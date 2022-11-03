@@ -76,7 +76,7 @@ def serialize_log_messages_from_bind(src: LogMessagesData):
     log_messages = { 'Debug':[], 'Info':[], 'Warning':[], 'Fatal':[], 'Error':[], }
     for msg in src.DebugMessages:
         log_messages['Debug'].append(msg)
-    for msg in src.InfogMessages:
+    for msg in src.InfoMessages:
         log_messages['Info'].append(msg)
     for msg in src.WarningMessages:
         log_messages['Warning'].append(msg)

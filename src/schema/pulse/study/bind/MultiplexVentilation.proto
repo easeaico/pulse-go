@@ -4,6 +4,8 @@ option java_package = "com.kitware.pulse.study.bind.multiplex_ventilation";
 option csharp_namespace = "pulse.study.bind.multiplex_ventilation";
 option optimize_for = SPEED;
 
+import "pulse/cdm/bind/Engine.proto";
+
 message PatientStateData
 {
   uint32          ID                                        = 1;
@@ -51,14 +53,6 @@ message PatientComparisonData
   PatientStateData               MultiplexVentilation       = 2;
 }
 
-message LogData
-{
-  repeated string                Info                       = 1;
-  repeated string                Warning                    = 2;
-  repeated string                Error                      = 3;
-  repeated string                Fatal                      = 4;
-}
-
 message SimulationData
 {
   // A filename without an extension (can/should have path also)
@@ -73,7 +67,7 @@ message SimulationData
   double                         PIP_cmH2O                  = 8;
   double                         PEEP_cmH2O                 = 9;
   double                         FiO2                       = 10;
-  LogData                        Log                        = 11;
+  pulse.cdm.bind.LogMessagesData Log                        = 11;
   repeated PatientComparisonData PatientComparisons         = 12;
 }
 

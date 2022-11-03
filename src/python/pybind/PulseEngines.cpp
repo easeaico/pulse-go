@@ -48,7 +48,7 @@ void PulseEnginePoolBind(py::module& m)
 {
   py::class_<PulseEnginePool>(m, "EnginePool", py::buffer_protocol())
     .def(py::init<size_t, const std::string&>())
-    .def("initialize_engines", &PulseEnginePool::InitializeEngines)
+    //.def("initialize_engines", &PulseEnginePool::InitializeEngines)
     .def("remove_engine", &PulseEnginePool::RemoveEngine)
     .def("process_actions", &PulseEnginePool::ProcessActions)
     .def("pull_data_requested", &PulseEnginePool::PullDataRequested)

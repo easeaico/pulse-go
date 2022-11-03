@@ -41,11 +41,9 @@ public:
   const size_t GetWorkerCount() const { return m_Pool.workerCount(); }
 
   bool RemoveEngine(int id);
-  const std::map<int, SEPhysiologyEnginePoolEngine*>& GetEngines() const;
-  SEPhysiologyEnginePoolEngine* GetEngine(int id) const;
-  SEPhysiologyEnginePoolEngine* CreateEngine(int id);
 
-  bool InitializeEngines();
+  SEEngineInitializationStatus InitializeEngine(SEEngineInitialization& init);
+  std::vector<SEEngineInitializationStatus> InitializeEngines(std::vector<SEEngineInitialization>& inits);
 
   // Advance all engines the same amount of time
   // If you want to advance individual engines/different times
@@ -65,10 +63,14 @@ public:
 protected:
   virtual void AllocateEngine(SEPhysiologyEnginePoolEngine& pe) = 0;
 
+  SEPhysiologyEnginePoolEngine* CreateEngine(SEEngineInitialization& init, int id);
+  static SEEngineInitializationStatus InitEngine(SEPhysiologyEnginePoolEngine* pe, int id);
+
   bool m_IsActive;
   SESubstanceManager m_SubMgr;
   std::map<int, SEPhysiologyEnginePoolEngine*> m_Engines;
   ThreadPool m_Pool;
+  int m_NextID;
 };
 
 /**

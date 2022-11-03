@@ -36,12 +36,11 @@ bool SEEngineInitialization::SerializeFromString(const std::string& src, std::ve
 
 void SEEngineInitialization::Clear()
 {
-  m_ID = -1;
   SAFE_DELETE(m_PatientConfiguration);
   m_StateFilename = "";
   m_State = "";
   SAFE_DELETE(m_DataRequestManager);
-  m_StateFilename = "";
+  m_LogFilename = "";
   m_KeepLogMessages = false;
   m_KeepEventChanges = false;
 }
@@ -54,15 +53,6 @@ void SEEngineInitialization::Copy(const SEEngineInitialization& from, const SESu
 bool SEEngineInitialization::IsValid() const
 {
   return (HasPatientConfiguration() || HasStateFilename() || HasState());
-}
-
-int SEEngineInitialization::GetID() const
-{
-  return m_ID;
-}
-void SEEngineInitialization::SetID(int id)
-{
-  m_ID = id;
 }
 
 bool SEEngineInitialization::HasPatientConfiguration() const

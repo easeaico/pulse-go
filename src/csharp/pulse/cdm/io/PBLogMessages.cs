@@ -17,7 +17,7 @@ namespace Pulse.CDM
       dst.Clear();
       foreach (var msg in src.DebugMessages)
         dst.debug_msgs.Add(msg);
-      foreach (var msg in src.InfogMessages)
+      foreach (var msg in src.InfoMessages)
         dst.info_msgs.Add(msg);
       foreach (var msg in src.WarningMessages)
         dst.warning_msgs.Add(msg);
@@ -51,7 +51,7 @@ namespace Pulse.CDM
       foreach (string msg in src.debug_msgs)
         dst.DebugMessages.Add(msg);
       foreach (string msg in src.info_msgs)
-        dst.InfogMessages.Add(msg);
+        dst.InfoMessages.Add(msg);
       foreach (string msg in src.warning_msgs)
         dst.WarningMessages.Add(msg);
       foreach (string msg in src.error_msgs)

@@ -169,15 +169,30 @@ message EngineInitializationData
     string                                              StateFilename                   = 3;/**<< @brief Create an engine using a patient state file. */
     string                                              State                           = 4;/**<< @brief Create an engine using a patient state.*/
   }
-  DataRequestManagerData                                DataRequestManager              = 5;/**<< @brief Data Requests to use for this engine*/
-  string                                                LogFilename                     = 6;/**<< @brief Log file to create for engine. */
-  bool                                                  KeepLogMessages                 = 7;/**<< @brief Keep log messages from engine, used when building DataRequested objects. */
-  bool                                                  KeepEventChanges                = 8;/**<< @brief Keep event changes from engine, used when building DataRequested objects. */
+  DataRequestManagerData                                DataRequestManager             = 4;/**<< @brief Data Requests to use for this engine. */
+  string                                                LogFilename                    = 5;/**<< @brief Log file to create for engine. */
+  bool                                                  KeepLogMessages                = 6;/**<< @brief Keep log messages from engine, used when building DataRequested objects. */
+  bool                                                  KeepEventChanges               = 7;/**<< @brief Keep event changes from engine, used when building DataRequested objects. */
 }
 
-message EngineInitializationListData
+message EngineInitializationGroupData
 {
-  repeated EngineInitializationData                     EngineInitialization            = 1;/**<< @brief Create an engine for each provided configuration. */
+  DataRequestManagerData                                DataRequestManager             = 1;/**<< @brief Data Requests to use for this group of engines. Ignored if individual data requests provided. */
+  bool                                                  KeepLogMessages                = 2;/**<< @brief Keep log messages from engine, used when building DataRequested objects. */
+  bool                                                  KeepEventChanges               = 3;/**<< @brief Keep event changes from engine, used when building DataRequested objects. */
+  repeated EngineInitializationData                     EngineInitialization           = 4;/**<< @brief Create an engine for each provided configuration. */
+}
+
+message EngineInitializationStatusData
+{
+  int32                                                 ID                             = 1;
+  bool                                                  Created                        = 2;
+  LogMessagesData                                       LogMessages                    = 3;
+}
+
+message EngineInitializationGroupStatusData
+{
+  repeated EngineInitializationStatusData               EngineInitializationStatus     = 1;
 }
 
 /** @brief Static timed stabilization lengths */
@@ -211,7 +226,7 @@ message DynamicStabilizationData
 message LogMessagesData
 {
   repeated string                                       DebugMessages                   = 1;
-  repeated string                                       InfogMessages                   = 2;
+  repeated string                                       InfoMessages                    = 2;
   repeated string                                       WarningMessages                 = 3;
   repeated string                                       ErrorMessages                   = 4;
   repeated string                                       FatalMessages                   = 5;

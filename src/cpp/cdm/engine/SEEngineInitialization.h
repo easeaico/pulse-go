@@ -12,9 +12,6 @@ public:
   explicit SEEngineInitialization(Logger* logger=nullptr);
   virtual ~SEEngineInitialization();
 
-  SEEngineInitialization(const SEEngineInitialization&) = delete;
-  SEEngineInitialization operator=(const SEEngineInitialization&) = delete;
-
   virtual void Copy(const SEEngineInitialization& from, const SESubstanceManager& subMgr);
   virtual void Clear(); //clear memory
 
@@ -23,9 +20,6 @@ public:
   static bool SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, eSerializationFormat m, const SESubstanceManager& subMgr);
 
   virtual bool IsValid()const;
-
-  virtual int GetID() const;
-  virtual void SetID(int id);
 
   virtual bool HasPatientConfiguration() const;
   virtual SEPatientConfiguration& GetPatientConfiguration();
@@ -55,7 +49,6 @@ public:
   virtual void KeepEventChanges(bool b);
 
 protected:
-  int                             m_ID;
   SEPatientConfiguration*         m_PatientConfiguration;
   std::string                     m_StateFilename;
   std::string                     m_State;

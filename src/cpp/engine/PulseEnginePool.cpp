@@ -12,10 +12,16 @@ PulseEnginePool::PulseEnginePool(size_t poolSize, const std::string& dataDir, Lo
 
 }
 
-SEPhysiologyEnginePoolEngine* PulseEnginePool::CreateEngine(int id, eModelType type)
+SEEngineInitializationStatus PulseEnginePool::InitializeEngine(SEEngineInitialization init, eModelType type)
 {
   m_creationType = type;
-  return CreateEngine(id);
+  return InitializeEngine(init);
+}
+
+std::vector<SEEngineInitializationStatus> PulseEnginePool::InitializeEngines(std::vector<SEEngineInitialization>& inits, eModelType type)
+{
+  m_creationType = type;
+  return InitializeEngines(inits);
 }
 
 void PulseEnginePool::AllocateEngine(SEPhysiologyEnginePoolEngine& pe)

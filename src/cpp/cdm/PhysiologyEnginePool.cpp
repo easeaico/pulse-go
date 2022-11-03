@@ -34,6 +34,7 @@ SEPhysiologyEnginePool::SEPhysiologyEnginePool(size_t poolSize, const std::strin
                                                                                             m_SubMgr(logger), m_Pool(poolSize)
 {
   m_IsActive = false;
+  m_NextID = 0;
   m_SubMgr.LoadSubstanceDirectory(dataDir);
 }
 SEPhysiologyEnginePool::~SEPhysiologyEnginePool()
@@ -48,99 +49,82 @@ bool SEPhysiologyEnginePool::RemoveEngine(int id)
   m_Engines.erase(id);
   return true;
 }
-SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::GetEngine(int id) const
-{
-  auto e = m_Engines.find(id);
-  if (e != m_Engines.end())
-    return e->second;
-  return nullptr;
-}
-const std::map<int, SEPhysiologyEnginePoolEngine*>& SEPhysiologyEnginePool::GetEngines() const
-{
-  return m_Engines;
-}
-SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::CreateEngine(int id)
-{
-  if (m_IsActive)
-    throw CommonDataModelException("Engine pool has already been initialized, dynamic engine support not implemented");
 
-  auto e = m_Engines.find(id);
-  if (e != m_Engines.end())
+SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::CreateEngine(SEEngineInitialization& init, int id)
+{
+  SEPhysiologyEnginePoolEngine* pe = new SEPhysiologyEnginePoolEngine(m_Logger);
+  AllocateEngine(*pe);
+  pe->DataRequested.SetEngine(*pe->Engine);
+  //pe->EngineInitialization.Copy(init, m_SubMgr);
+  pe->Engine->GetLogger()->LogToConsole(false);
+  m_Engines.insert({ id, pe });
+
+  return pe;
+}
+
+SEEngineInitializationStatus SEPhysiologyEnginePool::InitEngine(SEPhysiologyEnginePoolEngine* pe, int id)
+{
+  pe->IsActive = false;
+  PhysiologyEngine* engine = pe->Engine.get();
+  SEEngineInitialization* init = &pe->EngineInitialization;
+
+  if(init->HasLogFilename())
+    engine->GetLogger()->SetLogFile(init->GetLogFilename());
+  // Patient/State
+  if (init->HasPatientConfiguration())
+    pe->IsActive = engine->InitializeEngine(init->GetPatientConfiguration());
+  else if (init->HasStateFilename())
+    pe->IsActive = engine->SerializeFromFile(init->GetStateFilename());
+  else if (init->HasState())
+    pe->IsActive = engine->SerializeFromString(init->GetState(), init->GetStateFormat());
+
+  // Data Requests
+  if (init->HasDataRequestManager())
+    engine->GetEngineTracker()->GetDataRequestManager().Copy(init->GetDataRequestManager());
+
+  // Events
+  pe->DataRequested.KeepEventChanges(init->KeepEventChanges());
+  engine->GetEventManager().ForwardEvents(&pe->DataRequested);
+
+  // Logging
+  pe->DataRequested.KeepLogMessages(init->KeepLogMessages());
+  engine->GetLogger()->AddForward(&pe->DataRequested);
+
+  // Set Results Active
+  pe->DataRequested.SetIsActive(pe->IsActive);
+  if (!pe->IsActive)
+    pe->Warning("Engine "+std::to_string(id)+" was unable to initialize");
+
+  // TODO: Capture log messages in status
+  SEEngineInitializationStatus status;
+  status.SetID(id);
+  status.Created(pe->IsActive);
+
+  return status;
+}
+
+SEEngineInitializationStatus SEPhysiologyEnginePool::InitializeEngine(SEEngineInitialization& init)
+{
+  int id = m_NextID++;
+  SEPhysiologyEnginePoolEngine* pe = CreateEngine(init, id);
+  return InitEngine(pe, id);
+}
+
+std::vector<SEEngineInitializationStatus> SEPhysiologyEnginePool::InitializeEngines(std::vector<SEEngineInitialization>& inits)
+{
+  std::vector<std::future<SEEngineInitializationStatus>> futures;
+  for (auto& ei : inits)
   {
-    Warning("ID " + std::to_string(id) + " already has an engine.");
-    return e->second;
+    int id = m_NextID++;
+    SEPhysiologyEnginePoolEngine* pe = CreateEngine(ei, id);
+    futures.push_back(m_Pool.enqueue(InitEngine, pe, id));
   }
 
-  SEPhysiologyEnginePoolEngine* epe = new SEPhysiologyEnginePoolEngine(m_Logger);
-  AllocateEngine(*epe);
-  epe->EngineInitialization.SetID(id);
-  //epe->DataRequested.SetEngine(*epe->Engine);
-  epe->Engine->GetLogger()->LogToConsole(false);
-  m_Engines.insert({ id, epe });
-  return epe;
-}
+  std::vector<SEEngineInitializationStatus> statuses;
+  for (auto & f: futures)
+    statuses.push_back(f.get());
 
-bool SEPhysiologyEnginePool::InitializeEngines()
-{
-  if (m_IsActive)
-    throw CommonDataModelException("Engine pool has already been initialized, dynamic engine support not implemented");
-
-  if (m_Engines.empty())
-    return false;
-
-  std::vector<std::future<bool>> futures;
-  for (auto itr : m_Engines)
-  {
-    SEPhysiologyEnginePoolEngine* pe = itr.second;
-    futures.push_back(m_Pool.enqueue([pe]()
-    {
-      pe->IsActive = false;
-      PhysiologyEngine* engine = pe->Engine.get();
-      SEEngineInitialization* init = &pe->EngineInitialization;
-      pe->DataRequested.SetID(init->GetID());
-
-      if(init->HasLogFilename())
-        engine->GetLogger()->SetLogFile(init->GetLogFilename());
-      // Patient/State
-      if (init->HasPatientConfiguration())
-        pe->IsActive = engine->InitializeEngine(init->GetPatientConfiguration());
-      else if (init->HasStateFilename())
-        pe->IsActive = engine->SerializeFromFile(init->GetStateFilename());
-      else if (init->HasState())
-        pe->IsActive = engine->SerializeFromString(init->GetState(), init->GetStateFormat());
-      // Data Requests
-      if (init->HasDataRequestManager())
-        engine->GetEngineTracker()->GetDataRequestManager().Copy(init->GetDataRequestManager());
-      // Events
-      pe->DataRequested.KeepEventChanges(init->KeepEventChanges());
-      engine->GetEventManager().ForwardEvents(&pe->DataRequested);
-      // Logging
-      pe->DataRequested.KeepLogMessages(init->KeepLogMessages());
-      engine->GetLogger()->AddForward(&pe->DataRequested);
-      // Set Results Active
-      pe->DataRequested.SetIsActive(pe->IsActive);
-      if (!pe->IsActive)
-        pe->Warning("Engine "+std::to_string(pe->EngineInitialization.GetID())+" was unable to initialize");
-      return pe->IsActive;
-    }));
-  }
-
-  bool b = GatherResults(futures);
-  if (!b)
-  {// Are any engines ok?
-    size_t errors = 0;
-    for (auto itr : m_Engines)
-    {
-      if (!itr.second->IsActive)
-        errors++;
-    }
-    if (errors == m_Engines.size())
-      return false;
-    else if (errors > 0)
-      Warning(std::to_string(errors) + " out of " + std::to_string(m_Engines.size()) + " failed");
-  }
-  m_IsActive = true;
-  return m_IsActive;
+  return statuses;
 }
 
 bool SEPhysiologyEnginePool::AdvanceModelTime(double time, const TimeUnit& unit)
@@ -243,18 +227,16 @@ bool PhysiologyEnginePoolThunk::InitializeEngines(std::string const& engineIniti
     data->pool->Error("Unable to serialize engine_initializations string");
     return false;
   }
-  for (SEEngineInitialization* init : engines)
-  {
-    SEPhysiologyEnginePoolEngine* pEng = data->pool->CreateEngine(init->GetID());
-    if (!pEng)
-    {
-      data->pool->Error("Unable to create engines");
-      return false;
-    }
-    pEng->EngineInitialization.Copy(*init, data->pool->m_SubMgr);
-    delete init;
-  }
-  return data->pool->InitializeEngines();
+
+  // TODO: Fix this mess
+  std::vector<SEEngineInitialization> eis;
+  for (auto e: engines)
+    eis.push_back(*e);
+    
+  data->pool->InitializeEngines(eis);
+
+  // TODO: Fix return
+  return true;
 }
 
 bool PhysiologyEnginePoolThunk::RemoveEngine(int id)
@@ -265,13 +247,14 @@ bool PhysiologyEnginePoolThunk::RemoveEngine(int id)
 bool PhysiologyEnginePoolThunk::ProcessActions(std::string const& actions, eSerializationFormat format)
 {
   SEActionManager::SerializeFromString(actions, data->actionMap, format, data->pool->m_SubMgr);
-  for (auto itr : data->actionMap)
+  // TODO: Actions
+  /*for (auto itr : data->actionMap)
   {
     for (const SEAction* a : itr.second)
     {
       data->pool->GetEngine(itr.first)->Actions.push_back(a);
     }
-  }
+  }*/
   return data->pool->ProcessActions();
 }
 
