@@ -11,9 +11,6 @@ See accompanying NOTICE file for details.*/
 #include "cdm/engine/SEEngineInitialization.h"
 #include "cdm/substance/SESubstanceManager.h"
 
-// TODO Template these class and move to CDM
-// (Template is the PhysiologEngine type)
-
 class SEPhysiologyEnginePoolEngine : public Loggable
 {
   friend class SEPhysiologyEnginePool;
@@ -39,6 +36,7 @@ public:
   ~SEPhysiologyEnginePool();
 
   const size_t GetWorkerCount() const { return m_Pool.workerCount(); }
+  const size_t GetEngineCount() const { return m_Engines.size(); }
 
   bool RemoveEngine(int id);
 

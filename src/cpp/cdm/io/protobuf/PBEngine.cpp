@@ -1096,7 +1096,6 @@ void PBEngine::Copy(const SEEngineInitialization& src, SEEngineInitialization& d
   PBEngine::Serialize(data, dst, subMgr);
 }
 
-
 void PBEngine::Load(const CDM_BIND::EngineInitializationStatusData& src, SEEngineInitializationStatus& dst)
 {
   dst.Clear();
