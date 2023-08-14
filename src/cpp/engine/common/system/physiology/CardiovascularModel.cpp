@@ -386,7 +386,45 @@ namespace pulse
     //Paths
     if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
     {
-      //Not yet implemented
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightSuperiorLobeApicalShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightSuperiorLobePosteriorShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightSuperiorLobeAnteriorShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightMiddleLobeLateralShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightMiddleLobeMedialShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeSuperiorShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeMedialBasalShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeAnteriorBasalShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeLateralBasalShunt));
+      m_RightPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobePosteriorBasalShunt));
+
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobePosteriorBasalShunt));
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobeLateralBasalShunt));
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobeAnteromedialBasalShunt));
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobeSuperiorShunt));
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeInferiorLingulaShunt));
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeSuperiorLingulaShunt));
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeAnteriorShunt));
+      m_LeftPulmonaryArteriesToVeins.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeApicoposteriorShunt));
+
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightSuperiorLobeApicalPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightSuperiorLobePosteriorPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightSuperiorLobeAnteriorPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightMiddleLobeLateralPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightMiddleLobeMedialPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightInferiorLobeSuperiorPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightInferiorLobeMedialBasalPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightInferiorLobeAnteriorBasalPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightInferiorLobeLateralBasalPulmonaryCapillaries));
+      m_RightPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightInferiorLobePosteriorBasalPulmonaryCapillaries));
+
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftInferiorLobePosteriorBasalPulmonaryCapillaries));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftInferiorLobeLateralBasalPulmonaryCapillaries));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftInferiorLobeAnteromedialBasalPulmonaryCapillaries));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftInferiorLobeSuperiorPulmonaryCapillaries));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftSuperiorLobeInferiorLingulaPulmonaryCapillaries));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftSuperiorLobeAnteriorPulmonaryCapillaries));
+      m_LeftPulmonaryArteriesToCapillaries.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftSuperiorLobeApicoposteriorPulmonaryCapillaries));
     }
     else
     {
@@ -687,7 +725,25 @@ namespace pulse
 
     if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
     {
-      //Not yet implemented
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightSuperiorLobeApicalPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightSuperiorLobePosteriorPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightSuperiorLobeAnteriorPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightMiddleLobeLateralPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightMiddleLobeMedialPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeSuperiorPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeMedialBasalPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeAnteriorBasalPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobeLateralBasalPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightInferiorLobePosteriorBasalPulmonaryCapillariesToGround));
+
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobePosteriorBasalPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobeLateralBasalPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobeAnteromedialBasalPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftInferiorLobeSuperiorPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeInferiorLingulaPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeSuperiorLingulaPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeAnteriorPulmonaryCapillariesToGround));
+      m_PulmonaryCompliancePaths.push_back(m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftSuperiorLobeApicoposteriorPulmonaryCapillariesToGround));
     }
     else
     {
@@ -3517,17 +3573,21 @@ namespace pulse
         tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
       }
 
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1));
-      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
+      //jbw - Fix and make work for all CV setups
+      if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
+      {
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::LeftLungT2ToLeftLungT1));
+
+        tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1));
+        tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
+      }
 
       tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Muscle1));
       tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MuscleT2ToMuscleT1));
 
       tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Myocardium1));
       tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::MyocardiumT2ToMyocardiumT1));
-
-      tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1));
-      tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightLungT2ToRightLungT1));
 
       tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::Skin1));
       tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::SkinT2ToSkinT1));

@@ -55,6 +55,8 @@ namespace pulse { namespace human_adult_whole_body
     pc.m_Config->Initialize("./", &pc.GetSubstances());
     pc.m_Config->EnableRenal(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
+    //jbw - Make a seperate test that turns this on
+    pc.m_Config->UseExpandedRespiratory(eSwitch::On);
     pc.CreateCircuitsAndCompartments();
     pc.GetSubstances().InitializeGasCompartments();
     SEEnvironmentalConditions& env = pc.GetEnvironment().GetEnvironmentalConditions();

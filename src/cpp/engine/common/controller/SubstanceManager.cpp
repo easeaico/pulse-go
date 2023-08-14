@@ -499,12 +499,16 @@ namespace pulse
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Fat), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Fat));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Gut), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Gut));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::LeftKidney), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::LeftKidney));
-      InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::LeftLung), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::LeftLung));
+      //jbw - Fix and make work for all CV setups
+      if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
+      {
+        InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::LeftLung), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::LeftLung));
+        InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::RightLung), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::RightLung));
+      }
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Liver), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Liver));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Muscle), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Muscle));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Myocardium), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Myocardium));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::RightKidney), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::RightKidney));
-      InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::RightLung), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::RightLung));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Skin), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Skin));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Spleen), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Spleen));
     }

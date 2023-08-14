@@ -12,6 +12,25 @@ namespace Pulse.CDM
     LeftInferiorLobe,
     RightSuperiorLobe,
     RightMiddleLobe,
-    RightInferiorLobe
+    RightInferiorLobe,
+
+    RightSuperiorLobeApical,
+    RightSuperiorLobePosterior,
+    RightSuperiorLobeAnterior,
+    RightMiddleLobeLateral,
+    RightMiddleLobeMedial,
+    RightInferiorLobeSuperior,
+    RightInferiorLobeMedialBasal,
+    RightInferiorLobeAnteriorBasal,
+    RightInferiorLobeLateralBasal,
+    RightInferiorLobePosteriorBasal,
+    LeftInferiorLobePosteriorBasal,
+    LeftInferiorLobeLateralBasal,
+    LeftInferiorLobeAnteromedialBasal,
+    LeftInferiorLobeSuperior,
+    LeftSuperiorLobeInferiorLingula,
+    LeftSuperiorLobeSuperiorLingula,
+    LeftSuperiorLobeAnterior,
+    LeftSuperiorLobeApicoposterior
   };
 }

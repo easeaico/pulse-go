@@ -2476,50 +2476,54 @@ namespace pulse
 
     ///////////////
     // Left Lung //
-    SEFluidCircuitNode* LeftLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1);
-    SEFluidCircuitNode& LeftLungT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT1);
-    SEFluidCircuitNode& LeftLungT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT2);
-    SEFluidCircuitNode& LeftLungT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT3);
-    LeftLungT1.GetPressure().Set(LeftLung1->GetPressure());
-    LeftLungT3.GetPressure().Set(Ground->GetPressure());
-    LeftLungT1.GetVolumeBaseline().SetValue(LLungEWFraction * LLungTissueVolume * 1000.0, VolumeUnit::mL);
+    //jbw - Fix
+    if (m_Config->UseExpandedRespiratory() == eSwitch::Off)
+    {
+      SEFluidCircuitNode* LeftLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1);
+      SEFluidCircuitNode& LeftLungT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT1);
+      SEFluidCircuitNode& LeftLungT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT2);
+      SEFluidCircuitNode& LeftLungT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT3);
+      LeftLungT1.GetPressure().Set(LeftLung1->GetPressure());
+      LeftLungT3.GetPressure().Set(Ground->GetPressure());
+      LeftLungT1.GetVolumeBaseline().SetValue(LLungEWFraction * LLungTissueVolume * 1000.0, VolumeUnit::mL);
 
-    SEFluidCircuitPath& LeftLung1ToLeftLungT2 = cCombinedCardiovascular.CreatePath(*LeftLung1, LeftLungT2, pulse::TissuePath::LeftLung1ToLeftLungT2);
-    LeftLung1ToLeftLungT2.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
-    SEFluidCircuitPath& LeftLungT2ToLeftLungT1 = cCombinedCardiovascular.CreatePath(LeftLungT2, LeftLungT1, pulse::TissuePath::LeftLungT2ToLeftLungT1);
-    LeftLungT2ToLeftLungT1.GetResistanceBaseline().SetValue((1 / LLungTissueMass) * resistanceConstant, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    SEFluidCircuitPath& LeftLungT1ToLeftLungT3 = cCombinedCardiovascular.CreatePath(LeftLungT1, LeftLungT3, pulse::TissuePath::LeftLungT1ToLeftLungT3);
-    LeftLungT1ToLeftLungT3.GetComplianceBaseline().SetValue(LeftLungT1.GetVolumeBaseline(VolumeUnit::mL) / LeftLungT1.GetPressure(PressureUnit::mmHg), VolumePerPressureUnit::mL_Per_mmHg);
-    SEFluidCircuitPath& GroundToLeftLungT3 = cCombinedCardiovascular.CreatePath(*Ground, LeftLungT3, pulse::TissuePath::GroundToLeftLungT3);
-    GroundToLeftLungT3.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
+      SEFluidCircuitPath& LeftLung1ToLeftLungT2 = cCombinedCardiovascular.CreatePath(*LeftLung1, LeftLungT2, pulse::TissuePath::LeftLung1ToLeftLungT2);
+      LeftLung1ToLeftLungT2.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
+      SEFluidCircuitPath& LeftLungT2ToLeftLungT1 = cCombinedCardiovascular.CreatePath(LeftLungT2, LeftLungT1, pulse::TissuePath::LeftLungT2ToLeftLungT1);
+      LeftLungT2ToLeftLungT1.GetResistanceBaseline().SetValue((1 / LLungTissueMass) * resistanceConstant, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      SEFluidCircuitPath& LeftLungT1ToLeftLungT3 = cCombinedCardiovascular.CreatePath(LeftLungT1, LeftLungT3, pulse::TissuePath::LeftLungT1ToLeftLungT3);
+      LeftLungT1ToLeftLungT3.GetComplianceBaseline().SetValue(LeftLungT1.GetVolumeBaseline(VolumeUnit::mL) / LeftLungT1.GetPressure(PressureUnit::mmHg), VolumePerPressureUnit::mL_Per_mmHg);
+      SEFluidCircuitPath& GroundToLeftLungT3 = cCombinedCardiovascular.CreatePath(*Ground, LeftLungT3, pulse::TissuePath::GroundToLeftLungT3);
+      GroundToLeftLungT3.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
 
-    SEFluidCircuitPath& LeftLungT1ToLymph = cCombinedCardiovascular.CreatePath(LeftLungT1, Lymph, pulse::TissuePath::LeftLungT1ToLymph);
-    LeftLungT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+      SEFluidCircuitPath& LeftLungT1ToLymph = cCombinedCardiovascular.CreatePath(LeftLungT1, Lymph, pulse::TissuePath::LeftLungT1ToLymph);
+      LeftLungT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
-    SETissueCompartment& LeftLungTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::LeftLung);
-    SELiquidCompartment& LeftLungExtracellular = LeftLungTissue.GetExtracellular();
-    SELiquidCompartment& LeftLungIntracellular = LeftLungTissue.GetIntracellular();
-    LeftLungTissue.GetMatrixVolume().SetValue((1 - LLungEWFraction - LLungIWFraction) * LLungTissueVolume * 1000.0, VolumeUnit::mL);
-    LeftLungExtracellular.MapNode(LeftLungT1);
-    LeftLungExtracellular.MapNode(LeftLungT2);
-    LeftLungExtracellular.MapNode(LeftLungT3);
-    LeftLungExtracellular.GetWaterVolumeFraction().SetValue(LLungEWFraction);
-    LeftLungIntracellular.GetVolume().SetValue(LLungIWFraction * LLungTissueVolume * 1000.0, VolumeUnit::mL);
-    LeftLungIntracellular.GetWaterVolumeFraction().SetValue(LLungIWFraction);
-    LeftLungTissue.GetAcidicPhospohlipidConcentration().SetValue(LLungAPL, MassPerMassUnit::mg_Per_g);
-    LeftLungTissue.GetNeutralLipidsVolumeFraction().SetValue(LLungNLFraction);
-    LeftLungTissue.GetNeutralPhospholipidsVolumeFraction().SetValue(LLungNPFraction);
-    LeftLungTissue.GetTissueToPlasmaAlbuminRatio().SetValue(LLungARatio);
-    LeftLungTissue.GetTissueToPlasmaLipoproteinRatio().SetValue(LLungLRatio);
-    LeftLungTissue.GetTissueToPlasmaAlphaAcidGlycoproteinRatio().SetValue(LLungAAGRatio);
-    LeftLungTissue.GetTotalMass().SetValue(LLungTissueMass, MassUnit::kg);
+      SETissueCompartment& LeftLungTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::LeftLung);
+      SELiquidCompartment& LeftLungExtracellular = LeftLungTissue.GetExtracellular();
+      SELiquidCompartment& LeftLungIntracellular = LeftLungTissue.GetIntracellular();
+      LeftLungTissue.GetMatrixVolume().SetValue((1 - LLungEWFraction - LLungIWFraction) * LLungTissueVolume * 1000.0, VolumeUnit::mL);
+      LeftLungExtracellular.MapNode(LeftLungT1);
+      LeftLungExtracellular.MapNode(LeftLungT2);
+      LeftLungExtracellular.MapNode(LeftLungT3);
+      LeftLungExtracellular.GetWaterVolumeFraction().SetValue(LLungEWFraction);
+      LeftLungIntracellular.GetVolume().SetValue(LLungIWFraction * LLungTissueVolume * 1000.0, VolumeUnit::mL);
+      LeftLungIntracellular.GetWaterVolumeFraction().SetValue(LLungIWFraction);
+      LeftLungTissue.GetAcidicPhospohlipidConcentration().SetValue(LLungAPL, MassPerMassUnit::mg_Per_g);
+      LeftLungTissue.GetNeutralLipidsVolumeFraction().SetValue(LLungNLFraction);
+      LeftLungTissue.GetNeutralPhospholipidsVolumeFraction().SetValue(LLungNPFraction);
+      LeftLungTissue.GetTissueToPlasmaAlbuminRatio().SetValue(LLungARatio);
+      LeftLungTissue.GetTissueToPlasmaLipoproteinRatio().SetValue(LLungLRatio);
+      LeftLungTissue.GetTissueToPlasmaAlphaAcidGlycoproteinRatio().SetValue(LLungAAGRatio);
+      LeftLungTissue.GetTotalMass().SetValue(LLungTissueMass, MassUnit::kg);
 
-    SELiquidCompartmentLink& LeftLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::LeftLung),
-      LeftLungExtracellular, pulse::VascularLink::LeftLungVascularToTissue);
-    LeftLungVascularToTissue.MapPath(LeftLung1ToLeftLungT2);
+      SELiquidCompartmentLink& LeftLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::LeftLung),
+        LeftLungExtracellular, pulse::VascularLink::LeftLungVascularToTissue);
+      LeftLungVascularToTissue.MapPath(LeftLung1ToLeftLungT2);
 
-    SELiquidCompartmentLink& LeftLungTissueToLymph = m_Compartments->CreateLiquidLink(LeftLungExtracellular, cLymph, pulse::LymphLink::LeftLungTissueToLymph);
-    LeftLungTissueToLymph.MapPath(LeftLungT1ToLymph);
+      SELiquidCompartmentLink& LeftLungTissueToLymph = m_Compartments->CreateLiquidLink(LeftLungExtracellular, cLymph, pulse::LymphLink::LeftLungTissueToLymph);
+      LeftLungTissueToLymph.MapPath(LeftLungT1ToLymph);
+    }
 
     ///////////
     // Liver //
@@ -2716,50 +2720,54 @@ namespace pulse
 
     ////////////////
     // Right Lung //
-    SEFluidCircuitNode* RightLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1);
-    SEFluidCircuitNode& RightLungT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT1);
-    SEFluidCircuitNode& RightLungT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT2);
-    SEFluidCircuitNode& RightLungT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT3);
-    RightLungT1.GetPressure().Set(RightLung1->GetPressure());
-    RightLungT3.GetPressure().Set(Ground->GetPressure());
-    RightLungT1.GetVolumeBaseline().SetValue(RLungEWFraction * RLungTissueVolume * 1000.0, VolumeUnit::mL);
+    //jbw - Fix
+    if (m_Config->UseExpandedRespiratory() == eSwitch::Off)
+    {
+      SEFluidCircuitNode* RightLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1);
+      SEFluidCircuitNode& RightLungT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT1);
+      SEFluidCircuitNode& RightLungT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT2);
+      SEFluidCircuitNode& RightLungT3 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT3);
+      RightLungT1.GetPressure().Set(RightLung1->GetPressure());
+      RightLungT3.GetPressure().Set(Ground->GetPressure());
+      RightLungT1.GetVolumeBaseline().SetValue(RLungEWFraction * RLungTissueVolume * 1000.0, VolumeUnit::mL);
 
-    SEFluidCircuitPath& RightLung1ToRightLungT2 = cCombinedCardiovascular.CreatePath(*RightLung1, RightLungT2, pulse::TissuePath::RightLung1ToRightLungT2);
-    RightLung1ToRightLungT2.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
-    SEFluidCircuitPath& RightLungT2ToRightLungT1 = cCombinedCardiovascular.CreatePath(RightLungT2, RightLungT1, pulse::TissuePath::RightLungT2ToRightLungT1);
-    RightLungT2ToRightLungT1.GetResistanceBaseline().SetValue((1 / RLungTissueMass) * resistanceConstant, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    SEFluidCircuitPath& RightLungT1ToRightLungT3 = cCombinedCardiovascular.CreatePath(RightLungT1, RightLungT3, pulse::TissuePath::RightLungT1ToRightLungT3);
-    RightLungT1ToRightLungT3.GetComplianceBaseline().SetValue(RightLungT1.GetVolumeBaseline(VolumeUnit::mL) / RightLungT1.GetPressure(PressureUnit::mmHg), VolumePerPressureUnit::mL_Per_mmHg);
-    SEFluidCircuitPath& GroundToRightLungT3 = cCombinedCardiovascular.CreatePath(*Ground, RightLungT3, pulse::TissuePath::GroundToRightLungT3);
-    GroundToRightLungT3.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
+      SEFluidCircuitPath& RightLung1ToRightLungT2 = cCombinedCardiovascular.CreatePath(*RightLung1, RightLungT2, pulse::TissuePath::RightLung1ToRightLungT2);
+      RightLung1ToRightLungT2.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
+      SEFluidCircuitPath& RightLungT2ToRightLungT1 = cCombinedCardiovascular.CreatePath(RightLungT2, RightLungT1, pulse::TissuePath::RightLungT2ToRightLungT1);
+      RightLungT2ToRightLungT1.GetResistanceBaseline().SetValue((1 / RLungTissueMass) * resistanceConstant, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      SEFluidCircuitPath& RightLungT1ToRightLungT3 = cCombinedCardiovascular.CreatePath(RightLungT1, RightLungT3, pulse::TissuePath::RightLungT1ToRightLungT3);
+      RightLungT1ToRightLungT3.GetComplianceBaseline().SetValue(RightLungT1.GetVolumeBaseline(VolumeUnit::mL) / RightLungT1.GetPressure(PressureUnit::mmHg), VolumePerPressureUnit::mL_Per_mmHg);
+      SEFluidCircuitPath& GroundToRightLungT3 = cCombinedCardiovascular.CreatePath(*Ground, RightLungT3, pulse::TissuePath::GroundToRightLungT3);
+      GroundToRightLungT3.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
 
-    SEFluidCircuitPath& RightLungT1ToLymph = cCombinedCardiovascular.CreatePath(RightLungT1, Lymph, pulse::TissuePath::RightLungT1ToLymph);
-    RightLungT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+      SEFluidCircuitPath& RightLungT1ToLymph = cCombinedCardiovascular.CreatePath(RightLungT1, Lymph, pulse::TissuePath::RightLungT1ToLymph);
+      RightLungT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
-    SETissueCompartment& RightLungTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::RightLung);
-    SELiquidCompartment& RightLungExtracellular = RightLungTissue.GetExtracellular();
-    SELiquidCompartment& RightLungIntracellular = RightLungTissue.GetIntracellular();
-    RightLungTissue.GetMatrixVolume().SetValue((1 - RLungEWFraction - RLungIWFraction) * RLungTissueVolume * 1000.0, VolumeUnit::mL);
-    RightLungExtracellular.MapNode(RightLungT1);
-    RightLungExtracellular.MapNode(RightLungT2);
-    RightLungExtracellular.MapNode(RightLungT3);
-    RightLungExtracellular.GetWaterVolumeFraction().SetValue(RLungEWFraction);
-    RightLungIntracellular.GetVolume().SetValue(RLungIWFraction * RLungTissueVolume * 1000.0, VolumeUnit::mL);
-    RightLungIntracellular.GetWaterVolumeFraction().SetValue(RLungIWFraction);
-    RightLungTissue.GetAcidicPhospohlipidConcentration().SetValue(RLungAPL, MassPerMassUnit::mg_Per_g);
-    RightLungTissue.GetNeutralLipidsVolumeFraction().SetValue(RLungNLFraction);
-    RightLungTissue.GetNeutralPhospholipidsVolumeFraction().SetValue(RLungNPFraction);
-    RightLungTissue.GetTissueToPlasmaAlphaAcidGlycoproteinRatio().SetValue(RLungAAGRatio);
-    RightLungTissue.GetTissueToPlasmaAlbuminRatio().SetValue(RLungARatio);
-    RightLungTissue.GetTissueToPlasmaLipoproteinRatio().SetValue(RLungLRatio);
-    RightLungTissue.GetTotalMass().SetValue(RLungTissueMass, MassUnit::kg);
+      SETissueCompartment& RightLungTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::RightLung);
+      SELiquidCompartment& RightLungExtracellular = RightLungTissue.GetExtracellular();
+      SELiquidCompartment& RightLungIntracellular = RightLungTissue.GetIntracellular();
+      RightLungTissue.GetMatrixVolume().SetValue((1 - RLungEWFraction - RLungIWFraction) * RLungTissueVolume * 1000.0, VolumeUnit::mL);
+      RightLungExtracellular.MapNode(RightLungT1);
+      RightLungExtracellular.MapNode(RightLungT2);
+      RightLungExtracellular.MapNode(RightLungT3);
+      RightLungExtracellular.GetWaterVolumeFraction().SetValue(RLungEWFraction);
+      RightLungIntracellular.GetVolume().SetValue(RLungIWFraction * RLungTissueVolume * 1000.0, VolumeUnit::mL);
+      RightLungIntracellular.GetWaterVolumeFraction().SetValue(RLungIWFraction);
+      RightLungTissue.GetAcidicPhospohlipidConcentration().SetValue(RLungAPL, MassPerMassUnit::mg_Per_g);
+      RightLungTissue.GetNeutralLipidsVolumeFraction().SetValue(RLungNLFraction);
+      RightLungTissue.GetNeutralPhospholipidsVolumeFraction().SetValue(RLungNPFraction);
+      RightLungTissue.GetTissueToPlasmaAlphaAcidGlycoproteinRatio().SetValue(RLungAAGRatio);
+      RightLungTissue.GetTissueToPlasmaAlbuminRatio().SetValue(RLungARatio);
+      RightLungTissue.GetTissueToPlasmaLipoproteinRatio().SetValue(RLungLRatio);
+      RightLungTissue.GetTotalMass().SetValue(RLungTissueMass, MassUnit::kg);
 
-    SELiquidCompartmentLink& RightLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::RightLung),
-      RightLungExtracellular, pulse::VascularLink::RightLungVascularToTissue);
-    RightLungVascularToTissue.MapPath(RightLung1ToRightLungT2);
+      SELiquidCompartmentLink& RightLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::RightLung),
+        RightLungExtracellular, pulse::VascularLink::RightLungVascularToTissue);
+      RightLungVascularToTissue.MapPath(RightLung1ToRightLungT2);
 
-    SELiquidCompartmentLink& RightLungTissueToLymph = m_Compartments->CreateLiquidLink(RightLungExtracellular, cLymph, pulse::LymphLink::RightLungTissueToLymph);
-    RightLungTissueToLymph.MapPath(RightLungT1ToLymph);
+      SELiquidCompartmentLink& RightLungTissueToLymph = m_Compartments->CreateLiquidLink(RightLungExtracellular, cLymph, pulse::LymphLink::RightLungTissueToLymph);
+      RightLungTissueToLymph.MapPath(RightLungT1ToLymph);
+    }
 
     //////////
     // Skin //
