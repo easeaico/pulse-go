@@ -1309,7 +1309,7 @@ namespace pulse
 
   void Controller::SetupExpandedPulmonaryCardiovascular()
   {
-    Info("Setting Up Cardiovascular");
+    Info("Setting Up Expanded Pulmonary Cardiovascular");
     bool male = m_InitialPatient->GetSex() == ePatient_Sex::Male ? true : false;
     double RightLungRatio = m_InitialPatient->GetRightLungRatio().GetValue();
     double LeftLungRatio = 1 - RightLungRatio;
