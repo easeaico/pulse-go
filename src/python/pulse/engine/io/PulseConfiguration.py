@@ -39,6 +39,9 @@ def serialize_pulse_configuration_to_bind(src: PulseConfiguration, dst: Configur
     if src.has_time_step():
         serialize_scalar_time_to_bind(src.get_time_step(), dst.TimeStep)
 
+    if src.use_expanded_respiratory() is not eSwitch.NullSwitch:
+        dst.RespiratoryConfiguration.UseExpandedRespiratory = src.use_expanded_respiratory().value
+
 
 def serialize_pulse_configuration_from_bind(src: ConfigurationData, dst: PulseConfiguration):
     raise Exception("serialize_pulse_configuration_from_bind not implemented")

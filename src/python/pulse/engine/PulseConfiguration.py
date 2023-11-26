@@ -6,15 +6,20 @@ from pulse.cdm.scalars import SEScalarTime
 
 
 class PulseConfiguration:
-    __slots__ = ["_time_step", "_allow_dynamic_timestep"]
+    __slots__ = ["_time_step", "_allow_dynamic_timestep",
+                 "_use_expanded_respiratory"]
 
     def __init__(self):
         self._allow_dynamic_timestep = eSwitch.NullSwitch
         self._time_step = None
 
+        self._use_expanded_respiratory = eSwitch.NullSwitch
+
     def clear(self):
         self._allow_dynamic_timestep = eSwitch.NullSwitch
         if self._time_step is not None: self._time_step.invalidate()
+
+        self._use_expanded_respiratory = eSwitch.NullSwitch
 
     def set_allow_dynamic_timestep(self, s: eSwitch):
         self._allow_dynamic_timestep = s
@@ -27,4 +32,11 @@ class PulseConfiguration:
         if self._time_step is None:
             self._time_step = SEScalarTime()
         return self._time_step
+
+    def set_expanded_respiratory(self, s: eSwitch):
+        self._use_expanded_respiratory = s
+    def use_expanded_respiratory(self):
+        return self._use_expanded_respiratory
+
+
 
