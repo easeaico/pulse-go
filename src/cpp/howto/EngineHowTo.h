@@ -31,6 +31,7 @@ void HowToECMO();
 void HowToDehydration();
 void HowToEnvironmentChange();
 void HowToExercise();
+void HowToExpandedRespiratory();
 void HowToExpandedVasculature();
 void HowToHemorrhage();
 void HowToIsoShuntAnalysis();
