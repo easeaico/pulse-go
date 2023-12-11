@@ -75,7 +75,7 @@ def HowTo_ExpandedRespiratory():
     pulse.print_results()
 
     ards = SEAcuteRespiratoryDistressSyndromeExacerbation()
-    ards.get_severity(eLungCompartment.RightSuperiorLobe).set_value(0.3)
+    ards.get_severity(eLungCompartment.RightSuperiorLobeApical).set_value(0.3)
     ards.get_severity(eLungCompartment.RightSuperiorLobePosterior).set_value(0.3)
     ards.get_severity(eLungCompartment.RightSuperiorLobeAnterior).set_value(0.3)
     ards.get_severity(eLungCompartment.RightMiddleLobeLateral).set_value(0.3)
