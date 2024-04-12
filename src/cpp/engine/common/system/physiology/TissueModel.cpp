@@ -1894,7 +1894,7 @@ namespace pulse
         {
           //TODO: Why doesn't this work?
           //quantity->GetMass().SetReadOnly(false);
-          //quantity->GetMass().IncrementValue(-massLost_g, MassUnit::g);
+          //quantity->GetMass().Increment(-massLost_g, MassUnit::g);
           //quantity->GetMass().SetReadOnly(true);
         }
         else
