@@ -155,6 +155,7 @@ set(CDM_H_FILES
   cdm/patient/actions/SEPatientAssessmentRequest.h
   cdm/patient/actions/SEPericardialEffusion.h
   cdm/patient/actions/SEPneumoniaExacerbation.h
+  cdm/patient/actions/SEPrimaryBlastLungInjury.h
   cdm/patient/actions/SEPulmonaryShuntExacerbation.h
   cdm/patient/actions/SERespiratoryFatigue.h
   cdm/patient/actions/SERespiratoryMechanicsConfiguration.h
@@ -531,6 +532,7 @@ set(CDM_CPP_FILES
   cdm/patient/actions/SEPatientAssessmentRequest.cpp
   cdm/patient/actions/SEPericardialEffusion.cpp
   cdm/patient/actions/SEPneumoniaExacerbation.cpp
+  cdm/patient/actions/SEPrimaryBlastLungInjury.cpp
   cdm/patient/actions/SEPulmonaryShuntExacerbation.cpp
   cdm/patient/actions/SERespiratoryFatigue.cpp
   cdm/patient/actions/SERespiratoryMechanicsConfiguration.cpp

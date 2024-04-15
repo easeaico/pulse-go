@@ -143,6 +143,12 @@ namespace Pulse.CDM
         Serialize(any.PneumoniaExacerbation, lp);
         return lp;
       }
+      if (any.PrimaryBlastLungInjury != null)
+      {
+        SEPrimaryBlastLungInjury pbli = new SEPrimaryBlastLungInjury();
+        Serialize(any.PrimaryBlastLungInjury, pbli);
+        return pbli;
+      }
       if (any.MechanicalVentilation != null)
       {
         SEMechanicalVentilation mv = new SEMechanicalVentilation();
@@ -342,6 +348,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SEPneumoniaExacerbation)))
       {
         any.PneumoniaExacerbation = Unload((SEPneumoniaExacerbation)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEPrimaryBlastLungInjury)))
+      {
+        any.PrimaryBlastLungInjury = Unload((SEPrimaryBlastLungInjury)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SEMechanicalVentilation)))
@@ -1360,6 +1371,38 @@ namespace Pulse.CDM
       return dst;
     }
     public static void Serialize(SEPneumoniaExacerbation src, pulse.cdm.bind.PneumoniaExacerbationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      foreach (var s in src.GetSeverities())
+      {
+        LungImpairmentData d = new LungImpairmentData();
+        d.Compartment = (pulse.cdm.bind.eLungCompartment)s.Key;
+        d.Severity = PBProperty.Unload(s.Value);
+        dst.Severity.Add(d);
+      }
+    }
+    #endregion
+
+    #region SEPrimaryBlastLungInjury
+    public static void Load(pulse.cdm.bind.PrimaryBlastLungInjuryData src, SEPrimaryBlastLungInjury dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.PrimaryBlastLungInjuryData src, SEPrimaryBlastLungInjury dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      foreach (var s in src.Severity)
+        PBProperty.Load(s.Severity, dst.GetSeverity((eLungCompartment)s.Compartment));
+    }
+    public static pulse.cdm.bind.PrimaryBlastLungInjuryData Unload(SEPrimaryBlastLungInjury src)
+    {
+      pulse.cdm.bind.PrimaryBlastLungInjuryData dst = new pulse.cdm.bind.PrimaryBlastLungInjuryData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEPrimaryBlastLungInjury src, pulse.cdm.bind.PrimaryBlastLungInjuryData dst)
     {
       dst.PatientAction = new pulse.cdm.bind.PatientActionData();
       Serialize(src, dst.PatientAction);

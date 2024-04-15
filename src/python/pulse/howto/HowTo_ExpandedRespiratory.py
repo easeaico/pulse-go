@@ -6,7 +6,7 @@ from pathlib import Path
 from pulse.cdm.engine import eSwitch, eSerializationFormat
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.patient_actions import SEAcuteRespiratoryDistressSyndromeExacerbation
+from pulse.cdm.patient_actions import SEPrimaryBlastLungInjury
 from pulse.cdm.physiology import eLungCompartment
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, PressureUnit, \
                               TimeUnit, VolumeUnit
@@ -74,26 +74,26 @@ def HowTo_ExpandedRespiratory():
     results = pulse.pull_data()
     pulse.print_results()
 
-    ards = SEAcuteRespiratoryDistressSyndromeExacerbation()
-    ards.get_severity(eLungCompartment.RightSuperiorLobeApical).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightSuperiorLobePosterior).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightSuperiorLobeAnterior).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightMiddleLobeLateral).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightMiddleLobeMedial).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightInferiorLobeSuperior).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightInferiorLobeMedialBasal).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightInferiorLobeAnteriorBasal).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightInferiorLobeLateralBasal).set_value(0.3)
-    ards.get_severity(eLungCompartment.RightInferiorLobePosteriorBasal).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftInferiorLobePosteriorBasal).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftInferiorLobeLateralBasal).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftInferiorLobeAnteromedialBasal).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftInferiorLobeSuperior).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftSuperiorLobeInferiorLingula).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftSuperiorLobeSuperiorLingula).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftSuperiorLobeAnterior).set_value(0.3)
-    ards.get_severity(eLungCompartment.LeftSuperiorLobeApicoposterior).set_value(0.3)
-    pulse.process_action(ards)
+    pbli = SEPrimaryBlastLungInjury()
+    pbli.get_severity(eLungCompartment.RightSuperiorLobeApical).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightSuperiorLobePosterior).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightSuperiorLobeAnterior).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightMiddleLobeLateral).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightMiddleLobeMedial).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeSuperior).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeMedialBasal).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeAnteriorBasal).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeLateralBasal).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightInferiorLobePosteriorBasal).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobePosteriorBasal).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobeLateralBasal).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobeAnteromedialBasal).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobeSuperior).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeInferiorLingula).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeSuperiorLingula).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeAnterior).set_value(0.3)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeApicoposterior).set_value(0.3)
+    pulse.process_action(pbli)
 
     # Advance some time and print out the vitals
     pulse.advance_time_s(300)

@@ -33,6 +33,7 @@
 #include "cdm/patient/actions/SENeedleDecompression.h"
 #include "cdm/patient/actions/SEPatientAssessmentRequest.h"
 #include "cdm/patient/actions/SEPneumoniaExacerbation.h"
+#include "cdm/patient/actions/SEPrimaryBlastLungInjury.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
@@ -255,6 +256,9 @@ void CommonDataModelTest::ActionTest(const std::string& rptDirectory)
   lpe.GetSeverity(eLungCompartment::LeftLung).SetValue(0.3);
   lpe.GetSeverity(eLungCompartment::RightLung).SetValue(0.3);
   TestAction<SEPneumoniaExacerbation>(testSuite.CreateTestCase(), subMgr, lpe, "-Severity-LeftLungAffected-RightLungAffected");
+
+  //Aaron -do this
+  //SEPrimaryBlastLungInjury
 
   SEMechanicalVentilation mv;
   mv.SetState(eSwitch::On);

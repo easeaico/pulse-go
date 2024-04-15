@@ -42,6 +42,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SENeedleDecompression.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 #include "cdm/patient/actions/SEPneumoniaExacerbation.h"
+#include "cdm/patient/actions/SEPrimaryBlastLungInjury.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
@@ -1192,6 +1193,44 @@ void PBPatientAction::Copy(const SEPneumoniaExacerbation& src, SEPneumoniaExacer
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const CDM_BIND::PrimaryBlastLungInjuryData& src, SEPrimaryBlastLungInjury& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::PrimaryBlastLungInjuryData& src, SEPrimaryBlastLungInjury& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  for (int i = 0; i < src.severity_size(); i++)
+  {
+    auto& impairment = src.severity()[i];
+    PBProperty::Load(impairment.severity(), dst.GetSeverity((eLungCompartment)impairment.compartment()));
+  }
+}
+CDM_BIND::PrimaryBlastLungInjuryData* PBPatientAction::Unload(const SEPrimaryBlastLungInjury& src)
+{
+  CDM_BIND::PrimaryBlastLungInjuryData* dst = new CDM_BIND::PrimaryBlastLungInjuryData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEPrimaryBlastLungInjury& src, CDM_BIND::PrimaryBlastLungInjuryData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  for (auto itr : src.m_Severities)
+  {
+    auto impairment = dst.mutable_severity()->Add();
+    impairment->set_compartment((CDM_BIND::eLungCompartment)itr.first);
+    impairment->set_allocated_severity(PBProperty::Unload(*itr.second));
+  }
+}
+void PBPatientAction::Copy(const SEPrimaryBlastLungInjury& src, SEPrimaryBlastLungInjury& dst)
+{
+  dst.Clear();
+  CDM_BIND::PrimaryBlastLungInjuryData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const CDM_BIND::PulmonaryShuntExacerbationData& src, SEPulmonaryShuntExacerbation& dst)
 {
   dst.Clear();
@@ -1775,6 +1814,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.pneumoniaexacerbation(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kPrimaryBlastLungInjury:
+  {
+    SEPrimaryBlastLungInjury* a = new SEPrimaryBlastLungInjury();
+    PBPatientAction::Load(any.primaryblastlunginjury(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kPulmonaryShuntExacerbation:
   {
     SEPulmonaryShuntExacerbation* a = new SEPulmonaryShuntExacerbation();
@@ -2025,6 +2070,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (lp != nullptr)
   {
     any->set_allocated_pneumoniaexacerbation(PBPatientAction::Unload(*lp));
+    return any;
+  }
+  const SEPrimaryBlastLungInjury* pbli = dynamic_cast<const SEPrimaryBlastLungInjury*>(&action);
+  if (pbli != nullptr)
+  {
+    any->set_allocated_primaryblastlunginjury(PBPatientAction::Unload(*pbli));
     return any;
   }
   const SEPulmonaryShuntExacerbation* pse = dynamic_cast<const SEPulmonaryShuntExacerbation*>(&action);

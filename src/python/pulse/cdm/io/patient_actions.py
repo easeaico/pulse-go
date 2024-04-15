@@ -398,6 +398,19 @@ def serialize_pneumonia_exacerbation_from_bind(src:PneumoniaExacerbationData, ds
 
 #################################################################
 
+def serialize_primary_blast_lung_injury_to_bind(src:SEPrimaryBlastLungInjury, dst: PrimaryBlastLungInjuryData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    for c,s in src._severities.items():
+        i = dst.Severity.add()
+        i.Compartment = c.value
+        serialize_scalar_0to1_to_bind(s, i.Severity)
+
+def serialize_primary_blast_lung_injury_from_bind(src:PrimaryBlastLungInjuryData, dst: SEPrimaryBlastLungInjury ):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_patient_action_from_bind not implemented")
+
+#################################################################
+
 def serialize_pulmonary_shunt_exacerbation_to_bind(src:SEPulmonaryShuntExacerbation, dst: PulmonaryShuntExacerbationData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_severity():

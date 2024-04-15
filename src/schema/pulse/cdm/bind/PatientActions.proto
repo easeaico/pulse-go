@@ -42,17 +42,18 @@ message AnyPatientActionData
     NeedleDecompressionData                            NeedleDecompression                            = 24;
     PericardialEffusionData                            PericardialEffusion                            = 25;
     PneumoniaExacerbationData                          PneumoniaExacerbation                          = 26;
-    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 27;
-    RespiratoryFatigueData                             RespiratoryFatigue                             = 28;
-    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 29;
-    RespiratoryMechanicsModificationData               RespiratoryMechanicsModification               = 30;
-    SubstanceBolusData                                 SubstanceBolus                                 = 31;
-    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 32;
-    SubstanceInfusionData                              SubstanceInfusion                              = 33;
-    SupplementalOxygenData                             SupplementalOxygen                             = 34;
-    TensionPneumothoraxData                            TensionPneumothorax                            = 35;
-    TubeThoracostomyData                               TubeThoracostomy                               = 36;
-    UrinateData                                        Urinate                                        = 37;
+    PrimaryBlastLungInjuryData                         PrimaryBlastLungInjury                         = 27;
+    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 28;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 29;
+    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 30;
+    RespiratoryMechanicsModificationData               RespiratoryMechanicsModification               = 31;
+    SubstanceBolusData                                 SubstanceBolus                                 = 32;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 33;
+    SubstanceInfusionData                              SubstanceInfusion                              = 34;
+    SupplementalOxygenData                             SupplementalOxygen                             = 35;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 36;
+    TubeThoracostomyData                               TubeThoracostomy                               = 37;
+    UrinateData                                        Urinate                                        = 38;
   }
 }
 
@@ -403,6 +404,12 @@ message PneumoniaExacerbationData
   repeated LungImpairmentData               Severity                        = 2;/**<< @brief A list of impairment severities for the lung compartments*/
 }
 
+/** @brief Acute lung injury from blast over-pressure on the thorax. */
+message PrimaryBlastLungInjuryData
+{
+  PatientActionData                         PatientAction                   = 1;
+  repeated LungImpairmentData               Severity                        = 2;/**<< @brief A list of impairment severities for the lung compartments*/
+}
 
 /** @brief Pulmonary shunt is when the alveoli of the lungs are perfused with blood as normal, but ventilation (the supply of air) fails to supply the perfused region */
 message PulmonaryShuntExacerbationData

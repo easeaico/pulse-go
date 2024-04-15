@@ -1162,6 +1162,42 @@ class SEPneumoniaExacerbation(SEPatientAction):
             out += ("\t{}  Severity: {}\n").format(c, s)
         return out
 
+class SEPrimaryBlastLungInjury(SEPatientAction):
+    __slots__ = ["_severities"]
+
+    def __init__(self):
+        super().__init__()
+        self._severities = {}
+    def clear(self):
+        for s in self._severities.values():
+            if s is not None:
+                s.invalidate()
+    def is_valid(self):
+        return self.has_severity()
+    def has_severity(self):
+        return self._severity is not None
+
+    def has_severity(self, cmpt: eLungCompartment = None):
+        if cmpt is None:
+            for s in self._severities.values():
+                if s is not None and s.is_valid():
+                    return True
+            return False
+        if cmpt not in self._severities:
+            return False
+        return self._severities.get(cmpt).is_valid()
+    def get_severity(self, cmpt: eLungCompartment):
+        s = self._severities.get(cmpt)
+        if s is None:
+            s = SEScalar0To1()
+            self._severities[cmpt] = s
+        return s
+    def __repr__(self):
+        out = "Primary Blast Lung Injury\n"
+        for c, s in self._severities.items():
+            out += ("\t{}  Severity: {}\n").format(c, s)
+        return out
+
 class SEPulmonaryShuntExacerbation(SEPatientAction):
     __slots__ = ["severity"]
 
