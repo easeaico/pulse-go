@@ -113,6 +113,7 @@ void HowToEnvironmentChange()
   // The core temperature follows the skin temperature, and the metabolic rate increases due to shivering.
   SEChangeEnvironmentalConditions env(pe->GetLogger());
   SEEnvironmentalConditions& conditions = env.GetEnvironmentalConditions();
+  conditions.GetMechanicalDeadSpace().SetValue(500, VolumeUnit::mL);
   conditions.SetSurroundingType(eSurroundingType::Water);
   conditions.GetAirVelocity().SetValue(0, LengthPerTimeUnit::m_Per_s);
   conditions.GetAmbientTemperature().SetValue(10.0, TemperatureUnit::C);

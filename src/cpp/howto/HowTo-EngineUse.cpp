@@ -30,6 +30,9 @@
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarLength.h"
 
+#include "cdm/system/environment/SEEnvironment.h"
+#include "cdm/system/environment/SEEnvironmentalConditions.h"
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// A class used to forward log messages for application specific handling logic
@@ -135,6 +138,8 @@ void HowToEngineUse()
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  pe->GetEnvironment()->GetEnvironmentalConditions()->GetMechanicalDeadSpace(VolumeUnit::mL);
+
   // You can specify a specific simulation time for the engine to use as its initial simulation time
   // If no time is provided, the simulation time that is in the state file will be used
   // Note the provided state files are named to include what is simulation time is

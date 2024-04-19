@@ -6,7 +6,7 @@ from pulse.cdm.engine import eSwitch
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, \
                               SEScalarHeatResistanceArea, SEScalarLengthPerTime, \
                               SEScalarMassPerVolume, MassPerVolumeUnit, SEScalarPower, \
-                              SEScalarPressure, SEScalarTemperature
+                              SEScalarPressure, SEScalarTemperature, SEScalarVolume
 from pulse.cdm.substance import SESubstanceConcentration, \
                                 SESubstanceFraction
 
@@ -112,7 +112,7 @@ class eSurroundingType(Enum):
 class SEEnvironmentalConditions():
     __slots__ = ["_surrounding_type", "_air_density", "_air_velocity",
                  "_ambient_temperature", "_atmospheric_pressure", "_clothing_resistance",
-                 "_emissivity", "_mean_radiant_temperature", "_relative_humidity",
+                 "_emissivity", "_mean_radiant_temperature", "_mechanical_dead_space", "_relative_humidity",
                  "_respiration_ambient_temperature", "_ambient_gasses", "_ambient_aerosols"]
 
     def __init__(self):
@@ -124,6 +124,7 @@ class SEEnvironmentalConditions():
         self._clothing_resistance = None
         self._emissivity = None
         self._mean_radiant_temperature = None
+        self._mechanical_dead_space = None
         self._relative_humidity = None
         self._respiration_ambient_temperature = None
         self._ambient_gasses = []
@@ -138,6 +139,7 @@ class SEEnvironmentalConditions():
         if self._clothing_resistance is not None: self._clothing_resistance.invalidate()
         if self._emissivity is not None: self._emissivity.invalidate()
         if self._mean_radiant_temperature is not None: self._mean_radiant_temperature.invalidate()
+        if self._mechanical_dead_space is not None: self._mechanical_dead_space.invalidate()
         if self._relative_humidity is not None: self._relative_humidity.invalidate()
         if self._respiration_ambient_temperature is not None: self._respiration_ambient_temperature.invalidate()
         self._ambient_gasses = []
@@ -155,6 +157,7 @@ class SEEnvironmentalConditions():
         if src.has_clothing_resistance(): self.get_clothing_resistance().set(src._clothing_resistance)
         if src.has_emissivity(): self.get_emissivity().set(src._emissivity)
         if src.has_mean_radiant_temperature(): self.get_mean_radiant_temperature().set(src._mean_radiant_temperature)
+        if src.has_mechanical_dead_space(): self.get_mechanical_dead_space().set(src._mechanical_dead_space)
         if src.has_relative_humidity(): self.get_relative_humidity().set(src._relative_humidity)
         if src.has_respiration_ambient_temperature(): self.get_respiration_ambient_temperature().set(src._respiration_ambient_temperature)
 
@@ -217,6 +220,13 @@ class SEEnvironmentalConditions():
         if self._mean_radiant_temperature is None:
             self._mean_radiant_temperature = SEScalarTemperature()
         return self._mean_radiant_temperature
+
+    def has_mechanical_dead_space(self):
+        return False if self._mechanical_dead_space is None else self._mechanical_dead_space.is_valid()
+    def get_mechanical_dead_space(self):
+        if self._mechanical_dead_space is None:
+            self._mechanical_dead_space = SEScalarVolume()
+        return self._mechanical_dead_space
 
     def has_relative_humidity(self):
         return False if self._relative_humidity is None else self._relative_humidity.is_valid()

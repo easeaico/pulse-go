@@ -51,6 +51,8 @@ def serialize_environmental_conditions_to_bind(src: SEEnvironmentalConditions, d
         serialize_scalar_0to1_to_bind(src.get_emissivity(), dst.Emissivity)
     if src.has_mean_radiant_temperature():
         serialize_scalar_temperature_to_bind(src.get_mean_radiant_temperature(), dst.MeanRadiantTemperature)
+    if src.has_mechanical_dead_space():
+        serialize_scalar_volume_to_bind(src.get_mechanical_dead_space(), dst.MechanicalDeadSpace)
     if src.has_relative_humidity():
         serialize_scalar_0to1_to_bind(src.get_relative_humidity(), dst.RelativeHumidity)
     if src.has_respiration_ambient_temperature():
@@ -82,6 +84,8 @@ def serialize_environmental_conditions_from_bind(src: EnvironmentalConditionsDat
         serialize_scalar_0to1_from_bind(src.Emissivity, dst.get_emissivity())
     if src.HasField("MeanRadiantTemperature"):
         serialize_scalar_temperature_from_bind(src.MeanRadiantTemperature, dst.get_mean_radiant_temperature())
+    if src.HasField("MechanicalDeadSpace"):
+        serialize_scalar_volume_from_bind(src.MechanicalDeadSpace, dst.get_mechanical_dead_space())
     if src.HasField("RelativeHumidity"):
         serialize_scalar_0to1_from_bind(src.RelativeHumidity, dst.get_relative_humidity())
     if src.HasField("RespirationAmbientTemperature"):
