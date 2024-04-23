@@ -14,6 +14,129 @@
           },
           "PlotSource":
           [
+            { "CSVData": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorHealthyVerificationResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "HealthyVerification_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "HealthyVerification_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "HealthyVerification_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "HealthyVerification_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "HealthyVerification_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "HealthyVerification_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "HealthyVerification_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "HealthyVerification_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "HealthyVerification_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "HealthyVerification_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "HealthyVerification_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "HealthyVerification_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "HealthyVerification_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (Healthy) Monitors",
+          "PlotSource":
+          { "CSVData": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorHealthyVerificationResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "MechanicalVentilatorHealthyVerification-",
+          "DataRequestedFile": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorHealthyVerificationResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (ARDS)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorARDSVerificationResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "ARDSVerification_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "ARDSVerification_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "ARDSVerification_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "ARDSVerification_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "ARDSVerification_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "ARDSVerification_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "ARDSVerification_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "ARDSVerification_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "ARDSVerification_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "ARDSVerification_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "ARDSVerification_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "ARDSVerification_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "ARDSVerification_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (ARDS) Monitors",
+          "PlotSource":
+          { "CSVData": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorARDSVerificationResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "MechanicalVentilatorARDSVerification-",
+          "DataRequestedFile": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorARDSVerificationResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (COPD)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorCOPDVerificationResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "COPDVerification_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "COPDVerification_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "COPDVerification_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "COPDVerification_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "COPDVerification_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "COPDVerification_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "COPDVerification_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "COPDVerification_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "COPDVerification_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "COPDVerification_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "COPDVerification_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "COPDVerification_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "COPDVerification_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (COPD) Monitors",
+          "PlotSource":
+          { "CSVData": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorCOPDVerificationResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "MechanicalVentilatorCOPDVerification-",
+          "DataRequestedFile": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorCOPDVerificationResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (Healthy)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
             { "CSVData": "./test_results/scenarios/MechanicalVentilator/MechanicalVentilatorHealthyResults.csv" }
           ],
           "Series":
@@ -174,6 +297,55 @@
   {
     "Table" :
     [
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "MechanicalVentilatorHealthyVerification",
+        "Segment": 1,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "MechanicalVentilatorARDSVerification",
+        "Segment": 1,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "MechanicalVentilatorARDSVerification",
+        "Segment": 2,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "MechanicalVentilatorARDSVerification",
+        "Segment": 3,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "MechanicalVentilatorCOPDVerification",
+        "Segment": 1,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "MechanicalVentilatorCOPDVerification",
+        "Segment": 2,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "MechanicalVentilatorCOPDVerification",
+        "Segment": 3,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "MechanicalVentilatorHealthy",
