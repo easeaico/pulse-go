@@ -4321,14 +4321,14 @@ namespace pulse
         {0.3, 0.20}, //Mild
         {0.6, 0.14}, //Moderate
         {0.9, 0.08}, //Severe
-        {1.0, 0.01}  //Max
+        {1.0, 0.04}  //Max
       };
-      double damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity); 
+      double damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity);
 
       interpolatorPoints =
       {
         {0.0, 1.0}, //None
-        {0.3, 0.14}, //Mild
+        {0.3, 0.10}, //Mild
         {0.6, 0.07}, //Moderate
         {0.9, 0.02}, //Severe
         {1.0, 0.01}  //Max
@@ -4358,7 +4358,7 @@ namespace pulse
           {0.3, 0.20}, //Mild
           {0.6, 0.14}, //Moderate
           {0.9, 0.08}, //Severe
-          {1.0, 0.01}  //Max
+          {1.0, 0.04}  //Max
         };
         double scalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity);
         totalScalingFactor = MIN(totalScalingFactor, scalingFactor);
