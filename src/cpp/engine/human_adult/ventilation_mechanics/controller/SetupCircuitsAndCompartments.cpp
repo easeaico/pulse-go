@@ -43,10 +43,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
 
     // Below is what we need to initialize the system if we don't have substances
     // But Respiratory::TuneCircuit still assumes substances are in the system
-    //double atmPressure_cmH20 = 1033.23;// 1 atm
+    //double atmPressure_cmH2O = 1033.23;// 1 atm
     //if (GetConfiguration().HasInitialEnvironmentalConditions() && GetConfiguration().GetInitialEnvironmentalConditions()->HasAtmosphericPressure())
     //  atmPressure_cmH20 = GetConfiguration().GetInitialEnvironmentalConditions()->GetAtmosphericPressure(PressureUnit::cmH2O);
-    //gEnvironment.GetPressure().SetValue(atmPressure_cmH20, PressureUnit::cmH2O);
+    //gEnvironment.GetPressure().SetValue(atmPressure_cmH2O, PressureUnit::cmH2O);
 
     SetupRespiratory();
     SetupMechanicalVentilator();

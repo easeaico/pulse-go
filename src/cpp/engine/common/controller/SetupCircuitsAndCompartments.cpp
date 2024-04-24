@@ -2955,8 +2955,8 @@ namespace pulse
     cRespiratory.AddNode(Ambient);
 
     //Input parameters
-    const double RespiratorySystemCompliance_L_Per_cmH20 = 0.1; /// \cite Levitzky2013pulmonary
-    const double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH20 / 2.0; //compliances in parallel sum, so divide by 2 for each lung
+    const double RespiratorySystemCompliance_L_Per_cmH2O = 0.1; /// \cite Levitzky2013pulmonary
+    const double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH2O / 2.0; //compliances in parallel sum, so divide by 2 for each lung
     const double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O; //compliances in series, so multiply by 2 for equal split
     const double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O; // =0.1 L/cmH2O each /// \cite kacmarek2016egan p233
     const double IntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
