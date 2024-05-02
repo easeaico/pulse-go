@@ -704,7 +704,6 @@ namespace pulse
     if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
     {
       //Not yet implemented
-      //jbw
     }
     else
     {
