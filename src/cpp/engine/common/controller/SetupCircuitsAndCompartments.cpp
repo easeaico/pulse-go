@@ -2975,7 +2975,7 @@ namespace pulse
     double AlveoliDuctResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - BronchiResistance;
 
     double functionalResidualCapacity_L = m_InitialPatient->GetFunctionalResidualCapacity(VolumeUnit::L);
-    double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetWeight(MassUnit::kg); //Should not change with diseases /// \cite Levitzky2013pulmonary
+    double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetIdealBodyWeight(MassUnit::kg); /// \cite Levitzky2013pulmonary
     double alveolarDeadSpaceVolume_L = 0.001;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
     double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
     //double pleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  /// \cite Levitzky2013pulmonary
@@ -3963,9 +3963,8 @@ namespace pulse
     SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
     ///////////////////////
 
-    double tubeVolume_L = 0.3; //4 total tubes - this is per tube
-                               //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark
-    double yPieceVolume_L = 0.01;
+    double tubeVolume_L = 0.001; //Negligible - The tubes on the Y circuit do not cause dead space because of the check valves on the absorber
+    double yPieceVolume_L = 0.05;
     double connectionVolume_L = 0.05;
     double totalResistance_cmH2O_s_Per_L = 0.1;
     double tubeResistance_cmH2O_s_Per_L = totalResistance_cmH2O_s_Per_L / 2.0; //2 tubes in series for inhale and 2 tubes in series for exhale
