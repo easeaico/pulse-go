@@ -2,7 +2,7 @@
 @insert ./validation/scenarios/CSTARS/Scenario1-Introduction.md
 
 @htmlonly
-<a href="./Images/CSTARS/ModerateARDSXRay.png"><img src="./Images/CSTARS/ModerateARDSXRay.png" width="400"></a>
+<a href="./Images/CSTARS/MildARDSXRay.png"><img src="./Images/CSTARS/MildARDSXRay.png" width="400"></a>
 <center>
 <i>@figuredef {Scenario1XRay}. Chest radiograph demonstrates bi-basilar early consolidation, presence of the chest tube and pulmonary contusion.</i>
 </center><br>

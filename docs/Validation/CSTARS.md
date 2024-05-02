@@ -3,7 +3,7 @@
 The following list contains the scenarios validated for the CSTARS program.
 
 @secreflist
-  @refitem Scenario1 "Scenario 1: Moderate ARDS with Progressive Fall in Oxygenation"
+  @refitem Scenario1 "Scenario 1: Mild ARDS with Progressive Fall in Oxygenation"
   @refitem Scenario2 "Scenario 2: Moderate COPD with Subsequent Bronchospasm"
   @refitem Scenario3 "Scenario 3: Mild TBI with worsening ARDS"
   @refitem Scenario4 "Scenario 4: Mild ARDS with Tension Pneumothorax"
