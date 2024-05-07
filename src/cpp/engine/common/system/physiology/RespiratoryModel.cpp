@@ -2985,11 +2985,12 @@ namespace pulse
       double alveoliVolumeRatio = alveoliVolumeBaseline_L / totalBaselineAlveoliVolume_L;
 
       //------------------------------------------------------------------------------------------------------
+      //Restrictive
+      //The dead space cannot be greater than the FRC in our model
+      double restrictiveSeverity = 0.0;
+
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
-
-      //The dead space cannot be greater than the FRC in our model
-
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
       {
         double severity = 0.0;
@@ -3002,21 +3003,33 @@ namespace pulse
           severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
         }
 
-        std::vector<std::pair<double, double>>  interpolatorPoints =
-        {
-          {0.0, 0.0}, //None
-          {0.3, 0.12}, //Mild
-          {0.6, 0.15}, //Moderate
-          {0.9, 0.18}, //Severe
-          {1.0, 0.2}  //Max
-        };
-
-        deadSpaceIncrement_L = alveoliVolumeRatio * GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, severity);
-
-        alveoliIncrement_L = -alveoliVolumeRatio * GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 1.2, severity);
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
 
+      //Pulmonary Fibrosis
+      //Not per compartment, so just distribute to all evenly
+      if (m_data.GetConditions().HasPulmonaryFibrosis())
+      {
+        double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
+
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
+      }
+
+      std::vector<std::pair<double, double>>  interpolatorPoints =
+      {
+        {0.0, 0.0}, //None
+        {0.3, 0.12}, //Mild
+        {0.6, 0.15}, //Moderate
+        {0.9, 0.18}, //Severe
+        {1.0, 0.2}  //Max
+      };
+
+      deadSpaceIncrement_L = alveoliVolumeRatio * GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, restrictiveSeverity);
+      alveoliIncrement_L = -alveoliVolumeRatio * GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 1.2, restrictiveSeverity);
+
       //------------------------------------------------------------------------------------------------------
+      //Obstructive
+
       //COPD
       //Exacerbation will overwrite the condition, even if it means improvement
 
@@ -3045,17 +3058,6 @@ namespace pulse
         };
 
         deadSpaceIncrement_L = MAX(deadSpaceIncrement_L, GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity));
-      }
-
-      //---------------------------------------------------------------------------------------------------------------------------------------------
-      //Pulmonary Fibrosis
-
-      //Not per compartment, so just distribute to all evenly
-      if (m_data.GetConditions().HasPulmonaryFibrosis())
-      {
-        double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
-
-        deadSpaceIncrement_L = MAX(deadSpaceIncrement_L, alveoliVolumeRatio * GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 1.0, severity));
       }
 
       //---------------------------------------------------------------------------------------------------------------------------------------------
@@ -4079,6 +4081,7 @@ namespace pulse
 
       recruitmentScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, 1.0 - recruitedFraction);
 
+      double combinedSeverity = 0.0;
       //------------------------------------------------------------------------------------------------------
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
@@ -4094,7 +4097,7 @@ namespace pulse
           severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
         }
 
-        damageScalingFactor = MIN(damageScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, severity));
+        combinedSeverity = MAX(combinedSeverity, severity);
       }
 
       //------------------------------------------------------------------------------------------------------
@@ -4112,7 +4115,7 @@ namespace pulse
           severity = m_data.GetConditions().GetPneumonia().GetSeverity(cmpt).GetValue();
         }
 
-        damageScalingFactor = MIN(damageScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, severity));
+        combinedSeverity = MAX(combinedSeverity, severity);
       }
 
       //------------------------------------------------------------------------------------------------------
@@ -4121,8 +4124,10 @@ namespace pulse
       {
         double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
-        damageScalingFactor = MIN(damageScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, severity));
+        combinedSeverity = MAX(combinedSeverity, severity);
       }
+
+      damageScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, combinedSeverity);
 
       //------------------------------------------------------------------------------------------------------
       //Combine effects
@@ -4451,8 +4456,7 @@ namespace pulse
       double alveoliVolumeBaseline_L = cpt.AlveoliNode->GetVolumeBaseline(VolumeUnit::L);
       double alveoliVolumeRatio = alveoliVolumeBaseline_L / totalBaselineAlveoliVolume_L;
 
-      double combinedSeverity = 0.0;
-
+      double obstructiveModifier = 0.0;
       //------------------------------------------------------------------------------------------------------
       //COPD
       //Exacerbation will overwrite the condition, even if it means improvement
@@ -4471,10 +4475,10 @@ namespace pulse
           bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
         }
 
-        double severity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.4, MAX(emphysemaSeverity, bronchitisSeverity));
-        combinedSeverity = MAX(combinedSeverity, severity);
+        obstructiveModifier = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.4, MAX(emphysemaSeverity, bronchitisSeverity));
       }
 
+      double restrictiveSeverity = 0.0;
       //------------------------------------------------------------------------------------------------------
       //Pneumonia
       //Exacerbation will overwrite the condition, even if it means improvement
@@ -4490,8 +4494,7 @@ namespace pulse
           severity = m_data.GetConditions().GetPneumonia().GetSeverity(cmpt).GetValue();
         }
 
-        severity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, severity);
-        combinedSeverity = MAX(combinedSeverity, severity);
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
 
       //------------------------------------------------------------------------------------------------------
@@ -4501,7 +4504,8 @@ namespace pulse
         double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
         severity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, severity);
-        combinedSeverity = MAX(combinedSeverity, severity);
+
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
 
       //------------------------------------------------------------------------------------------------------
@@ -4519,12 +4523,14 @@ namespace pulse
           severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
         }
 
-        severity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, severity);
-        combinedSeverity = MAX(combinedSeverity, severity);
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
+      
+      double restrictiveModifier = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, restrictiveSeverity);
 
       //------------------------------------------------------------------------------------------------------
-      dyspneaSeverity += combinedSeverity * alveoliVolumeRatio;
+      double combinedModifier = MIN(obstructiveModifier, restrictiveModifier);
+      dyspneaSeverity += combinedModifier * alveoliVolumeRatio;
     }
 
     //------------------------------------------------------------------------------------------------------
