@@ -418,6 +418,7 @@ namespace pulse
     dst.m_BottomBreathElapsedTime_min = src.bottombreathelapsedtime_min();
     dst.m_BottomBreathTotalVolume_L = src.bottombreathtotalvolume_l();
     dst.m_BottomBreathAlveoliPressure_cmH2O = src.bottombreathalveolipressure_cmh2o();
+    dst.m_BottomBreathAirwayPressure_cmH2O = src.bottombreathairwaypressure_cmh2o();
     dst.m_PeakAlveolarPressure_cmH2O = src.peakalveolarpressure_cmh2o();
     dst.m_MaximalAlveolarPressure_cmH2O = src.maximalalveolarpressure_cmh2o();
     PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
@@ -483,6 +484,7 @@ namespace pulse
     dst.set_topbreathelapsedtime_min(src.m_TopBreathElapsedTime_min);
     dst.set_bottombreathelapsedtime_min(src.m_BottomBreathElapsedTime_min);
     dst.set_bottombreathtotalvolume_l(src.m_BottomBreathTotalVolume_L);
+    dst.set_bottombreathairwaypressure_cmh2o(src.m_BottomBreathAirwayPressure_cmH2O);
     dst.set_bottombreathalveolipressure_cmh2o(src.m_BottomBreathAlveoliPressure_cmH2O);
     dst.set_peakalveolarpressure_cmh2o(src.m_PeakAlveolarPressure_cmH2O);
     dst.set_maximalalveolarpressure_cmh2o(src.m_MaximalAlveolarPressure_cmH2O);

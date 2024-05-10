@@ -246,6 +246,7 @@ namespace pulse
     m_BottomBreathElapsedTime_min = 0.0;
     m_BottomBreathTotalVolume_L = 0.0;
     m_BottomBreathAlveoliPressure_cmH2O = 0.0;
+    m_BottomBreathAirwayPressure_cmH2O = 0.0;
     m_PeakAlveolarPressure_cmH2O = 0.0;
     m_MaximalAlveolarPressure_cmH2O = 0.0;
 
@@ -286,7 +287,9 @@ namespace pulse
     GetOxygenSaturationIndex().SetValue(0.0, PressureUnit::cmH2O);
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetMeanAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetExtrinsicPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetIntrinsicPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetTotalPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetInspiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     GetExpiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     GetPhysiologicDeadSpaceTidalVolumeRatio().SetValue(0.0);
@@ -2382,6 +2385,7 @@ namespace pulse
         m_BottomBreathTotalVolume_L = totalLungVolume_L;
         m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
         m_BottomBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
+        m_BottomBreathAirwayPressure_cmH2O = airwayOpeningPressure_cmH2O;
 
         unsigned int iter = 0;
         for (auto& itr : m_LungComponents)
@@ -2413,9 +2417,14 @@ namespace pulse
         GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
         GetExpiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
 
+        double totalPositiveEndExpiratoryPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O;
+        double extrinsicPositiveEndExpiratoryPressure_cmH2O = m_BottomBreathAirwayPressure_cmH2O - bodySurfacePressure_cmH2O;
+        double intrinsicPositiveEndExpiratoryPressure_cmH2O = totalPositiveEndExpiratoryPressure_cmH2O - extrinsicPositiveEndExpiratoryPressure_cmH2O;
+        GetTotalPositiveEndExpiratoryPressure().SetValue(totalPositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
+        GetExtrinsicPositiveEndExpiratoryPressure().SetValue(extrinsicPositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
+        GetIntrinsicPositiveEndExpiratoryPressure().SetValue(intrinsicPositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
+
         GetPeakInspiratoryPressure().SetValue(m_PeakAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
-        GetPositiveEndExpiratoryPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
-        GetIntrinsicPositiveEndExpiratoryPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
         GetMaximalInspiratoryPressure().SetValue(m_MaximalAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
 
         // Calculate Ventilations
@@ -2562,8 +2571,9 @@ namespace pulse
       m_MeanAirwayPressure_cmH2O->Invalidate();
       GetInspiratoryExpiratoryRatio().SetValue(0);
       GetPeakInspiratoryPressure().SetValue(0, PressureUnit::cmH2O);
-      GetPositiveEndExpiratoryPressure().SetValue(0, PressureUnit::cmH2O);
-      GetIntrinsicPositiveEndExpiratoryPressure().SetValue(0, PressureUnit::cmH2O);
+      GetExtrinsicPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
+      GetIntrinsicPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
+      GetTotalPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
       GetMaximalInspiratoryPressure().SetValue(0, PressureUnit::cmH2O);
       GetSpecificVentilation().SetValue(0);
       GetTotalDeadSpaceVentilation().SetValue(0, VolumePerTimeUnit::L_Per_min);
@@ -3048,7 +3058,7 @@ namespace pulse
           emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(cmpt).GetValue();
         }
 
-        std::vector<std::pair<double, double>>  interpolatorPoints =
+        interpolatorPoints =
         {
           {0.0, 0.0}, //None
           {0.3, 0.0}, //Mild
@@ -3478,18 +3488,18 @@ namespace pulse
       std::vector<std::pair<double, double>> inhaleInterpolatorPoints =
       {
         {0.0, 1.0}, //None
-        {0.3, 1.0}, //Mild
-        {0.6, 25.0}, //Moderate
-        {0.9, 53.0}, //Severe
-        {1.0, 90.0}  //Max
+        {0.3, 10.0}, //Mild
+        {0.6, 50.0}, //Moderate
+        {0.9, 100.0}, //Severe
+        {1.0, 150.0}  //Max
       };
       std::vector<std::pair<double, double>> exhaleInterpolatorPoints =
       {
         {0.0, 1.0}, //None
-        {0.3, 1.0}, //Mild
-        {0.6, 75.0}, //Moderate
-        {0.9, 130.0}, //Severe
-        {1.0, 150.0}  //Max
+        {0.3, 10.0}, //Mild
+        {0.6, 100.0}, //Moderate
+        {0.9, 180.0}, //Severe
+        {1.0, 250.0}  //Max
       };
 
       double resistanceScalingFactor = 1.0;
@@ -3720,9 +3730,9 @@ namespace pulse
         std::vector<std::pair<double, double>> interpolatorPoints =
         {
           {0.0, 1.0}, //None
-          {0.3, 1.19}, //Mild
-          {0.6, 1.195}, //Moderate
-          {0.9, 1.2}, //Severe
+          {0.3, 0.8}, //Mild
+          {0.6, 1.02}, //Moderate
+          {0.9, 1.15}, //Severe
           {1.0, 1.3}  //Max
         };
         obstructiveComplianceScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity);
@@ -4369,7 +4379,7 @@ namespace pulse
         interpolatorPoints =
         {
           {0.0, 1.0}, //None
-          {0.3, 0.25}, //Mild
+          {0.3, 0.7}, //Mild
           {0.6, 0.18}, //Moderate
           {0.9, 0.07}, //Severe
           {1.0, 0.04}  //Max

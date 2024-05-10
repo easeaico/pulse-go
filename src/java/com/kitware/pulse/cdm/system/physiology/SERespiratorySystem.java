@@ -33,6 +33,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolumePerTime         expiratoryFlow;
   protected SEScalarPressureTimePerVolume expiratoryPulmonaryResistance;
   protected SEScalarVolume                expiratoryTidalVolume;
+  protected SEScalarPressure              extrinsicPositiveEndExpiratoryPressure;
   protected SEScalar0To1                  fractionOfInspiredOxygen;
   protected SEScalarPower                 imposedPowerOfBreathing;
   protected SEScalarEnergy                imposedWorkOfBreathing;
@@ -53,7 +54,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarPressure              peakInspiratoryPressure;
   protected SEScalarVolume                physiologicDeadSpace;
   protected SEScalar                      physiologicDeadSpaceTidalVolumeRatio;
-  protected SEScalarPressure              positiveEndExpiratoryPressure;
   protected SEScalarVolumePerPressure     pulmonaryCompliance;
   protected SEScalarPressurePerVolume     pulmonaryElastance;
   protected SEScalarVolume                relativeTotalLungVolume;
@@ -68,6 +68,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolumePerTime         totalAlveolarVentilation;
   protected SEScalarVolumePerTime         totalDeadSpaceVentilation;
   protected SEScalarVolume                totalLungVolume;
+  protected SEScalarPressure              totalPositiveEndExpiratoryPressure;
   protected SEScalarPower                 totalPowerOfBreathing;
   protected SEScalarVolumePerTime         totalPulmonaryVentilation;
   protected SEScalarEnergy                totalWorkOfBreathing;
@@ -99,6 +100,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     expiratoryFlow = null;
     expiratoryPulmonaryResistance = null;
     expiratoryTidalVolume = null;
+    extrinsicPositiveEndExpiratoryPressure = null;
     fractionOfInspiredOxygen = null;
     imposedPowerOfBreathing = null;
     imposedWorkOfBreathing = null;
@@ -119,7 +121,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     peakInspiratoryPressure = null;
     physiologicDeadSpace = null;
     physiologicDeadSpaceTidalVolumeRatio = null;
-    positiveEndExpiratoryPressure = null;
     pulmonaryCompliance = null;
     pulmonaryElastance = null;
     relativeTotalLungVolume = null;
@@ -134,6 +135,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     totalAlveolarVentilation = null;
     totalDeadSpaceVentilation = null;
     totalLungVolume = null;
+    totalPositiveEndExpiratoryPressure = null;
     totalPowerOfBreathing = null;
     totalPulmonaryVentilation = null;
     totalWorkOfBreathing = null;
@@ -180,6 +182,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       expiratoryPulmonaryResistance.invalidate();
     if (expiratoryTidalVolume != null)
       expiratoryTidalVolume.invalidate();
+    if (extrinsicPositiveEndExpiratoryPressure != null)
+      extrinsicPositiveEndExpiratoryPressure.invalidate();
     if (fractionOfInspiredOxygen != null)
       fractionOfInspiredOxygen.invalidate();
     if (imposedPowerOfBreathing != null)
@@ -220,8 +224,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       physiologicDeadSpace.invalidate();
     if (physiologicDeadSpaceTidalVolumeRatio != null)
       physiologicDeadSpaceTidalVolumeRatio.invalidate();
-    if (positiveEndExpiratoryPressure != null)
-      positiveEndExpiratoryPressure.invalidate();
     if (pulmonaryCompliance != null)
       pulmonaryCompliance.invalidate();
     if (pulmonaryElastance != null)
@@ -250,6 +252,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       totalDeadSpaceVentilation.invalidate();
     if (totalLungVolume != null)
       totalLungVolume.invalidate();
+    if (totalPositiveEndExpiratoryPressure != null)
+      totalPositiveEndExpiratoryPressure.invalidate();
     if (totalPowerOfBreathing != null)
       totalPowerOfBreathing.invalidate();
     if (totalPulmonaryVentilation != null)
@@ -307,6 +311,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarPressureTimePerVolume.load(src.getExpiratoryRespiratoryResistance(),dst.getExpiratoryRespiratoryResistance());
     if (src.hasExpiratoryTidalVolume())
       SEScalarVolume.load(src.getExpiratoryTidalVolume(),dst.getExpiratoryTidalVolume());
+    if (src.hasExtrinsicPositiveEndExpiratoryPressure())
+      SEScalarPressure.load(src.getExtrinsicPositiveEndExpiratoryPressure(),dst.getExtrinsicPositiveEndExpiratoryPressure());
     if (src.hasFractionOfInspiredOxygen())
       SEScalar0To1.load(src.getFractionOfInspiredOxygen(),dst.getFractionOfInspiredOxygen()); 
     if (src.hasImposedPowerOfBreathing())
@@ -347,8 +353,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarVolume.load(src.getPhysiologicDeadSpace(),dst.getPhysiologicDeadSpace()); 
     if (src.hasPhysiologicDeadSpaceTidalVolumeRatio())
       SEScalar.load(src.getPhysiologicDeadSpaceTidalVolumeRatio(),dst.getPhysiologicDeadSpaceTidalVolumeRatio());
-    if (src.hasPositiveEndExpiratoryPressure())
-      SEScalarPressure.load(src.getPositiveEndExpiratoryPressure(),dst.getPositiveEndExpiratoryPressure());
     if (src.hasRespiratoryCompliance())
       SEScalarVolumePerPressure.load(src.getRespiratoryCompliance(),dst.getRespiratoryCompliance());
     if (src.hasRespiratoryElastance())
@@ -377,6 +381,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarVolumePerTime.load(src.getTotalDeadSpaceVentilation(),dst.getTotalDeadSpaceVentilation());
     if (src.hasTotalLungVolume())
       SEScalarVolume.load(src.getTotalLungVolume(),dst.getTotalLungVolume());
+    if (src.hasTotalPositiveEndExpiratoryPressure())
+      SEScalarPressure.load(src.getTotalPositiveEndExpiratoryPressure(),dst.getTotalPositiveEndExpiratoryPressure());
     if (src.hasTotalPowerOfBreathing())
       SEScalarPower.load(src.getTotalPowerOfBreathing(),dst.getTotalPowerOfBreathing());
     if (src.hasTotalPulmonaryVentilation())
@@ -441,6 +447,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setExpiratoryRespiratoryResistance(SEScalarPressureTimePerVolume.unload(src.getExpiratoryRespiratoryResistance()));
     if (src.hasExpiratoryTidalVolume())
       dst.setExpiratoryTidalVolume(SEScalarVolume.unload(src.getExpiratoryTidalVolume()));
+    if (src.hasExtrinsicPositiveEndExpiratoryPressure())
+      dst.setExtrinsicPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.getExtrinsicPositiveEndExpiratoryPressure()));
     if (src.hasFractionOfInspiredOxygen())
       dst.setFractionOfInspiredOxygen(SEScalar0To1.unload(src.getFractionOfInspiredOxygen()));
     if (src.hasImposedPowerOfBreathing())
@@ -481,8 +489,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setPhysiologicDeadSpace(SEScalarVolume.unload(src.getPhysiologicDeadSpace()));
     if (src.hasPhysiologicDeadSpaceTidalVolumeRatio())
       dst.setPhysiologicDeadSpaceTidalVolumeRatio(SEScalar.unload(src.getPhysiologicDeadSpaceTidalVolumeRatio()));
-    if (src.hasPositiveEndExpiratoryPressure())
-      dst.setPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.getPositiveEndExpiratoryPressure()));
     if (src.hasRespiratoryCompliance())
       dst.setRespiratoryCompliance(SEScalarVolumePerPressure.unload(src.getRespiratoryCompliance()));
     if (src.hasRespiratoryElastance())
@@ -511,6 +517,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setTotalDeadSpaceVentilation(SEScalarVolumePerTime.unload(src.getTotalDeadSpaceVentilation()));
     if (src.hasTotalLungVolume())
       dst.setTotalLungVolume(SEScalarVolume.unload(src.getTotalLungVolume()));
+    if (src.hasTotalPositiveEndExpiratoryPressure())
+      dst.setTotalPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.getTotalPositiveEndExpiratoryPressure()));
     if (src.hasTotalPowerOfBreathing())
       dst.setTotalPowerOfBreathing(SEScalarPower.unload(src.getTotalPowerOfBreathing()));
     if (src.hasTotalPulmonaryVentilation())
@@ -692,6 +700,17 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (expiratoryPulmonaryResistance == null)
       expiratoryPulmonaryResistance = new SEScalarPressureTimePerVolume();
     return expiratoryPulmonaryResistance;
+  }
+  
+  public boolean hasExtrinsicPositiveEndExpiratoryPressure()
+  {
+    return extrinsicPositiveEndExpiratoryPressure == null ? false : extrinsicPositiveEndExpiratoryPressure.isValid();
+  }
+  public SEScalarPressure getExtrinsicPositiveEndExpiratoryPressure()
+  {
+    if (extrinsicPositiveEndExpiratoryPressure == null)
+      extrinsicPositiveEndExpiratoryPressure = new SEScalarPressure();
+    return extrinsicPositiveEndExpiratoryPressure;
   }
   
   public boolean hasFractionOfInspiredOxygen()
@@ -915,17 +934,6 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       physiologicDeadSpaceTidalVolumeRatio = new SEScalar();
     return physiologicDeadSpaceTidalVolumeRatio;
   }
-  
-  public boolean hasPositiveEndExpiratoryPressure()
-  {
-    return positiveEndExpiratoryPressure == null ? false : positiveEndExpiratoryPressure.isValid();
-  }
-  public SEScalarPressure getPositiveEndExpiratoryPressure()
-  {
-    if (positiveEndExpiratoryPressure == null)
-      positiveEndExpiratoryPressure = new SEScalarPressure();
-    return positiveEndExpiratoryPressure;
-  }
 
   public boolean hasRespiratoryCompliance()
   {
@@ -1035,6 +1043,17 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (specificVentilation == null)
       specificVentilation = new SEScalar();
     return specificVentilation;
+  }
+
+    public boolean hasTotalPositiveEndExpiratoryPressure()
+  {
+    return totalPositiveEndExpiratoryPressure == null ? false : totalPositiveEndExpiratoryPressure.isValid();
+  }
+  public SEScalarPressure getTotalPositiveEndExpiratoryPressure()
+  {
+    if (totalPositiveEndExpiratoryPressure == null)
+      totalPositiveEndExpiratoryPressure = new SEScalarPressure();
+    return totalPositiveEndExpiratoryPressure;
   }
 
   public boolean hasTidalVolume()

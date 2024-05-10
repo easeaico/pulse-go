@@ -108,6 +108,10 @@
     <td><a href="./plots/CSTARS/Scenario1_VentilationPerfusionRatio.jpg"><img src="./plots/CSTARS/Scenario1_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>
+    <td><a href="./plots/CSTARS/Scenario1_TransthoracicPressure.jpg"><img src="./plots/CSTARS/Scenario1_TransthoracicPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario1_IntrinsicPositiveEndExpiratoryPressure.jpg"><img src="./plots/CSTARS/Scenario1_IntrinsicPositiveEndExpiratoryPressure.jpg" width="550"></a></td>
+</tr>
+<tr>
     <td><a href="./plots/CSTARS/Scenario1_Patient-FunctionalResidualCapacity.jpg"><img src="./plots/CSTARS/Scenario1_Patient-FunctionalResidualCapacity.jpg" width="550"></a></td>
     <td><a href="./plots/CSTARS/Scenario1_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/CSTARS/Scenario1_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
 </tr>

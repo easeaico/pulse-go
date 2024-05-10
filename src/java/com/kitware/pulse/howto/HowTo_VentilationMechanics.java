@@ -56,7 +56,7 @@ public class HowTo_VentilationMechanics
     
     // Create data requests for each value that should be written to the output log as the engine is executing
     // Physiology System Names are defined on the System Objects
-    SEDataRequestManager dataRequests = new SEDataRequestManager();  
+    SEDataRequestManager dataRequests = new SEDataRequestManager();
     dataRequests.createPhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min);
     dataRequests.createPhysiologyDataRequest("TidalVolume", VolumeUnit.mL);
     dataRequests.createPhysiologyDataRequest("TotalLungVolume", VolumeUnit.mL);
@@ -71,24 +71,31 @@ public class HowTo_VentilationMechanics
     dataRequests.createPhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.mL_Per_min);
     // Ventilator Monitor Data
     dataRequests.createMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("BreathState");
+    dataRequests.createMechanicalVentilatorDataRequest("DynamicRespiratoryCompliance", VolumePerPressureUnit.mL_Per_cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
     dataRequests.createMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("EndTidalOxygenFraction");
     dataRequests.createMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit.cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit.L_Per_s);
+    dataRequests.createMechanicalVentilatorDataRequest("ExpiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L);
     dataRequests.createMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit.L);
+    dataRequests.createMechanicalVentilatorDataRequest("ExtrinsicPositiveEndExpiratoryPressure", PressureUnit.cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio");
     dataRequests.createMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit.L_Per_s);
+    dataRequests.createMechanicalVentilatorDataRequest("InspiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L);
     dataRequests.createMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit.L);
     dataRequests.createMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiratoryPressure", PressureUnit.cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("LeakFraction");
     dataRequests.createMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("PeakInspiratoryFlow", VolumePerTimeUnit.L_Per_s);
     dataRequests.createMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit.cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit.cmH2O);
-    dataRequests.createMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit.cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createMechanicalVentilatorDataRequest("StaticRespiratoryCompliance", VolumePerPressureUnit.mL_Per_cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit.L);
     dataRequests.createMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit.L);
+    dataRequests.createMechanicalVentilatorDataRequest("TotalPositiveEndExpiratoryPressure", PressureUnit.cmH2O);
     dataRequests.createMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_s);
     dataRequests.setResultsFilename("./test_results/howto/HowTo_VentilationMechanics.cpp.csv");
 

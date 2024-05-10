@@ -53,6 +53,10 @@
     <td><a href="./plots/MechanicalVentilator/Healthy_VentilationPerfusionRatio.jpg"><img src="./plots/MechanicalVentilator/Healthy_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>
+    <td><a href="./plots/MechanicalVentilator/Healthy_TransthoracicPressure.jpg"><img src="./plots/MechanicalVentilator/Healthy_TransthoracicPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Healthy_IntrinsicPositiveEndExpiratoryPressure.jpg"><img src="./plots/MechanicalVentilator/Healthy_IntrinsicPositiveEndExpiratoryPressure.jpg" width="550"></a></td>
+</tr>
+<tr>
     <td><a href="./plots/MechanicalVentilator/Healthy_Patient-FunctionalResidualCapacity.jpg"><img src="./plots/MechanicalVentilator/Healthy_Patient-FunctionalResidualCapacity.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/Healthy_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/MechanicalVentilator/Healthy_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
 </tr>

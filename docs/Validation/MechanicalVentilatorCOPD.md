@@ -101,6 +101,10 @@
     <td><a href="./plots/MechanicalVentilator/COPD_VentilationPerfusionRatio.jpg"><img src="./plots/MechanicalVentilator/COPD_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>
+    <td><a href="./plots/MechanicalVentilator/COPD_TransthoracicPressure.jpg"><img src="./plots/MechanicalVentilator/COPD_TransthoracicPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD_IntrinsicPositiveEndExpiratoryPressure.jpg"><img src="./plots/MechanicalVentilator/COPD_IntrinsicPositiveEndExpiratoryPressure.jpg" width="550"></a></td>
+</tr>
+<tr>
     <td><a href="./plots/MechanicalVentilator/COPD_Patient-FunctionalResidualCapacity.jpg"><img src="./plots/MechanicalVentilator/COPD_Patient-FunctionalResidualCapacity.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/COPD_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/MechanicalVentilator/COPD_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
 </tr>

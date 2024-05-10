@@ -1210,6 +1210,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.expiratoryrespiratoryresistance(), dst.GetExpiratoryRespiratoryResistance());
   if (src.has_expiratorytidalvolume())
     PBProperty::Load(src.expiratorytidalvolume(), dst.GetExpiratoryTidalVolume());
+  if (src.has_extrinsicpositiveendexpiratorypressure())
+    PBProperty::Load(src.extrinsicpositiveendexpiratorypressure(), dst.GetExtrinsicPositiveEndExpiratoryPressure());
   if (src.has_fractionofinspiredoxygen())
     PBProperty::Load(src.fractionofinspiredoxygen(), dst.GetFractionOfInspiredOxygen());
   if (src.has_imposedpowerofbreathing())
@@ -1250,8 +1252,6 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.physiologicdeadspace(), dst.GetPhysiologicDeadSpace());
   if (src.has_physiologicdeadspacetidalvolumeratio())
     PBProperty::Load(src.physiologicdeadspacetidalvolumeratio(), dst.GetPhysiologicDeadSpaceTidalVolumeRatio());
-  if (src.has_positiveendexpiratorypressure())
-    PBProperty::Load(src.positiveendexpiratorypressure(), dst.GetPositiveEndExpiratoryPressure());
   if (src.has_respiratorycompliance())
     PBProperty::Load(src.respiratorycompliance(), dst.GetRespiratoryCompliance());
   if (src.has_respiratoryelastance())
@@ -1280,6 +1280,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.totaldeadspaceventilation(), dst.GetTotalDeadSpaceVentilation());
   if (src.has_totallungvolume())
     PBProperty::Load(src.totallungvolume(), dst.GetTotalLungVolume());
+  if (src.has_totalpositiveendexpiratorypressure())
+    PBProperty::Load(src.totalpositiveendexpiratorypressure(), dst.GetTotalPositiveEndExpiratoryPressure());
   if (src.has_totalpowerofbreathing())
     PBProperty::Load(src.totalpowerofbreathing(), dst.GetTotalPowerOfBreathing());
   if (src.has_totalpulmonaryventilation())
@@ -1343,6 +1345,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_expiratoryrespiratoryresistance(PBProperty::Unload(*src.m_ExpiratoryRespiratoryResistance));
   if (src.HasExpiratoryTidalVolume())
     dst.set_allocated_expiratorytidalvolume(PBProperty::Unload(*src.m_ExpiratoryTidalVolume));
+  if (src.HasExtrinsicPositiveEndExpiratoryPressure())
+    dst.set_allocated_extrinsicpositiveendexpiratorypressure(PBProperty::Unload(*src.m_ExtrinsicPositiveEndExpiratoryPressure));
   if (src.HasFractionOfInspiredOxygen())
     dst.set_allocated_fractionofinspiredoxygen(PBProperty::Unload(*src.m_FractionOfInspiredOxygen));
   if (src.HasImposedPowerOfBreathing())
@@ -1383,8 +1387,6 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_physiologicdeadspace(PBProperty::Unload(*src.m_PhysiologicDeadSpace));
   if (src.HasPhysiologicDeadSpaceTidalVolumeRatio())
     dst.set_allocated_physiologicdeadspacetidalvolumeratio(PBProperty::Unload(*src.m_PhysiologicDeadSpaceTidalVolumeRatio));
-  if (src.HasPositiveEndExpiratoryPressure())
-    dst.set_allocated_positiveendexpiratorypressure(PBProperty::Unload(*src.m_PositiveEndExpiratoryPressure));
   if (src.HasRespiratoryCompliance())
     dst.set_allocated_respiratorycompliance(PBProperty::Unload(*src.m_RespiratoryCompliance));
   if (src.HasRespiratoryElastance())
@@ -1413,6 +1415,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_totaldeadspaceventilation(PBProperty::Unload(*src.m_TotalDeadSpaceVentilation));
   if (src.HasTotalLungVolume())
     dst.set_allocated_totallungvolume(PBProperty::Unload(*src.m_TotalLungVolume));
+  if (src.HasTotalPositiveEndExpiratoryPressure())
+    dst.set_allocated_totalpositiveendexpiratorypressure(PBProperty::Unload(*src.m_TotalPositiveEndExpiratoryPressure));
   if (src.HasTotalPowerOfBreathing())
     dst.set_allocated_totalpowerofbreathing(PBProperty::Unload(*src.m_TotalPowerOfBreathing));
   if (src.HasTotalPulmonaryVentilation())

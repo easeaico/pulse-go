@@ -107,14 +107,15 @@ namespace pulse
     bool   m_BreathingCycle;
     bool   m_NotBreathing;
     double m_TopBreathTotalVolume_L;
-    double m_LastCardiacCycleBloodPH;
     double m_TopCarinaO2;
     double m_TopBreathElapsedTime_min;
     double m_BottomBreathElapsedTime_min;
     double m_BottomBreathTotalVolume_L;
     double m_BottomBreathAlveoliPressure_cmH2O;
+    double m_BottomBreathAirwayPressure_cmH2O;
     double m_PeakAlveolarPressure_cmH2O;
     double m_MaximalAlveolarPressure_cmH2O;
+    double m_LastCardiacCycleBloodPH;
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
 

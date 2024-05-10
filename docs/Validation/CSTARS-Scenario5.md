@@ -112,6 +112,10 @@
     <td><a href="./plots/CSTARS/Scenario5_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/CSTARS/Scenario5_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
 </tr>
 <tr>
+    <td><a href="./plots/CSTARS/Scenario5_TransthoracicPressure.jpg"><img src="./plots/CSTARS/Scenario5_TransthoracicPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario5_IntrinsicPositiveEndExpiratoryPressure.jpg"><img src="./plots/CSTARS/Scenario5_IntrinsicPositiveEndExpiratoryPressure.jpg" width="550"></a></td>
+</tr>
+<tr>
     <td><a href="./plots/CSTARS/Scenario5_LeftLungVolume.jpg"><img src="./plots/CSTARS/Scenario5_LeftLungVolume.jpg" width="550"></a></td>
     <td><a href="./plots/CSTARS/Scenario5_RightLungVolume.jpg"><img src="./plots/CSTARS/Scenario5_RightLungVolume.jpg" width="550"></a></td>
 </tr>
