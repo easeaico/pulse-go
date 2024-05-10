@@ -4485,7 +4485,8 @@ namespace pulse
           bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
         }
 
-        obstructiveModifier = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.4, MAX(emphysemaSeverity, bronchitisSeverity));
+        //It seems that the resistance does the job, so this doesn't really do anything
+        obstructiveModifier = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.01, MAX(emphysemaSeverity, bronchitisSeverity));
       }
 
       double restrictiveSeverity = 0.0;
@@ -4513,8 +4514,6 @@ namespace pulse
       {
         double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
-        severity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, severity);
-
         restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
 
@@ -4535,12 +4534,12 @@ namespace pulse
 
         restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
-      
+
       double restrictiveModifier = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, restrictiveSeverity);
 
       //------------------------------------------------------------------------------------------------------
-      double combinedModifier = MIN(obstructiveModifier, restrictiveModifier);
-      dyspneaSeverity += combinedModifier * alveoliVolumeRatio;
+      double combinedSeverity = MAX(obstructiveModifier, restrictiveModifier);
+      dyspneaSeverity += combinedSeverity * alveoliVolumeRatio;
     }
 
     //------------------------------------------------------------------------------------------------------
