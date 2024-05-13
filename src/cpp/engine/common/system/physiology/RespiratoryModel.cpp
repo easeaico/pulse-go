@@ -4204,6 +4204,7 @@ namespace pulse
 
       double combinedSeverity = 0.0;
 
+      double pulmonaryResistanceMultiplier = 1.0;
       //-------------------------------------------------------------------------------------------------------------------
       //COPD
       //Exacerbation will overwrite the condition, even if it means improvement
@@ -4220,6 +4221,7 @@ namespace pulse
         }
 
         combinedSeverity = severity;
+        pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 6.0, combinedSeverity);
       }
 
       //-------------------------------------------------------------------------------------------------------------------
@@ -4228,10 +4230,10 @@ namespace pulse
       {
         double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
         combinedSeverity = MAX(combinedSeverity, severity);
+        pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 4.0, combinedSeverity);
       }
 
       //-------------------------------------------------------------------------------------------------------------------
-      double pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 6.0, combinedSeverity);
 
       double pulmonaryCapillaryResistance = pulmonaryCapillaryPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       pulmonaryCapillaryResistance *= pulmonaryResistanceMultiplier;
