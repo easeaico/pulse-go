@@ -618,9 +618,7 @@ namespace pulse
     double deta = -aeta;
 
     //Calculate the normalized change in heart rate
-    //double HRBaseline_per_min = m_HeartRateNoFeedbackBaseline_per_min;
     // Maximum HR delta is 1.23 times baseline. The derivation of this maximum is described in the NervousMethodology documentation
-    //double maxHeartRateDelta = 1.23 * m_HeartRateNoFeedbackBaseline_per_min;
     double maxHeartRateDelta = 1.23 * m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
     double modifier = GeneralMath::LogisticFunction(amax, a50, aeta, normalized_pCO2);
     modifier += GeneralMath::LogisticFunction(bmax, b50, beta, normalized_pCO2);

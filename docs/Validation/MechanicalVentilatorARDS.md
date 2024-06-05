@@ -82,11 +82,15 @@
 <table border="0">
 <tr>
     <td><a href="./plots/MechanicalVentilator/ARDS_TotalLungVolume.jpg"><img src="./plots/MechanicalVentilator/ARDS_TotalLungVolume.jpg" width="550"></a></td>
-    <td><a href="./plots/MechanicalVentilator/ARDS_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/ARDS_ArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/ARDS_RespirationRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/ARDS_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/ARDS_RespirationRate.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/ARDS_TidalVolume.jpg"><img src="./plots/MechanicalVentilator/ARDS_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS_HeartRate.jpg"><img src="./plots/MechanicalVentilator/ARDS_HeartRate.jpg" width="550"></a></td>
+</tr>
+<tr>
+    <td><a href="./plots/MechanicalVentilator/ARDS_MeanArterialPressure.jpg"><img src="./plots/MechanicalVentilator/ARDS_MeanArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/ARDS_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
     <td><a href="./plots/MechanicalVentilator/ARDS_Aorta-Oxygen-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/ARDS_Aorta-Oxygen-PartialPressure.jpg" width="550"></a></td>

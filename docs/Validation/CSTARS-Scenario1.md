@@ -89,11 +89,15 @@
 <table border="0">
 <tr>
     <td><a href="./plots/CSTARS/Scenario1_TotalLungVolume.jpg"><img src="./plots/CSTARS/Scenario1_TotalLungVolume.jpg" width="550"></a></td>
-    <td><a href="./plots/CSTARS/Scenario1_ArterialPressure.jpg"><img src="./plots/CSTARS/Scenario1_ArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario1_RespirationRate.jpg"><img src="./plots/CSTARS/Scenario1_RespirationRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/CSTARS/Scenario1_RespirationRate.jpg"><img src="./plots/CSTARS/Scenario1_RespirationRate.jpg" width="550"></a></td>
     <td><a href="./plots/CSTARS/Scenario1_TidalVolume.jpg"><img src="./plots/CSTARS/Scenario1_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario1_HeartRate.jpg"><img src="./plots/CSTARS/Scenario1_HeartRate.jpg" width="550"></a></td>
+</tr>
+<tr>
+    <td><a href="./plots/CSTARS/Scenario1_MeanArterialPressure.jpg"><img src="./plots/CSTARS/Scenario1_MeanArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario1_ArterialPressure.jpg"><img src="./plots/CSTARS/Scenario1_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
     <td><a href="./plots/CSTARS/Scenario1_Aorta-Oxygen-PartialPressure.jpg"><img src="./plots/CSTARS/Scenario1_Aorta-Oxygen-PartialPressure.jpg" width="550"></a></td>

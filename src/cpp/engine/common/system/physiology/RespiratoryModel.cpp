@@ -3029,7 +3029,7 @@ namespace pulse
       {
         {0.0, 0.0}, //None
         {0.3, 0.12}, //Mild
-        {0.6, 0.15}, //Moderate
+        {0.6, 0.14}, //Moderate
         {0.9, 0.18}, //Severe
         {1.0, 0.2}  //Max
       };
@@ -3061,9 +3061,9 @@ namespace pulse
         interpolatorPoints =
         {
           {0.0, 0.0}, //None
-          {0.3, 0.0}, //Mild
-          {0.6, 0.062}, //Moderate
-          {0.9, 0.12}, //Severe
+          {0.3, 0.054}, //Mild
+          {0.6, 0.079}, //Moderate
+          {0.9, 0.095}, //Severe
           {1.0, 0.2}  //Max
         };
 
@@ -3731,9 +3731,9 @@ namespace pulse
         {
           {0.0, 1.0}, //None
           {0.3, 0.8}, //Mild
-          {0.6, 1.02}, //Moderate
-          {0.9, 1.15}, //Severe
-          {1.0, 1.3}  //Max
+          {0.6, 0.99}, //Moderate
+          {0.9, 1.1}, //Severe
+          {1.0, 1.2}  //Max
         };
         obstructiveComplianceScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity);
       }
@@ -3976,6 +3976,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::UpdateDiffusion()
   {
+    return;
+
     double initialPatientAlveoliDiffusionArea_cm2 = m_data.GetInitialPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
 
     //------------------------------------------------------------------------------------------------------
@@ -4355,9 +4357,9 @@ namespace pulse
       {
         {0.0, 1.0}, //None
         {0.1, 0.08}, //Mild
-        {0.5, 0.05}, //Moderate
-        {0.8, 0.032}, //Severe
-        {1.0, 0.01}  //Max
+        {0.5, 0.051}, //Moderate
+        {0.8, 0.034}, //Severe
+        {1.0, 0.02}  //Max
       };
       double recruitmentScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, 1.0 - recruitedFraction);
 
@@ -4381,7 +4383,7 @@ namespace pulse
         interpolatorPoints =
         {
           {0.0, 1.0}, //None
-          {0.3, 0.7}, //Mild
+          {0.3, 0.69}, //Mild
           {0.6, 0.18}, //Moderate
           {0.9, 0.07}, //Severe
           {1.0, 0.04}  //Max

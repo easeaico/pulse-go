@@ -58,11 +58,15 @@
 <table border="0">
 <tr>
     <td><a href="./plots/MechanicalVentilator/Recruitment_TotalLungVolume.jpg"><img src="./plots/MechanicalVentilator/Recruitment_TotalLungVolume.jpg" width="550"></a></td>
-    <td><a href="./plots/MechanicalVentilator/Recruitment_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/Recruitment_ArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/Recruitment_RespirationRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/Recruitment_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/Recruitment_RespirationRate.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/Recruitment_TidalVolume.jpg"><img src="./plots/MechanicalVentilator/Recruitment_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment_HeartRate.jpg"><img src="./plots/MechanicalVentilator/Recruitment_HeartRate.jpg" width="550"></a></td>
+</tr>
+<tr>
+    <td><a href="./plots/MechanicalVentilator/Recruitment_MeanArterialPressure.jpg"><img src="./plots/MechanicalVentilator/Recruitment_MeanArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/Recruitment_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
     <td><a href="./plots/MechanicalVentilator/Recruitment_Aorta-Oxygen-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/Recruitment_Aorta-Oxygen-PartialPressure.jpg" width="550"></a></td>

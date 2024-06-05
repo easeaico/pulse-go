@@ -64,6 +64,9 @@
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "RespiratoryExchangeRatio",            "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "SystemicVascularResistance",          "Unit": "mmHg s/mL" },
 
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "OxygenConsumptionRate",               "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "CarbonDioxideProductionRate",         "Unit": "mL/min" },
+
     { "DecimalFormat": { "Precision": 3 }, "Category": "Patient",                     "PropertyName": "AlveoliSurfaceArea",                  "Unit": "m^2" },
 
     { "DecimalFormat": { "Precision": 3 },                                            "PropertyName": "ExpiratoryReserveVolume",             "Unit": "L" },

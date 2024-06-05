@@ -82,11 +82,15 @@
 <table border="0">
 <tr>
     <td><a href="./plots/MechanicalVentilator/COPD_TotalLungVolume.jpg"><img src="./plots/MechanicalVentilator/COPD_TotalLungVolume.jpg" width="550"></a></td>
-    <td><a href="./plots/MechanicalVentilator/COPD_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/COPD_ArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/COPD_RespirationRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/COPD_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/COPD_RespirationRate.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/COPD_TidalVolume.jpg"><img src="./plots/MechanicalVentilator/COPD_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD_HeartRate.jpg"><img src="./plots/MechanicalVentilator/COPD_HeartRate.jpg" width="550"></a></td>
+</tr>
+<tr>
+    <td><a href="./plots/MechanicalVentilator/COPD_MeanArterialPressure.jpg"><img src="./plots/MechanicalVentilator/COPD_MeanArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/COPD_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
     <td><a href="./plots/MechanicalVentilator/COPD_Aorta-Oxygen-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/COPD_Aorta-Oxygen-PartialPressure.jpg" width="550"></a></td>

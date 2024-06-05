@@ -34,11 +34,15 @@
 <table border="0">
 <tr>
     <td><a href="./plots/MechanicalVentilator/Healthy_TotalLungVolume.jpg"><img src="./plots/MechanicalVentilator/Healthy_TotalLungVolume.jpg" width="550"></a></td>
-    <td><a href="./plots/MechanicalVentilator/Healthy_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/Healthy_ArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Healthy_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/Healthy_RespirationRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/Healthy_RespirationRate.jpg"><img src="./plots/MechanicalVentilator/Healthy_RespirationRate.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/Healthy_TidalVolume.jpg"><img src="./plots/MechanicalVentilator/Healthy_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Healthy_HeartRate.jpg"><img src="./plots/MechanicalVentilator/Healthy_HeartRate.jpg" width="550"></a></td>
+</tr>
+<tr>
+    <td><a href="./plots/MechanicalVentilator/Healthy_MeanArterialPressure.jpg"><img src="./plots/MechanicalVentilator/Healthy_MeanArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Healthy_ArterialPressure.jpg"><img src="./plots/MechanicalVentilator/Healthy_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
     <td><a href="./plots/MechanicalVentilator/Healthy_Aorta-Oxygen-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/Healthy_Aorta-Oxygen-PartialPressure.jpg" width="550"></a></td>

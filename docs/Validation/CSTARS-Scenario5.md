@@ -89,11 +89,15 @@
 <table border="0">
 <tr>
     <td><a href="./plots/CSTARS/Scenario5_TotalLungVolume.jpg"><img src="./plots/CSTARS/Scenario5_TotalLungVolume.jpg" width="550"></a></td>
-    <td><a href="./plots/CSTARS/Scenario5_ArterialPressure.jpg"><img src="./plots/CSTARS/Scenario5_ArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario5_RespirationRate.jpg"><img src="./plots/CSTARS/Scenario5_RespirationRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/CSTARS/Scenario5_RespirationRate.jpg"><img src="./plots/CSTARS/Scenario5_RespirationRate.jpg" width="550"></a></td>
     <td><a href="./plots/CSTARS/Scenario5_TidalVolume.jpg"><img src="./plots/CSTARS/Scenario5_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario5_HeartRate.jpg"><img src="./plots/CSTARS/Scenario5_HeartRate.jpg" width="550"></a></td>
+</tr>
+<tr>
+    <td><a href="./plots/CSTARS/Scenario5_MeanArterialPressure.jpg"><img src="./plots/CSTARS/Scenario5_MeanArterialPressure.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario5_ArterialPressure.jpg"><img src="./plots/CSTARS/Scenario5_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
     <td><a href="./plots/CSTARS/Scenario5_Aorta-Oxygen-PartialPressure.jpg"><img src="./plots/CSTARS/Scenario5_Aorta-Oxygen-PartialPressure.jpg" width="550"></a></td>
@@ -108,16 +112,12 @@
     <td><a href="./plots/CSTARS/Scenario5_VentilationPerfusionRatio.jpg"><img src="./plots/CSTARS/Scenario5_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/CSTARS/Scenario5_Patient-FunctionalResidualCapacity.jpg"><img src="./plots/CSTARS/Scenario5_Patient-FunctionalResidualCapacity.jpg" width="550"></a></td>
-    <td><a href="./plots/CSTARS/Scenario5_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/CSTARS/Scenario5_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
-</tr>
-<tr>
     <td><a href="./plots/CSTARS/Scenario5_TransthoracicPressure.jpg"><img src="./plots/CSTARS/Scenario5_TransthoracicPressure.jpg" width="550"></a></td>
     <td><a href="./plots/CSTARS/Scenario5_IntrinsicPositiveEndExpiratoryPressure.jpg"><img src="./plots/CSTARS/Scenario5_IntrinsicPositiveEndExpiratoryPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/CSTARS/Scenario5_LeftLungVolume.jpg"><img src="./plots/CSTARS/Scenario5_LeftLungVolume.jpg" width="550"></a></td>
-    <td><a href="./plots/CSTARS/Scenario5_RightLungVolume.jpg"><img src="./plots/CSTARS/Scenario5_RightLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario5_Patient-FunctionalResidualCapacity.jpg"><img src="./plots/CSTARS/Scenario5_Patient-FunctionalResidualCapacity.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario5_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/CSTARS/Scenario5_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
 </tr>
 <tr>
     <td colspan="2"><a href="./plots/CSTARS/Scenario5_Legend.jpg"><img src="./plots/CSTARS/Scenario5_Legend.jpg" width="1100"></a></td>
