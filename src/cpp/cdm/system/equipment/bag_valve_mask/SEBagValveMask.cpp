@@ -150,7 +150,7 @@ void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMg
           err = true;
       }
       if(err)
-        Error("Mechanical Ventilator substance fractions do not sum to 1");
+        Error("Bag valve mask substance fractions do not sum to 1");
     }
   }
 

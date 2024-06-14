@@ -2229,8 +2229,8 @@ namespace pulse
     double totalLungVolume_L = m_Lungs->GetVolume(VolumeUnit::L);
     GetTotalLungVolume().SetValue(totalLungVolume_L, VolumeUnit::L);
 
-    double bottomBreathTotalVolume_L = GetTidalVolume(VolumeUnit::L) / GetSpecificVentilation().GetValue();
-    double relativeTotalLungVolume_L = totalLungVolume_L - bottomBreathTotalVolume_L;
+    double functionalResidualCapacity_L = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
+    double relativeTotalLungVolume_L = totalLungVolume_L - functionalResidualCapacity_L;
     GetRelativeTotalLungVolume().SetValue(relativeTotalLungVolume_L, VolumeUnit::L);
 
     double AnatomicDeadSpace_L = m_AnatomicDeadSpace->GetVolume(VolumeUnit::L);
