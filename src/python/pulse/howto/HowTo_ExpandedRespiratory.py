@@ -26,17 +26,17 @@ def HowTo_ExpandedRespiratory():
 
     data_requests = [
         SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
-        SEDataRequest.create_physiology_request("ArterialPressure", unit=PressureUnit.mmHg),
-        SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
-
+        SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("HorowitzIndex", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("OxygenSaturation"),
         SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
         SEDataRequest.create_physiology_request("TidalVolume", unit=VolumeUnit.mL),
         SEDataRequest.create_physiology_request("TotalLungVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("ArterialOxygenPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("ArterialCarbonDioxidePressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_gas_compartment_request("LeftLungPulmonary", "Volume", unit=VolumeUnit.mL),
         SEDataRequest.create_gas_compartment_request("RightLungPulmonary", "Volume", unit=VolumeUnit.L),
     ]
@@ -68,6 +68,21 @@ def HowTo_ExpandedRespiratory():
     results = pulse.pull_data()
     pulse.print_results()
 
+    # Apply the standalone UNDEX equation
+    # Inputs
+    chargeMass_lbs = 1000
+    chargeDistance_ft = 100 #635 ~= 0.1; 211 ~= 0.3; 70 ~= 0.9
+    # Pressure equation
+    peakPressure = 13000 * (chargeMass_lbs ** 0.33) / chargeDistance_ft    
+    # PBLI severity mapping
+    severity = 0.0005 * peakPressure
+    # Bounding the severity between 0 and 1
+    severity = max(min(severity, 1.0), 0.0)
+
+    print(f"Charge Mass: {chargeMass_lbs} lbs")
+    print(f"Charge Distance: {chargeDistance_ft} ft")
+    print(f"Peak Pressure: {peakPressure} mmHg")
+    print(f"Severity: {severity}")
 
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)
@@ -75,28 +90,28 @@ def HowTo_ExpandedRespiratory():
     pulse.print_results()
 
     pbli = SEPrimaryBlastLungInjury()
-    pbli.get_severity(eLungCompartment.RightSuperiorLobeApical).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightSuperiorLobePosterior).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightSuperiorLobeAnterior).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightMiddleLobeLateral).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightMiddleLobeMedial).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightInferiorLobeSuperior).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightInferiorLobeMedialBasal).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightInferiorLobeAnteriorBasal).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightInferiorLobeLateralBasal).set_value(0.3)
-    pbli.get_severity(eLungCompartment.RightInferiorLobePosteriorBasal).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftInferiorLobePosteriorBasal).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftInferiorLobeLateralBasal).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftInferiorLobeAnteromedialBasal).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftInferiorLobeSuperior).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftSuperiorLobeInferiorLingula).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftSuperiorLobeSuperiorLingula).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftSuperiorLobeAnterior).set_value(0.3)
-    pbli.get_severity(eLungCompartment.LeftSuperiorLobeApicoposterior).set_value(0.3)
+    pbli.get_severity(eLungCompartment.RightSuperiorLobeApical).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightSuperiorLobePosterior).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightSuperiorLobeAnterior).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightMiddleLobeLateral).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightMiddleLobeMedial).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeSuperior).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeMedialBasal).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeAnteriorBasal).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightInferiorLobeLateralBasal).set_value(severity)
+    pbli.get_severity(eLungCompartment.RightInferiorLobePosteriorBasal).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobePosteriorBasal).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobeLateralBasal).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobeAnteromedialBasal).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftInferiorLobeSuperior).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeInferiorLingula).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeSuperiorLingula).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeAnterior).set_value(severity)
+    pbli.get_severity(eLungCompartment.LeftSuperiorLobeApicoposterior).set_value(severity)
     pulse.process_action(pbli)
 
     # Advance some time and print out the vitals
-    pulse.advance_time_s(300)
+    pulse.advance_time_s(900)
     results = pulse.pull_data()
     pulse.print_results()
 
