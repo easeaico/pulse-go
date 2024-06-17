@@ -728,8 +728,6 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 
 
 @anchor ventilator-validation-diseases
-# Validation - Respiratory Diseases
-
 @insert ./validation/markdown/MechanicalVentilator.md
 
 
