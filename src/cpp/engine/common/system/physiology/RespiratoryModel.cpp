@@ -3061,10 +3061,10 @@ namespace pulse
         interpolatorPoints =
         {
           {0.0, 0.0}, //None
-          {0.3, 0.054}, //Mild
-          {0.6, 0.072}, //Moderate
-          {0.9, 0.090}, //Severe
-          {1.0, 0.2}  //Max
+          {0.3, 0.0}, //Mild
+          {0.6, 0.060}, //Moderate
+          {0.9, 0.120}, //Severe
+          {1.0, 0.200}  //Max
         };
 
         deadSpaceIncrement_L = MAX(deadSpaceIncrement_L, GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity));
@@ -4049,140 +4049,156 @@ namespace pulse
       }
     }
 
-    //double totalScalingFactor = 1.0;
-    //double damageScalingFactor = 1.0;
-    //double recruitmentScalingFactor = 1.0;
+    double totalScalingFactor = 1.0;
+    double damageScalingFactor = 1.0;
+    double recruitmentScalingFactor = 1.0;
 
-    //double totalBaselineAlveoliVolume_L = 0.0;
-    //for (auto& itr : m_LungComponents)
-    //{
-    //  LungComponent& cpt = itr.second;
-    //  totalBaselineAlveoliVolume_L += cpt.AlveoliNode->GetVolumeBaseline(VolumeUnit::L);
-    //}
+    double totalBaselineAlveoliVolume_L = 0.0;
+    for (auto& itr : m_LungComponents)
+    {
+      LungComponent& cpt = itr.second;
+      totalBaselineAlveoliVolume_L += cpt.AlveoliNode->GetVolumeBaseline(VolumeUnit::L);
+    }
 
-    //double totalAlveoliDiffusionArea_cm2 = 0.0;
+    double totalAlveoliDiffusionArea_cm2 = 0.0;
 
-    //for (auto& itr : m_LungComponents)
-    //{
-    //  eLungCompartment cmpt = itr.first;
-    //  LungComponent& cpt = itr.second;
+    for (auto& itr : m_LungComponents)
+    {
+      eLungCompartment cmpt = itr.first;
+      LungComponent& cpt = itr.second;
 
-    //  SEGasCompartment* alveoliCompartment = cpt.AlveoliCompartment;
-    //  double alveoliVolumeBaseline_L = cpt.AlveoliNode->GetVolumeBaseline(VolumeUnit::L);
-    //  double alveoliVolumeRatio = alveoliVolumeBaseline_L / totalBaselineAlveoliVolume_L;
-    //  double initialAlveoliDiffusionArea_cm2 = initialPatientAlveoliDiffusionArea_cm2 * alveoliVolumeRatio;
-    //  double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
+      SEGasCompartment* alveoliCompartment = cpt.AlveoliCompartment;
+      double alveoliVolumeBaseline_L = cpt.AlveoliNode->GetVolumeBaseline(VolumeUnit::L);
+      double alveoliVolumeRatio = alveoliVolumeBaseline_L / totalBaselineAlveoliVolume_L;
+      double initialAlveoliDiffusionArea_cm2 = initialPatientAlveoliDiffusionArea_cm2 * alveoliVolumeRatio;
+      double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  //Restrictive - includes recruitment effects
-    //  //------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------
+      //Restrictive - includes recruitment effects
+      //------------------------------------------------------------------------------------------------------
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  //Acinar recruitment
-    //  //Alveoli volume decreases cause more shunting, such as with ARDS
-    //  //Collapsed lung causes more shunting, such as with pneumothorax and hemothorax
-    //  //Aeration improves when mechanically ventilated with increased PEEP
+      //------------------------------------------------------------------------------------------------------
+      //Acinar recruitment
+      //Alveoli volume decreases cause more shunting, such as with ARDS
+      //Collapsed lung causes more shunting, such as with pneumothorax and hemothorax
+      //Aeration improves when mechanically ventilated with increased PEEP
 
-    //  double alveoliVolume_L = cpt.AlveoliNode->GetNextVolume(VolumeUnit::L);
-    //  double cptResidualVolume_L = residualVolume_L * alveoliVolumeRatio;
+      double alveoliVolume_L = cpt.AlveoliNode->GetNextVolume(VolumeUnit::L);
+      double cptResidualVolume_L = residualVolume_L * alveoliVolumeRatio;
 
-    //  //0.01 is sensitivity factor to prevent hitting this when healthy
-    //  double recruitedFraction = (alveoliVolume_L - cptResidualVolume_L + 0.01) / (alveoliVolumeBaseline_L - cptResidualVolume_L);
-    //  recruitedFraction = LIMIT(recruitedFraction, 0.0, 1.0);
+      //0.01 is sensitivity factor to prevent hitting this when healthy
+      //double recruitedFraction = (alveoliVolume_L - cptResidualVolume_L + 0.01) / (alveoliVolumeBaseline_L - cptResidualVolume_L);
+      //recruitedFraction = LIMIT(recruitedFraction, 0.0, 1.0);
 
-    //  recruitmentScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, 1.0 - recruitedFraction);
+      //recruitmentScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, 1.0 - recruitedFraction);
 
-    //  double combinedSeverity = 0.0;
-    //  //------------------------------------------------------------------------------------------------------
-    //  //ARDS
-    //  //Exacerbation will overwrite the condition, even if it means improvement
-    //  if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
-    //  {
-    //    double severity = 0.0;
-    //    if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
-    //    {
-    //      severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(cmpt).GetValue();
-    //    }
-    //    else
-    //    {
-    //      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
-    //    }
+      double combinedSeverity = 0.0;
+      //------------------------------------------------------------------------------------------------------
+      //ARDS
+      //Exacerbation will overwrite the condition, even if it means improvement
+      if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
+      {
+        double severity = 0.0;
+        if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
+        {
+          severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation().GetSeverity(cmpt).GetValue();
+        }
+        else
+        {
+          severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
+        }
 
-    //    combinedSeverity = MAX(combinedSeverity, severity);
-    //  }
+        combinedSeverity = MAX(combinedSeverity, severity);
+      }
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  //Pneumonia
-    //  //Exacerbation will overwrite the condition, even if it means improvement
-    //  if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
-    //  {
-    //    double severity = 0.0;
-    //    if (m_PatientActions->HasPneumoniaExacerbation())
-    //    {
-    //      severity = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(cmpt).GetValue();
-    //    }
-    //    else
-    //    {
-    //      severity = m_data.GetConditions().GetPneumonia().GetSeverity(cmpt).GetValue();
-    //    }
+      //------------------------------------------------------------------------------------------------------
+      //Pneumonia
+      //Exacerbation will overwrite the condition, even if it means improvement
+      if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
+      {
+        double severity = 0.0;
+        if (m_PatientActions->HasPneumoniaExacerbation())
+        {
+          severity = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(cmpt).GetValue();
+        }
+        else
+        {
+          severity = m_data.GetConditions().GetPneumonia().GetSeverity(cmpt).GetValue();
+        }
 
-    //    combinedSeverity = MAX(combinedSeverity, severity);
-    //  }
+        combinedSeverity = MAX(combinedSeverity, severity);
+      }
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  //PulmonaryFibrosis
-    //  if (m_data.GetConditions().HasPulmonaryFibrosis())
-    //  {
-    //    double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
+      //------------------------------------------------------------------------------------------------------
+      //PulmonaryFibrosis
+      if (m_data.GetConditions().HasPulmonaryFibrosis())
+      {
+        double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
-    //    combinedSeverity = MAX(combinedSeverity, severity);
-    //  }
+        combinedSeverity = MAX(combinedSeverity, severity);
+      }
 
-    //  damageScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, combinedSeverity);
+      std::vector<std::pair<double, double>>  interpolatorPoints =
+      {
+        {0.0, 1.0}, //None
+        {0.3, 0.566}, //Mild
+        {0.6, 0.320}, //Moderate
+        {0.9, 0.100}, //Severe
+        {1.0, 0.050}  //Max
+      };
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  //Combine effects
-    //  totalScalingFactor = MIN(recruitmentScalingFactor, damageScalingFactor);
+      damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity);
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  //Obstructive - does not includes recruitment effects
-    //  //------------------------------------------------------------------------------------------------------
+      //------------------------------------------------------------------------------------------------------
+      //Combine effects
+      totalScalingFactor = MIN(recruitmentScalingFactor, damageScalingFactor);
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  //COPD
-    //  //Exacerbation will overwrite the condition, even if it means improvement
-    //  if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease() || m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
-    //  {
-    //    double emphysemaSeverity = 0.0;
-    //    if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
-    //    {
-    //      emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(cmpt).GetValue();
-    //    }
-    //    else
-    //    {
-    //      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(cmpt).GetValue();
-    //    }
+      //------------------------------------------------------------------------------------------------------
+      //Obstructive - does not includes recruitment effects
+      //------------------------------------------------------------------------------------------------------
 
-    //    totalScalingFactor = MIN(totalScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.15, 1.0, emphysemaSeverity));
-    //  }
+      //------------------------------------------------------------------------------------------------------
+      //COPD
+      //Exacerbation will overwrite the condition, even if it means improvement
+      if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease() || m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
+      {
+        double emphysemaSeverity = 0.0;
+        if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
+        {
+          emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation().GetEmphysemaSeverity(cmpt).GetValue();
+        }
+        else
+        {
+          emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(cmpt).GetValue();
+        }
 
-    //  //------------------------------------------------------------------------------------------------------
-    //  double alveoliDiffusionArea_cm2 = initialAlveoliDiffusionArea_cm2 * totalScalingFactor;
-    //  double perviousAlveoliDiffusionArea_cm2 = alveoliCompartment->GetDiffusionSurfaceArea(AreaUnit::cm2);
+        std::vector<std::pair<double, double>>  interpolatorPoints =
+        {
+          {0.0, 1.0}, //None
+          {0.3, 1.0}, //Mild
+          {0.6, 0.500}, //Moderate
+          {0.9, 0.080}, //Severe
+          {1.0, 0.050}  //Max
+        };
 
-    //  if (m_data.GetState() > EngineState::InitialStabilization) //Only dampen response if we're not initializing
-    //  {
-    //    //Dampen the change to prevent potential craziness
-    //    //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
-    //    double dampenFraction_perSec = 0.001 * 50.0;
-    //    alveoliDiffusionArea_cm2 = GeneralMath::Damper(alveoliDiffusionArea_cm2, perviousAlveoliDiffusionArea_cm2, dampenFraction_perSec, m_data.GetTimeStep_s());
-    //  }
-    //  alveoliCompartment->GetDiffusionSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
+        totalScalingFactor = MIN(totalScalingFactor, GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity));
+      }
 
-    //  totalAlveoliDiffusionArea_cm2 += alveoliDiffusionArea_cm2;
-    //}
+      //------------------------------------------------------------------------------------------------------
+      double alveoliDiffusionArea_cm2 = initialAlveoliDiffusionArea_cm2 * totalScalingFactor;
+      double perviousAlveoliDiffusionArea_cm2 = alveoliCompartment->GetDiffusionSurfaceArea(AreaUnit::cm2);
 
-    double totalAlveoliDiffusionArea_cm2 = initialPatientAlveoliDiffusionArea_cm2;
+      if (m_data.GetState() > EngineState::InitialStabilization) //Only dampen response if we're not initializing
+      {
+        //Dampen the change to prevent potential craziness
+        //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+        double dampenFraction_perSec = 0.001 * 50.0;
+        alveoliDiffusionArea_cm2 = GeneralMath::Damper(alveoliDiffusionArea_cm2, perviousAlveoliDiffusionArea_cm2, dampenFraction_perSec, m_data.GetTimeStep_s());
+      }
+      alveoliCompartment->GetDiffusionSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
+
+      totalAlveoliDiffusionArea_cm2 += alveoliDiffusionArea_cm2;
+    }
 
     //------------------------------------------------------------------------------------------------------
     m_data.GetCurrentPatient().GetAlveoliSurfaceArea().SetValue(totalAlveoliDiffusionArea_cm2, AreaUnit::cm2);
@@ -4392,7 +4408,7 @@ namespace pulse
           {0.0, 1.0},   //None
           {0.3, 0.280}, //Mild
           {0.6, 0.181}, //Moderate
-          {0.9, 0.155}, //Severe
+          {0.9, 0.168}, //Severe
           {1.0, 0.100}  //Max
 
         };
