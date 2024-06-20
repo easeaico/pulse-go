@@ -82,6 +82,31 @@
 
 @insert ./validation/tables/CSTARS/Scenario1/Segment3SegmentTable.md
 
+#### Segment 4
+
+@insert ./validation/tables/CSTARS/Scenario1/Segment4ValidationTable.md
+
+@htmlonly
+<center>
+<table border="0">
+<tr>
+    <td colspan="2"><a href="./plots/CSTARS/Scenario1-vitals_monitor_4.jpg"><img src="./plots/CSTARS/Scenario1-vitals_monitor_4.jpg" width="1100"></a></td>
+</tr>
+<tr>
+    <td><a href="./plots/CSTARS/Scenario1-ventilator_monitor_4.jpg"><img src="./plots/CSTARS/Scenario1-ventilator_monitor_4.jpg" width="825"></a></td>
+    <td><a href="./plots/CSTARS/Scenario1-ventilator_loops_4.jpg"><img src="./plots/CSTARS/Scenario1-ventilator_loops_4.jpg" width="275"></a></td>
+</tr>
+</table>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>@figuredef {Scenario1Segment3Monitors}. Vitals and ventilator monitors for Segment 4.</i>
+</center><br>
+
+@insert ./validation/tables/CSTARS/Scenario1/Segment4SegmentTable.md
+
+
 ### Scenario Output Plots
 
 @htmlonly

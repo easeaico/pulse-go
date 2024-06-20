@@ -18,7 +18,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Initial patient set generator
       - Can create large patient sets using permutations of starting HR, RR, MAP, Age, Height, BMI, BFF and other patient properties
     - Injury set generator
-      - For each patient in a patient set, will apply and run a permutation of inujuries such as (but not limited to) Hemorrhage, AirwayObstruction, Tension Tneumothorax
+      - For each patient in a patient set, will apply and run a permutation of inujuries such as (but not limited to) Hemorrhage, AirwayObstruction, Tension Pneumothorax
       - Convience modes provided to generate a set of preprogrammed TCCC injuries 
   - Combined DataModelBindings, CommonDataModel and PulseEngine into a single Pulse library
     - This single library can be built as a shared/dynamic library or a static (default) library
