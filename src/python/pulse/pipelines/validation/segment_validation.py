@@ -83,10 +83,10 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
             if engine_paren_idx == -1:
                 raise ValueError(f"Cannot convert between {requested_unit} and unitless for {header}")
             curr_unit = engine_full_header[engine_paren_idx+1:-1].replace("_", " ")
-            if curr_unit != val_unit:
+            if curr_unit != requested_unit:
                 val = PyPulse.convert(val, curr_unit, requested_unit)
 
-        return engine_val
+        return val
 
     # Convert to validation unit if needed
     engine_val = _convert_unit(header, engine_val)
