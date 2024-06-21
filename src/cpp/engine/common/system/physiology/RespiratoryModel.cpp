@@ -3071,15 +3071,17 @@ namespace pulse
       }
 
       //---------------------------------------------------------------------------------------------------------------------------------------------
-      double deadSpace_L = deadSpaceNode->GetVolumeBaseline(VolumeUnit::L) + deadSpaceIncrement_L;
-
       //Modify based on the specific patient
-      //Standard male patient ideal weight = 75.3 kg
-      double standardFunctionalResidualCapacity_L = 30.0 * 75.3 / 1000.0;
-      double pateintMultiplier = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) / standardFunctionalResidualCapacity_L;
+      double standardMaleIdealWeight_kg = 75.3;
+      double standardFunctionalResidualCapacity_L = 30.0 * standardMaleIdealWeight_kg / 1000.0;
+      double standardRedesidualVolume_L = 16.0 * standardMaleIdealWeight_kg / 1000.0;
+      double pateintMultiplier = (m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) - m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L))
+        / (standardFunctionalResidualCapacity_L - standardRedesidualVolume_L);
 
-      deadSpace_L *= pateintMultiplier;
+      deadSpaceIncrement_L *= pateintMultiplier;
       alveoliIncrement_L *= pateintMultiplier;
+
+      double deadSpace_L = deadSpaceNode->GetVolumeBaseline(VolumeUnit::L) + deadSpaceIncrement_L;
 
       //---------------------------------------------------------------------------------------------------------------------------------------------
       //Modifiers
@@ -4071,7 +4073,7 @@ namespace pulse
       double alveoliVolumeBaseline_L = cpt.AlveoliNode->GetVolumeBaseline(VolumeUnit::L);
       double alveoliVolumeRatio = alveoliVolumeBaseline_L / totalBaselineAlveoliVolume_L;
       double initialAlveoliDiffusionArea_cm2 = initialPatientAlveoliDiffusionArea_cm2 * alveoliVolumeRatio;
-      double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
+      //double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
 
       //------------------------------------------------------------------------------------------------------
       //Restrictive - includes recruitment effects
@@ -4083,8 +4085,8 @@ namespace pulse
       //Collapsed lung causes more shunting, such as with pneumothorax and hemothorax
       //Aeration improves when mechanically ventilated with increased PEEP
 
-      double alveoliVolume_L = cpt.AlveoliNode->GetNextVolume(VolumeUnit::L);
-      double cptResidualVolume_L = residualVolume_L * alveoliVolumeRatio;
+      //double alveoliVolume_L = cpt.AlveoliNode->GetNextVolume(VolumeUnit::L);
+      //double cptResidualVolume_L = residualVolume_L * alveoliVolumeRatio;
 
       //0.01 is sensitivity factor to prevent hitting this when healthy
       //double recruitedFraction = (alveoliVolume_L - cptResidualVolume_L + 0.01) / (alveoliVolumeBaseline_L - cptResidualVolume_L);
@@ -4172,7 +4174,7 @@ namespace pulse
           emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity(cmpt).GetValue();
         }
 
-        std::vector<std::pair<double, double>>  interpolatorPoints =
+        interpolatorPoints =
         {
           {0.0, 1.0}, //None
           {0.3, 1.0}, //Mild
@@ -4445,7 +4447,8 @@ namespace pulse
       unsigned int numComponents = cpt.Side == eSide::Right ? numRightComponents : numLeftComponents;
       if (numComponents > 1)
       {
-        totalScalingFactor *= segmentedLeftCalibratedValue + (numComponents - double(numLeftComponents)) / (double(numRightComponents) - double(numLeftComponents)) * (segmentedRightCalibratedValue - segmentedLeftCalibratedValue);
+        totalScalingFactor *= segmentedLeftCalibratedValue + (numComponents - double(numLeftComponents)) / 
+          (double(numRightComponents) - double(numLeftComponents)) * (segmentedRightCalibratedValue - segmentedLeftCalibratedValue);
       }
 
       double previousShuntResistance_mmHg_s_Per_mL = shuntPath->GetResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
