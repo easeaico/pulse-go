@@ -649,9 +649,9 @@ namespace pulse
     CalculateFatigue();
 
     UpdateChestWallCompliances();
+    UpdateAlveolarCompliances();
     UpdateVolumes();
     UpdateResistances();
-    UpdateAlveolarCompliances();
     UpdateInspiratoryExpiratoryRatio();
     UpdateDiffusion();
     if (m_data.HasCardiovascular())
@@ -2965,10 +2965,7 @@ namespace pulse
       m_StomachNode->GetNextPressure().Increment(pressureChange_cmH2O, PressureUnit::cmH2O);
     }
 
-    double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
-    double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
-    double totalLungCapacity_L = m_data.GetInitialPatient().GetTotalLungCapacity(VolumeUnit::L);
-
+    double functionalResidualCapacityChange_L = 0.0;
     double totalBaselineAlveoliVolume_L = 0.0;
     for (auto& itr : m_LungComponents)
     {
@@ -2978,6 +2975,9 @@ namespace pulse
 
     double leftAlveoliDecrease_L = 0.0;
     double rightAlveoliDecrease_L = 0.0;
+
+    double totalHealthyCompliance_L_Per_cmH2O = 0.0;
+    double totalCompliance_L_Per_cmH2O = 0.0;
 
     unsigned int iter = 0;
     for (auto& itr : m_LungComponents)
@@ -3134,15 +3134,38 @@ namespace pulse
       deadSpaceNode->GetNextVolume().SetValue(deadSpace_L, VolumeUnit::L);
 
       //Update lung volumes
-      functionalResidualCapacity_L += deadSpaceIncrement_L + alveoliIncrement_L;
-      residualVolume_L += deadSpaceIncrement_L + alveoliIncrement_L;
-      totalLungCapacity_L += deadSpaceIncrement_L + alveoliIncrement_L;
+      functionalResidualCapacityChange_L += deadSpaceIncrement_L + alveoliIncrement_L;
+
+      //Track total compliance change
+      SEFluidCircuitPath* compliancePath = cpt.CompliancePath;
+      totalHealthyCompliance_L_Per_cmH2O += compliancePath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+      totalCompliance_L_Per_cmH2O += compliancePath->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
 
       iter++;
     }
 
     m_RightAlveoliDecrease_L = rightAlveoliDecrease_L;
     m_LeftAlveoliDecrease_L = leftAlveoliDecrease_L;
+
+    //---------------------------------------------------------------------------------------------------------------------------------------------
+    //Update patient parameter volumes due to compliance change
+    //Lung compliance change method must happen before this method
+    double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
+    double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
+    double totalLungCapacity_L = m_data.GetInitialPatient().GetTotalLungCapacity(VolumeUnit::L);
+
+    double chestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O) +
+      m_RightPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+
+    double totalComplianceChangeFraction = ((totalHealthyCompliance_L_Per_cmH2O + chestWallCompliance_L_Per_cmH2O) * totalCompliance_L_Per_cmH2O) / 
+      ((totalHealthyCompliance_L_Per_cmH2O + totalCompliance_L_Per_cmH2O) * chestWallCompliance_L_Per_cmH2O);
+
+    //TODO: I have no idea why only moving the volume 1/3 as far works
+    totalComplianceChangeFraction += (1.0 - totalComplianceChangeFraction) * 2.0 / 3.0;
+
+    functionalResidualCapacity_L = functionalResidualCapacity_L * totalComplianceChangeFraction + functionalResidualCapacityChange_L;
+    residualVolume_L = residualVolume_L * totalComplianceChangeFraction + functionalResidualCapacityChange_L;
+    totalLungCapacity_L = totalLungCapacity_L * totalComplianceChangeFraction + functionalResidualCapacityChange_L;
 
     double tidalVolumeBaseline_L = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L);
 
