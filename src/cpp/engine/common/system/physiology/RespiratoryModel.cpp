@@ -4274,7 +4274,7 @@ namespace pulse
       {
         double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
         combinedSeverity = MAX(combinedSeverity, severity);
-        pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 4.0, combinedSeverity);
+        pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 6.0, combinedSeverity);
       }
 
       //-------------------------------------------------------------------------------------------------------------------
