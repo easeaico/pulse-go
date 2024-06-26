@@ -43,5 +43,6 @@ add_executable_ex(HowToDriver
   HowTo-TensionPneumothorax.cpp
   HowTo-TestSystemCapability.cpp
   HowTo-VentilationMechanics.cpp
+  HowTo-VentilatorFeedbackLoop.cpp
 )
 target_link_libraries(HowToDriver Pulse)

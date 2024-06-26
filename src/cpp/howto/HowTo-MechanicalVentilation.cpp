@@ -57,7 +57,7 @@ public:
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override
   {
     switch (type)
-    {     
+    {
       case eEvent::CardiogenicShock:
       {
         if (active)
@@ -82,8 +82,6 @@ public:
 //--------------------------------------------------------------------------------------------------
 void HowToMechanicalVentilation()
 {
-  //Note: Setting circuit values (resistance/compliances/etc.) needs to be done in the engine code - they currently are not directly exposed
-  
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();

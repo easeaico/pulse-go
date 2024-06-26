@@ -137,6 +137,9 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
 
 bool SEMechanicalVentilatorVolumeControl::IsValid() const
 {
+  if (!IsActive())
+    return true;
+
   return SEMechanicalVentilatorMode::IsValid() &&
     HasFlow() &&
     HasFractionInspiredOxygen() &&

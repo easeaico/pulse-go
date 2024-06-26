@@ -114,6 +114,9 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
 
 bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::IsValid() const
 {
+  if (!IsActive())
+    return true;
+
   return SEMechanicalVentilatorMode::IsValid() &&
     HasDeltaPressureSupport() &&
     HasFractionInspiredOxygen() &&

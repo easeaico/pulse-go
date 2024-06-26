@@ -135,6 +135,9 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
 
 bool SEMechanicalVentilatorPressureControl::IsValid() const
 {
+  if (!IsActive())
+    return true;
+
   return SEMechanicalVentilatorMode::IsValid() &&
     HasFractionInspiredOxygen() &&
     HasInspiratoryPressure() &&
