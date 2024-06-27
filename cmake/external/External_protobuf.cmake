@@ -57,7 +57,7 @@ add_external_project_ex( protobuf
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
-    -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
+    -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=ON # Match our settings in main CMakeLists.txt
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
     -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
     ${_pb_args}

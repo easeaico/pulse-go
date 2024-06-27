@@ -12,6 +12,10 @@ if(UNIX AND NOT APPLE)
   set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib:$ORIGIN/")
 endif()
 
+if(POLICY CMP0091)# For msvc runtime
+  cmake_policy(SET CMP0091 NEW)
+endif()
+
 if(NOT CMAKE_INSTALL_PREFIX OR CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   message(STATUS "Setting install dir inside build dir ${CMAKE_BINARY_DIR} ")
   set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "Install location" FORCE)
@@ -36,6 +40,17 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(Pulse VERSION 4.2.1 LANGUAGES C CXX)
 string(TOLOWER ${PROJECT_NAME} project_name)
 include(GNUInstallDirs)
+
+function(remove_cmake_variables)
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+    foreach (_variableName ${_variableNames})
+        if ((NOT DEFINED ARGV0) OR _variableName MATCHES ${ARGV0})
+            # message(STATUS "Removing ${_variableName}=${${_variableName}}")
+            unset(${_variableName} CACHE)
+        endif()
+    endforeach()
+endfunction()
 
 #-----------------------------------------------------------------------------
 # Project install directories
@@ -126,6 +141,60 @@ if(iOS_TOOLCHAIN)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fembed-bitcode")
 endif()
 
+if (${PROJECT_NAME}_JAVA_API)
+  set(${PROJECT_NAME}_JAVA_HOME_DIR "" CACHE PATH "Directory containing the Java version to use")
+  if(${PROJECT_NAME}_JAVA_HOME_DIR)
+    set(ENV{JAVA_HOME} ${${PROJECT_NAME}_JAVA_HOME_DIR})
+    message(STATUS "Looking for your specific Java in ${${PROJECT_NAME}_JAVA_HOME_DIR}")
+  else()
+    message(STATUS "Looking for Java in : $ENV{JAVA_HOME}")
+  endif()
+  remove_cmake_variables(Java_)
+  # Pulse uses Java in its development utility scripts
+  find_package(Java)
+  if(Java_FOUND)
+    include(UseJava)
+    if(Java_JAVA_EXECUTABLE)
+      message(STATUS "Using Java executable : ${Java_JAVA_EXECUTABLE}")
+      set(Java_CMD ${Java_JAVA_EXECUTABLE})
+    else()
+      message(STATUS "Could not find Java_JAVA_EXECUTABLE")
+    endif()
+  else()
+    message(WARNING "The Pulse `run` utility uses Java, which could not be found")
+    message(WARNING "To use the `run` utility, setup Java in this environment and reconfigure cmake")
+  endif()
+endif()
+
+set(Python_CMD "python")
+if (${PROJECT_NAME}_PYTHON_API)
+  set(${PROJECT_NAME}_PYTHON_HOME_DIR "" CACHE PATH "Directory containing the python interpreter to use")
+  # Pulse uses Python in its development utility scripts
+  if(${PROJECT_NAME}_JAVA_HOME_DIR)
+    set(Python3_ROOT_DIR ${${PROJECT_NAME}_PYTHON_HOME_DIR})
+    message(STATUS "Looking for your specific python in ${${PROJECT_NAME}_PYTHON_HOME_DIR}")
+  endif()
+  remove_cmake_variables(Python3_)
+  find_package(Python3 COMPONENTS Interpreter Development)
+  if(Python3_FOUND)
+    message(STATUS "Using Python: ${Python3_EXECUTABLE}")
+    set(Python_CMD ${Python3_EXECUTABLE})
+  else()
+    set(Python_CMD "python")
+    message(WARNING "The Pulse `run` utility uses python, which could not be found")
+    message(WARNING "To use the `run` utility, setup python in this environment and reconfigure cmake")
+  endif()
+endif()
+
+if(MSVC)
+  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc")
+  set(CMAKE_CXX_FLAGS_RELEASE "/MP /EHsc")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Zi /MP /EHsc")
+  # Forcing the use of a static run-time library linkage, using the dynamic leads Pulse to not always play well in other environments
+  # Specifically, I had to change this to get Pulse running again in a JVM due to mutex related crashes with recent JDK versions
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 #-----------------------------------------------------------------------------
 # SUPERBUILD
 #-----------------------------------------------------------------------------
@@ -148,7 +217,6 @@ if(${PROJECT_NAME}_SUPERBUILD)
     define_dependency(absl)
   endif()
   if(${PROJECT_NAME}_PYTHON_API)
-    find_package (Python3 COMPONENTS Interpreter Development)
     if(Python3_FOUND)
       define_dependency(pybind11)
       message(STATUS "Using python: ${Python3_EXECUTABLE}")
@@ -186,12 +254,6 @@ endif()
 #                               INNERBUILD
 #-----------------------------------------------------------------------------
 
-if(MSVC)
-# Using MD as that seems to be what I run into alot, you could change these to /MT and /MTd if you want...
-  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc" CACHE STRING INTERNAL FORCE)
-  set(CMAKE_CXX_FLAGS_RELEASE "/MD /MP /EHsc" CACHE STRING INTERNAL FORCE)
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MD /Zi /MP /EHsc" CACHE STRING INTERNAL FORCE)
-endif()
 if ( CMAKE_COMPILER_IS_GNUCC )
   # Protobuf is not using the same variable name in its swap specificiation definitions
   # Resulting in a LOT of warnings per file that includes protobuf headers, slowing the build down
@@ -251,33 +313,6 @@ add_subdirectory(data)
 #--------------------------------------------------------------------------
 # Setup development utility scripts
 #--------------------------------------------------------------------------
-
-# Pulse uses Python in its development utility scripts
-find_package(Python3 COMPONENTS Interpreter)
-if(Python3_FOUND)
-  message(STATUS "Using Python: ${Python3_EXECUTABLE}")
-  #get_filename_component(Python_CMD ${Python3_EXECUTABLE} NAME)
-  set(Python_CMD ${Python3_EXECUTABLE})
-else()
-  set(Python_CMD "python")
-  message(WARNING "The Pulse `run` utility uses python, which could not be found")
-  message(WARNING "To use the `run` utility, setup python in this environment and reconfigure cmake")
-endif()
-
-# Pulse uses Java in its development utility scripts
-find_package(Java)
-if(Java_FOUND)
-  include(UseJava)
-  if(Java_JAVA_EXECUTABLE)
-    message(STATUS "Using Java executable : ${Java_JAVA_EXECUTABLE}")
-    set(Java_CMD ${Java_JAVA_EXECUTABLE})
-  else()
-    message(STATUS "Could not find Java_JAVA_EXECUTABLE")
-  endif()
-else()
-  message(WARNING "The Pulse `run` utility uses Java, which could not be found")
-  message(WARNING "To use the `run` utility, setup Java in this environment and reconfigure cmake")
-endif()
 
 if(NOT WIN32)
   # Create setup shell script to create an environment for running examples
