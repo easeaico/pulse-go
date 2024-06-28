@@ -359,7 +359,7 @@
       {
         "TableName": "Segment4SegmentTable",
         "ScenarioName": "Scenario1",
-        "Segment": 3,
+        "Segment": 4,
         "DataRequestFile": ["CSTARSDataRequests.json"],
         "Header": []
       },
