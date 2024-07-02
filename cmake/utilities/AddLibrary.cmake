@@ -95,8 +95,6 @@ function(add_library_ex target)
                        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${CMAKE_INSTALL_PREFIX}/lib)
   endif()
 
-  set_target_properties(${target} PROPERTIES PREFIX "")
-
   #-----------------------------------------------------------------------------
   # Link libraries to current target
   #-----------------------------------------------------------------------------
