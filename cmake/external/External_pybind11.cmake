@@ -8,6 +8,7 @@ add_external_project_ex( pybind11
   URL https://github.com/pybind/pybind11/archive/refs/tags/v2.11.1.zip
   URL_MD5 c62d9e05243bd31cdb3bae1bb2f56655
   CMAKE_CACHE_ARGS
+    -DPython_ROOT_DIR:PATH=${Python_ROOT_DIR}
     -DCMAKE_INSTALL_PREFIX:STRING=${pybind11_PREFIX}/install
     -DPYBIND11_TEST:BOOL=OFF 
   RELATIVE_INCLUDE_PATH "include"

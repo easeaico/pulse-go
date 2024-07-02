@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 # Add External Project
 #-----------------------------------------------------------------------------
-if(${PROJECT_NAME}_MULTI_BUILD)
+if(Pulse_MULTI_BUILD)
   message(STATUS "Building multiple protobuf configurations at once")
   set(PROTOBUF_DEBUG_BLD COMMAND ${CMAKE_COMMAND} --build . --config debug)
   set(PROTOBUF_RELEASE_BLD COMMAND ${CMAKE_COMMAND} --build . --config release)
@@ -31,7 +31,7 @@ else()
 endif()
 
 set(BUILD_PROTOC_BINARIES ON)
-if(${PROJECT_NAME}_C_AS_STATIC)
+if(Pulse_C_AS_STATIC)
   set(BUILD_PROTOC_BINARIES OFF)
 endif()
 
@@ -57,7 +57,7 @@ add_external_project_ex( protobuf
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
-    -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=ON # Match our settings in main CMakeLists.txt
+    -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=${Pulse_MSVC_STATIC_RUNTIME}
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
     -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
     ${_pb_args}
