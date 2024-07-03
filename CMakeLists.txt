@@ -87,9 +87,7 @@ option(Pulse_CSHARP_API "Build C# API" OFF)
 option(Pulse_JAVA_API "Build Java API and utils for data generation and testing" ON)
 option(Pulse_PYTHON_API "Build Python API and utils for data generation and testing" ON)
 option(Pulse_DEPENDENT_BUILD "Pulse is being built as part of a different superbuild" OFF)
-# Defaulting the use of a static run-time library linkage to ON, using the dynamic leads Pulse to not always play well in other environments
-# Specifically, I had to change this to get Pulse running again in a JVM due to mutex related crashes with recent JDK versions
-option(Pulse_MSVC_STATIC_RUNTIME "Link static runtime libraries" ON)
+option(Pulse_MSVC_STATIC_RUNTIME "Link static runtime libraries" OFF)
 # This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
 # This will be in a <build>/Innerbuild/src/schema
 set(Pulse_NATIVE_BUILD_DIR "" CACHE PATH "For crosscompiling, provide the root folder of a native build with protobuf bindings")
@@ -168,6 +166,13 @@ if (Pulse_JAVA_API)
   else()
     message(WARNING "The Pulse `run` utility uses Java, which could not be found")
     message(WARNING "To use the `run` utility, setup Java in this environment and reconfigure cmake")
+  endif()
+  
+  # Running into this problem when running Pulse through certain JVMs
+  # There may be a better fix in the future, but for now  
+  # https://stackoverflow.com/questions/78598141/first-stdmutexlock-crashes-in-application-built-with-latest-visual-studio
+  if (MSVC)
+    add_compile_definitions(_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
   endif()
 else()
   remove_cmake_variables(Java_)
