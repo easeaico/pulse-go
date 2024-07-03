@@ -809,13 +809,12 @@ namespace pulse
     if (GetSettings().HasInspirationPatientTriggerPressure())
     {
       triggerDefined = true;
+
       double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
       double previousRelativePressure_cmH2O = m_PreviousConnectionPressure_cmH2O - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-      if (GetSettings().HasPositiveEndExpiratoryPressure())
-      {
-        relativePressure_cmH2O -= GetSettings().GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
-      }
-      if (relativePressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
+      double triggerPressure_cmH2O = relativePressure_cmH2O - GetExtrinsicPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
+
+      if (triggerPressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
       {
@@ -959,9 +958,9 @@ namespace pulse
   }
 
   //--------------------------------------------------------------------------------------------------
-/// \brief
-/// Close the inspiratory valve during exhale when using a pressure trigger.
-//--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Close the inspiratory valve during exhale when using a pressure trigger.
+  //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::SetValves()
   {
     if (GetSettings().HasInspirationPatientTriggerPressure() &&
@@ -974,9 +973,9 @@ namespace pulse
   }
 
   //--------------------------------------------------------------------------------------------------
-/// \brief
-/// Set the resistance to ground that causes air to leak out of the ventilator-respiratory system.
-//--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Set the flow to zero to hold.
+  //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::SetHold()
   {
     if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
