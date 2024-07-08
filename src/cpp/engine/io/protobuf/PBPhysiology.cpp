@@ -456,6 +456,7 @@ namespace pulse
     dst.m_InspiratoryToExpiratoryPauseFraction = src.inspiratorytoexpiratorypausefraction();
     dst.m_ResidueFraction = src.residuefraction();
     dst.m_PreviousDyspneaSeverity = src.previousdyspneaseverity();
+    dst.m_MechanoreceptorsDyspneaFactor = src.mechanoreceptorsdyspneafactor();
 
     dst.m_LeftAlveoliDecrease_L = src.leftalveolidecrease_l();
     dst.m_RightAlveoliDecrease_L = src.rightalveolidecrease_l();
@@ -523,6 +524,7 @@ namespace pulse
     dst.set_inspiratorytoexpiratorypausefraction(src.m_InspiratoryToExpiratoryPauseFraction);
     dst.set_residuefraction(src.m_ResidueFraction);
     dst.set_previousdyspneaseverity(src.m_PreviousDyspneaSeverity);
+    dst.set_mechanoreceptorsdyspneafactor(src.m_MechanoreceptorsDyspneaFactor);
 
     dst.set_activeconsciousrespirationcommand(src.m_ActiveConsciousRespirationCommand);
 

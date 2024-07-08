@@ -92,6 +92,7 @@ namespace pulse
     /**/void ConsciousRespiration();
     /**/double VolumeToDriverPressure(double TargetVolume);
     /**/void UpdateDriverPressure();
+    /****/void CalculateMechanoreceptors();
     /**/void UpdateDriverPeriod();
     /**/double UpdateTargetVentilation(double targetAlveolarVentilation_L_Per_min);
     // Aerosol Deposition and various Effects
@@ -151,6 +152,7 @@ namespace pulse
     double m_InspiratoryToExpiratoryPauseFraction;
     double m_ResidueFraction;
     double m_PreviousDyspneaSeverity;
+    double m_MechanoreceptorsDyspneaFactor;
 
     // Conscious Respiration
     bool m_ActiveConsciousRespirationCommand;

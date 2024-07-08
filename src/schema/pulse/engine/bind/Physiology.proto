@@ -196,15 +196,16 @@ message RespiratoryData
   double                                   InspiratoryToExpiratoryPauseFraction                = 40;
   double                                   ResidueFraction                                     = 41;
   double                                   PreviousDyspneaSeverity                             = 42;
+  double                                   MechanoreceptorsDyspneaFactor                       = 43;
   
   // Conscious Breathing
-  bool                                     ActiveConsciousRespirationCommand                   = 43;
+  bool                                     ActiveConsciousRespirationCommand                   = 44;
   // Disease States
-  double                                   LeftAlveoliDecrease_L                               = 44;
-  double                                   RightAlveoliDecrease_L                              = 45;
+  double                                   LeftAlveoliDecrease_L                               = 45;
+  double                                   RightAlveoliDecrease_L                              = 46;
   // Overrides
-  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 46;
-  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 47;
+  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 47;
+  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 48;
 }
 
 message TissueData

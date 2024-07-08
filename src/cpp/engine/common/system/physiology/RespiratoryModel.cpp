@@ -264,6 +264,7 @@ namespace pulse
     m_PeakExpiratoryPressure_cmH2O = 0.0;
     m_PreviousTargetAlveolarVentilation_L_Per_min = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L) * m_VentilationFrequency_Per_min;
     m_PreviousDyspneaSeverity = 0.0;
+    m_MechanoreceptorsDyspneaFactor = 0.0;
 
     m_IERatioScaleFactor = 1.0;
 
@@ -1277,6 +1278,7 @@ namespace pulse
       (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
     {
       m_BreathingCycleTime_s = 0.0;
+      m_MechanoreceptorsDyspneaFactor = 0.0;
 
       if (m_PatientActions->HasConsciousRespiration())
       {
@@ -1544,7 +1546,7 @@ namespace pulse
       m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * m_BreathingCycleTime_s / InspiratoryHoldTimeStart_s);
     }
 
-    if (!m_PatientActions->HasConsciousRespiration())
+    if (!m_PatientActions->HasConsciousRespiration() && !HasActiveMechanics())
     {
       UpdateDriverPressure();
 
@@ -4654,21 +4656,39 @@ namespace pulse
     {
       dyspneaSeverity = 1.0;
       m_NotBreathing = true;
+      m_MechanoreceptorsDyspneaFactor = 0.0;
     }
-    else if (m_PreviousDyspneaSeverity != dyspneaSeverity &&
-      m_data.GetState() == EngineState::Active) //Only dampen response if we're not initializing
+    else
     {
-      //Dampen the change to prevent potential craziness
-      //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
-      double dampenFraction_perSec = 0.001 * 50.0;
-      dyspneaSeverity = GeneralMath::Damper(dyspneaSeverity, m_PreviousDyspneaSeverity, dampenFraction_perSec, m_data.GetTimeStep_s());
+      // ------------------------------------------------------------------------------------------------------
+      if (m_PreviousDyspneaSeverity != dyspneaSeverity &&
+        m_data.GetState() == EngineState::Active) //Only dampen response if we're not initializing
+      {
+        //Dampen the change to prevent potential craziness
+        //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+        double dampenFraction_perSec = 0.001 * 50.0;
+        dyspneaSeverity = GeneralMath::Damper(dyspneaSeverity, m_PreviousDyspneaSeverity, dampenFraction_perSec, m_data.GetTimeStep_s());
+      }
+
+      //------------------------------------------------------------------------------------------------------
+      //Mechanoreceptors
+      CalculateMechanoreceptors();
+
+      //Dampen the change to prevent pressure waveform strangeness
+      //This needs to be way faster than other dyspnea reasons because it's applied during each breath seperately
+      double dampenFraction_perSec = 0.01;
+      double mechanoreceptorsDyspneaFactor = GeneralMath::Damper(m_MechanoreceptorsDyspneaFactor, m_PreviousDyspneaSeverity, dampenFraction_perSec, m_data.GetTimeStep_s());
+
+      dyspneaSeverity = MAX(dyspneaSeverity, mechanoreceptorsDyspneaFactor);
     }
+
     m_PreviousDyspneaSeverity = dyspneaSeverity;
 
+
+    //------------------------------------------------------------------------------------------------------
     //Reduce the tidal volume by the percentage given
     m_DriverPressure_cmH2O = m_DriverPressure_cmH2O * (1 - dyspneaSeverity);
 
-    //------------------------------------------------------------------------------------------------------
     //Modifiers
     if (m_MechanicsModifiers->HasTidalVolumeMultiplier())
     {
@@ -4678,6 +4698,44 @@ namespace pulse
 #ifdef DEBUG
     m_data.GetDataTrack().Probe("dyspneaSeverity", dyspneaSeverity);
 #endif
+  }
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Reduce the driver pressure based on pulmonary mechanoreceptors.
+///
+/// \details
+/// This method scales the driver pressure lower due to the pulmonary mechanoreceptors. There is no
+/// scaling unless inflation is caused by an outside source.
+//--------------------------------------------------------------------------------------------------
+  void RespiratoryModel::CalculateMechanoreceptors()
+  {
+    double airwayPressure_cmH2O = m_AirwayNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+    double flow_L_Per_s = -m_DriverPressurePath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+
+    if (airwayPressure_cmH2O <= 0.0 //Not assisted
+      || !(flow_L_Per_s > 0.01)) //Exhaling or not breathing
+    {
+      return;
+    }
+
+    //What it has
+    double musclePressure_cmH2O = m_RespiratoryMuscleNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+    double pressureDifference_cmH2O = airwayPressure_cmH2O - musclePressure_cmH2O;
+    double respiratoryResistance_cmH2O_s_Per_L = std::abs(pressureDifference_cmH2O / flow_L_Per_s);
+
+    //What it wants
+    double unassistedPressureDifference_cmH2O = 0.0 - m_DriverPressure_cmH2O;
+    double unassistedFlow_L_Per_s = unassistedPressureDifference_cmH2O / respiratoryResistance_cmH2O_s_Per_L;
+
+    //To achieve target
+    double assistedDriverPressure_cmH2O = -(respiratoryResistance_cmH2O_s_Per_L * unassistedFlow_L_Per_s - airwayPressure_cmH2O);
+    double mechanoreceptorsDyspneaFactor = 1.0 - assistedDriverPressure_cmH2O / -m_DriverPressure_cmH2O;
+
+    mechanoreceptorsDyspneaFactor = MIN(mechanoreceptorsDyspneaFactor, 0.8); //Cap it
+
+    //Hold onto it in a member veriable so it does reduce later and mess up the waveform
+    m_MechanoreceptorsDyspneaFactor = MAX(m_MechanoreceptorsDyspneaFactor, mechanoreceptorsDyspneaFactor);
   }
 
 //--------------------------------------------------------------------------------------------------
