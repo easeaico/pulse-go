@@ -2488,6 +2488,15 @@ namespace pulse
     m_RightHeartElastanceMax_mmHg_Per_mL *= strokeVolumeMultiplier;
 #endif
 
+
+    if (m_data.GetState() > EngineState::InitialStabilization) //Only dampen response if we're not initializing
+    {
+      //Dampen the change to prevent craziness
+      double previousHeartDriverFrequency_Per_Min = GetHeartRate(FrequencyUnit::Per_min);
+      double dampenFraction_perSec = 1.0;
+      HeartDriverFrequency_Per_Min = GeneralMath::Damper(HeartDriverFrequency_Per_Min, previousHeartDriverFrequency_Per_Min, dampenFraction_perSec, m_data.GetTimeStep_s());
+    }
+
     m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
     // Snap the cycle period to the nearest time step
     m_DriverCyclePeriod_s = std::floor((m_DriverCyclePeriod_s / m_data.GetTimeStep_s()) + 0.5) * m_data.GetTimeStep_s();

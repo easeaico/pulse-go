@@ -2289,12 +2289,12 @@ namespace pulse
 
     m_MeanAirwayPressure_cmH2O->Sample(transrespiratoryPressure_cmH2O);
 
-    if (abs(tracheaFlow_L_Per_s) > ZERO_APPROX)
+    if (abs(tracheaFlow_L_Per_s) > 0.001)
     {
       double resistance_cmH2O_s_Per_L = (airwayOpeningPressure_cmH2O - alveolarPressure_cmH2O) / tracheaFlow_L_Per_s;
       if (resistance_cmH2O_s_Per_L > 0.0)
       {
-        if (tracheaFlow_L_Per_s > 0.0)
+        if (m_PharynxToCarina->GetFlow(VolumePerTimeUnit::L_Per_s) > 0.0)
         {
           GetInspiratoryRespiratoryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
@@ -3001,6 +3001,23 @@ namespace pulse
       //The dead space cannot be greater than the FRC in our model
       double restrictiveSeverity = 0.0;
 
+      //Pneumonia
+      //Exacerbation will overwrite the condition, even if it means improvement
+      if (m_data.GetConditions().HasPneumonia() || m_PatientActions->HasPneumoniaExacerbation())
+      {
+        double severity = 0.0;
+        if (m_PatientActions->HasPneumoniaExacerbation())
+        {
+          severity = m_PatientActions->GetPneumoniaExacerbation().GetSeverity(cmpt).GetValue();
+        }
+        else
+        {
+          severity = m_data.GetConditions().GetPneumonia().GetSeverity(cmpt).GetValue();
+        }
+
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
+      }
+
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
@@ -3063,8 +3080,8 @@ namespace pulse
         interpolatorPoints =
         {
           {0.0, 0.0}, //None
-          {0.3, 0.0}, //Mild
-          {0.6, 0.060}, //Moderate
+          {0.3, 0.015}, //Mild
+          {0.6, 0.050}, //Moderate
           {0.9, 0.120}, //Severe
           {1.0, 0.200}  //Max
         };
@@ -3516,15 +3533,15 @@ namespace pulse
       {
         {0.0, 1.0}, //None
         {0.3, 10.0}, //Mild
-        {0.6, 50.0}, //Moderate
+        {0.6, 60.0}, //Moderate
         {0.9, 100.0}, //Severe
         {1.0, 150.0}  //Max
       };
       std::vector<std::pair<double, double>> exhaleInterpolatorPoints =
       {
         {0.0, 1.0}, //None
-        {0.3, 10.0}, //Mild
-        {0.6, 100.0}, //Moderate
+        {0.3, 35.0}, //Mild
+        {0.6, 120.0}, //Moderate
         {0.9, 180.0}, //Severe
         {1.0, 250.0}  //Max
       };
@@ -4203,8 +4220,8 @@ namespace pulse
         {
           {0.0, 1.0}, //None
           {0.3, 1.0}, //Mild
-          {0.6, 0.500}, //Moderate
-          {0.9, 0.080}, //Severe
+          {0.6, 1.0}, //Moderate
+          {0.9, 0.075}, //Severe
           {1.0, 0.050}  //Max
         };
 
@@ -4281,8 +4298,17 @@ namespace pulse
 
       //-------------------------------------------------------------------------------------------------------------------
 
+      double previousPulmonaryCapillaryResistance = pulmonaryCapillaryPath->GetResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       double pulmonaryCapillaryResistance = pulmonaryCapillaryPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       pulmonaryCapillaryResistance *= pulmonaryResistanceMultiplier;
+
+      if (m_data.GetState() > EngineState::InitialStabilization) //Only dampen response if we're not initializing
+      {
+        //Dampen the change to prevent potential craziness
+        double dampenFraction_perSec = 0.001 * 50.0;
+        pulmonaryCapillaryResistance = GeneralMath::Damper(pulmonaryCapillaryResistance, previousPulmonaryCapillaryResistance, dampenFraction_perSec, m_data.GetTimeStep_s());
+      }
+
       pulmonaryCapillaryPath->GetNextResistance().SetValue(pulmonaryCapillaryResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
   }

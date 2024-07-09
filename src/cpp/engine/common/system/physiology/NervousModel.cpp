@@ -367,9 +367,9 @@ namespace pulse
     //Backout the pressure associated with the total sympathetic fraction from the last time step 
     // double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1.0 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
     // double deltaPressure_mmHg = meanArterialPressure_mmHg - m_LastMeanArterialPressure_mmHg;
+
     double totalSympatheticFraction = 1.0 / (1.0 + pow(meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg, nu));
     double parasympatheticFraction = 1.0 - totalSympatheticFraction;
-    m_LastMeanArterialPressure_mmHg = meanArterialPressure_mmHg;
     double normalizedMAP = meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg;
 
 #ifdef PROBE
