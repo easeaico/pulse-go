@@ -2493,7 +2493,7 @@ namespace pulse
     {
       //Dampen the change to prevent craziness
       double previousHeartDriverFrequency_Per_Min = GetHeartRate(FrequencyUnit::Per_min);
-      double dampenFraction_perSec = 1.0;
+      double dampenFraction_perSec = 2.0;
       HeartDriverFrequency_Per_Min = GeneralMath::Damper(HeartDriverFrequency_Per_Min, previousHeartDriverFrequency_Per_Min, dampenFraction_perSec, m_data.GetTimeStep_s());
     }
 

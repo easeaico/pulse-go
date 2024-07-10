@@ -4002,7 +4002,8 @@ namespace pulse
 
     // Bronchodilators
     //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
-    combinedSeverity *= 1.0 - m_AverageLocalTissueBronchodilationEffects / 0.001;
+    //TODO: Reevaluate how this works
+    //combinedSeverity *= 1.0 - m_AverageLocalTissueBronchodilationEffects / 0.001;
     combinedSeverity = LIMIT(combinedSeverity, 0.0, 1.0);
 
     m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.5 * 0.2, combinedSeverity);
@@ -4184,9 +4185,9 @@ namespace pulse
 
       std::vector<std::pair<double, double>>  interpolatorPoints =
       {
-        {0.0, 1.0}, //None
-        {0.3, 0.566}, //Mild
-        {0.6, 0.320}, //Moderate
+        {0.0, 1.000}, //None
+        {0.3, 0.500}, //Mild
+        {0.6, 0.200}, //Moderate
         {0.9, 0.100}, //Severe
         {1.0, 0.050}  //Max
       };
@@ -4218,10 +4219,10 @@ namespace pulse
 
         interpolatorPoints =
         {
-          {0.0, 1.0}, //None
-          {0.3, 1.0}, //Mild
-          {0.6, 1.0}, //Moderate
-          {0.9, 0.075}, //Severe
+          {0.0, 1.000}, //None
+          {0.3, 0.500}, //Mild
+          {0.6, 0.200}, //Moderate
+          {0.9, 0.100}, //Severe
           {1.0, 0.050}  //Max
         };
 
