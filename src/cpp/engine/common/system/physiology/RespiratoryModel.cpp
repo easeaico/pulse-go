@@ -3932,6 +3932,11 @@ namespace pulse
         obstructiveSeverity = MAX(obstructiveSeverity, emphysemaSeverity);
       }
 
+      // Bronchodilators
+      //When a bronchodilator (like albuterol) is administered, the bronchodilation also causes the IE ratio to correct itself
+      obstructiveSeverity *= 1.0 - m_AverageLocalTissueBronchodilationEffects / 0.001;
+      obstructiveSeverity = LIMIT(obstructiveSeverity, 0.0, 1.0);
+
       //------------------------------------------------------------------------------------------------------
       //Restrictive = Increase
 
@@ -3999,12 +4004,6 @@ namespace pulse
     // Obstructive effects
     //Multiplier included to counterbalance effects of RC time constant
     double combinedSeverity = MAX(combinedObstructiveSeverity, combinedRestrictiveSeverity);
-
-    // Bronchodilators
-    //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
-    //TODO: Reevaluate how this works
-    //combinedSeverity *= 1.0 - m_AverageLocalTissueBronchodilationEffects / 0.001;
-    combinedSeverity = LIMIT(combinedSeverity, 0.0, 1.0);
 
     m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.5 * 0.2, combinedSeverity);
   }
@@ -4462,7 +4461,7 @@ namespace pulse
           {0.0, 1.0},   //None
           {0.3, 0.280}, //Mild
           {0.6, 0.181}, //Moderate
-          {0.9, 0.168}, //Severe
+          {0.9, 0.220}, //Severe
           {1.0, 0.100}  //Max
 
         };
