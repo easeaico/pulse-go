@@ -101,7 +101,7 @@
 </center>
 @endhtmlonly
 <center>
-<i>@figuredef {Scenario1Segment3Monitors}. Vitals and ventilator monitors for Segment 4.</i>
+<i>@figuredef {Scenario1Segment4Monitors}. Vitals and ventilator monitors for Segment 4.</i>
 </center><br>
 
 @insert ./validation/tables/CSTARS/Scenario1/Segment4SegmentTable.md
