@@ -2489,7 +2489,8 @@ namespace pulse
 #endif
 
 
-    if (m_data.GetState() > EngineState::InitialStabilization) //Only dampen response if we're not initializing
+    if (m_data.GetState() > EngineState::InitialStabilization && //Only dampen response if we're not initializing
+      !m_TransitionArrhythmia) //and not transitioning between arrhythmias
     {
       //Dampen the change to prevent craziness
       double previousHeartDriverFrequency_Per_Min = GetHeartRate(FrequencyUnit::Per_min);
