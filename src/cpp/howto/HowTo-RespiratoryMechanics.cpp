@@ -82,8 +82,6 @@ void HowToRespiratoryMechanics()
   double sideResistance = bronchiResistance + alveoliDuctResistance;
 
   double RespiratorySideCompliance_L_Per_cmH2O = compliance_mL_Per_cmH2O / 2.0;
-  double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O;
-  double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
 
   double totalBreathTime_s = 1.0 / (respirationRate_bpm / 60.0);
   double inspiratoryFraction = inspiratoryTime_s / totalBreathTime_s;

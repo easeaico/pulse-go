@@ -3201,6 +3201,7 @@ namespace pulse
     m_data.GetCurrentPatient().GetInspiratoryCapacity().SetValue(inspiratoryCapacity_L, VolumeUnit::L);
     m_data.GetCurrentPatient().GetVitalCapacity().SetValue(vitalCapacity_L, VolumeUnit::L);
 
+
     //---------------------------------------------------------------------------------------------------------------------------------------------
     //Mechanical Dead Space
     //This is from the environment settings
@@ -3213,6 +3214,45 @@ namespace pulse
       mechanicalDeadSpace_L = m_data.GetEnvironment().GetEnvironmentalConditions().GetMechanicalDeadSpace(VolumeUnit::L);
     }
     m_AirwayNode->GetNextVolume().SetValue(airwayBaselineVolume_L + mechanicalDeadSpace_L, VolumeUnit::L);
+
+
+    //------------------------------------------------------------------------------------------------------
+    //Guard against volume going negative... or even below the residual volume at all
+    //This is probably only needed for collapsing lungs or with the expanded respiratory system
+    iter = 0;
+    for (auto& itr : m_LungComponents)
+    {
+      LungComponent& cpt = itr.second;
+
+      SEFluidCircuitNode* alveoliNode = cpt.AlveoliNode;
+
+      double alveoliVolumeBaseline_L = alveoliNode->GetVolumeBaseline(VolumeUnit::L);
+      double alveoliVolumeRatio = alveoliVolumeBaseline_L / totalBaselineAlveoliVolume_L;
+      double alveoliVolume_L = alveoliNode->GetNextVolume(VolumeUnit::L);
+      double cptResidualVolume_L = m_data.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) * alveoliVolumeRatio;
+
+      if (alveoliVolume_L < cptResidualVolume_L)
+      {
+        double volumeIncrement_L = alveoliVolume_L - cptResidualVolume_L;
+
+        alveoliNode->GetNextVolume().SetReadOnly(false);
+        alveoliNode->GetVolume().SetReadOnly(false);
+        alveoliNode->GetNextVolume().SetValue(cptResidualVolume_L, VolumeUnit::L);
+        alveoliNode->GetVolume().SetValue(cptResidualVolume_L, VolumeUnit::L);
+        alveoliNode->GetNextVolume().SetReadOnly(true);
+        alveoliNode->GetVolume().SetReadOnly(true);
+
+        SEFluidCircuitNode* pleuralNode;
+        pleuralNode = cpt.Side == eSide::Right ? m_RightPleuralNode : m_LeftPleuralNode;
+
+        pleuralNode->GetNextVolume().SetReadOnly(false);
+        pleuralNode->GetVolume().SetReadOnly(false);
+        pleuralNode->GetNextVolume().Increment(volumeIncrement_L, VolumeUnit::L);
+        pleuralNode->GetVolume().Increment(volumeIncrement_L, VolumeUnit::L);
+        pleuralNode->GetNextVolume().SetReadOnly(true);
+        pleuralNode->GetVolume().SetReadOnly(true);
+      }
+    }
   }
 
   //--------------------------------------------------------------------------------------------------
