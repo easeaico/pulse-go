@@ -3050,12 +3050,12 @@ namespace pulse
     if (pleuralCavityPressureBaselineDiff_cmH2O > 0.0)
     {
       double maxPressureDiff_cmH2O = 10.0;
-      double maxResistanceMultiplier = 20.0;
+      double maxResistanceMultiplier = 10.0;
       pleuralCavityPressureBaselineDiff_cmH2O = MIN(pleuralCavityPressureBaselineDiff_cmH2O, maxPressureDiff_cmH2O);
 
       //Interpolate into a parabola to effect things much more at larger differences
       double factor = pleuralCavityPressureBaselineDiff_cmH2O / maxPressureDiff_cmH2O;
-      double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
+      double resistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, maxResistanceMultiplier, factor);
 
       //Use this resistance because it is after the shunt
       double rightPulmonaryVenousReturnResistance_mmHg_s_Per_mL = m_RightPulmonaryVenousReturnResistancePath->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -3078,9 +3078,7 @@ namespace pulse
     double maxResistanceMultiplier = 6.0;
     pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
 
-    //Interpolate into a parabola to effect things much more at larger differences
     double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
-    //double resistanceMultiplier = GeneralMath::ParbolicInterpolator(1.0, maxResistanceMultiplier, factor);
     double resistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, maxResistanceMultiplier, factor);
 
     double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistancePath->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
