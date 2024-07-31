@@ -4929,20 +4929,48 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Total time of one breathing cycle in seconds.
+  /// Return the appropriate compliance segment.
   ///
   //--------------------------------------------------------------------------------------------------
-  SESegment* RespiratoryModel::GetSegement(const std::vector<SESegment*>& segments, double volume_L)
+  SESegment* RespiratoryModel::GetSegement(std::vector<SESegment*>& segments, double volume_L)
   {
-    // Currently not checking that segment components are sorted or if there is overlap between segments
+    // Check if segments are sorted by BeginVolume
+    bool sorted = true;
+    for (size_t i = 1; i < segments.size(); ++i)
+    {
+      if (segments[i - 1]->GetBeginVolume(VolumeUnit::L) > segments[i]->GetBeginVolume(VolumeUnit::L))
+      {
+        sorted = false;
+        break;
+      }
+    }
 
+    if (!sorted)
+    {
+      Warning("Respiratory compliance segments are not sorted. Sorting them now.");
+      std::sort(segments.begin(), segments.end(), [](SESegment* a, SESegment* b) {
+        return a->GetBeginVolume(VolumeUnit::L) < b->GetBeginVolume(VolumeUnit::L);
+        });
+    }
+
+    // Check for overlapping segments
+    for (size_t i = 1; i < segments.size(); ++i)
+    {
+      if (segments[i - 1]->GetEndVolume(VolumeUnit::L) > segments[i]->GetBeginVolume(VolumeUnit::L))
+      {
+        Error("There are overlapping volume ranges in the respiratory compliance segments. Expected functionality is not guaranteed.");
+        return nullptr;
+      }
+    }
+
+    // Find and return the appropriate segment for the given volume
     for (SESegment* segment : segments)
     {
       if (segment->GetBeginVolume().IsInfinity())
       {
         if (segment->GetBeginVolume().IsPositive())
         {
-          Error("The begninng compliance segment volume be positive infinity");
+          Error("The beginning respiratory compliance segment volume cannot be positive infinity");
           return nullptr;
         }
 
@@ -4954,7 +4982,7 @@ namespace pulse
       {
         if (segment->GetBeginVolume().IsNegative())
         {
-          Error("The ending compliance segment volume cannot be negative infinity");
+          Error("The ending respiratory compliance segment volume cannot be negative infinity");
           return nullptr;
         }
 
@@ -4966,9 +4994,10 @@ namespace pulse
         return segment;
     }
 
-    Error("Could not find a compliance segment that bounds the provided volume "+std::to_string(volume_L)+"L");
+    Error("Could not find a respiratory compliance segment that bounds the provided volume " + std::to_string(volume_L) + "L");
     return nullptr;
   }
+
 
   std::string RespiratoryModel::GetCompartmentName(eLungCompartment m)
   {

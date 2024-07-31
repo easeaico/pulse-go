@@ -75,7 +75,7 @@ namespace pulse
     void UpdateDiffusion();
     void UpdatePulmonaryCapillary();
     void UpdatePulmonaryShunt();
-    SESegment* GetSegement(const std::vector<SESegment*>& segments, double volume_L);
+    SESegment* GetSegement(std::vector<SESegment*>& segments, double volume_L);
     //Overrides
     void SetRespiratoryResistance();
     void SetRespiratoryCompliance();
