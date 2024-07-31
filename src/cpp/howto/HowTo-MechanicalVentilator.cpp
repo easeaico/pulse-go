@@ -176,6 +176,26 @@ void HowToMechanicalVentilator()
   pe->GetEngineTracker()->LogRequestedValues();
 
 
+  // Expose all ventilator configuration settings from the higher-level modes
+  SEMechanicalVentilatorConfiguration vc_ac_config;
+  SEMechanicalVentilatorSettings& vc_ac_mv = vc_ac_config.GetSettings();
+  vc_ac.ToSettings(vc_ac_mv, pe->GetSubstanceManager());
+
+  // Now add an aerosol
+  const SESubstance* Albuterol = pe->GetSubstanceManager().GetSubstance("Albuterol");
+  SESubstanceConcentration& concentrationAlbuterol = vc_ac_mv.GetConcentrationInspiredAerosol(*Albuterol);
+  concentrationAlbuterol.GetConcentration().SetValue(1.0, MassPerVolumeUnit::mg_Per_L);
+
+  // Now add a gas
+  const SESubstance* Desflurane = pe->GetSubstanceManager().GetSubstance("Desflurane");
+  SESubstanceFraction& fractionDesflurane = vc_ac_mv.GetFractionInspiredGas(*Desflurane);
+  fractionDesflurane.GetFractionAmount().SetValue(0.06);
+
+  pe->ProcessAction(vc_ac_config);
+  AdvanceAndTrackTime_s(10.0, *pe);
+  pe->GetEngineTracker()->LogRequestedValues();
+
+
   // Here is an example of programming a custom ventilator mode
   SEMechanicalVentilatorConfiguration mv_config;
   SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
@@ -184,7 +204,8 @@ void HowToMechanicalVentilator()
   mv.SetExpirationWaveform(eDriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
   mv.GetPositiveEndExpiratoryPressure().SetValue(10.0, PressureUnit::cmH2O);
-  SESubstanceFraction& fractionFiO2 = mv.GetFractionInspiredGas(*pe->GetSubstanceManager().GetSubstance("Oxygen"));
+  const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  SESubstanceFraction& fractionFiO2 = mv.GetFractionInspiredGas(*O2);
   fractionFiO2.GetFractionAmount().SetValue(0.5);
   double respirationRate_per_min = 20.0;
   double IERatio = 0.5;
