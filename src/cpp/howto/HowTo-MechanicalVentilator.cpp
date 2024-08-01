@@ -93,6 +93,10 @@ void HowToMechanicalVentilator()
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit::L);
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalPositiveEndExpiratoryPressure", PressureUnit::cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_s);
+  // Substances
+  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albuterol", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Desflurane", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_L);
+
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo/HowTo_MechanicalVentilator.cpp.csv");
 
   //Dyspnea
