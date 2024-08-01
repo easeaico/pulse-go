@@ -3916,6 +3916,15 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::UpdateInspiratoryExpiratoryRatio()
   {
+    //Make inspiratory time short if ventilated
+    if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+    {
+      m_IERatioScaleFactor = 0.5;
+      return;
+    }
+
     m_IERatioScaleFactor = 1.0; //Reset
 
     double totalBaselineAlveoliVolume_L = 0.0;
@@ -4029,7 +4038,7 @@ namespace pulse
     }
 
     //------------------------------------------------------------------------------------------------------
-    //Set new value & Drugs/PD
+    //Set new value
 
     // Approximate mapping without frequency effects (standard respiration rate)
     //
@@ -4041,11 +4050,11 @@ namespace pulse
     // 1.5    | 0.5                  | 1:1 (1.0)
     // 2.0    | 0.67                 | 2:1 (2.0)
 
-    // Obstructive effects
-    //Multiplier included to counterbalance effects of RC time constant
-    double combinedSeverity = MAX(combinedObstructiveSeverity, combinedRestrictiveSeverity);
+    //Restrictive = Increased IE Ratio
+    m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 2.0, combinedRestrictiveSeverity);
 
-    m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.5 * 0.2, combinedSeverity);
+    //Obstructive = Decreased IE Ratio
+    m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.5, combinedObstructiveSeverity);
   }
 
   //--------------------------------------------------------------------------------------------------
