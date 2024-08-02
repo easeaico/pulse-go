@@ -4785,12 +4785,11 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::CalculateMechanoreceptors()
   {
-    if (!(m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
-      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+    if (!(m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
       m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator))
     {
       //Only do this with certain equipement
-      //For example, the simple mask causes this to kick in otherwise
+      //For example, the simple mask and anesthesia machine act weird
       return;
     }
 
