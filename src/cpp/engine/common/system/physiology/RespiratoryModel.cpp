@@ -4785,6 +4785,15 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::CalculateMechanoreceptors()
   {
+    if (!(m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator))
+    {
+      //Only do this with certain equipement
+      //For example, the simple mask causes this to kick in otherwise
+      return;
+    }
+
     double airwayPressure_cmH2O = m_AirwayNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
     double flow_L_Per_s = -m_DriverPressurePath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
