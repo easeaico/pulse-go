@@ -5,15 +5,13 @@
       "PatientFile": "Hassan.json"
   },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "DrugDataRequests.json",
+    "NervousDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest": 
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "NeuromuscularBlockLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SedationLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-SizeModifier", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-ReactivityModifier", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Succinylcholine", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Ketamine", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" }
     ]
