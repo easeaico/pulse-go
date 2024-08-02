@@ -190,7 +190,6 @@
     }
    }
   },
-  { "PatientAction": { "Dyspnea": { "TidalVolumeSeverity": { "Scalar0To1": { "Value": 1.0 } } } } },
   {
    "PatientAction": {
     "Intubation": {
@@ -237,7 +236,7 @@
      },
      "RespirationRate": {
       "ScalarFrequency": {
-       "Value": 16,
+       "Value": 12,
        "Unit": "1/min"
       }
      },
