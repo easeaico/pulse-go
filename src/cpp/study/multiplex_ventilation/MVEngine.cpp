@@ -699,7 +699,7 @@ namespace pulse::study::multiplex_ventilation
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
     printOpts.preserve_proto_field_names = true;
-    printOpts.always_print_primitive_fields = true;
+    printOpts.always_print_fields_with_no_presence = true;
     return google::protobuf::util::MessageToJsonString(src, &dst, printOpts).ok();
   }
   bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst)

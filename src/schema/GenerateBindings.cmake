@@ -145,6 +145,7 @@ if(Pulse_JAVA_API)
                           #unittest_well_known_types.proto
                           wrappers.proto
                           )
+
     #Generate the java API files from their proto files
     foreach(f ${__API_PROTO_FILES})
       execute_process(COMMAND ${BINDER} --proto_path=${protobuf_SRC}/src/
@@ -152,7 +153,11 @@ if(Pulse_JAVA_API)
                                           "${protobuf_SRC}/src/google/protobuf/${f}")
       message(STATUS "Java Binding file ${protobuf_SRC}/src/google/protobuf/${f}")
     endforeach()
-    
+    execute_process(COMMAND ${BINDER} --proto_path=${protobuf_SRC}/src/
+                                        --java_out=${java_bindings_DIR}
+                                          "java/core/src/main/resources/google/protobuf/java_features.proto")
+    message(STATUS "Java Binding file ${protobuf_SRC}/java/core/src/main/resources/google/protobuf/java_features.proto")
+
   # Copy these files to our source directory
   file(COPY "${protobuf_SRC}/java/core/src/main/java/com"
        DESTINATION ${java_bindings_DIR}
@@ -194,13 +199,10 @@ if(Pulse_PYTHON_API)
   find_package (Python3 COMPONENTS Interpreter)
   if(Python3_FOUND)
     set(python_bindings_DIR "${DST_ROOT}/python")
+    file(MAKE_DIRECTORY "${python_bindings_DIR}")
     delete_bindings(${python_bindings_DIR})
+    
     set( ENV{PROTOC} ${BINDER} )
-    execute_process(COMMAND ${Python3_EXECUTABLE} setup.py build
-                    WORKING_DIRECTORY "${protobuf_SRC}/python")
-    file(COPY "${protobuf_SRC}/python/build/lib/google"
-         DESTINATION ${python_bindings_DIR}
-    )
     foreach(f ${_FILES})
       message(STATUS "Python Binding file ${f}")
       execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}

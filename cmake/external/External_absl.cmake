@@ -13,15 +13,11 @@ endif()
 
 define_external_dirs_ex(absl)
 add_external_project_ex(absl
-  # URL https://github.com/abseil/abseil-cpp/archive/refs/tags/20240116.0.zip
-  # URL_MD5 "1aac81d51689e902d9d88e6fb0992623"
+  URL https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
+  URL_MD5 "740fb8f35ebdf82740c294bde408b9c0"
   
   #URL https://github.com/abseil/abseil-cpp/archive/refs/tags/20240116.2.zip
   #URL_MD5 "de7b132899d3ef28edbd7212fbd6a334"
-  
-  GIT_REPOSITORY https://github.com/aaron-bray/abseil-cpp.git
-  GIT_TAG msvc_runtime_library
-  GIT_SHALLOW TRUE
   
   CMAKE_CACHE_ARGS
     -DBUILD_SHARED_LIBS:BOOL=OFF
