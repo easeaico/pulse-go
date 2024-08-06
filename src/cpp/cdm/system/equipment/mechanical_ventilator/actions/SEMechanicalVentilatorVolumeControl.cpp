@@ -19,7 +19,7 @@ SEMechanicalVentilatorVolumeControl::SEMechanicalVentilatorVolumeControl(Logger*
   m_InspirationPatientTriggerPressure = nullptr;
   m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   m_InspiratoryPeriod = nullptr;
-  m_PositiveEndExpiredPressure = nullptr;
+  m_PositiveEndExpiratoryPressure = nullptr;
   m_RespirationRate = nullptr;
   m_TidalVolume = nullptr;
   m_Slope = nullptr;
@@ -34,7 +34,7 @@ SEMechanicalVentilatorVolumeControl::~SEMechanicalVentilatorVolumeControl()
   SAFE_DELETE(m_InspirationPatientTriggerPressure);
   m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   SAFE_DELETE(m_InspiratoryPeriod);
-  SAFE_DELETE(m_PositiveEndExpiredPressure);
+  SAFE_DELETE(m_PositiveEndExpiratoryPressure);
   SAFE_DELETE(m_RespirationRate);
   SAFE_DELETE(m_TidalVolume);
   SAFE_DELETE(m_Slope);
@@ -50,7 +50,7 @@ void SEMechanicalVentilatorVolumeControl::Clear()
   INVALIDATE_PROPERTY(m_InspirationPatientTriggerFlow);
   INVALIDATE_PROPERTY(m_InspirationPatientTriggerPressure);
   INVALIDATE_PROPERTY(m_InspiratoryPeriod);
-  INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
+  INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
   INVALIDATE_PROPERTY(m_RespirationRate);
   INVALIDATE_PROPERTY(m_TidalVolume);
   INVALIDATE_PROPERTY(m_Slope);
@@ -101,7 +101,7 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
     s.GetInspirationTargetFlow().Set(GetFlow());
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
     s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
-    s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
+    s.GetPositiveEndExpiratoryPressure().Set(GetPositiveEndExpiratoryPressure());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
 
     // Optional Values (Transfer data, let the SEMechanicalVentilatorSettings class handle precedence)
@@ -137,10 +137,13 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
 
 bool SEMechanicalVentilatorVolumeControl::IsValid() const
 {
+  if (!IsActive())
+    return true;
+
   return SEMechanicalVentilatorMode::IsValid() &&
     HasFlow() &&
     HasFractionInspiredOxygen() &&
-    HasPositiveEndExpiredPressure() &&
+    HasPositiveEndExpiratoryPressure() &&
     HasRespirationRate() &&
     HasTidalVolume();
     // Everything else is optional
@@ -170,8 +173,8 @@ const SEScalar* SEMechanicalVentilatorVolumeControl::GetScalar(const std::string
   //  return &GetInspirationWaveform();
   if (name.compare("InspiratoryPeriod") == 0)
     return &GetInspiratoryPeriod();
-  if (name.compare("PositiveEndExpiredPressure") == 0)
-    return &GetPositiveEndExpiredPressure();
+  if (name.compare("PositiveEndExpiratoryPressure") == 0)
+    return &GetPositiveEndExpiratoryPressure();
   if (name.compare("RespirationRate") == 0)
     return &GetRespirationRate();
   if (name.compare("TidalVolume") == 0)
@@ -239,21 +242,21 @@ double SEMechanicalVentilatorVolumeControl::GetInspiratoryPeriod(const TimeUnit&
   return m_InspiratoryPeriod->GetValue(unit);
 }
 
-bool SEMechanicalVentilatorVolumeControl::HasPositiveEndExpiredPressure() const
+bool SEMechanicalVentilatorVolumeControl::HasPositiveEndExpiratoryPressure() const
 {
-  return m_PositiveEndExpiredPressure != nullptr;
+  return m_PositiveEndExpiratoryPressure != nullptr;
 }
-SEScalarPressure& SEMechanicalVentilatorVolumeControl::GetPositiveEndExpiredPressure()
+SEScalarPressure& SEMechanicalVentilatorVolumeControl::GetPositiveEndExpiratoryPressure()
 {
-  if (m_PositiveEndExpiredPressure == nullptr)
-    m_PositiveEndExpiredPressure = new SEScalarPressure();
-  return *m_PositiveEndExpiredPressure;
+  if (m_PositiveEndExpiratoryPressure == nullptr)
+    m_PositiveEndExpiratoryPressure = new SEScalarPressure();
+  return *m_PositiveEndExpiratoryPressure;
 }
-double SEMechanicalVentilatorVolumeControl::GetPositiveEndExpiredPressure(const PressureUnit& unit) const
+double SEMechanicalVentilatorVolumeControl::GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const
 {
-  if (m_PositiveEndExpiredPressure == nullptr)
+  if (m_PositiveEndExpiratoryPressure == nullptr)
     return SEScalar::dNaN();
-  return m_PositiveEndExpiredPressure->GetValue(unit);
+  return m_PositiveEndExpiratoryPressure->GetValue(unit);
 }
 
 bool SEMechanicalVentilatorVolumeControl::HasRespirationRate() const

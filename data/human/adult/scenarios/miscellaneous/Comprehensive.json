@@ -297,7 +297,7 @@
             }
           },
           "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
+          "PositiveEndExpiratoryPressure": {
             "ScalarPressure": {
               "Value": 1.0,
               "Unit": "cmH2O"

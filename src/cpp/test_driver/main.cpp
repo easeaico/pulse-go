@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
       //cdmTest.ConvertScenarioLogs(cdmDir);
 
       // Property Tests
-      //cdmTest.ScalarTest(cdmDir);
+      cdmTest.ScalarTest(cdmDir);
       //cdmTest.UnitsTest(cdmDir);
       //cdmTest.WaveformInterpolatorTest(cdmDir);
 

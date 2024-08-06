@@ -65,6 +65,11 @@ POP_PROTO_WARNINGS
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
 #include "cdm/patient/actions/SEPatientAssessmentRequest.h"
 #include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "cdm/patient/actions/SEAcuteStress.h"
@@ -284,6 +289,16 @@ void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::Actio
 
   if (src.HasMechanicalVentilatorConfiguration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorConfiguration));
+  if (src.HasMechanicalVentilatorContinuousPositiveAirwayPressure())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorContinuousPositiveAirwayPressure));
+  if (src.HasMechanicalVentilatorPressureControl())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorPressureControl));
+  if (src.HasMechanicalVentilatorVolumeControl())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorVolumeControl));
+  if (src.HasMechanicalVentilatorHold())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorHold));
+  if (src.HasMechanicalVentilatorLeak())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorLeak));
 }
 void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {

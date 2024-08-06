@@ -1188,8 +1188,8 @@ When positive pressure ventilation is applied (i.e., mechanical ventilator or an
     <th>Severe</th>
   </tr>
  <tr><td>Alveolar Dead Space (L)</td><td>Respiratory</td><td>0</td><td>0</td><td>Polynomial Growth</td><td>0</td><td>0.03</td><td>0.15</td><td>Linear Growth</td><td>0.3</td><td>0.6</td><td>0.9</td></tr>
- <tr><td>Airway Resistance (cmH20-s/L)</td><td>Respiratory</td><td>1.125</td><td>12.375</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
- <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Linear Growth</td><td>8.5</td><td>1.7</td><td>2.4</td></tr>
+ <tr><td>Airway Resistance (cmH2O-s/L)</td><td>Respiratory</td><td>1.125</td><td>12.375</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
+ <tr><td>Bronchi Resistance (cmH2O-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Linear Growth</td><td>8.5</td><td>1.7</td><td>2.4</td></tr>
  <tr><td>Lung Compliance (L/cmH2O)</td><td>Respiratory</td><td>0.1</td><td>0.04</td><td>Exponential Decay</td><td>0.07</td><td>0.05</td><td>0.04</td><td>Exponential Growth</td><td>0.1</td><td>0.11</td><td>0.14</td></tr>
  <tr><td>Inspiratory-Expiratory Ratio</td><td>Respiratory</td><td>0.5</td><td>0.5</td><td>Linear Growth</td><td>0.7</td><td>1.1</td><td>1.5</td><td>Linear Decay</td><td>0.35</td><td>0.22</td><td>0.12</td></tr>
  <tr><td>Diffusion Surface Area (m^2)</td><td>Respiratory</td><td>68</td><td>68</td><td>Exponential Decay</td><td>34</td><td>17</td><td>9</td><td>Exponential Decay</td><td>39</td><td>22</td><td>12</td></tr>

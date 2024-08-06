@@ -18,7 +18,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Initial patient set generator
       - Can create large patient sets using permutations of starting HR, RR, MAP, Age, Height, BMI, BFF and other patient properties
     - Injury set generator
-      - For each patient in a patient set, will apply and run a permutation of inujuries such as (but not limited to) Hemorrhage, AirwayObstruction, Tension Tneumothorax
+      - For each patient in a patient set, will apply and run a permutation of inujuries such as (but not limited to) Hemorrhage, AirwayObstruction, Tension Pneumothorax
       - Convience modes provided to generate a set of preprogrammed TCCC injuries 
   - Combined DataModelBindings, CommonDataModel and PulseEngine into a single Pulse library
     - This single library can be built as a shared/dynamic library or a static (default) library
@@ -42,14 +42,17 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Remove action vertical lines in our verification plots of actions that occur many many times. These actions are usually testing sensor driven inputs and make data interpretation difficult.
 
 - Physiology Model Improvements
-  - Dyspnea
+  - Updated dyspnea implementation
     - Split single severity into a Respiration Rate severity and Tidal Volume severity
     - This allows users to define breathing impairments with more precision
     - **Note** any previous scenarios using Dyspnea severity should apply that value to the Tidal Volume severity
   - Mechanical Ventilator Model
-    - Ventilation will immediately stop at limits
+    - Ventilation will immediately stop at limits for more precise targets
+    - Apneic patients will no long trigger the ventilator when the model trigger is selected
+    - Update naming conventions and parameter calculations to be match more widely accepted definitions
   - Respiratory Model
     - Improved handling of lung recruitment based on acinar ventilation for showing the pulmonary shunt changes due to increased ventilator PEEP
+    - Calibrated respiratory diseases for mechanically ventilated patients, including ARDS and COPD
   - Modifier Actions (SECardiovascularMechanicsModification, SERespiratoryMechanicsModification)
     - We now provide 2 new actions to modify the respiratory and cardiovascular model parameters
     - For example, you can provide a multipliers to modify the heart rate, respiration rate, systemic vascular and pulmonary resistances
@@ -61,7 +64,9 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Updated the sweat rate methodology to better meet validation
     - Calibrated the convective/evaporative heat loss due to sweating
     - Fixed a bug for substance tissue diffusion between the vascular and extracellular spaces
-    - Added new system data outputs for total body fluid volume, plasma osmolality, and plasm osmolarity
+    - Added new system data outputs for total body fluid volume, plasma osmolality, and plasma osmolarity
+  - Added a dehydration condition model that directly affects the Tissue, Cardiovascular and Energy systems
+  - Added a mechanical dead space parameter to the Environment
 
 ---
 

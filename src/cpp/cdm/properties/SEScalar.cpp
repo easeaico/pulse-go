@@ -179,11 +179,11 @@ double SEScalar::Increment(const SEScalar& s)
   if (!s.IsValid())
     Invalidate();
   else
-    IncrementValue(s.GetValue());
+    Increment(s.GetValue());
   return m_value;
 }
 
-double SEScalar::IncrementValue(double d)
+double SEScalar::Increment(double d)
 {
   if (!IsValid())
   {
@@ -194,7 +194,7 @@ double SEScalar::IncrementValue(double d)
   return m_value;
 }
 
-double SEScalar::ForceIncrementValue(double d)
+double SEScalar::ForceIncrement(double d)
 {
   if (!IsValid())
   {
@@ -205,16 +205,7 @@ double SEScalar::ForceIncrementValue(double d)
   return m_value;
 }
 
-double SEScalar::Multiply(const SEScalar& s)
-{
-  if (!s.IsValid())
-    Invalidate();
-  else
-    MultiplyValue(s.GetValue());
-  return m_value;
-}
-
-double SEScalar::MultiplyValue(double d)
+double SEScalar::Multiply(double d)
 {
   if (!IsValid())
   {

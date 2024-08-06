@@ -690,7 +690,7 @@ namespace pulse
   void TissueModel::ProduceAlbumin(double duration_s)
   {
     double massConverted_g = m_AlbuminProdutionRate_g_Per_s * duration_s;
-    m_LiverTissueAlbumin->GetMass().IncrementValue(massConverted_g, MassUnit::g);
+    m_LiverTissueAlbumin->GetMass().Increment(massConverted_g, MassUnit::g);
     m_LiverTissueAlbumin->Balance(BalanceLiquidBy::Mass);
   }
 
@@ -797,7 +797,7 @@ namespace pulse
     /// \todo Remove this temporary blood increment when diffusion is operational (0.125 is tuning factor)
     double acetoacetateIncrement_mg = 0.375 * KetoneProductionRate_mmol_Per_kg_s * m_Acetoacetate->GetMolarMass(MassPerAmountUnit::mg_Per_mmol)
       * SEScalar::Truncate(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 4) * time_s;
-    m_LiverAcetoacetate->GetMass().IncrementValue(acetoacetateIncrement_mg, MassUnit::mg);
+    m_LiverAcetoacetate->GetMass().Increment(acetoacetateIncrement_mg, MassUnit::mg);
     if (m_LiverAcetoacetate->GetMass(MassUnit::ug) < ZERO_APPROX)
     {
       m_LiverAcetoacetate->GetMass().SetValue(0.0, MassUnit::ug);
@@ -909,7 +909,7 @@ namespace pulse
       ULIM(O2TuningParameter, 1.0);
       massConverted_g *= O2TuningParameter;
       BLIM(massConverted_g, 0.0, TissueO2->GetMass(MassUnit::g));
-      TissueO2->GetMass().IncrementValue(-massConverted_g, MassUnit::g);
+      TissueO2->GetMass().Increment(-massConverted_g, MassUnit::g);
       if (std::abs(TissueO2->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         TissueO2->GetMass().SetValue(0.0, MassUnit::ug);
@@ -926,7 +926,7 @@ namespace pulse
       massConverted_g = co2Production_mol_Per_s * (m_CO2->GetMolarMass(MassPerAmountUnit::g_Per_mol)) * time_s;
 
       double CO2TuningParameter = 0.36 + m_data.GetEnergy().GetTotalWorkRateLevel().GetValue() * exerciseTuningFactor;
-      TissueCO2->GetMass().IncrementValue(CO2TuningParameter * massConverted_g, MassUnit::g);
+      TissueCO2->GetMass().Increment(CO2TuningParameter * massConverted_g, MassUnit::g);
       if (std::abs(TissueCO2->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         TissueCO2->GetMass().SetValue(0.0, MassUnit::ug);
@@ -958,7 +958,7 @@ namespace pulse
         double glucoseConsumption_mg_Per_s = glucoseConsumption_mol_Per_s * m_Glucose->GetMolarMass(MassPerAmountUnit::g_Per_mol);
         massConverted_g = glucoseConsumption_mg_Per_s * time_s;
         massConverted_g = MIN(massConverted_g, TissueGlucose->GetMass(MassUnit::g));
-        TissueGlucose->GetMass().IncrementValue(-massConverted_g, MassUnit::g);
+        TissueGlucose->GetMass().Increment(-massConverted_g, MassUnit::g);
 
         /// \todo Remove this temporary blood increment when diffusion is fully operational 
         // The insulin effect is based on the insulin dependent term in the model described in \cite tolic2000modeling
@@ -982,7 +982,7 @@ namespace pulse
         double TristearinConsumption_mol_Per_s = FractionLipidsAsTristearin * (1.0 - FractionCarbConsumed) * FractionOfLipidToATP * LocalATPUseRate_mol_Per_s;
         massConverted_g = TristearinConsumption_mol_Per_s * (m_Tristearin->GetMolarMass(MassPerAmountUnit::g_Per_mol)) * time_s;
         massConverted_g = MIN(massConverted_g, TissueTristearin->GetMass(MassUnit::g));
-        TissueTristearin->GetMass().IncrementValue(-massConverted_g, MassUnit::g);
+        TissueTristearin->GetMass().Increment(-massConverted_g, MassUnit::g);
 
         /// \todo Remove this temporary blood increment when diffusion is operational (0.125 is tuning factor)
         double tristearinIncrement_mg = -0.125 * TristearinConsumption_mol_Per_s * m_Tristearin->GetMolarMass(MassPerAmountUnit::mg_Per_mol) * time_s;
@@ -1005,7 +1005,7 @@ namespace pulse
         {
           double creatinineProductionRate_mg_Per_s = 2.0e-5; /// \todo Creatinine production rate should be a function of muscle mass.
           massConverted_g = creatinineProductionRate_mg_Per_s * time_s;
-          TissueCreatinine->GetMass().IncrementValue(massConverted_g, MassUnit::g);
+          TissueCreatinine->GetMass().Increment(massConverted_g, MassUnit::g);
           if (std::abs(TissueCreatinine->GetMass(MassUnit::ug)) < ZERO_APPROX)
           {
             TissueCreatinine->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1026,7 +1026,7 @@ namespace pulse
           {
             massConverted_g = lactateConsumptionTuningParameter * FractionOfLactateToGlucose * (TissueLactate->GetMass(MassUnit::g) /
               m_Lactate->GetMolarMass(MassPerAmountUnit::g_Per_mol)) * m_Glucose->GetMolarMass(MassPerAmountUnit::g_Per_mol);
-            TissueGlucose->GetMass().IncrementValue(massConverted_g, MassUnit::g);
+            TissueGlucose->GetMass().Increment(massConverted_g, MassUnit::g);
 
             if (std::abs(TissueGlucose->GetMass(MassUnit::ug)) < ZERO_APPROX)
             {
@@ -1145,12 +1145,12 @@ namespace pulse
       massDelta_mg = insulinFeedback * bloodGlucoseDelta_mg_Per_mL * transferTimeConstant_per_s * vascularVolume * time_s;
       if (massDelta_mg > m_MuscleVascularGlucose->GetMass(MassUnit::mg))
         massDelta_mg = m_MuscleVascularGlucose->GetMass(MassUnit::mg);
-      m_MuscleVascularGlucose->GetMass().IncrementValue(-massDelta_mg, MassUnit::mg);
+      m_MuscleVascularGlucose->GetMass().Increment(-massDelta_mg, MassUnit::mg);
       if (std::abs(m_MuscleVascularGlucose->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_MuscleVascularGlucose->GetMass().SetValue(0.0, MassUnit::ug);
       }
-      m_MuscleIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass().IncrementValue(massDelta_mg, MassUnit::mg);
+      m_MuscleIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass().Increment(massDelta_mg, MassUnit::mg);
       if (std::abs(m_MuscleIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_MuscleIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1163,12 +1163,12 @@ namespace pulse
       massDelta_mg = bloodGlucoseDelta_mg_Per_mL * transferTimeConstant_per_s * extravascularVolume * time_s;
       if (massDelta_mg > m_LiverIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass(MassUnit::mg))
         massDelta_mg = m_LiverIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass(MassUnit::mg);
-      m_LiverVascularGlucose->GetMass().IncrementValue(-massDelta_mg, MassUnit::mg);
+      m_LiverVascularGlucose->GetMass().Increment(-massDelta_mg, MassUnit::mg);
       if (std::abs(m_LiverVascularGlucose->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_LiverVascularGlucose->GetMass().SetValue(0.0, MassUnit::ug);
       }
-      m_LiverIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass().IncrementValue(massDelta_mg, MassUnit::mg);
+      m_LiverIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass().Increment(massDelta_mg, MassUnit::mg);
       if (std::abs(m_LiverIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_LiverIntracellular->GetSubstanceQuantity(*m_Glucose)->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1181,12 +1181,12 @@ namespace pulse
       massDelta_mg = insulinFeedback * bloodLipidDelta_mg_Per_mL * transferTimeConstant_per_s * vascularVolume * time_s;
       if (massDelta_mg > m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass(MassUnit::mg))
         massDelta_mg = m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass(MassUnit::mg);
-      m_FatVascularLipid->GetMass().IncrementValue(-massDelta_mg, MassUnit::mg);
+      m_FatVascularLipid->GetMass().Increment(-massDelta_mg, MassUnit::mg);
       if (std::abs(m_FatVascularLipid->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_FatVascularLipid->GetMass().SetValue(0.0, MassUnit::ug);
       }
-      m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass().IncrementValue(massDelta_mg, MassUnit::mg);
+      m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass().Increment(massDelta_mg, MassUnit::mg);
       if (std::abs(m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1198,12 +1198,12 @@ namespace pulse
       massDelta_mg = bloodLipidDelta_mg_Per_mL * transferTimeConstant_per_s * vascularVolume * time_s;
       if (massDelta_mg > m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass(MassUnit::mg))
         massDelta_mg = m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass(MassUnit::mg);
-      m_FatVascularLipid->GetMass().IncrementValue(-massDelta_mg, MassUnit::mg);
+      m_FatVascularLipid->GetMass().Increment(-massDelta_mg, MassUnit::mg);
       if (std::abs(m_FatVascularLipid->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_FatVascularLipid->GetMass().SetValue(0.0, MassUnit::ug);
       }
-      m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass().IncrementValue(massDelta_mg, MassUnit::mg);
+      m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass().Increment(massDelta_mg, MassUnit::mg);
       if (std::abs(m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         m_FatIntracellular->GetSubstanceQuantity(*m_Tristearin)->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1250,7 +1250,7 @@ namespace pulse
 
     //Patient weight decrease due to fluid mass lost from all sources
     double patientMassLost_kg = m_PreviousFluidMass_kg - currentFluidMass_kg;
-    m_data.GetCurrentPatient().GetWeight().IncrementValue(-patientMassLost_kg, MassUnit::kg);
+    m_data.GetCurrentPatient().GetWeight().Increment(-patientMassLost_kg, MassUnit::kg);
 
     double restingPatientMass_kg = m_data.GetInitialPatient().GetWeight(MassUnit::kg);
     double massLossFraction = (m_RestingFluidMass_kg - currentFluidMass_kg) / restingPatientMass_kg;
@@ -1327,7 +1327,7 @@ namespace pulse
 
     if (!cmpt.HasChildren())
     {
-      subQ->GetMass().IncrementValue(mass, unit);
+      subQ->GetMass().Increment(mass, unit);
       if (std::abs(subQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         subQ->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1340,7 +1340,7 @@ namespace pulse
       {
         double leafMass = mass * (leaf->GetVolume(VolumeUnit::mL) / volume_mL);
         SELiquidSubstanceQuantity* leafSubQ = leaf->GetSubstanceQuantity(sub);
-        leafSubQ->GetMass().IncrementValue(leafMass, unit);
+        leafSubQ->GetMass().Increment(leafMass, unit);
         if (std::abs(leafSubQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
         {
           leafSubQ->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1373,7 +1373,7 @@ namespace pulse
 
     if (!cmpt.HasChildren())
     {
-      subQ->GetMass().IncrementValue(mass, unit);
+      subQ->GetMass().Increment(mass, unit);
       if (std::abs(subQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         subQ->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1390,7 +1390,7 @@ namespace pulse
         {
           leafMass = mass * (leafSubQ->GetMass(MassUnit::ug) / mass_ug);
         }
-        leafSubQ->GetMass().IncrementValue(leafMass, unit);
+        leafSubQ->GetMass().Increment(leafMass, unit);
         if (std::abs(leafSubQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
         {
           leafSubQ->GetMass().SetValue(0.0, MassUnit::ug);
@@ -1544,11 +1544,11 @@ namespace pulse
       }
     }
 
-    pSubQ->GetVolume().IncrementValue(-DiffusedVolume_mL, VolumeUnit::mL);
-    sub.GetAlveolarTransfer().IncrementValue(DiffusedVolume_mL / timestep_s, VolumePerTimeUnit::mL_Per_s);
-    sub.GetDiffusingCapacity().IncrementValue(DiffusingCapacityO2_mL_Per_s_mmHg * sub.GetRelativeDiffusionCoefficient().GetValue(), VolumePerTimePressureUnit::mL_Per_s_mmHg);
+    pSubQ->GetVolume().Increment(-DiffusedVolume_mL, VolumeUnit::mL);
+    sub.GetAlveolarTransfer().Increment(DiffusedVolume_mL / timestep_s, VolumePerTimeUnit::mL_Per_s);
+    sub.GetDiffusingCapacity().Increment(DiffusingCapacityO2_mL_Per_s_mmHg * sub.GetRelativeDiffusionCoefficient().GetValue(), VolumePerTimePressureUnit::mL_Per_s_mmHg);
 
-    vSubQ->GetMass().IncrementValue(DiffusedMass_ug, MassUnit::ug);
+    vSubQ->GetMass().Increment(DiffusedMass_ug, MassUnit::ug);
     vSubQ->Balance(BalanceLiquidBy::Mass);
   }
 
@@ -1895,7 +1895,7 @@ namespace pulse
         }
         else
         {
-          vascularQuantity->GetMass().IncrementValue(-vascularMassLost_g, MassUnit::g);
+          vascularQuantity->GetMass().Increment(-vascularMassLost_g, MassUnit::g);
         }
         vascularQuantity->Balance(BalanceLiquidBy::Mass);
 
@@ -1903,14 +1903,14 @@ namespace pulse
         double intracellularMassLost_g = concentration_g_Per_L * intracellularPerspiredVolume_mL / 1000.0;
         SELiquidSubstanceQuantity* intracellularQuantity = tissue->GetIntracellular().GetSubstanceQuantity(component->GetSubstance());
         intracellularMassLost_g = MIN(intracellularQuantity->GetMass(MassUnit::g), intracellularMassLost_g);
-        intracellularQuantity->GetMass().IncrementValue(-intracellularMassLost_g, MassUnit::g);
+        intracellularQuantity->GetMass().Increment(-intracellularMassLost_g, MassUnit::g);
         intracellularQuantity->Balance(BalanceLiquidBy::Mass);
 
         // Extracellular
         double extracellularMassLost_g = concentration_g_Per_L * extracellularPerspiredVolume_mL / 1000.0;
         SELiquidSubstanceQuantity* extracellularQuantity = tissue->GetExtracellular().GetSubstanceQuantity(component->GetSubstance());
         extracellularMassLost_g = MIN(extracellularQuantity->GetMass(MassUnit::g), extracellularMassLost_g);
-        extracellularQuantity->GetMass().IncrementValue(-extracellularMassLost_g, MassUnit::g);
+        extracellularQuantity->GetMass().Increment(-extracellularMassLost_g, MassUnit::g);
         extracellularQuantity->Balance(BalanceLiquidBy::Mass);
 
       }

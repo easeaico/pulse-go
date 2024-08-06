@@ -100,8 +100,8 @@ public class SEAnesthesiaMachine implements SEEquipment
       this.getOxygenFraction().set(from.getOxygenFraction());
     if(from.oxygenSource!=null && from.oxygenSource != eOxygenSource.NullSource)
     	this.setOxygenSource(from.getOxygenSource());
-    if(from.hasPositiveEndExpiredPressure())
-      this.getPositiveEndExpiredPressure().set(from.getPositiveEndExpiredPressure());
+    if(from.hasPositiveEndExpiratoryPressure())
+      this.getPositiveEndExpiratoryPressure().set(from.getPositiveEndExpiratoryPressure());
     if(from.primaryGas!=null && from.primaryGas != ePrimaryGas.NullGas)
     	this.setPrimaryGas(from.getPrimaryGas());
     if(from.hasReliefValvePressure())
@@ -134,8 +134,8 @@ public class SEAnesthesiaMachine implements SEEquipment
       SEScalar0To1.load(src.getOxygenFraction(), dst.getOxygenFraction());
     if (src.getOxygenSource()!=eOxygenSource.UNRECOGNIZED)
       dst.setOxygenSource(src.getOxygenSource());
-    if (src.hasPositiveEndExpiredPressure())
-      SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
+    if (src.hasPositiveEndExpiratoryPressure())
+      SEScalarPressure.load(src.getPositiveEndExpiratoryPressure(), dst.getPositiveEndExpiratoryPressure());
     if (src.getPrimaryGas()!=ePrimaryGas.UNRECOGNIZED)
       dst.setPrimaryGas(src.getPrimaryGas());
     if (src.hasRespiratoryRate())
@@ -171,8 +171,8 @@ public class SEAnesthesiaMachine implements SEEquipment
       dst.setOxygenFraction(SEScalar0To1.unload(src.oxygenFraction));
     if (src.hasOxygenSource())
       dst.setOxygenSource(src.oxygenSource);
-    if (src.hasPositiveEndExpiredPressure())
-      dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.positiveEndExpiredPressure));
+    if (src.hasPositiveEndExpiratoryPressure())
+      dst.setPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.positiveEndExpiredPressure));
     if (src.hasPrimaryGas())
       dst.setPrimaryGas(src.primaryGas);
     if (src.hasRespiratoryRate())
@@ -266,13 +266,13 @@ public class SEAnesthesiaMachine implements SEEquipment
   /*
    * Positive End-Expired Pressure
    */
-  public SEScalarPressure getPositiveEndExpiredPressure()
+  public SEScalarPressure getPositiveEndExpiratoryPressure()
   {
     if (positiveEndExpiredPressure == null)
       positiveEndExpiredPressure = new SEScalarPressure();
     return positiveEndExpiredPressure;
   }
-  public boolean hasPositiveEndExpiredPressure()
+  public boolean hasPositiveEndExpiratoryPressure()
   {
     return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.isValid();
   }
@@ -437,7 +437,7 @@ public class SEAnesthesiaMachine implements SEEquipment
       + "\n\tInspiratoryExpiratoryRatio: " + getInspiratoryExpiratoryRatio()
       + "\n\tOxygenFraction: " + getOxygenFraction()
       + "\n\tOxygenSource: " + (hasOxygenSource()?getOxygenSource():"NotProvided")
-      + "\n\tPositiveEndExpiredPressure: " + getPositiveEndExpiredPressure()
+      + "\n\tPositiveEndExpiratoryPressure: " + getPositiveEndExpiratoryPressure()
       + "\n\tPrimaryGas: " + (hasPrimaryGas()?getPrimaryGas():"NotProvided")
       + "\n\tRespiratoryRate: " + getRespiratoryRate()
       + "\n\tReliefValvePressure: " + getReliefValvePressure()

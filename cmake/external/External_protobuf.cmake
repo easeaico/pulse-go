@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 # Add External Project
 #-----------------------------------------------------------------------------
-if(${PROJECT_NAME}_MULTI_BUILD)
+if(Pulse_MULTI_BUILD)
   message(STATUS "Building multiple protobuf configurations at once")
   set(PROTOBUF_DEBUG_BLD COMMAND ${CMAKE_COMMAND} --build . --config debug)
   set(PROTOBUF_RELEASE_BLD COMMAND ${CMAKE_COMMAND} --build . --config release)
@@ -16,12 +16,12 @@ endif()
 # Generally, We only support the latest version at the time of a release
 # And any release that somebody has requested we support for compatibility with their application
 
-set(Protobuf_VERSION "25.2" CACHE STRING "Select the  version of ProtoBuf to build.")
-set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "25.2" "21.12")
+set(Protobuf_VERSION "27.3" CACHE STRING "Select the  version of ProtoBuf to build.")
+set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "27.3" "21.12")
 
-if (Protobuf_VERSION VERSION_EQUAL 25.2)# Latest, Can change
+if (Protobuf_VERSION VERSION_EQUAL 27.3)# Latest, Can change
   set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-${Protobuf_VERSION}.zip" )
-  set(Protobuf_md5 "fed3e9e3c19aae55a355ff9d9e475e1e" )
+  set(Protobuf_md5 "0250ec2b8d8d2278e1678096b520c32f" )
 elseif (Protobuf_VERSION VERSION_EQUAL 21.12)# Last version before the ABSL dependency
   set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-all-${Protobuf_VERSION}.zip" )
   set(Protobuf_md5 "4ef7148d6f8b42bcdba687ea1b60292f" )
@@ -31,7 +31,7 @@ else()
 endif()
 
 set(BUILD_PROTOC_BINARIES ON)
-if(${PROJECT_NAME}_C_AS_STATIC)
+if(Pulse_C_AS_STATIC)
   set(BUILD_PROTOC_BINARIES OFF)
 endif()
 
@@ -57,7 +57,7 @@ add_external_project_ex( protobuf
     -Dprotobuf_BUILD_TESTS:BOOL=OFF
     -Dprotobuf_BUILD_EXAMPLES:BOOL=OFF
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
-    -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
+    -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=${Pulse_MSVC_STATIC_RUNTIME}
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
     -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
     ${_pb_args}
@@ -67,6 +67,14 @@ add_external_project_ex( protobuf
   DEPENDENCIES ${_pb_dependencies}
   #VERBOSE
 )
+if(Pulse_PYTHON_API)
+  message(STATUS "Pip installing protobuf")
+  ExternalProject_Add_Step(protobuf pypi
+    COMMAND ${Python3_EXECUTABLE} -m pip install --force-reinstall -v "protobuf==5.${Protobuf_VERSION}"
+    DEPENDEES install
+    ALWAYS 1
+    USES_TERMINAL true)
+endif()
 
 if (NOT USE_SYSTEM_protobuf)
   set(protobuf_INSTALL ${CMAKE_INSTALL_PREFIX})

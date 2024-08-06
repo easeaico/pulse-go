@@ -288,10 +288,10 @@ namespace pulse { namespace human_adult_whole_body
         if (localUsingDiffusion)
         {
           //Do it in the tissues and let it diffuse
-          cPulmonary.GetSubstanceQuantity(O2)->GetMass().IncrementValue(O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
-          cPulmonary.GetSubstanceQuantity(CO2)->GetMass().IncrementValue(-CO2Production_ugPerS * deltaT_s, MassUnit::ug);
-          cTissue.GetSubstanceQuantity(O2)->GetMass().IncrementValue(-O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
-          cTissue.GetSubstanceQuantity(CO2)->GetMass().IncrementValue(CO2Production_ugPerS * deltaT_s, MassUnit::ug);
+          cPulmonary.GetSubstanceQuantity(O2)->GetMass().Increment(O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
+          cPulmonary.GetSubstanceQuantity(CO2)->GetMass().Increment(-CO2Production_ugPerS * deltaT_s, MassUnit::ug);
+          cTissue.GetSubstanceQuantity(O2)->GetMass().Increment(-O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
+          cTissue.GetSubstanceQuantity(CO2)->GetMass().Increment(CO2Production_ugPerS * deltaT_s, MassUnit::ug);
 
           //See if we took too much out
           double pulmonaryCO2Mass_ug = cPulmonary.GetSubstanceQuantity(CO2)->GetMass(MassUnit::ug);
@@ -319,10 +319,10 @@ namespace pulse { namespace human_adult_whole_body
         else
         {
           //No tissues, so put straight into the blood
-          cPulmonary.GetSubstanceQuantity(O2)->GetMass().IncrementValue(O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
-          cPulmonary.GetSubstanceQuantity(CO2)->GetMass().IncrementValue(-CO2Production_ugPerS * deltaT_s, MassUnit::ug);
-          cCapillaries.GetSubstanceQuantity(O2)->GetMass().IncrementValue(-O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
-          cCapillaries.GetSubstanceQuantity(CO2)->GetMass().IncrementValue(CO2Production_ugPerS * deltaT_s, MassUnit::ug);
+          cPulmonary.GetSubstanceQuantity(O2)->GetMass().Increment(O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
+          cPulmonary.GetSubstanceQuantity(CO2)->GetMass().Increment(-CO2Production_ugPerS * deltaT_s, MassUnit::ug);
+          cCapillaries.GetSubstanceQuantity(O2)->GetMass().Increment(-O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
+          cCapillaries.GetSubstanceQuantity(CO2)->GetMass().Increment(CO2Production_ugPerS * deltaT_s, MassUnit::ug);
 
           //See if we took too much out
           double pulmonaryCO2Mass_ug = cPulmonary.GetSubstanceQuantity(CO2)->GetMass(MassUnit::ug);

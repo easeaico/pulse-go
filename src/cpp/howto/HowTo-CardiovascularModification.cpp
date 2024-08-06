@@ -52,8 +52,8 @@ void HowToCardiovascularMechanicsModification()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp.csv");
@@ -92,7 +92,9 @@ void HowToCardiovascularMechanicsModificationAnalysis()
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp.log");
-  pe->GetLogger()->Info("HowTo_CardiovascularMechanicsModification");
+  pe->GetLogger()->Info("HowToCardiovascularMechanicsModificationAnalysis");
+
+  std::ofstream outFile("./test_results/howto/CardiovascularMechanicsModificationTable.txt"); // Create an ofstream object for output file
 
   // With this engine, you do not initialize it, its already ready to go at construction time
 
@@ -101,7 +103,7 @@ void HowToCardiovascularMechanicsModificationAnalysis()
   SECardiovascularMechanicsModification config;
   SECardiovascularMechanicsModifiers& mechanics = config.GetModifiers();
 
-  std::vector<double> multiplierList = { 0.5, 1.0, 1.5 };
+  std::vector<double> multiplierList = { 0.5, 0.75, 1.0, 1.5, 2.0 };
 
   // Header for the table
   results << std::left
@@ -164,6 +166,13 @@ void HowToCardiovascularMechanicsModificationAnalysis()
                 << std::setw(30) << pe->GetNervousSystem()->GetBaroreceptorHeartRateScale()
                 << std::setw(30) << pe->GetNervousSystem()->GetChemoreceptorHeartRateScale()
                 << "\n";
+
+              std::cout << results.str();
+
+              // Output the results
+              outFile << results.str(); // Output to file
+              outFile.flush(); // Flush after each write
+              results.str("");          // Clear the stringstream for the next iteration
             }
           }
         }
@@ -172,5 +181,5 @@ void HowToCardiovascularMechanicsModificationAnalysis()
   }
 
   // Output the results
-  std::cout << results.str();
+  outFile.close();          // Close the file stream
 }

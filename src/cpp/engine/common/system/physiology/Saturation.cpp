@@ -81,19 +81,11 @@ namespace pulse
         double CO2PartialPressureGuess_mmHg = partialPressure.GetValue(PressureUnit::mmHg);
 
         //calculate a scaling factor for the CO2 saturation curve based on total CO2
-        //scaling factor is linear such that when CO2 mM is 27, factor is .4; when CO2 mM is 29, factor is 1
+        //scaling factor is linear such that when CO2 mM is 27, factor is .2; when CO2 mM is 29, factor is 1
+        //scaling factor is bounded between 0.1 and 1.0
         double totalCO2_mM = co2_mM / .05;
         double CO2_scaling_factor = .4 * totalCO2_mM - 10.6;
-        if (CO2_scaling_factor > 1.0)
-        {
-          //Just setting this to 1.0 here causes a discontinuity that actually causes the CO2 Sat to drop when it should rise.
-          //Therefore, we'll smooth it a little.
-          CO2_scaling_factor = 1.0 + 0.1 * (CO2_scaling_factor - 1.0);
-        }
-        else if (CO2_scaling_factor < 0.1)
-        {
-          CO2_scaling_factor = 0.1;
-        }
+        CO2_scaling_factor = LIMIT(CO2_scaling_factor, 0.1, 1.0);
 
         sc.CalculateHemoglobinSaturations(cs, O2PartialPressureGuess_mmHg, CO2PartialPressureGuess_mmHg, pH, sc.m_temperature_C, sc.m_hematocrit, OxygenSaturation, CarbonDioxideSaturation, CO2_scaling_factor);
         logTerm = log10(bicarb_mM / co2_mM);

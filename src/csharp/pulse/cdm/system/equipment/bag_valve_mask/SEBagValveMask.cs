@@ -80,8 +80,8 @@ namespace Pulse.CDM
         this.GetFilterVolume().Set(from.GetFilterVolume());
       if (from.HasSealResistance())
         this.GetSealResistance().Set(from.GetSealResistance());
-      if (from.HasValvePositiveEndExpiredPressure())
-        this.GetValvePositiveEndExpiredPressure().Set(from.GetValvePositiveEndExpiredPressure());
+      if (from.HasValvePositiveEndExpiratoryPressure())
+        this.GetValvePositiveEndExpiratoryPressure().Set(from.GetValvePositiveEndExpiratoryPressure());
       if (from.HasValveResistance())
         this.GetValveResistance().Set(from.GetValveResistance());
       if (from.HasValveVolume())
@@ -178,13 +178,13 @@ namespace Pulse.CDM
       return seal_resistance == null ? false : seal_resistance.IsValid();
     }
 
-    public SEScalarPressure GetValvePositiveEndExpiredPressure()
+    public SEScalarPressure GetValvePositiveEndExpiratoryPressure()
     {
       if (valve_positive_end_expired_pressure == null)
         valve_positive_end_expired_pressure = new SEScalarPressure();
       return valve_positive_end_expired_pressure;
     }
-    public bool HasValvePositiveEndExpiredPressure()
+    public bool HasValvePositiveEndExpiratoryPressure()
     {
       return valve_positive_end_expired_pressure == null ? false : valve_positive_end_expired_pressure.IsValid();
     }
@@ -322,7 +322,7 @@ namespace Pulse.CDM
       + "\n\tBagResistance: " + (HasBagResistance() ? GetBagResistance().ToString() : "Not Provided")
       + "\n\tFilterResistance: " + (HasFilterResistance() ? GetFilterResistance().ToString() : "Not Provided")
       + "\n\tFilterVolume: " + (HasFilterVolume() ? GetFilterVolume().ToString() : "Not Provided")
-      + "\n\tValvePositiveEndExpiredPressure: " + (HasValvePositiveEndExpiredPressure() ? GetValvePositiveEndExpiredPressure().ToString() : "Not Provided")
+      + "\n\tValvePositiveEndExpiratoryPressure: " + (HasValvePositiveEndExpiratoryPressure() ? GetValvePositiveEndExpiratoryPressure().ToString() : "Not Provided")
       + "\n\tValveResistance: " + (HasValveResistance() ? GetValveResistance().ToString() : "Not Provided");
       foreach (SESubstanceFraction sf in this.fraction_inspired_gases)
         str += "\n\t" + sf.GetSubstance();

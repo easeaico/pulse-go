@@ -22,6 +22,7 @@ namespace Pulse.CDM
     protected SEScalarHeatResistanceArea     clothing_resistance;
     protected SEScalar0To1                   emissivity;
     protected SEScalarTemperature            mean_radiant_temperature;
+    protected SEScalarVolume                 mechanical_dead_space;
     protected SEScalar0To1                   relative_humidity;
     protected SEScalarTemperature            respiration_ambient_temperature;
 
@@ -39,6 +40,7 @@ namespace Pulse.CDM
       this.clothing_resistance = null;
       this.emissivity = null;
       this.mean_radiant_temperature = null;
+      this.mechanical_dead_space = null;
       this.relative_humidity = null;
       this.respiration_ambient_temperature = null;
 
@@ -63,6 +65,8 @@ namespace Pulse.CDM
         emissivity.Invalidate();
       if (mean_radiant_temperature != null)
         mean_radiant_temperature.Invalidate();
+      if (mechanical_dead_space != null)
+        mechanical_dead_space.Invalidate();
       if (relative_humidity != null)
         relative_humidity.Invalidate();
       if (respiration_ambient_temperature != null)
@@ -246,6 +250,17 @@ namespace Pulse.CDM
     public bool HasMeanRadiantTemperature()
     {
       return mean_radiant_temperature == null ? false : mean_radiant_temperature.IsValid();
+    }
+
+    public SEScalarVolume GetMechanicalDeadSpace()
+    {
+      if (mechanical_dead_space == null)
+        mechanical_dead_space = new SEScalarVolume();
+      return mechanical_dead_space;
+    }
+    public bool HasMechanicalDeadSpace()
+    {
+      return mechanical_dead_space == null ? false : mechanical_dead_space.IsValid();
     }
 
     public SEScalar0To1 GetRelativeHumidity()

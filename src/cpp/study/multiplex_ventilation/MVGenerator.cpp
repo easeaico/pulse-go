@@ -177,7 +177,7 @@ namespace pulse::study::multiplex_ventilation
     mv.SetInspirationWaveform(eDriverWaveform::Square);
     mv.SetExpirationWaveform(eDriverWaveform::Square);
     mv.GetPeakInspiratoryPressure().SetValue(pData.pip_cmh2o(), PressureUnit::cmH2O);
-    mv.GetPositiveEndExpiredPressure().SetValue(pData.peep_cmh2o(), PressureUnit::cmH2O);
+    mv.GetPositiveEndExpiratoryPressure().SetValue(pData.peep_cmh2o(), PressureUnit::cmH2O);
     double respirationRate_per_min = pData.respirationrate_per_min();
     double IERatio = pData.ieratio();
 
@@ -359,7 +359,7 @@ namespace pulse::study::multiplex_ventilation
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
     printOpts.preserve_proto_field_names = true;
-    printOpts.always_print_primitive_fields = true;
+    printOpts.always_print_fields_with_no_presence = true;
     if (!google::protobuf::util::MessageToJsonString(src, &output, printOpts).ok())
     {
       Error("Unable to serialize Patient list");

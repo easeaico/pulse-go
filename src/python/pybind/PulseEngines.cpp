@@ -1,12 +1,15 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "engine/PulseEngineThunk.h"
-#include "engine/PulseEnginePool.h"
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 #include <pybind11/numpy.h>
+
+#include "engine/PulseEngineThunk.h"
+#include "engine/PulseEnginePool.h"
 
 namespace py = pybind11;
 

@@ -36,9 +36,9 @@ public:
   virtual eBreathState GetBreathState() const;
   virtual void SetBreathState(eBreathState c);
 
-  virtual bool HasDynamicPulmonaryCompliance() const;
-  virtual SEScalarVolumePerPressure& GetDynamicPulmonaryCompliance();
-  virtual double GetDynamicPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
+  virtual bool HasDynamicRespiratoryCompliance() const;
+  virtual SEScalarVolumePerPressure& GetDynamicRespiratoryCompliance();
+  virtual double GetDynamicRespiratoryCompliance(const VolumePerPressureUnit& unit) const;
 
   virtual bool HasEndTidalCarbonDioxideFraction() const;
   virtual SEScalar0To1& GetEndTidalCarbonDioxideFraction();
@@ -68,6 +68,10 @@ public:
   virtual SEScalarVolume& GetExpiratoryTidalVolume();
   virtual double GetExpiratoryTidalVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasExtrinsicPositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetExtrinsicPositiveEndExpiratoryPressure();
+  virtual double GetExtrinsicPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
+
   virtual bool HasInspiratoryExpiratoryRatio() const;
   virtual SEScalar& GetInspiratoryExpiratoryRatio();
   virtual double GetInspiratoryExpiratoryRatio() const;
@@ -84,9 +88,9 @@ public:
   virtual SEScalarVolume& GetInspiratoryTidalVolume();
   virtual double GetInspiratoryTidalVolume(const VolumeUnit& unit) const;
 
-  virtual bool HasIntrinsicPositiveEndExpiredPressure() const;
-  virtual SEScalarPressure& GetIntrinsicPositiveEndExpiredPressure();
-  virtual double GetIntrinsicPositiveEndExpiredPressure(const PressureUnit& unit) const;
+  virtual bool HasIntrinsicPositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetIntrinsicPositiveEndExpiratoryPressure();
+  virtual double GetIntrinsicPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
   virtual bool HasLeakFraction() const;
   virtual SEScalar0To1& GetLeakFraction();
@@ -100,6 +104,10 @@ public:
   virtual SEScalarVolumePerTime& GetPeakExpiratoryFlow();
   virtual double GetPeakExpiratoryFlow(const VolumePerTimeUnit& unit) const;
 
+  virtual bool HasPeakInspiratoryFlow() const;
+  virtual SEScalarVolumePerTime& GetPeakInspiratoryFlow();
+  virtual double GetPeakInspiratoryFlow(const VolumePerTimeUnit& unit) const;
+
   virtual bool HasPeakInspiratoryPressure() const;
   virtual SEScalarPressure& GetPeakInspiratoryPressure();
   virtual double GetPeakInspiratoryPressure(const PressureUnit& unit) const;
@@ -108,17 +116,13 @@ public:
   virtual SEScalarPressure& GetPlateauPressure();
   virtual double GetPlateauPressure(const PressureUnit& unit) const;
 
-  virtual bool HasPositiveEndExpiratoryPressure() const;
-  virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
-  virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
-
   virtual bool HasRespirationRate() const;
   virtual SEScalarFrequency& GetRespirationRate();
   virtual double GetRespirationRate(const FrequencyUnit& unit) const;
 
-  virtual bool HasStaticPulmonaryCompliance() const;
-  virtual SEScalarVolumePerPressure& GetStaticPulmonaryCompliance();
-  virtual double GetStaticPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
+  virtual bool HasStaticRespiratoryCompliance() const;
+  virtual SEScalarVolumePerPressure& GetStaticRespiratoryCompliance();
+  virtual double GetStaticRespiratoryCompliance(const VolumePerPressureUnit& unit) const;
 
   virtual bool HasTidalVolume() const;
   virtual SEScalarVolume& GetTidalVolume();
@@ -127,6 +131,10 @@ public:
   virtual bool HasTotalLungVolume() const;
   virtual SEScalarVolume& GetTotalLungVolume();
   virtual double GetTotalLungVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasTotalPositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetTotalPositiveEndExpiratoryPressure();
+  virtual double GetTotalPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
   virtual bool HasTotalPulmonaryVentilation() const;
   virtual SEScalarVolumePerTime& GetTotalPulmonaryVentilation();
@@ -141,7 +149,7 @@ protected:
 
   SEScalarPressure*                  m_AirwayPressure;
   SEScalarEnum<eBreathState>         m_BreathState;
-  SEScalarVolumePerPressure*         m_DynamicPulmonaryCompliance;
+  SEScalarVolumePerPressure*         m_DynamicRespiratoryCompliance;
   SEScalar0To1*                      m_EndTidalCarbonDioxideFraction;
   SEScalarPressure*                  m_EndTidalCarbonDioxidePressure;
   SEScalar0To1*                      m_EndTidalOxygenFraction;
@@ -149,21 +157,23 @@ protected:
   SEScalarVolumePerTime*             m_ExpiratoryFlow;
   SEScalarPressureTimePerVolume*     m_ExpiratoryResistance;
   SEScalarVolume*                    m_ExpiratoryTidalVolume;
+  SEScalarPressure*                  m_ExtrinsicPositiveEndExpiratoryPressure;
   SEScalar*                          m_InspiratoryExpiratoryRatio;
   SEScalarVolumePerTime*             m_InspiratoryFlow;
   SEScalarPressureTimePerVolume*     m_InspiratoryResistance;
   SEScalarVolume*                    m_InspiratoryTidalVolume;
-  SEScalarPressure*                  m_IntrinsicPositiveEndExpiredPressure;
+  SEScalarPressure*                  m_IntrinsicPositiveEndExpiratoryPressure;
   SEScalar0To1*                      m_LeakFraction;
   SEScalarPressure*                  m_MeanAirwayPressure;
   SEScalarVolumePerTime*             m_PeakExpiratoryFlow;
+  SEScalarVolumePerTime*             m_PeakInspiratoryFlow;
   SEScalarPressure*                  m_PeakInspiratoryPressure;
   SEScalarPressure*                  m_PlateauPressure;
-  SEScalarPressure*                  m_PositiveEndExpiratoryPressure;
   SEScalarFrequency*                 m_RespirationRate;
-  SEScalarVolumePerPressure*         m_StaticPulmonaryCompliance;
+  SEScalarVolumePerPressure*         m_StaticRespiratoryCompliance;
   SEScalarVolume*                    m_TidalVolume;
   SEScalarVolume*                    m_TotalLungVolume;
+  SEScalarPressure*                  m_TotalPositiveEndExpiratoryPressure;
   SEScalarVolumePerTime*             m_TotalPulmonaryVentilation;
 
   SEMechanicalVentilatorSettings*    m_Settings;

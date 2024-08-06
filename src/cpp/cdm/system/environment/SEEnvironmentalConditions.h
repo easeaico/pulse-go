@@ -66,6 +66,10 @@ public:
   virtual SEScalarTemperature& GetMeanRadiantTemperature();
   virtual double GetMeanRadiantTemperature(const TemperatureUnit& unit) const;
 
+  virtual bool HasMechanicalDeadSpace() const;
+  virtual SEScalarVolume& GetMechanicalDeadSpace();
+  virtual double GetMechanicalDeadSpace(const VolumeUnit& unit) const;
+
   virtual bool HasRelativeHumidity() const;
   virtual SEScalar0To1& GetRelativeHumidity();
   virtual double GetRelativeHumidity() const;
@@ -103,6 +107,7 @@ protected:
   SEScalarHeatResistanceArea*                  m_ClothingResistance;
   SEScalar0To1*                                m_Emissivity;
   SEScalarTemperature*                         m_MeanRadiantTemperature;
+  SEScalarVolume*                              m_MechanicalDeadSpace;
   SEScalar0To1*                                m_RelativeHumidity;
   SEScalarTemperature*                         m_RespirationAmbientTemperature;
 

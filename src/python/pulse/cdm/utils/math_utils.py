@@ -98,9 +98,9 @@ def percent_change(expected: float, calculated: float, epsilon: float, verbose: 
 
 
 def generate_percentage_span(percentage, precision, success=10, warning=30):
-    if percentage <= success:
+    if abs(percentage) <= success:
         c = '"success"'
-    elif percentage <= warning:
+    elif abs(percentage) <= warning:
         c = '"warning"'
     else:
         c = '"danger"'

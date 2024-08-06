@@ -125,7 +125,7 @@ namespace pulse
     SETemporalInterpolator* m_HeartComplianceModifier;
     SETemporalInterpolator* m_AortaComplianceModifier;
     SETemporalInterpolator* m_VenaCavaComplianceModifier;
-    SETemporalInterpolator* m_PulmonaryComplianceModifier;
+    SETemporalInterpolator* m_RespiratoryComplianceModifier;
     SETemporalInterpolator* m_SystemicVascularResistanceModifier;
     SETemporalInterpolator* m_SystemicVascularComplianceModifier;
     //CPR
@@ -211,6 +211,9 @@ namespace pulse
     SEFluidCircuitPath*              m_LeftHeartToAorta;
     SEFluidCircuitPath*              m_LeftHeartCompliancePath;
 
+    SEFluidCircuitPath*              m_RightPulmonaryVenousReturnResistancePath;
+    SEFluidCircuitPath*              m_LeftPulmonaryVenousReturnResistancePath;
+
     SEFluidCircuitPath*              m_BrainResistanceUpstreamPath;
     SEFluidCircuitPath*              m_BrainResistanceDownstreamPath;
 
@@ -251,7 +254,7 @@ namespace pulse
     std::vector<SEFluidCircuitPath*> m_AortaResistancePaths;
     std::vector<SEFluidCircuitPath*> m_VenaCavaCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_VenaCavaResistancePaths;
-    std::vector<SEFluidCircuitPath*> m_PulmonaryCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_RespiratoryCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_PulmonaryResistancePaths;
     std::vector<SEFluidCircuitPath*> m_SystemicCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_SystemicResistancePaths;

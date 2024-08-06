@@ -55,8 +55,8 @@ public class SEMechanicalVentilatorPressureControl extends SEMechanicalVentilato
         getInspiratoryPeriod().set(other.getInspiratoryPeriod());
       if (other.hasInspiratoryPressure())
         getInspiratoryPressure().set(other.getInspiratoryPressure());
-      if (other.hasPositiveEndExpiredPressure())
-        getPositiveEndExpiredPressure().set(other.getPositiveEndExpiredPressure());
+      if (other.hasPositiveEndExpiratoryPressure())
+        getPositiveEndExpiratoryPressure().set(other.getPositiveEndExpiratoryPressure());
       if (other.hasRespirationRate())
         getRespirationRate().set(other.getRespirationRate());
       if (other.hasSlope())
@@ -102,8 +102,8 @@ public class SEMechanicalVentilatorPressureControl extends SEMechanicalVentilato
         SEScalarTime.load(src.getInspiratoryPeriod(), dst.getInspiratoryPeriod());
       if (src.hasInspiratoryPressure())
         SEScalarPressure.load(src.getInspiratoryPressure(), dst.getInspiratoryPressure());
-      if (src.hasPositiveEndExpiredPressure())
-        SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
+      if (src.hasPositiveEndExpiratoryPressure())
+        SEScalarPressure.load(src.getPositiveEndExpiratoryPressure(), dst.getPositiveEndExpiratoryPressure());
       if (src.hasRespirationRate())
         SEScalarFrequency.load(src.getRespirationRate(), dst.getRespirationRate());
       if (src.hasSlope())
@@ -130,8 +130,8 @@ public class SEMechanicalVentilatorPressureControl extends SEMechanicalVentilato
         dst.setInspiratoryPeriod(SEScalarTime.unload(src.getInspiratoryPeriod()));
       if (src.hasInspiratoryPressure())
         dst.setInspiratoryPressure(SEScalarPressure.unload(src.getInspiratoryPressure()));
-      if (src.hasPositiveEndExpiredPressure())
-        dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.getPositiveEndExpiredPressure()));
+      if (src.hasPositiveEndExpiratoryPressure())
+        dst.setPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.getPositiveEndExpiratoryPressure()));
       if (src.hasRespirationRate())
         dst.setRespirationRate(SEScalarFrequency.unload(src.getRespirationRate()));
       if (src.hasSlope())
@@ -143,7 +143,7 @@ public class SEMechanicalVentilatorPressureControl extends SEMechanicalVentilato
       return super.isValid() &&
         hasFractionInspiredOxygen() &&
         hasInspiratoryPressure() &&
-        hasPositiveEndExpiredPressure() &&
+        hasPositiveEndExpiratoryPressure() &&
         hasRespirationRate();
     }
 
@@ -220,11 +220,11 @@ public class SEMechanicalVentilatorPressureControl extends SEMechanicalVentilato
       return inspiratoryPressure;
     }
 
-    public boolean hasPositiveEndExpiredPressure()
+    public boolean hasPositiveEndExpiratoryPressure()
     {
       return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.isValid();
     }
-    public SEScalarPressure getPositiveEndExpiredPressure()
+    public SEScalarPressure getPositiveEndExpiratoryPressure()
     {
       if (positiveEndExpiredPressure == null)
         positiveEndExpiredPressure = new SEScalarPressure();
@@ -263,7 +263,7 @@ public class SEMechanicalVentilatorPressureControl extends SEMechanicalVentilato
       str += "\n\tInspirationWaveform: " + getInspirationWaveform();
       str += "\n\tInspiratoryPeriod: " + (hasInspiratoryPeriod() ? getInspiratoryPeriod().toString() : "Not Provided");
       str += "\n\tInspiratoryPressure: " + (hasInspiratoryPressure() ? getInspiratoryPressure().toString() : "Not Provided");
-      str += "\n\tPositiveEndExpiredPressure: " + (hasPositiveEndExpiredPressure() ? getPositiveEndExpiredPressure().toString() : "Not Provided");
+      str += "\n\tPositiveEndExpiratoryPressure: " + (hasPositiveEndExpiratoryPressure() ? getPositiveEndExpiratoryPressure().toString() : "Not Provided");
       str += "\n\tRespirationRate: " + (hasRespirationRate() ? getRespirationRate().toString() : "Not Provided");
       str += "\n\tSlope: " + (hasSlope() ? getSlope().toString() : "Not Provided");
 

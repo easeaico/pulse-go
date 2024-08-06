@@ -1033,7 +1033,7 @@ namespace pulse
     subQ->GetMass().SetValue(mass_ug, MassUnit::ug);
     subQ->Balance(BalanceLiquidBy::Mass);
 
-    sub.GetSystemicMassCleared().IncrementValue(MassCleared_ug, MassUnit::ug);
+    sub.GetSystemicMassCleared().Increment(MassCleared_ug, MassUnit::ug);
     if (cleared != nullptr)
       cleared->SetValue(MassCleared_ug, MassUnit::ug);
   }
@@ -1083,7 +1083,7 @@ namespace pulse
     MassCleared_ug = subQ->GetMass(MassUnit::ug) - mass_ug;
     subQ->GetMass().SetValue(mass_ug, MassUnit::ug);
     subQ->Balance(BalanceLiquidBy::Mass);
-    subQ->GetMassCleared().IncrementValue(MassCleared_ug, MassUnit::ug);
+    subQ->GetMassCleared().Increment(MassCleared_ug, MassUnit::ug);
     if (cleared != nullptr)
       cleared->SetValue(MassCleared_ug, MassUnit::ug);
   }
@@ -1124,7 +1124,7 @@ namespace pulse
     MassExcreted_ug = subQ->GetMass().GetValue(MassUnit::ug) - mass_ug;
     subQ->GetMass().SetValue(mass_ug, MassUnit::ug);
     subQ->Balance(BalanceLiquidBy::Mass);
-    subQ->GetMassExcreted().IncrementValue(MassExcreted_ug, MassUnit::ug);
+    subQ->GetMassExcreted().Increment(MassExcreted_ug, MassUnit::ug);
     if (excreted != nullptr)
       excreted->SetValue(MassExcreted_ug, MassUnit::ug);
   }

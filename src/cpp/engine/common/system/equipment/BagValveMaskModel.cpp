@@ -387,9 +387,9 @@ namespace pulse
     {
       //Hold this pressure until an action is called or the BVM is turned off
       m_SqueezePressure_cmH2O = 0.0;
-      if (HasValvePositiveEndExpiredPressure())
+      if (HasValvePositiveEndExpiratoryPressure())
       {
-        m_SqueezePressure_cmH2O = GetValvePositiveEndExpiredPressure(PressureUnit::cmH2O);
+        m_SqueezePressure_cmH2O = GetValvePositiveEndExpiratoryPressure(PressureUnit::cmH2O);
       }
       m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
 
@@ -595,9 +595,9 @@ namespace pulse
     }
 
     m_SqueezePressure_cmH2O = 0.0;
-    if (HasValvePositiveEndExpiredPressure())
+    if (HasValvePositiveEndExpiratoryPressure())
     {
-      m_SqueezePressure_cmH2O = GetValvePositiveEndExpiredPressure(PressureUnit::cmH2O);
+      m_SqueezePressure_cmH2O = GetValvePositiveEndExpiratoryPressure(PressureUnit::cmH2O);
     }
 
     m_SqueezeFlow_L_Per_s = SEScalar::dNaN();

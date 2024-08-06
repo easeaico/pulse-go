@@ -1100,8 +1100,8 @@ namespace Pulse.CDM
       if (src.InspirationPatientTriggerPressure != null)
         PBProperty.Load(src.InspirationPatientTriggerPressure, dst.GetInspirationPatientTriggerPressure());
       dst.SetInspirationWaveform((eDriverWaveform)src.InspirationWaveform);
-      if (src.PositiveEndExpiredPressure != null)
-        PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
+      if (src.PositiveEndExpiratoryPressure != null)
+        PBProperty.Load(src.PositiveEndExpiratoryPressure, dst.GetPositiveEndExpiratoryPressure());
       if (src.Slope != null)
         PBProperty.Load(src.Slope, dst.GetSlope());
     }
@@ -1129,8 +1129,8 @@ namespace Pulse.CDM
       if (src.HasInspirationPatientTriggerPressure())
         dst.InspirationPatientTriggerPressure = PBProperty.Unload(src.GetInspirationPatientTriggerPressure());
       dst.InspirationWaveform = (pulse.cdm.bind.eDriverWaveform)(int)src.GetInspirationWaveform();
-      if (src.HasPositiveEndExpiredPressure())
-        dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
+      if (src.HasPositiveEndExpiratoryPressure())
+        dst.PositiveEndExpiratoryPressure = PBProperty.Unload(src.GetPositiveEndExpiratoryPressure());
       if (src.HasSlope())
         dst.Slope = PBProperty.Unload(src.GetSlope());
     }
@@ -1156,8 +1156,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.InspiratoryPeriod, dst.GetInspiratoryPeriod());
       if (src.InspiratoryPressure != null)
         PBProperty.Load(src.InspiratoryPressure, dst.GetInspiratoryPressure());
-      if (src.PositiveEndExpiredPressure != null)
-        PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
+      if (src.PositiveEndExpiratoryPressure != null)
+        PBProperty.Load(src.PositiveEndExpiratoryPressure, dst.GetPositiveEndExpiratoryPressure());
       if (src.RespirationRate != null)
         PBProperty.Load(src.RespirationRate, dst.GetRespirationRate());
       if (src.Slope != null)
@@ -1184,8 +1184,8 @@ namespace Pulse.CDM
         dst.InspiratoryPeriod = PBProperty.Unload(src.GetInspiratoryPeriod());
       if (src.HasInspiratoryPressure())
         dst.InspiratoryPressure = PBProperty.Unload(src.GetInspiratoryPressure());
-      if (src.HasPositiveEndExpiredPressure())
-        dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
+      if (src.HasPositiveEndExpiratoryPressure())
+        dst.PositiveEndExpiratoryPressure = PBProperty.Unload(src.GetPositiveEndExpiratoryPressure());
       if (src.HasRespirationRate())
         dst.RespirationRate = PBProperty.Unload(src.GetRespirationRate());
       if (src.HasSlope())
@@ -1213,8 +1213,8 @@ namespace Pulse.CDM
       dst.SetInspirationWaveform((eDriverWaveform)src.InspirationWaveform);
       if (src.InspiratoryPeriod != null)
         PBProperty.Load(src.InspiratoryPeriod, dst.GetInspiratoryPeriod());
-      if (src.PositiveEndExpiredPressure != null)
-        PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
+      if (src.PositiveEndExpiratoryPressure != null)
+        PBProperty.Load(src.PositiveEndExpiratoryPressure, dst.GetPositiveEndExpiratoryPressure());
       if (src.RespirationRate != null)
         PBProperty.Load(src.RespirationRate, dst.GetRespirationRate());
       if (src.Slope != null)
@@ -1243,8 +1243,8 @@ namespace Pulse.CDM
       dst.InspirationWaveform = (pulse.cdm.bind.eDriverWaveform)(int)src.GetInspirationWaveform();
       if (src.HasInspiratoryPeriod())
         dst.InspiratoryPeriod = PBProperty.Unload(src.GetInspiratoryPeriod());
-      if (src.HasPositiveEndExpiredPressure())
-        dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
+      if (src.HasPositiveEndExpiratoryPressure())
+        dst.PositiveEndExpiratoryPressure = PBProperty.Unload(src.GetPositiveEndExpiratoryPressure());
       if (src.HasRespirationRate())
         dst.RespirationRate = PBProperty.Unload(src.GetRespirationRate());
       if (src.HasSlope())

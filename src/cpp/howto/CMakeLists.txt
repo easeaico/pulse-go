@@ -25,9 +25,9 @@ add_executable_ex(HowToDriver
   HowTo-Hemorrhage.cpp
   HowTo-Hemothorax.cpp
   HowTo-IsoShuntAnalysis.cpp
-  HowTo-Pneumonia.cpp
   HowTo-MechanicalVentilation.cpp
   HowTo-MechanicalVentilator.cpp
+  HowTo-Pneumonia.cpp
   HowTo-PulmonaryFibrosis.cpp
   HowTo-PulseEnginePool.cpp
   HowTo-RespiratoryMechanics.cpp
@@ -43,5 +43,6 @@ add_executable_ex(HowToDriver
   HowTo-TensionPneumothorax.cpp
   HowTo-TestSystemCapability.cpp
   HowTo-VentilationMechanics.cpp
+  HowTo-VentilatorFeedbackLoop.cpp
 )
 target_link_libraries(HowToDriver Pulse)

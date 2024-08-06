@@ -57,7 +57,7 @@ public:
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override
   {
     switch (type)
-    {     
+    {
       case eEvent::CardiogenicShock:
       {
         if (active)
@@ -82,8 +82,6 @@ public:
 //--------------------------------------------------------------------------------------------------
 void HowToMechanicalVentilation()
 {
-  //Note: Setting circuit values (resistance/compliances/etc.) needs to be done in the engine code - they currently are not directly exposed
-  
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
@@ -115,15 +113,15 @@ void HowToMechanicalVentilation()
       COPD.GetEmphysemaSeverity(eLungCompartment::RightLung).SetValue(0.7);
     }
     if (false) //Pneumonia
-    {      
+    {
       SEPneumonia& Pneumonia = pc.GetConditions().GetPneumonia();
-      Pneumonia.GetSeverity(eLungCompartment::LeftLung).SetValue(1.0);
-      Pneumonia.GetSeverity(eLungCompartment::RightLung).SetValue(1.0);
+      Pneumonia.GetSeverity(eLungCompartment::LeftLung).SetValue(0.2);
+      Pneumonia.GetSeverity(eLungCompartment::RightLung).SetValue(0.3);
     }
     if (false) //Generic ImpairedAlveolarExchange (no specified reason)
-    {      
+    {
       SEImpairedAlveolarExchange& ImpairedAlveolarExchange = pc.GetConditions().GetImpairedAlveolarExchange();
-      ImpairedAlveolarExchange.GetImpairedFraction().SetValue(0.5);
+      ImpairedAlveolarExchange.GetImpairedFraction().SetValue(0.25);
     }
 
     //Select the patient and initialize with conditions
@@ -148,11 +146,12 @@ void HowToMechanicalVentilation()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RelativeTotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
@@ -271,26 +270,16 @@ void HowToMechanicalVentilation()
   pe->ProcessAction(env);
 
   AdvanceAndTrackTime_s(60.0, *pe);
-  
+
+  //Make the patient stop breathing
   //Dyspnea
   //Maybe the muscles are getting weak?
   SEDyspnea Dyspnea;
-  Dyspnea.GetTidalVolumeSeverity().SetValue(0.3);
+  Dyspnea.GetTidalVolumeSeverity().SetValue(1.0);
   pe->ProcessAction(Dyspnea);
 
-  //Succs
-  //Make the patient stop breathing
-  // Get the Succinylcholine substance from the substance manager
-  const SESubstance* succs = pe->GetSubstanceManager().GetSubstance("Succinylcholine");
-  // Create a substance bolus action to administer the substance
-  SESubstanceBolus bolus(*succs);
-  bolus.GetConcentration().SetValue(4820, MassPerVolumeUnit::ug_Per_mL);
-  bolus.GetDose().SetValue(20, VolumeUnit::mL);
-  bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
-  pe->ProcessAction(bolus);
+  AdvanceAndTrackTime_s(10.0, *pe);
 
-  AdvanceAndTrackTime_s(60.0, *pe);
-  
   //Mechanical Ventilation
   // Create an SEMechanicalVentilation object
   SEMechanicalVentilation mechVent;
@@ -314,25 +303,34 @@ void HowToMechanicalVentilation()
     // Going to update values every second
     //The tracker with write to the results file every time-step
 
-  //Difference from ambient pressure
+    //Difference from ambient pressure
     inputPressure_cmH2O = yOffset + amplitude_cmH2O * sin(alpha * time_s);   //compute new pressure
 
     mechVent.GetPressure().SetValue(inputPressure_cmH2O, PressureUnit::cmH2O);
-  //You can set flow, but we aren't
-    O2frac.GetFractionAmount().SetValue(0.21);
-    CO2frac.GetFractionAmount().SetValue(4.0E-4);
-    N2frac.GetFractionAmount().SetValue(0.7896);    
+    //You can set flow, but we aren't
+    double O2fraction = 0.55; //Can be read from sensor
+    double CO2fraction = 4.0E-4; //Can be read from sensor
+    O2frac.GetFractionAmount().SetValue(O2fraction);
+    CO2frac.GetFractionAmount().SetValue(CO2fraction);
+    //Remaining will go to N2
+    double N2fraction = 1.0 - O2fraction - CO2fraction;
+    N2frac.GetFractionAmount().SetValue(N2fraction);
+
     pe->ProcessAction(mechVent);
 
+    //Simulate
     AdvanceAndTrackTime_s(1, *pe);
 
-  //Output some random stuff to the log
+    //Output some random stuff to the log
     pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
     pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
     pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
     pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+
+    //If you are doing a control system and need the volume, use this variable that is referenced to the FRC
+    pe->GetLogger()->Info(std::stringstream() << "Relative Total Lung Volume : " << pe->GetRespiratorySystem()->GetRelativeTotalLungVolume(VolumeUnit::mL) << VolumeUnit::mL);
   }
 
   pe->GetLogger()->Info("Finished");

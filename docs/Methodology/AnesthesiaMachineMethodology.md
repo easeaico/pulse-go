@@ -298,7 +298,7 @@ anesthesia machine*
 |	State (on/off)	|	Determines if the Anesthesia machine is running or not	|
 |	VentilatorPressure	|	The maximum ventilator pressure applied each cycle	|
 |	RespiratoryRate	|	Frequency of the ventilator	|
-|	PositiveEndExpiredPressure	|	The minimum ventilator pressure applied each cycle	|
+|	PositiveEndExpiratoryPressure	|	The minimum ventilator pressure applied each cycle	|
 |	InspiratoryExpiratoryRatio	|	The relative ratio of the period of positive and negative flow in and out of the lungs	|
 |	ReliefValvePressure	|	The pressure at which air will be vented out of the machine - pressure will not be able to go above this	|
 |	<b>Gas Inlet Settings</b>	|		|

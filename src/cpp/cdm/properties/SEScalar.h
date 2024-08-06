@@ -66,11 +66,10 @@ public:
   void   ForceValue(double d);
 
   double Increment(const SEScalar& s);
-  double IncrementValue(double d);
-  double ForceIncrementValue(double d);
+  double Increment(double d);
+  double ForceIncrement(double d);
 
-  double Multiply(const SEScalar& s);
-  double MultiplyValue(double d);
+  double Multiply(double d);
 
   void Average(int cnt);
 
@@ -160,11 +159,9 @@ private:
   using SEScalar::ForceValue;
 
   using SEScalar::Increment;
-  using SEScalar::IncrementValue;
-  using SEScalar::ForceIncrementValue;
+  using SEScalar::ForceIncrement;
 
   using SEScalar::Multiply;
-  using SEScalar::MultiplyValue;
 
   using SEScalar::Average;
 
@@ -199,9 +196,8 @@ public:
   virtual double GetValue(const CCompoundUnit& unit, int decimal_places) const = 0;
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
   virtual void   ForceValue(double d, const CCompoundUnit& unit) = 0;
-  virtual double IncrementValue(double d, const CCompoundUnit& unit) = 0;
-  virtual double ForceIncrementValue(double d, const CCompoundUnit& unit) = 0;
-  virtual double MultiplyValue(double d, const CCompoundUnit& unit) = 0;
+  virtual double Increment(double d, const CCompoundUnit& unit) = 0;
+  virtual double ForceIncrement(double d, const CCompoundUnit& unit) = 0;
 
 protected:
   virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const = 0;
@@ -231,9 +227,8 @@ protected:
   double GetValue(const CCompoundUnit& unit, int decimal_places) const override;
   void   SetValue(double d, const CCompoundUnit& unit) override;
   void   ForceValue(double d, const CCompoundUnit& unit) override;
-  double IncrementValue(double d, const CCompoundUnit& unit) override;
-  double ForceIncrementValue(double d, const CCompoundUnit& unit) override;
-  double MultiplyValue(double d, const CCompoundUnit& unit) override;
+  double Increment(double d, const CCompoundUnit& unit) override;
+  double ForceIncrement(double d, const CCompoundUnit& unit) override;
 
   const CCompoundUnit* GetCompoundUnit(const std::string& unit) const override;
 
@@ -260,17 +255,11 @@ public:
   double Increment(const SEScalar& s) = delete;// Must provide a unit
   virtual double Increment(const SEScalarQuantity& s);
 
-  double IncrementValue(double d) = delete;// Must provide a unit
-  virtual double IncrementValue(double d, const Unit& unit);
+  double Increment(double d) = delete;// Must provide a unit
+  virtual double Increment(double d, const Unit& unit);
 
-  double ForceIncrementValue(double d) = delete;// Must provide a unit
-  virtual double ForceIncrementValue(double d, const Unit& unit);
-
-  double MultiplyValue(double d) = delete;// Must provide a unit
-  virtual double MultiplyValue(double d, const Unit& unit);
-
-  double Multiply(const SEScalar& s) = delete;// Must provide a unit
-  virtual double Multiply(const SEScalarQuantity& s);
+  double ForceIncrement(double d) = delete;// Must provide a unit
+  virtual double ForceIncrement(double d, const Unit& unit);
 
   bool Equals(const SEScalar& to) const = delete;// Must provide a unit
   virtual bool Equals(const SEScalarQuantity<Unit>& to) const;
@@ -356,7 +345,7 @@ inline void IncrementOverride(SEScalar& s, double value)
 {
   bool b = s.IsReadOnly();
   s.SetReadOnly(false);
-  s.IncrementValue(value);
+  s.Increment(value);
   s.SetReadOnly(b);
 }
 template<class Unit>
@@ -364,7 +353,7 @@ inline void IncrementOverride(SEScalarQuantity<Unit>& s, double value, const Uni
 {
   bool b = s.IsReadOnly();
   s.SetReadOnly(false);
-  s.IncrementValue(value, unit);
+  s.Increment(value, unit);
   s.SetReadOnly(b);
 }
 

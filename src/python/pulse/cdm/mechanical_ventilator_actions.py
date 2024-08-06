@@ -222,7 +222,7 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
         return "Mechanical Ventilator Continuous Positive Airway Pressure" + \
                "\n\tDeltaPressureSupport: " + str(self._delta_pressure_support) if self.has_delta_pressure_support() else "Not Provided" + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
-               "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
+               "\n\tPositiveEndExpiratoryPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
                "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided" \
                "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name + \
                "\n\tInspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" + \
@@ -376,7 +376,7 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
                "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name + \
                "\n\tInspiratoryPeriod: " + str(self._inspiratory_period) if self.has_inspiratory_period() else "Not Provided" + \
                "\n\tInspiratoryPressure: " + str(self._inspiratory_pressure) if self.has_inspiratory_pressure() else "Not Provided" + \
-               "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
+               "\n\tPositiveEndExpiratoryPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
                "\n\tRespirationRate: " + str(self._respiration_rate) if self.has_respiration_rate() else "Not Provided" + \
                "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided"
 
@@ -537,7 +537,7 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
                "\n\tInspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" + \
                "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name + \
                "\n\tInspiratoryPeriod: " + str(self._inspiratory_period) if self.has_inspiratory_period() else "Not Provided" + \
-               "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
+               "\n\tPositiveEndExpiratoryPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
                "\n\tRespirationRate: " + str(self._respiration_rate) if self.has_respiration_rate() else "Not Provided" + \
                "\n\tTidalVolume: " + str(self._tidal_volume) if self.has_tidal_volume() else "Not Provided" + \
                "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided"

@@ -35,14 +35,14 @@ if __name__ == "__main__":
         generate_data_request("Patient", "VitalCapacity", "mL", 1),
 
         generate_data_request("Physiology", "ArterialPressure", "mmHg", 1),
-        generate_data_request("Physiology", "RespiratoryMusclePressure", "cmH20", 4),
+        generate_data_request("Physiology", "RespiratoryMusclePressure", "cmH2O", 4),
     ]
     logging.info(f"Writing validation\\requests\\Patient.json")
     serialize_data_request_list_to_file(patient_drs, Path("./validation/requests/Patient.json"))
 
     # In the future, we will do all xlsx in the data/validation dir
     # But for now, we are just hard coding the automated xlsx files
-    xls_files = ["AirwayObstruction.xlsx", "Dehydration.xlsx"]
+    xls_files = ["AirwayObstruction.xlsx", "Dehydration.xlsx", "MechanicalVentilator.xlsx", "CSTARS.xlsx"]
 
     for xls_file in xls_files:
         segment_validation_pipeline(

@@ -37,7 +37,7 @@
             }
           },
           "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
+          "PositiveEndExpiratoryPressure": {
             "ScalarPressure": {
               "Unit": "cmH2O"
             }
@@ -135,7 +135,7 @@
             }
           },
           "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
+          "PositiveEndExpiratoryPressure": {
             "ScalarPressure": {
               "Value": 3.0,
               "Unit": "cmH2O"
@@ -208,7 +208,7 @@
             }
           },
           "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
+          "PositiveEndExpiratoryPressure": {
             "ScalarPressure": {
               "Value": 1.0,
               "Unit": "cmH2O"
@@ -285,7 +285,7 @@
             }
           },
           "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
+          "PositiveEndExpiratoryPressure": {
             "ScalarPressure": {
               "Value": 3.0,
               "Unit": "cmH2O"

@@ -129,7 +129,7 @@ namespace pulse
       insulinMassDelta_g = Convert(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min, AmountPerTimeUnit::mol_Per_s);
       insulinMassDelta_g *= m_insulinMolarMass_g_Per_mol * m_data.GetTimeStep_s();
     }
-    m_splanchnicInsulin->GetMass().IncrementValue(insulinMassDelta_g, MassUnit::g);
+    m_splanchnicInsulin->GetMass().Increment(insulinMassDelta_g, MassUnit::g);
     m_splanchnicInsulin->Balance(BalanceLiquidBy::Mass);
   }
 
@@ -172,7 +172,7 @@ namespace pulse
     }
 
     norepinephrineRelease_ug *= norepiReleaseMultiplier;
-    m_aortaNorepinephrine->GetMass().IncrementValue(norepinephrineRelease_ug, MassUnit::ug);
+    m_aortaNorepinephrine->GetMass().Increment(norepinephrineRelease_ug, MassUnit::ug);
 
     // If we have a stress/anxiety response, release more epi
     if (m_data.GetActions().GetPatientActions().HasAcuteStress())
@@ -185,7 +185,7 @@ namespace pulse
 
     epinephrineRelease_ug *= epiReleaseMultiplier;
 
-    m_rKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);
-    m_lKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);
+    m_rKidneyEpinephrine->GetMass().Increment(0.5 * epinephrineRelease_ug, MassUnit::ug);
+    m_lKidneyEpinephrine->GetMass().Increment(0.5 * epinephrineRelease_ug, MassUnit::ug);
   }
 END_NAMESPACE

@@ -42,6 +42,7 @@ void HowToRespiratoryMechanics();
 void HowToRespiratoryMechanicsModification();
 void HowToSmoke();
 void HowToTensionPneumothorax();
+void HowToVentilatorFeedbackLoop();
 
 void HowToRunScenario();
 void HowToScenarioFromLog();

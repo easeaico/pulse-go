@@ -35,8 +35,8 @@ namespace Pulse.CDM
       dst.SetOxygenSource((eAnesthesiaMachine_OxygenSource)src.OxygenSource);
       if (src.PeakInspiratoryPressure != null)
         PBProperty.Load(src.PeakInspiratoryPressure, dst.GetPeakInspiratoryPressure());
-      if (src.PositiveEndExpiredPressure != null)
-        PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
+      if (src.PositiveEndExpiratoryPressure != null)
+        PBProperty.Load(src.PositiveEndExpiratoryPressure, dst.GetPositiveEndExpiratoryPressure());
       dst.SetPrimaryGas((eAnesthesiaMachine_PrimaryGas)src.PrimaryGas);
       if (src.RespiratoryRate != null)
         PBProperty.Load(src.RespiratoryRate, dst.GetRespiratoryRate());
@@ -70,8 +70,8 @@ namespace Pulse.CDM
       dst.OxygenSource = (pulse.cdm.bind.AnesthesiaMachineData.Types.eOxygenSource)(int)src.GetOxygenSource();
       if (src.HasPeakInspiratoryPressure())
         dst.PeakInspiratoryPressure = PBProperty.Unload(src.GetPeakInspiratoryPressure());
-      if (src.HasPositiveEndExpiredPressure())
-        dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
+      if (src.HasPositiveEndExpiratoryPressure())
+        dst.PositiveEndExpiratoryPressure = PBProperty.Unload(src.GetPositiveEndExpiratoryPressure());
       dst.PrimaryGas = (pulse.cdm.bind.AnesthesiaMachineData.Types.ePrimaryGas)(int)src.GetPrimaryGas();
       if (src.HasRespiratoryRate())
         dst.RespiratoryRate = PBProperty.Unload(src.GetRespiratoryRate());

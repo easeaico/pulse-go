@@ -107,7 +107,7 @@ bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::strin
     opts.add_whitespace = true;
     opts.preserve_proto_field_names = true;
     if (m == eSerializationFormat::VERBOSE_JSON)
-      opts.always_print_primitive_fields = true;
+      opts.always_print_fields_with_no_presence = true;
     auto status = google::protobuf::util::MessageToJsonString(src, &output, opts);
     if (!status.ok())
     {

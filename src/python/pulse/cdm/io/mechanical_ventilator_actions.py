@@ -70,7 +70,7 @@ def serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(
         serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationCyclePressure)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
     if src.has_positive_end_expired_pressure():
-        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
+        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiratoryPressure)
     if src.has_slope():
         serialize_scalar_time_to_bind(src.get_slope(), dst.Slope)
 
@@ -92,7 +92,7 @@ def serialize_mechanical_ventilator_pressure_control_to_bind(src: SEMechanicalVe
     if src.has_inspiratory_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiratory_pressure(), dst.InspiratoryPressure)
     if src.has_positive_end_expired_pressure():
-        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
+        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiratoryPressure)
     if src.has_respiration_rate():
         serialize_scalar_frequency_to_bind(src.get_respiration_rate(), dst.RespirationRate)
     if src.has_slope():
@@ -116,7 +116,7 @@ def serialize_mechanical_ventilator_volume_control_to_bind(src: SEMechanicalVent
     if src.has_inspiratory_period():
         serialize_scalar_time_to_bind(src.get_inspiratory_period(), dst.InspiratoryPeriod)
     if src.has_positive_end_expired_pressure():
-        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
+        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiratoryPressure)
     if src.has_respiration_rate():
         serialize_scalar_frequency_to_bind(src.get_respiration_rate(), dst.RespirationRate)
     if src.has_slope():

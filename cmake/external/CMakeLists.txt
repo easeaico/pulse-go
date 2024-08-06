@@ -16,12 +16,12 @@ endif()
 #-----------------------------------------------------------------------------
 if(MSVC)
   # Allow the MP flag to get set externally
-  set(${PROJECT_NAME}_ENABLE_MULTI_PROCESS_BUILDS ON CACHE BOOL "Enable multi-process builds")
+  set(Pulse_ENABLE_MULTI_PROCESS_BUILDS ON CACHE BOOL "Enable multi-process builds")
   set(PROCESSOR_COUNT "$ENV{NUMBER_OF_PROCESSORS}")
-  set(${PROJECT_NAME}_NUM_BUILD_PROCESSES ${PROCESSOR_COUNT} CACHE STRING "The maximum number of processes for the /MP flag")
-  if(${PROJECT_NAME}_ENABLE_MULTI_PROCESS_BUILDS)
-    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} /MP${${PROJECT_NAME}_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP${${PROJECT_NAME}_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
+  set(Pulse_NUM_BUILD_PROCESSES ${PROCESSOR_COUNT} CACHE STRING "The maximum number of processes for the /MP flag")
+  if(Pulse_ENABLE_MULTI_PROCESS_BUILDS)
+    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
   endif()
 #elseif(ANDROID)
 #  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
@@ -86,32 +86,35 @@ mark_as_superbuild(VARS CMAKE_INCLUDE_PATH ALL_PROJECTS)
 #-----------------------------------------------------------------------------
 set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}) # Location of the "External_*" files
 
-ExternalProject_Include_Dependencies( ${PROJECT_NAME}
-  DEPENDS_VAR ${PROJECT_NAME}_DEPENDENCIES
-  EP_ARGS_VAR ${PROJECT_NAME}_EP_ARGS
-  SUPERBUILD_VAR ${PROJECT_NAME}_SUPERBUILD
+ExternalProject_Include_Dependencies( Pulse
+  DEPENDS_VAR Pulse_DEPENDENCIES
+  EP_ARGS_VAR Pulse_EP_ARGS
+  SUPERBUILD_VAR Pulse_SUPERBUILD
   )
 
 
 #-----------------------------------------------------------------------------
 # Inner build of the main project
 #-----------------------------------------------------------------------------
-ExternalProject_Add( ${PROJECT_NAME}
-  ${${PROJECT_NAME}_EP_ARGS}
+ExternalProject_Add( Pulse
+  ${Pulse_EP_ARGS}
   DOWNLOAD_COMMAND ""
-  SOURCE_DIR ${${PROJECT_NAME}_SOURCE_DIR}
+  SOURCE_DIR ${Pulse_SOURCE_DIR}
   BINARY_DIR ${CMAKE_BINARY_DIR}/Innerbuild
   ${COMMON_CMAKE_EP_ARGS}
   CMAKE_ARGS
     -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
   CMAKE_CACHE_ARGS 
-    -D${PROJECT_NAME}_SUPERBUILD:BOOL=OFF
-    -D${PROJECT_NAME}_JAVA_API:BOOL=${${PROJECT_NAME}_JAVA_API}
-    -D${PROJECT_NAME}_CSHARP_API:BOOL=${${PROJECT_NAME}_CSHARP_API}
-    -D${PROJECT_NAME}_PYTHON_API:BOOL=${${PROJECT_NAME}_PYTHON_API}
-    -D${PROJECT_NAME}_AS_SHARED:BOOL=${${PROJECT_NAME}_AS_SHARED}
-    -D${PROJECT_NAME}_C_AS_STATIC:BOOL=${${PROJECT_NAME}_C_AS_STATIC}
-    -D${PROJECT_NAME}_NATIVE_BUILD_DIR:PATH=${${PROJECT_NAME}_NATIVE_BUILD_DIR}
+    -DPulse_SUPERBUILD:BOOL=OFF
+    -DPulse_JAVA_API:BOOL=${Pulse_JAVA_API}
+    -DPulse_JAVA_HOME_DIR:PATH=${Pulse_JAVA_HOME_DIR}
+    -DPulse_CSHARP_API:BOOL=${Pulse_CSHARP_API}
+    -DPulse_PYTHON_API:BOOL=${Pulse_PYTHON_API}
+    -DPulse_PYTHON_HOME_DIR:PATH=${Pulse_PYTHON_HOME_DIR}
+    -DPulse_AS_SHARED:BOOL=${Pulse_AS_SHARED}
+    -DPulse_C_AS_STATIC:BOOL=${Pulse_C_AS_STATIC}
+    -DPulse_NATIVE_BUILD_DIR:PATH=${Pulse_NATIVE_BUILD_DIR}
+    -DPulse_MSVC_STATIC_RUNTIME:BOOL=${Pulse_MSVC_STATIC_RUNTIME}
     -DEigen3_DIR:PATH=${Eigen3_DIR}
     -Dprotobuf_DIR:PATH=${protobuf_DIR}
     -Dprotobuf_SRC:PATH=${protobuf_SRC}
@@ -120,12 +123,12 @@ ExternalProject_Add( ${PROJECT_NAME}
     -Dabsl_DIR:PATH=${absl_DIR}
     -Dutf8_range_DIR:PATH=${utf8_range_DIR}
   #INSTALL_COMMAND ${SKIP_STEP_COMMAND}
-  DEPENDS ${${PROJECT_NAME}_DEPENDENCIES}
+  DEPENDS ${Pulse_DEPENDENCIES}
 )
-set_target_properties (${PROJECT_NAME} PROPERTIES FOLDER ${PROJECT_NAME})
+set_target_properties (Pulse PROPERTIES FOLDER Pulse)
 
 # Need Java Utils to generate data
-if (${PROJECT_NAME}_JAVA_API)
+if (Pulse_JAVA_API)
   add_custom_target(PulseData ALL)
   add_dependencies(PulseData Pulse)
   add_custom_command(TARGET PulseData POST_BUILD
@@ -143,22 +146,22 @@ if (${PROJECT_NAME}_JAVA_API)
               COMMAND_EXPAND_LISTS
               WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
       BYPRODUCTS "${CMAKE_INSTALL_PREFIX}/bin/states/StandardMale@0s.json")
-  set_target_properties (PulseData PROPERTIES FOLDER ${PROJECT_NAME})
+  set_target_properties (PulseData PROPERTIES FOLDER Pulse)
 else()
   message(STATUS "!!! Without Java Utils, this build will not generate required data files needed for Pulse to execute !!!")
   message(STATUS "!!! You will need to get these required data files from another build/source !!!")
 endif()
 
-if (NOT ${PROJECT_NAME}_PYTHON_API)
+if (NOT Pulse_PYTHON_API)
   message(STATUS "!!! Without Python Utils, this build will not generate files and utilities needed for Pulse testing and development !!!")
 endif()
 
-if(${PROJECT_NAME}_DOWNLOAD_BASELINES)
+if(Pulse_DOWNLOAD_BASELINES)
   message(STATUS "Pulling the latest Pulse Baselines!")
   add_custom_command(TARGET PulseData POST_BUILD
     COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=updateBaselines -P run.cmake WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
             WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
-  set_target_properties (PulseData PROPERTIES FOLDER ${PROJECT_NAME})
+  set_target_properties (PulseData PROPERTIES FOLDER Pulse)
 else()
   message(STATUS "!!! NOT pulling the latest Pulse Baselines !!!")
 endif()

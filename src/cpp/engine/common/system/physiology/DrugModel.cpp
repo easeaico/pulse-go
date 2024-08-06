@@ -244,9 +244,9 @@ namespace pulse
       administrationTime_s = bolus->GetAdminDuration(TimeUnit::s);
       concentration_ugPermL = bolus->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
       massIncrement_ug = dose_mL * concentration_ugPermL * m_data.GetTimeStep_s() / administrationTime_s;
-      subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
+      subQ->GetMass().Increment(massIncrement_ug, MassUnit::ug);
       subQ->Balance(BalanceLiquidBy::Mass);
-      bolus->GetTotalInfusedDose().IncrementValue(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
+      bolus->GetTotalInfusedDose().Increment(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
       /// \todo Add fluid amount to fluid system
     }
     // Remove any bolus that are complete
@@ -285,7 +285,7 @@ namespace pulse
 
       concentration_ug_Per_mL = infusion->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_mL);
       rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
-      infusion->GetVolume().IncrementValue(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
+      infusion->GetVolume().Increment(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
       if (infusion->GetVolume().IsZero() || infusion->GetVolume().IsNegative())
       { /// \todo correct the mass based on what we have left in the bag
         finished.push_back(&infusion->GetSubstance());
@@ -294,7 +294,7 @@ namespace pulse
 
       massIncrement_ug = rate_mL_Per_s * concentration_ug_Per_mL * m_data.GetTimeStep_s();
       subQ = m_venaCavaVascular->GetSubstanceQuantity(infusion->GetSubstance());
-      subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
+      subQ->GetMass().Increment(massIncrement_ug, MassUnit::ug);
       //todo: Enforce limits and remove the fatal error
       if (massIncrement_ug < 0)
       {
@@ -353,7 +353,7 @@ namespace pulse
         return;
       }
 
-      infusion->GetBagVolume().IncrementValue(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
+      infusion->GetBagVolume().Increment(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
       if (infusion->GetBagVolume().IsZero() || infusion->GetBagVolume().IsNegative())
       { /// \todo correct the mass based on what we have left in the bag
         emptyBags.push_back(compound);
@@ -364,7 +364,7 @@ namespace pulse
       {
         subQ = m_venaCavaVascular->GetSubstanceQuantity(component->GetSubstance());
         massIncrement_ug = rate_mL_Per_s * component->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * m_data.GetTimeStep_s();
-        subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
+        subQ->GetMass().Increment(massIncrement_ug, MassUnit::ug);
         subQ->Balance(BalanceLiquidBy::Mass);
       }
     }

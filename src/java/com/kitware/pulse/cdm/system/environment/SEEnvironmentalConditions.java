@@ -14,7 +14,6 @@ import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData.eSurroundingType;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceConcentrationData;
-import com.kitware.pulse.cdm.bind.Substance.SubstanceData.eState;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceFractionData;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarHeatResistanceArea;
@@ -22,10 +21,10 @@ import com.kitware.pulse.cdm.properties.SEScalarLengthPerTime;
 import com.kitware.pulse.cdm.properties.SEScalarMassPerVolume;
 import com.kitware.pulse.cdm.properties.SEScalarPressure;
 import com.kitware.pulse.cdm.properties.SEScalarTemperature;
+import com.kitware.pulse.cdm.properties.SEScalarVolume;
 import com.kitware.pulse.cdm.substance.SESubstanceConcentration;
 import com.kitware.pulse.cdm.substance.SESubstanceFraction;
 import com.kitware.pulse.utilities.FileUtils;
-import com.kitware.pulse.utilities.Log;
 
 public class SEEnvironmentalConditions
 {
@@ -37,6 +36,7 @@ public class SEEnvironmentalConditions
   protected SEScalarHeatResistanceArea      clothingResistance;
   protected SEScalar0To1                    emissivity;
   protected SEScalarTemperature             meanRadiantTemperature;
+  protected SEScalarVolume                  mechanicalDeadSpace;
   protected SEScalar0To1                    relativeHumidity;
   protected SEScalarTemperature             respirationAmbientTemperature;
 
@@ -55,6 +55,7 @@ public class SEEnvironmentalConditions
     this.clothingResistance=null;
     this.emissivity=null;
     this.meanRadiantTemperature=null;
+    this.mechanicalDeadSpace=null;
     this.relativeHumidity=null;
     this.respirationAmbientTemperature=null;
 
@@ -80,6 +81,8 @@ public class SEEnvironmentalConditions
       emissivity.invalidate();
     if (meanRadiantTemperature != null)
       meanRadiantTemperature.invalidate();
+    if (mechanicalDeadSpace != null)
+      mechanicalDeadSpace.invalidate();
     if (relativeHumidity != null)
       relativeHumidity.invalidate();
     if (respirationAmbientTemperature != null)
@@ -108,6 +111,8 @@ public class SEEnvironmentalConditions
       this.getEmissivity().set(from.getEmissivity());
     if(from.hasMeanRadiantTemperature())
       this.getMeanRadiantTemperature().set(from.getMeanRadiantTemperature());
+    if(from.hasMechanicalDeadSpace())
+      this.getMechanicalDeadSpace().set(from.getMechanicalDeadSpace());
     if(from.hasRelativeHumidity())
       this.getRelativeHumidity().set(from.getRelativeHumidity());
     if(from.hasRespirationAmbientTemperature())
@@ -166,6 +171,8 @@ public class SEEnvironmentalConditions
       SEScalar0To1.load(src.getEmissivity(),dst.getEmissivity());
     if (src.hasMeanRadiantTemperature())
       SEScalarTemperature.load(src.getMeanRadiantTemperature(),dst.getMeanRadiantTemperature());
+    if (src.hasMechanicalDeadSpace())
+      SEScalarVolume.load(src.getMechanicalDeadSpace(),dst.getMechanicalDeadSpace());
     if (src.hasRelativeHumidity())
       SEScalar0To1.load(src.getRelativeHumidity(),dst.getRelativeHumidity());
     if (src.hasRespirationAmbientTemperature())
@@ -211,6 +218,8 @@ public class SEEnvironmentalConditions
       dst.setEmissivity(SEScalar0To1.unload(src.emissivity));  
     if (src.hasMeanRadiantTemperature())
       dst.setMeanRadiantTemperature(SEScalarTemperature.unload(src.meanRadiantTemperature));
+    if (src.hasMechanicalDeadSpace())
+      dst.setMechanicalDeadSpace(SEScalarVolume.unload(src.mechanicalDeadSpace));
     if (src.hasRelativeHumidity())
       dst.setRelativeHumidity(SEScalar0To1.unload(src.relativeHumidity));
     if (src.hasRespirationAmbientTemperature())
@@ -310,6 +319,17 @@ public class SEEnvironmentalConditions
   public boolean hasMeanRadiantTemperature()
   {
     return meanRadiantTemperature == null ? false : meanRadiantTemperature.isValid();
+  }
+  
+  public SEScalarVolume getMechanicalDeadSpace()
+  {
+    if (mechanicalDeadSpace == null)
+      mechanicalDeadSpace = new SEScalarVolume();
+    return mechanicalDeadSpace;
+  }
+  public boolean hasMechanicalDeadSpace()
+  {
+    return mechanicalDeadSpace == null ? false : mechanicalDeadSpace.isValid();
   }
   
   public SEScalar0To1 getRelativeHumidity()
@@ -465,6 +485,7 @@ public class SEEnvironmentalConditions
           + "\n\tClothingResistance: " + (hasClothingResistance()?getClothingResistance():"None")
           + "\n\tEmissivity: " + (hasEmissivity()?getEmissivity():"None")
           + "\n\tMeanRadiantTemperature: " + (hasMeanRadiantTemperature()?getMeanRadiantTemperature():"None")
+          + "\n\tMechanicalDeadSpace: " + (hasMechanicalDeadSpace()?getMechanicalDeadSpace():"None")
           + "\n\tRelativeHumidity: " + (hasRelativeHumidity()?getRelativeHumidity():"None")
           + "\n\tRespirationAmbientTemperature: " + (hasRespirationAmbientTemperature()?getRespirationAmbientTemperature():"None");
       for(SESubstanceFraction sf : this.ambientGases)

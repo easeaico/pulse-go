@@ -263,7 +263,7 @@ namespace pulse { namespace human_adult_whole_body
           testID++;
 
           if (total_SID_iterations > 1)
-            strongIonDifference.IncrementValue(SID_range_mM / (total_SID_iterations - 1), AmountPerVolumeUnit::mmol_Per_L);
+            strongIonDifference.Increment(SID_range_mM / (total_SID_iterations - 1), AmountPerVolumeUnit::mmol_Per_L);
 
         }//End SID Loop
       }//End CO2 loop

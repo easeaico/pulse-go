@@ -885,12 +885,12 @@ void CommonDataModelTest::ComplianceVolumeChange(const std::string& sTestDirecto
     {
       volumeChanged = true;
       node3->GetNextVolume().SetReadOnly(false);
-      node3->GetNextVolume().IncrementValue(10.0, VolumeUnit::L);
+      node3->GetNextVolume().Increment(10.0, VolumeUnit::L);
     }
     if (currentTime_s > 8.0 && !pressureChanged)
     {
       pressureChanged = true;
-      node3->GetNextPressure().IncrementValue(10.0, PressureUnit::cmH2O);
+      node3->GetNextPressure().Increment(10.0, PressureUnit::cmH2O);
     }
     //Process
     fluidCalculator.Process(*fluidCircuit, timeStep_s);
@@ -972,7 +972,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("VolumeBaseline"+type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetVolumeBaseline().IncrementValue(2, VolumeUnit::m3); }
+      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetVolumeBaseline().Increment(2, VolumeUnit::m3); }
     catch (...) {
       caught = true; }
     if (i!=2 && !caught)
@@ -986,7 +986,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("Volume" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetVolume().IncrementValue(2, VolumeUnit::m3); }
+      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetVolume().Increment(2, VolumeUnit::m3); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1000,7 +1000,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("NextVolume" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetNextVolume().IncrementValue(2, VolumeUnit::m3);
+      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetNextVolume().Increment(2, VolumeUnit::m3);
     }
     catch (...) {
       caught = true;
@@ -1017,7 +1017,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("No Capacitance NextVolume" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Short")->GetSourceNode().GetNextVolume().IncrementValue(2, VolumeUnit::m3);
+      fluidCircuit->GetPath("Short")->GetSourceNode().GetNextVolume().Increment(2, VolumeUnit::m3);
     }
     catch (...) {
       caught = true;
@@ -1031,7 +1031,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("Pressure" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetPressure().IncrementValue(2, PressureUnit::Pa); }
+      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetPressure().Increment(2, PressureUnit::Pa); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1045,7 +1045,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("NextPressure" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetNextPressure().IncrementValue(2, PressureUnit::Pa); }
+      fluidCircuit->GetPath("Capacitor")->GetSourceNode().GetNextPressure().Increment(2, PressureUnit::Pa); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1059,7 +1059,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("Flow" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetFlow().IncrementValue(2, VolumePerTimeUnit::m3_Per_s); }
+      fluidCircuit->GetPath("Capacitor")->GetFlow().Increment(2, VolumePerTimeUnit::m3_Per_s); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1073,7 +1073,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("NextFlow" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetNextFlow().IncrementValue(2, VolumePerTimeUnit::m3_Per_s); }
+      fluidCircuit->GetPath("Capacitor")->GetNextFlow().Increment(2, VolumePerTimeUnit::m3_Per_s); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1087,7 +1087,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("FlowSource" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Flow Source")->GetFlowSource().IncrementValue(2, VolumePerTimeUnit::m3_Per_s); }
+      fluidCircuit->GetPath("Flow Source")->GetFlowSource().Increment(2, VolumePerTimeUnit::m3_Per_s); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1101,7 +1101,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("Resistance" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Resistor")->GetResistance().IncrementValue(2, PressureTimePerVolumeUnit::Pa_s_Per_m3); }
+      fluidCircuit->GetPath("Resistor")->GetResistance().Increment(2, PressureTimePerVolumeUnit::Pa_s_Per_m3); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1115,7 +1115,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("Capacitance" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Capacitor")->GetCapacitance().IncrementValue(2, VolumePerPressureUnit::m3_Per_Pa); }
+      fluidCircuit->GetPath("Capacitor")->GetCapacitance().Increment(2, VolumePerPressureUnit::m3_Per_Pa); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1129,7 +1129,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("Inductance" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Inductor")->GetInductance().IncrementValue(2, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3); }
+      fluidCircuit->GetPath("Inductor")->GetInductance().Increment(2, PressureTimeSquaredPerVolumeUnit::Pa_s2_Per_m3); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)
@@ -1143,7 +1143,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
     testCase->SetName("PotentialSource" + type);
     pTimer.Start("Test");
     try {
-      fluidCircuit->GetPath("Potential Source")->GetPotentialSource().IncrementValue(2, PressureUnit::Pa); }
+      fluidCircuit->GetPath("Potential Source")->GetPotentialSource().Increment(2, PressureUnit::Pa); }
     catch (...) {
       caught = true; }
     if (i != 2 && !caught)

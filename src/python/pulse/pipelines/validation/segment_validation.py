@@ -74,17 +74,22 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
         raise ValueError(f"Could not find results for {header} in segment {seg_id}")
     engine_val = result.values[header_idx]
 
+    def _convert_unit(header: str, val: float):
+        paren_idx = header.find("(")
+        if paren_idx != -1:
+            requested_unit = header[paren_idx+1:-1].replace("_", " ")
+            engine_full_header = results.get_headers()[results.get_header_index(header)]
+            engine_paren_idx = engine_full_header.find("(")
+            if engine_paren_idx == -1:
+                raise ValueError(f"Cannot convert between {requested_unit} and unitless for {header}")
+            curr_unit = engine_full_header[engine_paren_idx+1:-1].replace("_", " ")
+            if curr_unit != requested_unit:
+                val = PyPulse.convert(val, curr_unit, requested_unit)
+
+        return val
+
     # Convert to validation unit if needed
-    paren_idx = header.find("(")
-    if paren_idx != -1:
-        val_unit = header[paren_idx+1:-1].replace("_", " ")
-        engine_full_header = results.get_headers()[results.get_header_index(header)]
-        engine_paren_idx = engine_full_header.find("(")
-        if engine_paren_idx == -1:
-            raise ValueError(f"Cannot convert between {val_unit} and unitless for {header}")
-        engine_unit = engine_full_header[engine_paren_idx+1:-1].replace("_", " ")
-        if engine_unit != val_unit:
-            engine_val = PyPulse.convert(engine_val, engine_unit, val_unit)
+    engine_val = _convert_unit(header, engine_val)
 
     if compare_type == SESegmentValidationTarget.eComparisonType.EqualToSegment or \
        compare_type == SESegmentValidationTarget.eComparisonType.EqualToValue:
@@ -94,6 +99,7 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
             if tgt_result is None:
                 raise Exception("Could not find result for segment " + str(seg_id))
             expected_val = tgt_result.values[results.get_header_index(header)]
+            expected_val = _convert_unit(header, expected_val)
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()
@@ -113,6 +119,7 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
             if tgt_result is None:
                 raise Exception("Could not find result for segment " + str(seg_id))
             expected_val = tgt_result.values[results.get_header_index(header)]
+            expected_val = _convert_unit(header, expected_val)
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()
@@ -132,6 +139,7 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
             if tgt_result is None:
                 raise Exception("Could not find result for segment " + str(seg_id))
             expected_val = tgt_result.values[results.get_header_index(header)]
+            expected_val = _convert_unit(header, expected_val)
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()
@@ -151,6 +159,7 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
             if tgt_result is None:
                 raise Exception("Could not find result for segment " + str(seg_id))
             expected_val = tgt_result.values[results.get_header_index(header)]
+            expected_val = _convert_unit(header, expected_val)
             expected_str = f"({expected_val:.{value_precision}G})"
         else:
             expected_val = tgt.get_target()

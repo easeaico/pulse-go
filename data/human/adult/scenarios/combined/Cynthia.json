@@ -5,15 +5,13 @@
       "PatientFile": "Cynthia.json"
   },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "DrugDataRequests.json",
+    "NervousDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest": 
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "NeuromuscularBlockLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SedationLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-SizeModifier", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-ReactivityModifier", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Ketamine", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Rocuronium", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Midazolam", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" }
@@ -181,7 +179,7 @@
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 13.2, "Unit": "cmH2O" } },
-          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
+          "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 3.25, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.75, "Unit": "s" } },
           "FractionInspiredGas": [

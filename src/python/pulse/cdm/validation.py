@@ -7,6 +7,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+import PyPulse
 from pulse.cdm.patient import SEPatient
 from pulse.cdm.plots import SEPlotter
 from pulse.cdm.utils.file_utils import get_scenario_dir
@@ -304,12 +305,28 @@ class SESegmentValidationSegmentTable:
 
         def _get_engine_value(dr_header: str, precision: int=3) -> List[str]:
             header_idx = results.get_header_index(dr_header)
+
             if header_idx is None:
                 _pulse_logger.error(f"Could not find results for {dr_header} in segment {self.get_segment()}")
                 return None
+
+            engine_val = result.values[header_idx]
+
+            # Convert unit if needed
+            paren_idx = dr_header.find("(")
+            if paren_idx != -1 and engine_val != "NaN":
+                table_unit = dr_header[paren_idx+1:-1].replace("_", " ")
+                engine_full_header = results.get_headers()[header_idx]
+                engine_paren_idx = engine_full_header.find("(")
+                if engine_paren_idx == -1:
+                    raise ValueError(f"Cannot convert between {table_unit} and unitless for {dr_header}")
+                engine_unit = engine_full_header[engine_paren_idx+1:-1].replace("_", " ")
+                if engine_unit != table_unit:
+                    engine_val = PyPulse.convert(engine_val, engine_unit, table_unit)
+
             return [
                 dr_header,
-                f"{result.values[header_idx]:.{precision}G}" if result.values[header_idx] != "NaN" else "NaN"
+                f"{engine_val:.{precision}G}" if engine_val != "NaN" else "NaN"
             ]
 
         table_data = list()

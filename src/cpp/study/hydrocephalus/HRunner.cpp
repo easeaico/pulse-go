@@ -315,7 +315,7 @@ namespace pulse::study::hydrocephalus
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
     printOpts.preserve_proto_field_names = true;
-    printOpts.always_print_primitive_fields = true;
+    printOpts.always_print_fields_with_no_presence = true;
     if (!google::protobuf::util::MessageToJsonString(src, &output, printOpts).ok())
     {
       Error("Unable to serialize simulation list");

@@ -50,6 +50,7 @@ int main()
   //HowToRespiratoryMechanicsModification();
   //HowToSmoke();
   //HowToTensionPneumothorax();
+  //HowToVentilatorFeedbackLoop();
 
   // These ones do not really run, pure examples
   //HowToRunScenario();

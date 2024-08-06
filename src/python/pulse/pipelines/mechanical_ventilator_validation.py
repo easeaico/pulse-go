@@ -91,54 +91,54 @@ def data():
                 "TidalVolume": [900, "mL"],
                 "InspiratoryTime": [1.0, "s"],
                 "RespirationRate" : [12, "bpm"],
-                "PositiveEndExpiredPressure": [5, "cmH2O"],
+                "PositiveEndExpiratoryPressure": [5, "cmH2O"],
                 "Flow": [60, "L/min"]
             },
             "Healthy_PC_AC": {
                 "InspiratoryTime": [1.0, "s"],
                 "RespirationRate": [12, "bpm"],
-                "PositiveEndExpiredPressure": [5, "cmH2O"],
+                "PositiveEndExpiratoryPressure": [5, "cmH2O"],
                 "PeakInspiratoryPressure": [19, "cmH2O"]
             },
             "Healthy_CPAP": {
                 "DeltaPressureSupport": [10, "cmH2O"],
-                "PositiveEndExpiredPressure": [5, "cmH2O"],
+                "PositiveEndExpiratoryPressure": [5, "cmH2O"],
                 "Slope": [0.2, "s"]
             },
             "Restrictive_VC_AC": {
                 "TidalVolume": [550, "mL"],
                 "InspiratoryTime": [1.1, "s"],
                 "RespirationRate": [12, "bpm"],
-                "PositiveEndExpiredPressure": [5, "cmH2O"],
+                "PositiveEndExpiratoryPressure": [5, "cmH2O"],
                 "Flow": [40, "L/min"]
             },
             "Restrictive_PC_AC": {
                 "InspiratoryTime": [1.1, "s"],
                 "RespirationRate": [12, "bpm"],
-                "PositiveEndExpiredPressure": [5, "cmH2O"],
+                "PositiveEndExpiratoryPressure": [5, "cmH2O"],
                 "PeakInspiratoryPressure": [23, "cmH2O"]
             },
             "Restrictive_CPAP": {
                 "DeltaPressureSupport": [10, "cmH2O"],
-                "PositiveEndExpiredPressure": [5, "cmH2O"],
+                "PositiveEndExpiratoryPressure": [5, "cmH2O"],
                 "Slope": [0.2, "s"]
             },
             "Obstructive_VC_AC": {
                 "TidalVolume": [500,"mL"],
                 "InspiratoryTime": [1.1,"s"],
                 "RespirationRate": [12,"/min"],
-                "PositiveEndExpiredPressure": [5,"cmH2O"],
+                "PositiveEndExpiratoryPressure": [5,"cmH2O"],
                 "Flow": [40,"L/min"]
             },
             "Obstructive_PC_AC": {
                 "InspiratoryTime": [1.2,"s"],
                 "RespirationRate": [12,"bpm"],
-                "PositiveEndExpiredPressure": [5,"cmH2O"],
+                "PositiveEndExpiratoryPressure": [5,"cmH2O"],
                 "PeakInspiratoryPressure": [12,"cmH2O"]
             },
             "Obstructive_CPAP": {
                 "DeltaPressureSupport": [10,"cmH2O"],
-                "PositiveEndExpiredPressure": [5,"cmH2O"],
+                "PositiveEndExpiratoryPressure": [5,"cmH2O"],
                 "Slope": [0.2,"s"]
             }
         },

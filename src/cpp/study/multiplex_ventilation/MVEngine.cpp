@@ -290,7 +290,7 @@ namespace pulse::study::multiplex_ventilation
       mv.SetInspirationWaveform(eDriverWaveform::Square);
       mv.SetExpirationWaveform(eDriverWaveform::Square);
       mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);
-      mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
+      mv.GetPositiveEndExpiratoryPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
       double respirationRate_per_min = sim.respirationrate_per_min();
       double IERatio = sim.ieratio();
 
@@ -595,7 +595,7 @@ namespace pulse::study::multiplex_ventilation
 
       multiVentilation->set_respirationrate_per_min(respirationRate_per_min);
       multiVentilation->set_ieratio(IERatio);
-      multiVentilation->set_peep_cmh2o(pc->GetMechanicalVentilator().GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O));
+      multiVentilation->set_peep_cmh2o(pc->GetMechanicalVentilator().GetSettings().GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O));
       multiVentilation->set_pip_cmh2o(pc->GetMechanicalVentilator().GetSettings().GetPeakInspiratoryPressure(PressureUnit::cmH2O));
       multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetSettings().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());
       // Write out all the vitals
@@ -657,11 +657,11 @@ namespace pulse::study::multiplex_ventilation
   void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
   {
     trkr.GetDataRequestManager().SetResultsFilename(csv_filename);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     trkr.GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
-    trkr.GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PositiveEndExpiredPressure", PressureUnit::cmH2O);
+    trkr.GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalPositiveEndExpiratoryPressure", PressureUnit::cmH2O);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TotalRespiratoryModelCompliance", VolumePerPressureUnit::L_Per_cmH2O);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
@@ -699,7 +699,7 @@ namespace pulse::study::multiplex_ventilation
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
     printOpts.preserve_proto_field_names = true;
-    printOpts.always_print_primitive_fields = true;
+    printOpts.always_print_fields_with_no_presence = true;
     return google::protobuf::util::MessageToJsonString(src, &dst, printOpts).ok();
   }
   bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst)

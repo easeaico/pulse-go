@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     //    return 1;
     //  }
     //  pc->GetEngineTracker().GetDataRequestManager().SetResultsFilename("./test/multiplex_patient_" + cdm::to_string(i) + ".csv");
-    //  pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+    //  pc->GetEngineTracker().GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
     //  pc->GetEngineTracker().SetupRequests();
     //  pc->AdvanceModelTime();
     //  delete(pc);

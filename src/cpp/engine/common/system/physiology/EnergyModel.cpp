@@ -196,7 +196,7 @@ namespace pulse
   //
   //  //Patient weight decrease due to fluid mass lost
   //  double patientMassLost_kg = m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL)*fluidLoss_mL;
-  //  m_Patient->GetWeight().IncrementValue(-patientMassLost_kg, MassUnit::kg);
+  //  m_Patient->GetWeight().Increment(-patientMassLost_kg, MassUnit::kg);
   //}
 
   //--------------------------------------------------------------------------------------------------
@@ -688,7 +688,7 @@ namespace pulse
       double massLost_g = concentration * perspiredVolume_mL / 1000.0;
       SELiquidSubstanceQuantity* quantity = m_SkinExtracellular->GetSubstanceQuantity(component->GetSubstance());
       massLost_g = MIN(quantity->GetMass(MassUnit::g), massLost_g);
-      quantity->GetMass().IncrementValue(-massLost_g, MassUnit::g);
+      quantity->GetMass().Increment(-massLost_g, MassUnit::g);
       quantity->Balance(BalanceLiquidBy::Mass);
     }
   }

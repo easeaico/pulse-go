@@ -89,7 +89,7 @@ void HowToCOVID19Ventilated()
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation() * 100 << "%");
-  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetRespiratoryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
   pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "P/F Ratio : " << pe->GetRespiratorySystem()->GetHorowitzIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetBloodChemistrySystem()->GetShuntFraction() * 100 << "%");
@@ -115,7 +115,7 @@ void HowToCOVID19Ventilated()
   mv.SetInspirationWaveform(eDriverWaveform::Square);
   mv.SetExpirationWaveform(eDriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
-  mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit::cmH2O);
+  mv.GetPositiveEndExpiratoryPressure().SetValue(10.0, PressureUnit::cmH2O);
   const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
   mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(0.5);
   double respirationRate_per_min = 20.0;
@@ -144,7 +144,7 @@ void HowToCOVID19Ventilated()
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation() * 100 << "%");
-  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetRespiratoryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
   pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "P/F Ratio : " << pe->GetRespiratorySystem()->GetHorowitzIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetBloodChemistrySystem()->GetShuntFraction() * 100 << "%");

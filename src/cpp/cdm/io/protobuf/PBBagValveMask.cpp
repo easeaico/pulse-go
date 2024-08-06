@@ -38,8 +38,8 @@ void PBBagValveMask::Serialize(const CDM_BIND::BagValveMaskData& src, SEBagValve
     PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
   if (src.has_valvevolume())
     PBProperty::Load(src.valvevolume(), dst.GetValveVolume());
-  if (src.has_valvepositiveendexpiredpressure())
-    PBProperty::Load(src.valvepositiveendexpiredpressure(), dst.GetValvePositiveEndExpiredPressure());
+  if (src.has_valvepositiveendexpiratorypressure())
+    PBProperty::Load(src.valvepositiveendexpiratorypressure(), dst.GetValvePositiveEndExpiratoryPressure());
   if (src.has_valveresistance())
     PBProperty::Load(src.valveresistance(), dst.GetValveResistance());
 
@@ -102,8 +102,8 @@ void PBBagValveMask::Serialize(const SEBagValveMask& src, CDM_BIND::BagValveMask
     dst.set_allocated_connectionvolume(PBProperty::Unload(*src.m_ConnectionVolume));
   if (src.HasValveVolume())
     dst.set_allocated_valvevolume(PBProperty::Unload(*src.m_ValveVolume));
-  if (src.HasValvePositiveEndExpiredPressure())
-    dst.set_allocated_valvepositiveendexpiredpressure(PBProperty::Unload(*src.m_ValvePositiveEndExpiredPressure));
+  if (src.HasValvePositiveEndExpiratoryPressure())
+    dst.set_allocated_valvepositiveendexpiratorypressure(PBProperty::Unload(*src.m_ValvePositiveEndExpiratoryPressure));
   if (src.HasValveResistance())
     dst.set_allocated_valveresistance(PBProperty::Unload(*src.m_ValveResistance));
 

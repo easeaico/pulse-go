@@ -21,7 +21,7 @@ def serialize_bag_valve_mask_to_bind(src: SEBagValveMask, dst: BagValveMaskData)
     if src.has_seal_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_seal_resistance(), dst.SealResistance)
     if src.has_valve_positive_end_expired_pressure():
-        serialize_scalar_pressure_to_bind(src.get_valve_positive_end_expired_pressure(), dst.ValvePositiveEndExpiredPressure)
+        serialize_scalar_pressure_to_bind(src.get_valve_positive_end_expired_pressure(), dst.ValvePositiveEndExpiratoryPressure)
     if src.has_valve_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_valve_resistance(), dst.ValveResistance)
     if src.has_valve_volume():

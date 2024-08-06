@@ -26,11 +26,12 @@ message EnvironmentalConditionsData
   ScalarHeatResistanceAreaData              ClothingResistance               = 6; /**<< @brief Average thermal resistance of all patient clothing. */
   Scalar0To1Data                            Emissivity                       = 7; /**<< @brief Efficiency of the patient's surface to emit thermal energy. */
   ScalarTemperatureData                     MeanRadiantTemperature           = 8; /**<< @brief The uniform temperature of an imaginary enclosure in which the radiant heat transfer from the patient's body is equal to the radiant heat transfer in the actual non-uniform enclosure. */
-  Scalar0To1Data                            RelativeHumidity                 = 9; /**<< @brief Local ambient ratio of the partial pressure of water vapor to the equilibrium vapor pressure of water at the same temperature. */
-  ScalarTemperatureData                     RespirationAmbientTemperature    = 10;/**<< @brief Local ambient temperature of the surrounding air that is inhaled. */
+  ScalarVolumeData                          MechanicalDeadSpace              = 9; /**<< @brief A volume of breathing gas that functions as an external extension of the physiological dead space, such as with a face mask or diving helmet. */
+  Scalar0To1Data                            RelativeHumidity                 = 10;/**<< @brief Local ambient ratio of the partial pressure of water vapor to the equilibrium vapor pressure of water at the same temperature. */
+  ScalarTemperatureData                     RespirationAmbientTemperature    = 11;/**<< @brief Local ambient temperature of the surrounding air that is inhaled. */
 
-  repeated SubstanceFractionData            AmbientGas                       = 11;/**<< @brief Break down of the gasses in the environment, fractions must add up to 1. */
-  repeated SubstanceConcentrationData       AmbientAerosol                   = 12;/**<< @brief Break down of the aerosolized solid/liquid substances in the environment. */
+  repeated SubstanceFractionData            AmbientGas                       = 12;/**<< @brief Break down of the gasses in the environment, fractions must add up to 1. */
+  repeated SubstanceConcentrationData       AmbientAerosol                   = 13;/**<< @brief Break down of the aerosolized solid/liquid substances in the environment. */
 }
 
 /** @brief Equipment or clothing activly changing the surounding environment of the patient. */

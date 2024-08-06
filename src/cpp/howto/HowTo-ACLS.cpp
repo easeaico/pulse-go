@@ -172,7 +172,7 @@ void HowToACLS()
   }
 
   bvm.GetConfiguration().SetConnection(eSwitch::On);
-  bvm.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+  bvm.GetConfiguration().GetValvePositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
   pe->ProcessAction(bvm);
   sce.AddAction(bvm);
 
