@@ -2751,7 +2751,7 @@ namespace pulse
       double healthySideCompliance_L_Per_cmH2O = 0.0;
 
       bool hasRespiratoryMechanicsCompliance = false;
-      std::vector<SESegment*> segments;
+      const std::vector<SESegment*>* segments;
       SESegment* segment = nullptr;
 
       if (iterLung == 0) //right lung
@@ -2767,7 +2767,7 @@ namespace pulse
           hasRespiratoryMechanicsCompliance = m_Mechanics->HasRightComplianceCurve();
           if (hasRespiratoryMechanicsCompliance)
           {
-            segments = m_Mechanics->GetRightComplianceCurve().GetSegments();
+            segments = &m_Mechanics->GetRightComplianceCurve().GetSegments();
           }
         }
       }
@@ -2784,7 +2784,7 @@ namespace pulse
           hasRespiratoryMechanicsCompliance = m_Mechanics->HasLeftComplianceCurve();
           if (hasRespiratoryMechanicsCompliance)
           {
-            segments = m_Mechanics->GetLeftComplianceCurve().GetSegments();
+            segments = &m_Mechanics->GetLeftComplianceCurve().GetSegments();
           }
         }
       }
@@ -2801,7 +2801,7 @@ namespace pulse
       if (hasRespiratoryMechanicsCompliance)
       {
         //Specified externally
-        segment = GetSegement(segments, lungVolume_L);
+        segment = GetSegement(*segments, lungVolume_L);
       }
       else
       {
@@ -4949,37 +4949,8 @@ namespace pulse
   /// Return the appropriate compliance segment.
   ///
   //--------------------------------------------------------------------------------------------------
-  SESegment* RespiratoryModel::GetSegement(std::vector<SESegment*>& segments, double volume_L)
+  SESegment* RespiratoryModel::GetSegement(const std::vector<SESegment*>& segments, double volume_L)
   {
-    // Check if segments are sorted by BeginVolume
-    bool sorted = true;
-    for (size_t i = 1; i < segments.size(); ++i)
-    {
-      if (segments[i - 1]->GetBeginVolume(VolumeUnit::L) > segments[i]->GetBeginVolume(VolumeUnit::L))
-      {
-        sorted = false;
-        break;
-      }
-    }
-
-    if (!sorted)
-    {
-      Warning("Respiratory compliance segments are not sorted. Sorting them now.");
-      std::sort(segments.begin(), segments.end(), [](SESegment* a, SESegment* b) {
-        return a->GetBeginVolume(VolumeUnit::L) < b->GetBeginVolume(VolumeUnit::L);
-        });
-    }
-
-    // Check for overlapping segments
-    for (size_t i = 1; i < segments.size(); ++i)
-    {
-      if (segments[i - 1]->GetEndVolume(VolumeUnit::L) > segments[i]->GetBeginVolume(VolumeUnit::L))
-      {
-        Error("There are overlapping volume ranges in the respiratory compliance segments. Expected functionality is not guaranteed.");
-        return nullptr;
-      }
-    }
-
     // Find and return the appropriate segment for the given volume
     for (SESegment* segment : segments)
     {

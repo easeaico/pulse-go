@@ -8,11 +8,11 @@
 #include "cdm/properties/SESegmentParabolic.h"
 #include "cdm/properties/SESegmentSigmoidal.h"
 
-class CDM_DECL SECurve : public SEProperty
+class CDM_DECL SECurve : public SEProperty, public Loggable
 {
 public:
 
-  SECurve();
+  SECurve(Logger* logger=nullptr);
   virtual ~SECurve();
 
   void Invalidate() override;
@@ -20,6 +20,7 @@ public:
   virtual void Copy(const SECurve& src);
 
   virtual bool HasSegment() const;
+  virtual void SortSegments();
 
   SESegmentConstant& AddConstantSegment();
   SESegmentLinear& AddLinearSegment();
