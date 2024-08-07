@@ -3387,32 +3387,7 @@ namespace pulse
       double alveoliVolumeRatio = alveoliVolumeBaseline_L / totalBaselineAlveoliVolume_L;
 
       //------------------------------------------------------------------------------------------------------
-      //PBLI
-      //Same as ARDS
-      if (m_PatientActions->HasPrimaryBlastLungInjury())
-      {
-        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
-        if (severity > 0.29)
-        {
-          // best fit for (severity, volume): (0, 0), (0.3, 0), (0.6, 0.003), (0.9, 0.15)
-          deadSpaceIncrement_L = alveoliVolumeRatio * (0.3704 * std::pow(severity, 3.0) - 0.1667 * std::pow(severity, 2.0) + 0.0167 * severity);
-        }
-
-        if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
-        {
-          //Prevent negative volume with high severities
-          alveoliIncrement_L = -alveoliVolumeRatio * GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.9, severity);
-        }
-        else
-        {
-          alveoliIncrement_L = -alveoliVolumeRatio * GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 1.2, severity);
-        }
-      }
-
-      //------------------------------------------------------------------------------------------------------
-      //ARDS
-      //Exacerbation will overwrite the condition, even if it means improvement
-
+      //Restrictive
       //The dead space cannot be greater than the FRC in our model
       double restrictiveSeverity = 0.0;
 
@@ -3455,6 +3430,15 @@ namespace pulse
       if (m_data.GetConditions().HasPulmonaryFibrosis())
       {
         double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
+
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
+      }
+
+      //PBLI
+      //Same as ARDS
+      if (m_PatientActions->HasPrimaryBlastLungInjury())
+      {
+        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
 
         restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
@@ -4177,15 +4161,6 @@ namespace pulse
       }
 
       //------------------------------------------------------------------------------------------------------
-      //PBLI
-      //Same as ARDS
-      if (m_PatientActions->HasPrimaryBlastLungInjury())
-      {
-        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
-        restrictiveSeverity = MAX(restrictiveSeverity, severity);
-      }
-
-      //------------------------------------------------------------------------------------------------------
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
@@ -4202,6 +4177,16 @@ namespace pulse
 
         restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
+
+      //------------------------------------------------------------------------------------------------------
+      //PBLI
+      //Same as ARDS
+      if (m_PatientActions->HasPrimaryBlastLungInjury())
+      {
+        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
+      }
+
 
       std::vector<std::pair<double, double>> interpolatorPoints =
       {
@@ -4361,15 +4346,6 @@ namespace pulse
       }
 
       //------------------------------------------------------------------------------------------------------
-      //PBLI
-      //Same as ARDS
-      if (m_PatientActions->HasPrimaryBlastLungInjury())
-      {
-        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
-        restrictiveComplianceScalingFactor = MIN(restrictiveComplianceScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.45, 1.0, severity));
-      }
-
-      //------------------------------------------------------------------------------------------------------
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
@@ -4384,6 +4360,15 @@ namespace pulse
           severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
         }
 
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
+      }
+
+      //------------------------------------------------------------------------------------------------------
+      //PBLI
+      //Same as ARDS
+      if (m_PatientActions->HasPrimaryBlastLungInjury())
+      {
+        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
         restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
 
@@ -4569,16 +4554,6 @@ namespace pulse
       }
 
       //------------------------------------------------------------------------------------------------------
-      //PBLI
-      //Same as ARDS
-      if (m_PatientActions->HasPrimaryBlastLungInjury())
-      {
-        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
-
-        restrictiveSeverity = MAX(restrictiveSeverity, severity);
-      }
-
-      //------------------------------------------------------------------------------------------------------
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
@@ -4592,6 +4567,16 @@ namespace pulse
         {
           severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
         }
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
+      }
+
+      //------------------------------------------------------------------------------------------------------
+      //PBLI
+      //Same as ARDS
+      if (m_PatientActions->HasPrimaryBlastLungInjury())
+      {
+        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
+
         restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
 
@@ -4749,16 +4734,6 @@ namespace pulse
 
       double combinedSeverity = 0.0;
       //------------------------------------------------------------------------------------------------------
-      //PBLI
-      //Same as ARDS with a multiplier
-      if (m_PatientActions->HasPrimaryBlastLungInjury())
-      {
-        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
-        double PBLIMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.75, severity);
-        damageScalingFactor = MIN(damageScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.15 * PBLIMultiplier, 1.0, severity));
-      }
-
-      //------------------------------------------------------------------------------------------------------
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
@@ -4803,6 +4778,19 @@ namespace pulse
         combinedSeverity = MAX(combinedSeverity, severity);
       }
 
+      //------------------------------------------------------------------------------------------------------
+      //PBLI
+      //Same as ARDS with a multiplier
+      double PBLIMultiplier = 1.0;
+      if (m_PatientActions->HasPrimaryBlastLungInjury())
+      {
+        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
+
+        PBLIMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.75, severity);
+
+        combinedSeverity = MAX(combinedSeverity, severity);
+      }
+
       std::vector<std::pair<double, double>>  interpolatorPoints =
       {
         {0.0, 1.000}, //None
@@ -4812,7 +4800,7 @@ namespace pulse
         {1.0, 0.050}  //Max
       };
 
-      damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity);
+      damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity) * PBLIMultiplier;
 
       //------------------------------------------------------------------------------------------------------
       //Combine effects
@@ -5011,17 +4999,6 @@ namespace pulse
       }
 
       //------------------------------------------------------------------------------------------------------
-      //PBLI
-      //Use a multiplier on ARDS equation
-      double PBLIMultiplier = 1.0;
-      if (m_PatientActions->HasPrimaryBlastLungInjury())
-      {
-        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
-        PBLIMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.5, severity);
-        combinedSeverity = MAX(combinedSeverity, severity);
-      }
-
-      //------------------------------------------------------------------------------------------------------
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
@@ -5040,6 +5017,19 @@ namespace pulse
       }
 
       //------------------------------------------------------------------------------------------------------
+      //PBLI
+      //Use a multiplier on ARDS equation
+      double PBLIMultiplier = 1.0;
+      if (m_PatientActions->HasPrimaryBlastLungInjury())
+      {
+        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
+
+        PBLIMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.5, severity);
+
+        combinedSeverity = MAX(combinedSeverity, severity);
+      }
+
+      //------------------------------------------------------------------------------------------------------
       //Combine effects
       //Damage factor acts as floor if fully recruited
       std::vector<std::pair<double, double>> interpolatorPoints =
@@ -5050,7 +5040,7 @@ namespace pulse
         {0.9, 0.5}, //Severe
         {1.0, 1.0}  //Max
       };
-      damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity);
+      double damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity) * PBLIMultiplier;
 
       interpolatorPoints =
       {
@@ -5272,17 +5262,6 @@ namespace pulse
       }
 
       //------------------------------------------------------------------------------------------------------
-      //PBLI
-      //Same as ARDS
-      if (m_PatientActions->HasPrimaryBlastLungInjury())
-      {
-        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
-
-        severity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, severity);
-        combinedSeverity = MAX(combinedSeverity, severity);
-      }
-
-      //------------------------------------------------------------------------------------------------------
       //ARDS
       //Exacerbation will overwrite the condition, even if it means improvement
       if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
@@ -5296,6 +5275,16 @@ namespace pulse
         {
           severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity(cmpt).GetValue();
         }
+
+        restrictiveSeverity = MAX(restrictiveSeverity, severity);
+      }
+
+      //------------------------------------------------------------------------------------------------------
+      //PBLI
+      //Same as ARDS
+      if (m_PatientActions->HasPrimaryBlastLungInjury())
+      {
+        double severity = m_PatientActions->GetPrimaryBlastLungInjury().GetSeverity(cmpt).GetValue();
 
         restrictiveSeverity = MAX(restrictiveSeverity, severity);
       }
