@@ -14,7 +14,7 @@ int main()
 
   //HowToSandbox();
 
-  HowToEngineUse();
+  //HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
@@ -48,6 +48,7 @@ int main()
   //HowToPulmonaryFibrosis();
   //HowToRespiratoryMechanics();
   //HowToRespiratoryMechanicsModification();
+  HowToRunToStable();
   //HowToSmoke();
   //HowToTensionPneumothorax();
   //HowToVentilatorFeedbackLoop();

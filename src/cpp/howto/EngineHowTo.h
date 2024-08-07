@@ -40,6 +40,7 @@ void HowToMechanicalVentilator();
 void HowToPulmonaryFibrosis();
 void HowToRespiratoryMechanics();
 void HowToRespiratoryMechanicsModification();
+void HowToRunToStable();
 void HowToSmoke();
 void HowToTensionPneumothorax();
 void HowToVentilatorFeedbackLoop();

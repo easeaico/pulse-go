@@ -33,6 +33,7 @@ add_executable_ex(HowToDriver
   HowTo-RespiratoryMechanics.cpp
   HowTo-RespiratoryModification.cpp
   HowTo-RunScenario.cpp
+  HowTo-RunToStable.cpp
   HowTo-RunThreaded.cpp
   HowTo-RunThreaded.h
   HowTo-Sandbox.cpp
