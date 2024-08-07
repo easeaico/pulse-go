@@ -3631,7 +3631,7 @@ namespace pulse
         tissueResistancePaths.push_back(m_data.GetCircuits().GetFluidPath(pulse::TissuePath::RightKidneyT2ToRightKidneyT1));
       }
 
-      //jbw - Fix and make work for all CV setups
+      //TODO: Make this work for the expanded model
       if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
       {
         tissuePressureCVSources.push_back(m_data.GetCircuits().GetFluidNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1));

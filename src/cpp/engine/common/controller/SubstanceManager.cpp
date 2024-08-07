@@ -499,7 +499,7 @@ namespace pulse
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Fat), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Fat));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::Gut), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::Gut));
       InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::LeftKidney), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::LeftKidney));
-      //jbw - Fix and make work for all CV setups
+      //TODO: Make this work for the expanded model
       if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
       {
         InitializeBloodGases(*cmpts.GetTissueCompartment(pulse::TissueCompartment::LeftLung), *cmpts.GetLiquidCompartment(pulse::VascularCompartment::LeftLung));

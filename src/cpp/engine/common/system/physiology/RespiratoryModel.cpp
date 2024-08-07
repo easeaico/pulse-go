@@ -981,7 +981,7 @@ namespace pulse
 
     if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
     {
-      //jbw - Fix
+      //TODO: Make this work for the expanded model
       ComputeExposedModelParameters();
     }
   }
@@ -3060,7 +3060,7 @@ namespace pulse
   double RespiratoryModel::VolumeToDriverPressure(double TargetVolume_L)
   {
     //Calculate as if constant compliances
-    //jbw - Either sum all paths or add a configuration value
+    //TODO: Make this work for the expanded model
     double leftHealthyLungCompliance_L_Per_cmH2O = 0.1;
     double rightHealthyLungCompliance_L_Per_cmH2O = 0.1;
     if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
@@ -3176,7 +3176,7 @@ namespace pulse
 
       if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
       {
-        //jbw - Either sum all paths or add a configuration value
+        //TODO: Make this work for the expanded model
         healthyLungCompliance_L_Per_cmH2O = 0.1;
       }
       else

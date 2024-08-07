@@ -2476,7 +2476,7 @@ namespace pulse
 
     ///////////////
     // Left Lung //
-    //jbw - Fix
+    //TODO: Make this work for the expanded model
     if (m_Config->UseExpandedRespiratory() == eSwitch::Off)
     {
       SEFluidCircuitNode* LeftLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1);
@@ -2720,7 +2720,7 @@ namespace pulse
 
     ////////////////
     // Right Lung //
-    //jbw - Fix
+    //TODO: Make this work for the expanded model
     if (m_Config->UseExpandedRespiratory() == eSwitch::Off)
     {
       SEFluidCircuitNode* RightLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1);

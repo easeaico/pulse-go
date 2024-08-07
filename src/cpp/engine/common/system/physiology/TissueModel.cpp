@@ -226,7 +226,7 @@ namespace pulse
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
-    //jbw - Fix and make work for all CV setups
+    //TODO: Make this work for the expanded model
     if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
     {
       m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLung);

@@ -52,7 +52,7 @@ namespace pulse
     //const double AlveoliDuctResistanceFraction = 0.2;
 
     double functionalResidualCapacity_L = m_InitialPatient->GetFunctionalResidualCapacity(VolumeUnit::L);
-    double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetWeight(MassUnit::kg); //Should not change with diseases /// \cite Levitzky2013pulmonary
+    double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetWeight(MassUnit::kg); /// \cite Levitzky2013pulmonary
     double alveolarDeadSpaceVolume_L = 0.001;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
     double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
     //double pleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  /// \cite Levitzky2013pulmonary
@@ -2977,7 +2977,6 @@ namespace pulse
     gCardiovascular.AddLink(vLeftSuperiorLobeAnteriorShunt);
     gCardiovascular.AddLink(vLeftSuperiorLobeApicoposteriorShunt);
 
-    // jbw - What do we do here?
     // Remove modifiers of paths we removed
     m_Config->GetModifiers().erase(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1);
     m_Config->GetModifiers().erase(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1);
