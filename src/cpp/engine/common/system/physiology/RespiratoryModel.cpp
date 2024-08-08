@@ -3757,6 +3757,12 @@ namespace pulse
           {
             //Tuned based on mechanical ventilator validation data
             tracheaResistance_cmH2O_s_Per_L *= intubationTracheatracheaResistanceMultiplier_cmH2O_s_Per_L;
+
+            if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+            {
+              //Trachea resistance was tuned from 1.125 to 0.8 cmH2O-s/L in the circuit setup
+              tracheaResistance_cmH2O_s_Per_L *= 1.125 / 0.8;
+            }
           }
 
           break;
