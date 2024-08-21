@@ -418,6 +418,53 @@ namespace pulse
           m_data.GetEvents().SetEvent(eEvent::Hyponatremia, false, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::Hypernatremia, false, m_data.GetSimulationTime());
         }
+
+        double bloodGlucoseConcentration_mg_Per_dL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
+        if (bloodGlucoseConcentration_mg_Per_dL > 180.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyperglycemia, true, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::Hypoglycemia, false, m_data.GetSimulationTime());
+        }
+        else if (bloodGlucoseConcentration_mg_Per_dL < 70.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyperglycemia, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::Hypoglycemia, true, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Hyperglycemia) && bloodGlucoseConcentration_mg_Per_dL < 178.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyperglycemia, false, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Hypoglycemia) && bloodGlucoseConcentration_mg_Per_dL >  72.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hypoglycemia, false, m_data.GetSimulationTime());
+        }
+
+        if (bloodGlucoseConcentration_mg_Per_dL > 250.0 && m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis))
+        {
+          m_data.GetEvents().SetEvent(eEvent::Ketoacidosis, true, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Ketoacidosis) && !m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis))
+        {
+          m_data.GetEvents().SetEvent(eEvent::Ketoacidosis, false, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Ketoacidosis) && bloodGlucoseConcentration_mg_Per_dL < 240.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Ketoacidosis, false, m_data.GetSimulationTime());
+        }
+
+        double bloodLactateConcentration_mg_Per_dL = m_data.GetSubstances().GetLactate().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
+        if (bloodLactateConcentration_mg_Per_dL > 36.04 && m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis)) // > 4 mmol/L
+        {
+          m_data.GetEvents().SetEvent(eEvent::LacticAcidosis, true, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::LacticAcidosis) && !m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis))
+        {
+          m_data.GetEvents().SetEvent(eEvent::LacticAcidosis, false, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::LacticAcidosis) && bloodLactateConcentration_mg_Per_dL < 35.04)
+        {
+          m_data.GetEvents().SetEvent(eEvent::LacticAcidosis, false, m_data.GetSimulationTime());
+        }
       }
 
       m_ArterialOxygen_mmHg->Invalidate();

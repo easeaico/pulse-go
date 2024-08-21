@@ -529,7 +529,6 @@ namespace pulse
     if (coreTemperature_degC < 35.0) /// \cite mallet2001hypothermia
     {
       m_data.GetEvents().SetEvent(eEvent::Hypothermia, true, m_data.GetSimulationTime());
-
     }
     else if (m_data.GetEvents().IsEventActive(eEvent::Hypothermia) && coreTemperature_degC > 35.2)
     {
@@ -563,16 +562,22 @@ namespace pulse
       if (m_data.GetState() > EngineState::InitialStabilization)
       {// Don't throw events if we are initializing
         if (bloodPH < 7.35 && bloodBicarbonate_mmol_Per_L < 22.0)
+        {
           m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, true, m_data.GetSimulationTime());
-
-        if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis) &&
+          bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
           m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, false, m_data.GetSimulationTime());
 
         if (bloodPH > 7.45 && bloodBicarbonate_mmol_Per_L > 26.0)
+        {
           m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, true, m_data.GetSimulationTime());
-
-        else if (bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::MetabolicAlkalosis) &&
+          bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)
+        {
           m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, false, m_data.GetSimulationTime());
+        }
       }
       // Reset the running averages. Why do we need running averages here? Does the aorta pH fluctuate that much? 
       m_BloodpH->Invalidate();
