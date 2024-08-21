@@ -1324,8 +1324,9 @@ namespace pulse
 
     //assuming there is a left and right kidney node in cardiovascular AND that a baseline volume is set (as a function of patient mass):
     double leftKidneyFluidVolume_mL = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1)->GetVolumeBaseline(VolumeUnit::mL);
-    double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.5;// / 2;    //Total large vasculature fluid volume
-    double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.5;// / 2;    //Total small vasculature fluid volume 
+    //These are calibrated to meet validation because cardiovascular has a modifier on the baseline volume
+    double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.55;// / 2;    //Total large vasculature fluid volume
+    double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.55;// / 2;    //Total small vasculature fluid volume 
 
     //////////////////////////
     ///// Circuit Parameters//////
