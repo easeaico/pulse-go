@@ -1,4 +1,4 @@
-Version 4.2.0 {#version}
+Version 4.3.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -12,6 +12,10 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 ---
 
 ## Pulse Integration (Current new feature set)
+
+---
+
+## Pulse v4.3.0 (August 2024)
 
 - Software Architecture Improvements
   - Data Set Generation Tools
@@ -53,6 +57,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Respiratory Model
     - Improved handling of lung recruitment based on acinar ventilation for showing the pulmonary shunt changes due to increased ventilator PEEP
     - Calibrated respiratory diseases for mechanically ventilated patients, including ARDS and COPD
+    - Added mechanoreceptor feedback that inhibits the inspiratory drive and reduces the respiratory muscle pressure during an assisted breath
   - Modifier Actions (SECardiovascularMechanicsModification, SERespiratoryMechanicsModification)
     - We now provide 2 new actions to modify the respiratory and cardiovascular model parameters
     - For example, you can provide a multipliers to modify the heart rate, respiration rate, systemic vascular and pulmonary resistances
@@ -67,6 +72,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Added new system data outputs for total body fluid volume, plasma osmolality, and plasma osmolarity
   - Added a dehydration condition model that directly affects the Tissue, Cardiovascular and Energy systems
   - Added a mechanical dead space parameter to the Environment
+  - Added several new events
 
 ---
 
