@@ -997,10 +997,9 @@ The concept of the Recruited Fraction is central to this model. It represents th
 This relationship is visually depicted in @figureref {recruitment}, which illustrates the mapping of reduced alveolar volume to the shunt scaling factor across different cardiopulmonary compartments.
 
 @htmlonly
-
 <center>
-<a href="./plots/Respiratory/RecruitmentShunting.png">
-<img src="./plots/Respiratory/RecruitmentShunting.png" width="800"></a>
+<a href="./Images/Respiratory/RecruitmentShunting.png">
+<img src="./Images/Respiratory/RecruitmentShunting.png" width="800"></a>
 <br>
 </center>
 @endhtmlonly

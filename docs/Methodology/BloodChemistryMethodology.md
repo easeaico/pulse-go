@@ -392,9 +392,8 @@ Recommended Improvements
 ------------------------
 The exclusion of blood cellular elements prohibits the implementation of a variety of mechanistic models of physiologic processes, including coagulation, infectious disease, and hematopoiesis to name a few. 
 - Inclusion of RBC, platelets, lymphocytes, monocytes, neutrophils, eosinophils, and basophils as blood constituents.
-- Adaptive total hemoglobin (for example, increasing hemoglobin with exposure to low-oxygen pressure environments)
-- Myoglobin substance models
-	- Including interactions with oxygen and carbon monoxide
+- Adaptive total hemoglobin (for example, increasing hemoglobin with exposure to low-oxygen pressure environments).
+- Myoglobin substance models, including interactions with oxygen and carbon monoxide.
 
 @anchor bloodchemistry-appendices
 Appendices

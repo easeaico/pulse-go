@@ -13,6 +13,8 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ## Pulse Integration (Current new feature set)
 
+-TBD
+
 ---
 
 ## Pulse v4.3.0 (August 2024)

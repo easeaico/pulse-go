@@ -14,7 +14,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "./test_results/scenarios/CSTARS/Scenario1Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results.csv" }
           ],
           "Series":
           [
@@ -44,9 +44,9 @@
         {
           "Comment": "CSTARS Validation (Scenario 1) Monitors",
           "PlotSource":
-          { "CSVData": "./test_results/scenarios/CSTARS/Scenario1Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario1-",
-          "DataRequestedFile": "./test_results/scenarios/CSTARS/Scenario1Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results-Segments.json"
         }
       }
       ,
@@ -60,7 +60,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "./test_results/scenarios/CSTARS/Scenario2Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results.csv" }
           ],
           "Series":
           [
@@ -90,9 +90,9 @@
         {
           "Comment": "CSTARS Validation (Scenario 2) Monitors",
           "PlotSource":
-          { "CSVData": "./test_results/scenarios/CSTARS/Scenario2Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario2-",
-          "DataRequestedFile": "./test_results/scenarios/CSTARS/Scenario2Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results-Segments.json"
         }
       }
       ,
@@ -106,7 +106,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "./test_results/scenarios/CSTARS/Scenario3Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results.csv" }
           ],
           "Series":
           [
@@ -136,9 +136,9 @@
         {
           "Comment": "CSTARS Validation (Scenario 3) Monitors",
           "PlotSource":
-          { "CSVData": "./test_results/scenarios/CSTARS/Scenario3Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario3-",
-          "DataRequestedFile": "./test_results/scenarios/CSTARS/Scenario3Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results-Segments.json"
         }
       }
       ,
@@ -152,7 +152,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "./test_results/scenarios/CSTARS/Scenario4Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results.csv" }
           ],
           "Series":
           [
@@ -184,9 +184,9 @@
         {
           "Comment": "CSTARS Validation (Scenario 4) Monitors",
           "PlotSource":
-          { "CSVData": "./test_results/scenarios/CSTARS/Scenario4Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario4-",
-          "DataRequestedFile": "./test_results/scenarios/CSTARS/Scenario4Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results-Segments.json"
         }
       }
       ,
@@ -200,7 +200,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "./test_results/scenarios/CSTARS/Scenario5Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results.csv" }
           ],
           "Series":
           [
@@ -232,9 +232,9 @@
         {
           "Comment": "CSTARS Validation (Scenario 5) Monitors",
           "PlotSource":
-          { "CSVData": "./test_results/scenarios/CSTARS/Scenario5Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario5-",
-          "DataRequestedFile": "./test_results/scenarios/CSTARS/Scenario5Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results-Segments.json"
         }
       }
       ,
@@ -248,7 +248,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "./test_results/scenarios/CSTARS/Scenario6Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results.csv" }
           ],
           "Series":
           [
@@ -278,9 +278,9 @@
         {
           "Comment": "CSTARS Validation (Scenario 6) Monitors",
           "PlotSource":
-          { "CSVData": "./test_results/scenarios/CSTARS/Scenario6Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario6-",
-          "DataRequestedFile": "./test_results/scenarios/CSTARS/Scenario6Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results-Segments.json"
         }
       }
       ,
@@ -294,7 +294,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "./test_results/scenarios/CSTARS/Scenario7Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results.csv" }
           ],
           "Series":
           [
@@ -324,9 +324,9 @@
         {
           "Comment": "CSTARS Validation (Scenario 7) Monitors",
           "PlotSource":
-          { "CSVData": "./test_results/scenarios/CSTARS/Scenario7Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario7-",
-          "DataRequestedFile": "./test_results/scenarios/CSTARS/Scenario7Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results-Segments.json"
         }
       }
     ]

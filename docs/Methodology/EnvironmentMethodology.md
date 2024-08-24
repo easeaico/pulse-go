@@ -696,7 +696,7 @@ Table 8.
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Pulse Oximetry	|	Oxygen Saturation	|	Percent Carboxyhemoglobin	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Environment Change: Carbon Monoxide 200ppm	|	Person is exposed to 200ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical pg. 690	</span>|
+|	Environment Change: Carbon Monoxide 200ppm	|	Person is exposed to 200ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical	</span>|
 |	None	|	10 minutes	|	N/A	|	605	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="warning">	1 to 2 % @cite stewart1975effect	</span>|
 |	None	|	30 minutes	|	N/A	|	1805	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="warning">	3 to 4 % @cite stewart1975effect	</span>|
 |	None	|	1 hour	|	N/A	|	3605	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="warning">	5 to 6 % @cite stewart1975effect	</span>|
@@ -709,7 +709,7 @@ Table 9.
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Pulse Oximetry	|	Oxygen Saturation	|	Percent Carboxyhemoglobin	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Environment Change: Carbon Monoxide 5000ppm	|	Person is exposed to 5000ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical pg. 690	</span>|
+|	Environment Change: Carbon Monoxide 5000ppm	|	Person is exposed to 5000ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical	</span>|
 |	None	|	1 hour	|	N/A	|	3605	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="success">	approx. 80% @cite stewart1975effect Increased @cite turino1981effect	</span>|
 |	None	|	2 hours - Irreversible state should happen by this point	|	N/A	|	7205	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Death (Irreversible State)	</span>|<span class="success">	Death (Irreversible State)	</span>|
 
