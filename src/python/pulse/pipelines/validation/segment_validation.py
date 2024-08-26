@@ -212,7 +212,8 @@ def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequest
     if tgt.get_reference():
         references = [ref.strip() for ref in tgt.get_reference().replace("\n", "").split(",")]
         for ref in references:
-            expected_str += f" @cite {ref}"
+            if not ref.startswith('['):
+                expected_str += f" @cite {ref}"
 
     # Add comparison type to beginning of expected string
     if "Segment" in compare_type.name:

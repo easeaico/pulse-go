@@ -249,7 +249,7 @@ if __name__ == "__main__":
                     f.write("<td>" + gen_engine_val_str(tgt) + "</td>")
                     f.write(f"<td>{tgt.get_error_value():{tgt.get_table_formatting()}}</td>")
                     f.write("<td>" + tgt.get_notes() + "</td></tr>\n")
-                f.write("</table><br>\n");
-        f.write("</body>\n");
-        f.write("</html>\n");
+                f.write("</table><br>\n")
+        f.write("</body>\n")
+        f.write("</html>\n")
         f.close()

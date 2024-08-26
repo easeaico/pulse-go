@@ -1,9 +1,12 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import logging
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.csv_utils import compute_means
 from pulse.cdm.utils.math_utils import generate_percent_difference_span
+
+_pulse_logger = logging.getLogger('pulse')
 
 def write_patient_table(patient_map):
     for patient,values in patient_map.items():
@@ -17,7 +20,9 @@ def write_patient_table(patient_map):
 
         align = [('^', '<'), ('^', '^')]
 
-        f = open("./test_results/tables/MechanicalVentilator-" + patient + "-Patient-Settings"+".md", "w")
+        fn = "./test_results/tables/MechanicalVentilator-" + patient + "-Patient-Settings"+".md"
+        _pulse_logger.info(f"Writing {fn}")
+        f = open(fn, "w")
         table(f, data, fields, headings, align)
         f.close()
 
@@ -33,7 +38,9 @@ def write_ventilator_settings_table(settings_map):
 
         align = [('^', '<'), ('^', '^')]
 
-        f = open("./test_results/tables/MechanicalVentilator-" + mode + "-Ventilator-Settings" + ".md", "w")
+        fn = "./test_results/tables/MechanicalVentilator-" + mode + "-Ventilator-Settings" + ".md"
+        _pulse_logger.info(f"Writing {fn}")
+        f = open(fn, "w")
         table(f, data, fields, headings, align)
         f.close()
 
@@ -56,7 +63,9 @@ def write_validation_table(validation_map):
 
         align = [('<', '<')] * len(headings)
 
-        f = open("./test_results/tables/MechanicalVentilator-" + key + "-Validation" + ".md", "w")
+        fn = "./test_results/tables/MechanicalVentilator-" + key + "-Validation" + ".md"
+        _pulse_logger.info(f"Writing {fn}")
+        f = open(fn, "w")
         table(f, data, fields, headings, align)
         f.close()
 
@@ -192,6 +201,7 @@ def data():
     }
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     baseline = data()
     write_patient_table(baseline["patientSettings"])
     write_ventilator_settings_table(baseline["ventilatorSettings"])
