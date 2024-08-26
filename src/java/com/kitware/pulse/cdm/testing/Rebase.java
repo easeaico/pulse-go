@@ -118,8 +118,17 @@ public class Rebase
             continue;
           }
           result_files.add(result_path);
-          log_file = result_files.get(0).replaceAll("Results"+SETestConfiguration.ext, ".log");
-          result_files.add(log_file);
+          // See if the log file is named EXACTLY like the csv file
+          log_file = result_path.replaceAll(SETestConfiguration.ext, ".log");
+          if (new File(log_file).exists())
+            result_files.add(log_file);
+          else
+          {
+            // If not, take off 'Results'
+            log_file = result_files.get(0).replaceAll("Results"+SETestConfiguration.ext, ".log");
+            if (new File(log_file).exists())
+              result_files.add(log_file);
+          }
           if (job.isValidation)
             result_files.add(result_path.replace(".csv", "-Segments.json"));
           Log.info("Creating zip for "+result_files.get(0));
