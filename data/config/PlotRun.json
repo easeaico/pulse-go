@@ -433,24 +433,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "Comment": "Heart Failure",
-        "PlotConfig":
-        {
-          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/VentricularSystolicDysfunctionResults.csv" }
-        ],
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "HeartFailure", "YHeader": [ "BloodVolume(L)" ] }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
         "Comment": "Drugs Methodology Report - Validation - Albuterol",
         "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Drugs/" },
         "PlotSource":

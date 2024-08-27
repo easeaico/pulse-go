@@ -135,7 +135,6 @@ The following conditions are specified via the SEPatientConfiguration object.
   @refitem ChronicObstructivePulmonaryDiseaseTable "COPD"
   @refitem ChronicPericardialEffusionTable "Chronic Pericardial Effusion"
   @refitem ChronicRenalStenosisTable "Chronic Renal Stenosis"
-  @refitem ChronicVentricularSystolicDysfunctionTable "Chronic Ventricular Systolic Dysfunction"
   @refitem ConsumeMealTable "Consume Meal"
   @refitem ImpairedAlveolarExchangeTable "Impaired Alveolar Exchange"
   @refitem PneumoniaTable "Pneumonia"
