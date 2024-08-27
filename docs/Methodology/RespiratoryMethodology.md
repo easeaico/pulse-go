@@ -997,11 +997,7 @@ The concept of the Recruited Fraction is central to this model. It represents th
 This relationship is visually depicted in @figureref {recruitment}, which illustrates the mapping of reduced alveolar volume to the shunt scaling factor across different cardiopulmonary compartments.
 
 @htmlonly
-<center>
-<a href="./Images/Respiratory/RecruitmentShunting.png">
-<img src="./Images/Respiratory/RecruitmentShunting.png" width="800"></a>
-<br>
-</center>
+<center><a href="./Images/Respiratory/RecruitmentShunting.png"><img src="./Images/Respiratory/RecruitmentShunting.png" style="width:60%;"></a></center>
 @endhtmlonly
 <center>
 <i>@figuredef {recruitment}. The mapping of reduced alveolar volume to shunt scaling factor for each cardiopulmonary compartment.</i>
@@ -2135,7 +2131,7 @@ Dyspnea or shortness of breath directly effects the achieved respiratory driver 
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Tidal Volume (mL)	|	Respiration Rate (breaths/min)	|
-|	---	|	---	|	---	|	---	|	---	|	---	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Dysnea: Tidal Volulme Severity = 0.3	|	Mild amplitude effect	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|<span class="success">	Increase	</span>|
 |	Dysnea: Tidal Volulme Severity = 0.6	|	Moderate amplitude effect	|	30	|	210	|<span class="success">	Decrease to ~30% of healthy	</span>|<span class="success">	Increase	</span>|
 |	Dysnea: Tidal Volulme Severity = 1.0	|	Full amplitude effect	|	30	|	210	|<span class="success">	0	</span>|<span class="success">	0	</span>|
