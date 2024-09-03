@@ -731,6 +731,10 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 @insert ./validation/markdown/MechanicalVentilator.md
 
 
+@anchor cstars
+@insert ./validation/markdown/CSTARS.md
+
+
 @anchor ventilator-conclusion
 ## Conclusion
 
