@@ -20,14 +20,16 @@ _pulse_logger = logging.getLogger('pulse')
 
 class SEValidationTarget:
     __slots__ = ["_header", "_reference", "_notes", "_table_formatting",
-                 "_target", "_target_min", "_target_max"]
+                 "_target", "_target_min", "_target_max", "_target_enum", "_assessment"]
 
     def __init__(self):
         self.clear()
 
     def __repr__(self) -> str:
         return f'SEValidationTarget({self._header}, {self._reference}, {self._notes}, ' \
-               f'{self._table_formatting}, {self._target}, {self._target_min}, {self._target_max})'
+               f'{self._table_formatting}, ' \
+               f'{self._target_enum if self._target_enum is not None else self._target}, ' \
+               f'{self._target_min}, {self._target_max})'
 
     def __str__(self) -> str:
         return f'SEValidationTarget:' \
@@ -35,11 +37,11 @@ class SEValidationTarget:
                 f'\n\tReference: {self._reference}' \
                 f'\n\tNotes: {self._notes}' \
                 f'\n\tTable Formatting: {self._table_formatting}' \
-                f'\n\tTarget: {self._target}' \
+                f'\n\tTarget: {(self._target_enum if self._target_enum is not None else self._target)}' \
                 f'\n\tTarget Range: [{self._target_min}, {self._target_max}]'
 
     def is_valid(self) -> bool:
-        if np.isnan(self._target) and np.isnan(self._target_max):
+        if np.isnan(self._target) and np.isnan(self._target_max) and self._target_enum is not None:
             return False
         return True
 
@@ -49,8 +51,10 @@ class SEValidationTarget:
         self._notes = ""
         self._table_formatting = None
         self._target = np.nan
+        self._target_enum = None
         self._target_min = np.nan
         self._target_max = np.nan
+        self._assessment = None
 
     def get_header(self) -> str:
         return self._header
@@ -82,8 +86,13 @@ class SEValidationTarget:
         return self._target_max
     def get_target_minimum(self) -> float:
         return self._target_min
-    def get_target(self) -> float:
-        return self._target
+    def get_target(self):
+        return self._target_enum if self._target_enum is not None else self._target
+
+    def get_assessment(self) -> str:
+        return self._assessment
+    def set_assessment(self, s: str):
+        self._assessment = s
 
 
 class SESegmentValidationTarget(SEValidationTarget):
@@ -410,7 +419,8 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
     class eComparisonType(Enum):
         NotValidating = 0
         EqualToValue = 1
-        Range = 5
+        Range = 2
+        EqualToEnum = 3
 
     class eTargetType(Enum):
         Mean = 0
@@ -419,6 +429,8 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
         MeanPerIdealWeight_kg = 3
         MinPerIdealWeight_kg = 4
         MaxPerIdealWeight_kg = 5
+        Enumeration = 6
+
 
     def __init__(self):
         super().__init__()
@@ -427,7 +439,7 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
     def clear(self):
         super().clear()
         self._comparison_type = self.eComparisonType.NotValidating
-        self._target_type = self.eTargetType.Mean
+        self._target_type = SETimeSeriesValidationTarget.eTargetType.Mean
         self._computed_value = None
         self._error_value = None
         self._patient_specific = None
@@ -437,18 +449,30 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
 
     def get_comparison_type(self) -> eComparisonType:
         return self._comparison_type
+
     def get_target_type(self) -> eTargetType:
         return self._target_type
 
     def set_equal_to(self, d: float, t: eTargetType):
         self._comparison_type = self.eComparisonType.EqualToValue
         self._target_type = t
+        self._target_enum = None
         self._target = d
         self._target_max = d
         self._target_min = d
+
+    def set_equal_to_enum(self, e: str, t: eTargetType):
+        self._comparison_type = self.eComparisonType.EqualToEnum
+        self._target_type = t
+        self._target_enum = e
+        self._target = np.nan
+        self._target_max = np.nan
+        self._target_min = np.nan
+
     def set_range(self, min: float, max: float, t: eTargetType):
         self._comparison_type = self.eComparisonType.Range
         self._target_type = t
+        self._target_enum = None
         self._target = np.nan
         self._target_max = max
         self._target_min = min

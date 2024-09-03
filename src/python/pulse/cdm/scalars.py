@@ -1568,10 +1568,13 @@ class VolumeUnit(SEScalarUnit):
             return VolumeUnit.dL
         if string == VolumeUnit.m3.get_string():
             return VolumeUnit.m3
+        if string == VolumeUnit.uL.get_string():
+            return VolumeUnit.uL
         raise Exception("No VolumeUnit defined for " + string)
 VolumeUnit.L = VolumeUnit("L")
 VolumeUnit.mL = VolumeUnit("mL")
 VolumeUnit.dL = VolumeUnit("dL")
+VolumeUnit.uL = VolumeUnit("uL")
 VolumeUnit.m3 = VolumeUnit("m^3")
 class SEScalarVolume(SEScalarQuantity):
 

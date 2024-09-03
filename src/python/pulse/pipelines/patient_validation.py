@@ -27,7 +27,8 @@ def timeseries_validation_pipeline(
         log_file: Path,
         csv_file: Path,
         table_dir: Optional[Path] = None,
-        out_file: Optional[Path] = None
+        out_file: Optional[Path] = None,
+        assessment_files: Optional[list] = None
 ) -> SEPatientTimeSeriesValidation:
     """
     Processes given log and csv file through the timeseries validation
@@ -46,7 +47,10 @@ def timeseries_validation_pipeline(
         _pulse_logger.error("Unable to generate patient targets")
         return False
 
-    validate(patient_validation=patient_validation, csv_filename=csv_file, output_file=out_file)
+    validate(patient_validation=patient_validation,
+             csv_filename=csv_file,
+             assessment_files=assessment_files,
+             output_file=out_file)
 
     # Generate Tables (Optional)
     if table_dir is not None:
@@ -103,9 +107,13 @@ def bulk_timeseries_validation_pipeline(
         for filename_base, t_dir in zip(filename_base_paths, table_dirs):
             cnt += 1
 
+            # Find all data files to validate
             log_file = filename_base.parent / f"{filename_base.name}.log"
             csv_file = filename_base.parent / f"{filename_base.name}.csv"
             sce_out_file = filename_base.parent / f"{filename_base.name}.json" if serialize_per_file else None
+            # Look for any assessment json files
+            json_files = filename_base.parent.glob('*.json')
+            assessment_files = [f for f in json_files if "@" in f.name and filename_base.name in f.name]
             # Check if the csv file should have *Results
             if not csv_file.exists():
                 csv_file = filename_base.parent / f"{filename_base.name}Results.csv"
@@ -118,7 +126,8 @@ def bulk_timeseries_validation_pipeline(
                 log_file=log_file,
                 csv_file=csv_file,
                 table_dir=t_dir,
-                out_file=sce_out_file
+                out_file=sce_out_file,
+                assessment_files=assessment_files
             )
             all_tgts.append(tgts)
     except:
