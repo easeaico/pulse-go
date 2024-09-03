@@ -1683,14 +1683,21 @@ namespace pulse
     //u.SetBilirubin();
 
     u.GetSpecificGravity().SetValue(GetUrineSpecificGravity());
-    if (bladder_glucose_mg_Per_dL > 0.15) /// \cite roxe1990urinalysis
+
+    SESubstance* HbO2 = &m_data.GetSubstances().GetHbO2();
+    double bladder_red_blood_cell_mg_Per_dL = m_bladder->GetSubstanceQuantity(*HbO2)->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_dL);
+
+    if (bladder_red_blood_cell_mg_Per_dL > 0.001)
       u.SetBlood(eUrinalysis_PresenceIndicator::Positive);
     else
       u.SetBlood(eUrinalysis_PresenceIndicator::Negative);
 
     //u.GetPH().Set();
 
-    if (bladder_glucose_mg_Per_dL > 30.0)/// \cite roxe1990urinalysis
+    SESubstance* albumin = &m_data.GetSubstances().GetAlbumin();
+    double bladder_protein_mg_Per_mL = m_bladder->GetSubstanceQuantity(*albumin)->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_mL);
+
+    if (bladder_protein_mg_Per_mL > 0.2)
       u.SetProtein(eUrinalysis_PresenceIndicator::Positive);
     else
       u.SetProtein(eUrinalysis_PresenceIndicator::Negative);
