@@ -7,6 +7,7 @@ import argparse
 from pathlib import Path
 from typing import List, Optional, Union
 
+from pulse.cdm.utils.markdown import table
 from pulse.cdm.engine import eEngineInitializationState
 from pulse.cdm.scenario import eScenarioExecutionState, SEScenarioExecStatus
 from pulse.cdm.validation import SEPatientTimeSeriesValidation
@@ -219,6 +220,46 @@ if __name__ == "__main__":
         table_dir=table_dir,
         serialize_per_file=serialize_per_file
     )
+
+    # Gather totals for each patient and create a table of validation statistics
+    fields = [0, 1, 2, 3, 4]
+    headings = ["Category", "< 10%", "< 30%", "> 30%", "Total"]
+    align = []
+    for i in range(len(fields)):
+        align.append(('^', '^'))
+    for validation in all_validation:
+        data = []
+        validation_red = 0
+        validation_yellow = 0
+        validation_green = 0
+        for category, targets in validation.get_targets().items():
+            green = 0
+            yellow = 0
+            red = 0
+            for target in targets:
+                if target.get_error_value() < 10:
+                    green += 1
+                elif target.get_error_value() < 30:
+                    yellow += 1
+                else:
+                    red += 1
+            validation_red += red
+            validation_yellow += yellow
+            validation_green += green
+            total = green + yellow + red
+            data.append((f"{category}",
+                         f'<span class="success">{green}</span>',
+                         f'<span class="warning">{yellow}</span>',
+                         f'<span class="danger">{red}</span>',
+                         f'{total}'))
+        validation_total = validation_red + validation_yellow + validation_green
+        data.append(("<b>Totals</b>",
+                     f'<span class="success"><b>{validation_green}</b></span>',
+                     f'<span class="warning"><b>{validation_yellow}</b></span>',
+                     f'<span class="danger"><b>{validation_red}</b></span>',
+                     f'<b>{validation_total}</b>'))
+        f = open(table_dir / f"{validation.get_patient().get_name()}ValidationSummaryTable.md", "w")
+        table(f, data, fields, headings, align)
 
     # Only write a html file for test results
     if opts.input == "test_results":

@@ -46,7 +46,13 @@ Below is a summary of our system and compartment level validation.
 |<span class="warning"> Some deviation: correct trend and/or <30% deviation from expected </span>|
 |<span class="danger"> Poor agreement: incorrect trends or >30% deviation from expected </span>|
 
-@insert ./docs/markdown/SystemSummaryValidationTable.md
+##### Standard Male Validation Summary
+
+@insert ./test_results/tables/StandardMaleValidationSummaryTable.md
+
+##### Standard Female Validation Summary
+
+@insert ./test_results/tables/StandardFemaleValidationSummaryTable.md
 
 ---------
 
