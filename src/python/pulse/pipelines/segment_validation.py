@@ -170,7 +170,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         abs_targets_filename = Path(scenario_dir / target_file)
         abs_segments_filename = Path(validate_dir / target_file.replace("-ValidationTargets", "Results-Segments"))
         if not abs_segments_filename.exists():
-            _pulse_logger.error(f"Unable to locate segments for {target_file}. Continuing without validating.")
+            _pulse_logger.error(f"Unable to locate segments for {abs_segments_filename}. Continuing without validating.")
             continue
 
         table_dir = Path("./validation/tables/" + xls_basename + '/' + target_file.split('-')[0])
