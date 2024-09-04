@@ -399,8 +399,8 @@ The exclusion of blood cellular elements prohibits the implementation of a varie
 Appendices
 ==========
 
-@anchor bloodchemistry-symbols
-Acronyms and Symbols
+@anchor bloodchemistry-glossary
+Glossary
 --------
 <center>
 *Table 7. List of acronyms and symbols.*

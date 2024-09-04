@@ -968,7 +968,7 @@ The ventricular systolic function and anemia are now unvalidated conditions in t
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 AHA - American Heart Association
 

@@ -555,8 +555,8 @@ SECircuitCalculator
 SECircuitNode
 
 SECircuitPath
-@anchor circuit-acronyms
-## Acronyms
+@anchor circuit-glossary
+## Glossary
 
 CDM - Common Data Model
 

@@ -2219,7 +2219,7 @@ A respiratory control mechanism for rhythmic breathing could be added to the eng
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 
 ARDS - Acute %Respiratory Distress Syndrome

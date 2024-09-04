@@ -415,7 +415,7 @@ Recommended Improvements
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 RQ - Respiratory Quotient
 BMR - Basal Metabolic Rate

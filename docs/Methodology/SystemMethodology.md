@@ -616,7 +616,7 @@ Investigations into the effects of biological variability and parameter (inputs 
 
 # Appendices
 
-## Acronyms
+## Glossary
 
 CDM - Common Data Model
 

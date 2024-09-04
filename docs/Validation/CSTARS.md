@@ -1,6 +1,14 @@
-### CSTARS Validation
+## En Route Care Validation
 
-The following list contains the scenarios validated for the CSTARS program.
+### Introduction
+
+Additional validation has been conducted for the management of ventilated patients during transport, encompassing a variety of conditions and injuries.
+
+### Data Sources
+
+Empirical data and published sources were utilized where available. In cases lacking direct data, expected patient outcomes were verified by the clinical expertise of subject matter experts @cite BransonSME, @cite ChatburnSME.
+
+### Results
 
 @secreflist
   @refitem CSTARSScenario1 "Scenario 1: Mild ARDS with Progressive Fall in Oxygenation"

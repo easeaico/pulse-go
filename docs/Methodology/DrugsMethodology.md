@@ -551,7 +551,7 @@ Recommended Improvements
 @anchor drugs-appendices
 # Appendices
 
-## Acronyms
+## Glossary
 
 MAP - Mean Arterial Pressure
 

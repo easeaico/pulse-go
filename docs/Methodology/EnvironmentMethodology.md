@@ -113,7 +113,7 @@ The Post Process step moves everything calculated in Process from the next time 
 Features and Capabilities
 -------------------------
 ### Definitions
-Acronyms and a nomenclature table are available in the [appendix](@ref environment-appendices).
+An acronyms, initialisms, and a nomenclature table are available in the Glossary section.
 
 ### Circuit
 The one-dimensional model shown in Figure 1 is further simplified to a zero-dimensional model (Figure 3) by averaging the thermal effects over the entire patient.  The %Environment system uses the generic circuit solver in the same way as fluid systems (@ref CircuitMethodology).

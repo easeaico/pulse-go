@@ -975,7 +975,7 @@ that allows spontaneous breathing along with positive-pressure ventilation, simi
 
 @ref AnesthesiaMachineYPieceDisconnectTable "AnesthesiaMachineYPieceDisconnect"
 
-## Acronyms
+## Glossary
 
 ETT - Endotracheal tube
 

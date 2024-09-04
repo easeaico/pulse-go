@@ -766,7 +766,7 @@ The inherent modularity of this model could be leveraged to add parameters and e
 
 @ref MechanicalVentilatorTable "Mechanical Ventilator"
 
-## Acronyms
+## Glossary
 
 API - Application Programming Interface
 

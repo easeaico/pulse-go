@@ -46,6 +46,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Testing Utils
     - Add a run.cmake option to generate a config of all the failures for a quick and easy rebase (once they have been reviewed and approved of course)
     - Remove action vertical lines in our verification plots of actions that occur many many times. These actions are usually testing sensor driven inputs and make data interpretation difficult.
+  - Fixed improperly mapped events
 
 - Physiology Model Improvements
   - Updated dyspnea implementation
@@ -74,7 +75,8 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Added new system data outputs for total body fluid volume, plasma osmolality, and plasma osmolarity
   - Added a dehydration condition model that directly affects the Tissue, Cardiovascular and Energy systems
   - Added a mechanical dead space parameter to the Environment
-  - Added several new events
+  - Updated the urinalysis assessment with more appropriate substance thresholds
+  - Added logic for several missing events: hyperglycemia, hypoglycemia, ketoacidosis, and lactic acidosis
 
 ---
 
