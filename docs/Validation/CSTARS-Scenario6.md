@@ -1,4 +1,6 @@
-\anchor Scenario6
+CSTARS Scenario 6 {#CSTARSScenario6}
+====================================
+
 @insert ./validation/scenarios/CSTARS/Scenario6-Introduction.md
 
 @htmlonly

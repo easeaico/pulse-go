@@ -1,5 +1,7 @@
-\anchor Scenario3
-#@insert ./validation/scenarios/CSTARS/Scenario3-Introduction.md
+CSTARS Scenario 3 {#CSTARSScenario3}
+====================================
+
+@insert ./validation/scenarios/CSTARS/Scenario3-Introduction.md
 
 @htmlonly
 <a href="./Images/CSTARS/Placeholder.png"><img src="./Images/CSTARS/Placeholder.png" width="400"></a>
