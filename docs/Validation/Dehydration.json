@@ -27,9 +27,9 @@
             "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Dehydration/"
           },
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/Dehydration/MildDehydrationResults.csv" },
-          "Vitals": true, "Ventilator": false, "OutputPrefix": "MildDehydration-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Dehydration/MildDehydrationResults-Segments.json"
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Dehydration/MildResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Mild-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Dehydration/MildResults-Segments.json"
         }
       }
       ,
@@ -42,9 +42,9 @@
             "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Dehydration/"
           },
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/Dehydration/ModerateDehydrationResults.csv" },
-          "Vitals": true, "Ventilator": false, "OutputPrefix": "ModerateDehydration-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Dehydration/ModerateDehydrationResults-Segments.json"
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Dehydration/ModerateResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Moderate-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Dehydration/ModerateResults-Segments.json"
         }
       }
       ,
@@ -57,9 +57,9 @@
             "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/Dehydration/"
           },
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/Dehydration/SevereDehydrationResults.csv" },
-          "Vitals": true, "Ventilator": false, "OutputPrefix": "SevereDehydration-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Dehydration/SevereDehydrationResults-Segments.json"
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Dehydration/SevereResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Severe-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Dehydration/SevereResults-Segments.json"
         }
       }
     ]
@@ -77,21 +77,21 @@
       },
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "MildDehydration",
+        "ScenarioName": "Mild",
         "Segment": 1,
         "DataRequestFile": ["StandardDataRequests.json", "DehydrationDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "ModerateDehydration",
+        "ScenarioName": "Moderate",
         "Segment": 1,
         "DataRequestFile": ["StandardDataRequests.json", "DehydrationDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "SevereDehydration",
+        "ScenarioName": "Severe",
         "Segment": 1,
         "DataRequestFile": ["StandardDataRequests.json", "DehydrationDataRequests.json"],
         "Header": []

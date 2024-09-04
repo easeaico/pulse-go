@@ -1,4 +1,4 @@
-\anchor Healthy
+\anchor HealthyHydration
 @insert ./validation/scenarios/Dehydration/Healthy-Introduction.md
 
 ### Segment Validation

@@ -1,21 +1,21 @@
 \anchor MechanicalVentilatorCOPD
-@insert ./validation/scenarios/MechanicalVentilator/MechanicalVentilatorCOPD-Introduction.md
+@insert ./validation/scenarios/MechanicalVentilator/COPD-Introduction.md
 
 ### Segment Validation
 
 #### Segment 1
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorCOPD/Segment1ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/COPD/Segment1ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-vitals_monitor_1.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/COPD-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/COPD-vitals_monitor_1.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_monitor_1.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_loops_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_loops_1.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/COPD-ventilator_monitor_1.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD-ventilator_loops_1.jpg"><img src="./plots/MechanicalVentilator/COPD-ventilator_loops_1.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -25,21 +25,21 @@
 <i>@figuredef {COPDSegment1Monitors}. Vitals and ventilator monitors for Segment 1.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorCOPD/Segment1SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/COPD/Segment1SegmentTable.md
 
 #### Segment 2
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorCOPD/Segment2ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/COPD/Segment2ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-vitals_monitor_2.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/COPD-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/COPD-vitals_monitor_2.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_monitor_2.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_loops_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_loops_2.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/COPD-ventilator_monitor_2.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD-ventilator_loops_2.jpg"><img src="./plots/MechanicalVentilator/COPD-ventilator_loops_2.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -49,21 +49,21 @@
 <i>@figuredef {COPDSegment2Monitors}. Vitals and ventilator monitors for Segment 2.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorCOPD/Segment2SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/COPD/Segment2SegmentTable.md
 
 #### Segment 3
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorCOPD/Segment3ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/COPD/Segment3ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-vitals_monitor_3.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-vitals_monitor_3.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/COPD-vitals_monitor_3.jpg"><img src="./plots/MechanicalVentilator/COPD-vitals_monitor_3.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_monitor_3.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_monitor_3.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_loops_3.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorCOPD-ventilator_loops_3.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD-ventilator_monitor_3.jpg"><img src="./plots/MechanicalVentilator/COPD-ventilator_monitor_3.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD-ventilator_loops_3.jpg"><img src="./plots/MechanicalVentilator/COPD-ventilator_loops_3.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -73,7 +73,7 @@
 <i>@figuredef {COPDSegment3Monitors}. Vitals and ventilator monitors for Segment 3.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorCOPD/Segment3SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/COPD/Segment3SegmentTable.md
 
 ### Scenario Output Plots
 

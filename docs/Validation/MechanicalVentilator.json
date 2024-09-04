@@ -14,7 +14,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorHealthyResults.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/HealthyResults.csv" }
           ],
           "Series":
           [
@@ -44,9 +44,9 @@
         {
           "Comment": "MechanicalVentilator Validation (Healthy) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorHealthyResults.csv" },
-          "Vitals": true, "Ventilator": true, "OutputPrefix": "MechanicalVentilatorHealthy-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorHealthyResults-Segments.json"
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/HealthyResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Healthy-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/HealthyResults-Segments.json"
         }
       },
       {
@@ -59,7 +59,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorARDSResults.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/ARDSResults.csv" }
           ],
           "Series":
           [
@@ -89,9 +89,9 @@
         {
           "Comment": "MechanicalVentilator Validation (ARDS) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorARDSResults.csv" },
-          "Vitals": true, "Ventilator": true, "OutputPrefix": "MechanicalVentilatorARDS-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorARDSResults-Segments.json"
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/ARDSResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "ARDS-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/ARDSResults-Segments.json"
         }
       },
       {
@@ -104,7 +104,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorCOPDResults.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/COPDResults.csv" }
           ],
           "Series":
           [
@@ -134,9 +134,9 @@
         {
           "Comment": "MechanicalVentilator Validation (COPD) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorCOPDResults.csv" },
-          "Vitals": true, "Ventilator": true, "OutputPrefix": "MechanicalVentilatorCOPD-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorCOPDResults-Segments.json"
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/COPDResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "COPD-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/COPDResults-Segments.json"
         }
       },
       {
@@ -149,7 +149,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorRecruitmentResults.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/RecruitmentResults.csv" }
           ],
           "Series":
           [
@@ -179,9 +179,9 @@
         {
           "Comment": "MechanicalVentilator Validation (Recruitment) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorRecruitmentResults.csv" },
-          "Vitals": true, "Ventilator": true, "OutputPrefix": "MechanicalVentilatorRecruitment-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/MechanicalVentilatorRecruitmentResults-Segments.json"
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/RecruitmentResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Recruitment-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/RecruitmentResults-Segments.json"
         }
       }
     ]
@@ -192,63 +192,63 @@
     [
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "MechanicalVentilatorHealthy",
+        "ScenarioName": "Healthy",
         "Segment": 1,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "MechanicalVentilatorARDS",
+        "ScenarioName": "ARDS",
         "Segment": 1,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
-        "ScenarioName": "MechanicalVentilatorARDS",
+        "ScenarioName": "ARDS",
         "Segment": 2,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
-        "ScenarioName": "MechanicalVentilatorARDS",
+        "ScenarioName": "ARDS",
         "Segment": 3,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "MechanicalVentilatorCOPD",
+        "ScenarioName": "COPD",
         "Segment": 1,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
-        "ScenarioName": "MechanicalVentilatorCOPD",
+        "ScenarioName": "COPD",
         "Segment": 2,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
-        "ScenarioName": "MechanicalVentilatorCOPD",
+        "ScenarioName": "COPD",
         "Segment": 3,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "MechanicalVentilatorRecruitment",
+        "ScenarioName": "Recruitment",
         "Segment": 1,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
-        "ScenarioName": "MechanicalVentilatorRecruitment",
+        "ScenarioName": "Recruitment",
         "Segment": 2,
         "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
         "Header": []

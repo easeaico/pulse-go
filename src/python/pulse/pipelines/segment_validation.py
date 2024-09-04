@@ -248,6 +248,7 @@ if __name__ == "__main__":
         # In the future, we will do all xlsx in the data/validation dir
         # But for now, we are just hard coding the automated xlsx files
         xls_files.append("AirwayObstruction.xlsx")
+        xls_files.append("Dehydration.xlsx")
         xls_files.append("MechanicalVentilator.xlsx")
         xls_files.append("CSTARS.xlsx")
 
