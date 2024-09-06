@@ -17,7 +17,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
-## Pulse v4.3.0 (August 2024)
+## Pulse v4.3.0 (September 2024)
 
 - CDM API Changes
   - Blood Chemistry System Data
