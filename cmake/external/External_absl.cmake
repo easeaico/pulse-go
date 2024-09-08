@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------------
 # Add External Project
 #-----------------------------------------------------------------------------
+message(STATUS "Processing External_absl")
 if(${PROJECT_NAME}_MULTI_BUILD)
   message(STATUS "Building multiple abls configurations at once")
   set(ABSL_DEBUG_BLD COMMAND ${CMAKE_COMMAND} --build . --config debug)
@@ -32,7 +33,7 @@ add_external_project_ex(absl
   ${ABSL_MULTI_INSTALL}
 )
 
-if (NOT USE_SYSTEM_abls)
+if (NOT USE_SYSTEM_absl)
   set(absl_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/absl")
   message(STATUS "absl_DIR : ${absl_DIR}")
 endif()

@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------------------
 # Add External Project
 #-----------------------------------------------------------------------------
+message(STATUS "Processing External_Eigen3")
 include(AddExternalProject)
 define_external_dirs_ex( Eigen3 )
 add_external_project_ex( Eigen3

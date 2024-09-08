@@ -43,6 +43,11 @@ add_library_ex(PulseTests STATIC
 )
 target_include_directories(PulseTests PRIVATE ${EIGEN3_INCLUDE_DIR})
 
+
+if(${PROJECT_NAME}_C_AS_STATIC)
+  return()
+endif()
+
 add_subdirectory(howto)
 add_subdirectory(scenario_driver)
 add_subdirectory(test_driver)

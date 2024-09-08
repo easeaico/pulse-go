@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 # Add External Project
 #-----------------------------------------------------------------------------
-
+message(STATUS "Processing External_pybind11")
 include(AddExternalProject)
 define_external_dirs_ex(pybind11)
 add_external_project_ex( pybind11
