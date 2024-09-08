@@ -1,21 +1,21 @@
 \anchor MechanicalVentilatorARDS
-@insert ./validation/scenarios/MechanicalVentilator/MechanicalVentilatorARDS-Introduction.md
+@insert ./validation/scenarios/MechanicalVentilator/ARDS-Introduction.md
 
 ### Segment Validation
 
 #### Segment 1
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorARDS/Segment1ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/ARDS/Segment1ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-vitals_monitor_1.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/ARDS-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/ARDS-vitals_monitor_1.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_monitor_1.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_loops_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_loops_1.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/ARDS-ventilator_monitor_1.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS-ventilator_loops_1.jpg"><img src="./plots/MechanicalVentilator/ARDS-ventilator_loops_1.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -25,21 +25,21 @@
 <i>@figuredef {ARDSSegment1Monitors}. Vitals and ventilator monitors for Segment 1.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorARDS/Segment1SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/ARDS/Segment1SegmentTable.md
 
 #### Segment 2
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorARDS/Segment2ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/ARDS/Segment2ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-vitals_monitor_2.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/ARDS-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/ARDS-vitals_monitor_2.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_monitor_2.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_loops_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_loops_2.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/ARDS-ventilator_monitor_2.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS-ventilator_loops_2.jpg"><img src="./plots/MechanicalVentilator/ARDS-ventilator_loops_2.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -49,21 +49,21 @@
 <i>@figuredef {ARDSSegment2Monitors}. Vitals and ventilator monitors for Segment 2.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorARDS/Segment2SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/ARDS/Segment2SegmentTable.md
 
 #### Segment 3
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorARDS/Segment3ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/ARDS/Segment3ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-vitals_monitor_3.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-vitals_monitor_3.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/ARDS-vitals_monitor_3.jpg"><img src="./plots/MechanicalVentilator/ARDS-vitals_monitor_3.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_monitor_3.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_monitor_3.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_loops_3.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorARDS-ventilator_loops_3.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS-ventilator_monitor_3.jpg"><img src="./plots/MechanicalVentilator/ARDS-ventilator_monitor_3.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS-ventilator_loops_3.jpg"><img src="./plots/MechanicalVentilator/ARDS-ventilator_loops_3.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -73,7 +73,7 @@
 <i>@figuredef {ARDSSegment3Monitors}. Vitals and ventilator monitors for Segment 3.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorARDS/Segment3SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/ARDS/Segment3SegmentTable.md
 
 ### Scenario Output Plots
 

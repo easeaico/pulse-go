@@ -220,7 +220,7 @@ Recommended Improvements
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 
 GI - %Gastrointestinal

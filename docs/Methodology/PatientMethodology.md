@@ -281,7 +281,7 @@ One way to extend the engine for clinical use is to use data from sources such a
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 
 CDM - Common Data Model

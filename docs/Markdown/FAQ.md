@@ -55,8 +55,7 @@ and control system feedback mechanisms to model real-time system-level
 physiologic behaviors. Spatial resolution is limited by the lumped-parameter approach 
 to sections of organs (what may arguably be referred to as the tissue level). However, the engine
 uses an extensible architecture to promote integration with external models with varying levels of 
-fidelity (resolution or granularity). For more details, please see the recorded [Committee on Credible Practice of Modeling & Simulation 
-in Healthcare](https://simtk.org/projects/cpms/ "CPMS") webinar.
+fidelity (resolution or granularity).
 
 
 <b>What is the long-term plan for the physiology engine?</b><br>
@@ -90,7 +89,7 @@ The deliberate identification of data requirements must precede any model modifi
 if an extension of the Common Data Model is required. If the existing data model is sufficient to meet your modeling needs, 
 you may be able to implement changes satisfactorily just by modifying the source code for the physiologic system 
 of interest. If a Common Data Model extension is necessary, modification of the source code becomes more complicated. The 
-quickest and easiest way to modify the engine to meet your needs is to work with Kitware - email: kitware@kitware.com.
+quickest and easiest way to modify the engine to meet your needs is to work with <a href="https://www.kitware.com/contact/">Kitware</a>.
 
 We can help with requirements definition, provide development support, and/or make modifications for you.
 
@@ -99,8 +98,7 @@ We include scenarios and their results for verification and validation.
 These results provide a baseline we can use to measure deviations to results when the code is modified.
 As changes are implemented in the code base, we rerun all scenarios and compare the new results with baseline results to see how the implemented changes manifest in system data. 
 Any new result that is over 2% error is marked as a failure. 
-This data is used extensively to validate each system individually, as well as the combined effects of insults and interventions. See the Methodology Reports for more details.  
-The scenarios output requests match the columns in the results file; we recommend that these scenarios remain unmodified.
+This data is used extensively to validate each system individually, as well as the combined effects of insults and interventions. See the Methodology Reports for more details. The scenarios output requests match the columns in the results file; we recommend that these scenarios remain unmodified.
 
 <b>How can I contribute to the physiology engine?</b><br>
 Take a look at our <a href="https://gitlab.kitware.com/physiology/engine/blob/master/CONTRIBUTING.md">Contribution Guide</a>.
@@ -108,7 +106,7 @@ Take a look at our <a href="https://gitlab.kitware.com/physiology/engine/blob/ma
 
 <b>Can I contact the physiology team to work on my current or upcoming project?</b><br>
 Absolutely. We always welcome new and challenging opportunities to 
-work with research partners and sponsors. Please email us at kitware@kitware.com.
+work with research partners and sponsors. Please <a href="https://www.kitware.com/contact/">contact</a> us.
 
 
 <b>Where did Pulse come from?</b><br>

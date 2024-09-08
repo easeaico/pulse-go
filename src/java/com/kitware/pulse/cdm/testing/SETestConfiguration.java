@@ -216,8 +216,6 @@ public class SETestConfiguration
             }
             if(directive.equalsIgnoreCase("Validation")) 
             { job.isValidation = true; job.scenarioDirectory = "./validation/scenarios/"; continue; }
-            if(directive.equalsIgnoreCase("Assessment")) 
-            { job.isAssessment = true; job.state = SETestJob.State.Complete; continue; }
             if(directive.equalsIgnoreCase("NoCompare")) 
             { job.plottableResults = false; continue; }
             if(directive.equalsIgnoreCase("FastPlot")) 
@@ -320,20 +318,14 @@ public class SETestConfiguration
           // Look for scenario jobs and make copies for each of the different patient files to use
           for(SETestJob job : oldJobs)
           {
-            if(!job.isAssessment && (job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1))
+            if(job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1)
               continue;
 
             copy = job.clone();
             copy.patientFile = pFileName;
             
             String baseName = copy.name;
-            if(job.isAssessment)
-            {
-              baseName = baseName.replaceAll("Validation", "Validation-"+pFileName);
-              deriveScenarioResultNames(copy, baseName.replaceAll(sce_ext, ""));
-            }
-            else
-              deriveScenarioResultNames(copy, baseName.replaceAll(sce_ext, "-"+pFileName));
+            deriveScenarioResultNames(copy, baseName.replaceAll(sce_ext, "-"+pFileName));
             
             jobs.add(copy);
           }
@@ -341,7 +333,7 @@ public class SETestConfiguration
         // Now look for the non scenario jobs, so just add those back as is
         for(SETestJob job : oldJobs)
         {
-          if(!job.isAssessment && (job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1))
+          if(job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1)
             jobs.add(job);
         }
 
@@ -360,8 +352,6 @@ public class SETestConfiguration
   // Let's clean out everything we are about to run
     for(SETestJob job : jobs)
     {
-      if(job.isAssessment)
-        continue;
       deleteTestResults(job.computedDirectory+"/"+job.name);
       for(String resultFile : job.computedFiles)
       {
@@ -381,56 +371,48 @@ public class SETestConfiguration
     String output;
     String patientOutput;
     
-    if(job.isAssessment)
-    {
-      baseline=job.baselineDirectory+"/"+baseName+".json";
-      output=job.computedDirectory+"/"+baseName+".json";
-    }
-    else
-    {
-      String[] dirs = baseName.substring(0, baseName.indexOf(sce_ext)).split("[/\\\\]");
-      
-      baseline = job.baselineDirectory;
-      for(int i=0; i<dirs.length-1; i++)
-        baseline+="/"+dirs[i];
+    String[] dirs = baseName.substring(0, baseName.indexOf(sce_ext)).split("[/\\\\]");
+    
+    baseline = job.baselineDirectory;
+    for(int i=0; i<dirs.length-1; i++)
+      baseline+="/"+dirs[i];
 
-      output = job.computedDirectory;
-      for(int i=0; i<dirs.length; i++)
-        output+="/"+dirs[i];
-      
-      baseline+="/"+dirs[dirs.length-1];
-      patientBaseline = baseline;
-      baseline+="Results"+ext;
-      patientOutput = output;
-      output+="Results"+ext;
-      //example : ./Scenarios/Validation/Patient-ValidationResults.csv
-      if(new File(baseline).exists() == false && patientFiles == null)
+    output = job.computedDirectory;
+    for(int i=0; i<dirs.length; i++)
+      output+="/"+dirs[i];
+    
+    baseline+="/"+dirs[dirs.length-1];
+    patientBaseline = baseline;
+    baseline+="Results"+ext;
+    patientOutput = output;
+    output+="Results"+ext;
+    //example : ./Scenarios/Validation/Patient-ValidationResults.csv
+    if(new File(baseline).exists() == false && patientFiles == null)
+    {
+      try
       {
-        try
+        // The baseline does not exist
+        // but the baseline file could be for a specific patient
+        // so let's see if a baseline with patient name exists
+        String patientFile;
+        SEScenario sce = new SEScenario();
+        sce.readFile(job.scenarioDirectory+job.name);
+        if(sce.hasPatientConfiguration() && sce.getPatientConfiguration().hasPatientFile())
         {
-          // The baseline does not exist
-          // but the baseline file could be for a specific patient
-          // so let's see if a baseline with patient name exists
-          String patientFile;
-          SEScenario sce = new SEScenario();
-          sce.readFile(job.scenarioDirectory+job.name);
-          if(sce.hasPatientConfiguration() && sce.getPatientConfiguration().hasPatientFile())
+          patientFile = sce.getPatientConfiguration().getPatientFile();
+          patientFile = patientFile.trim();
+          int start = patientFile.lastIndexOf("/");
+          patientFile = patientFile.substring(start==-1?0:start+1,patientFile.indexOf(sce_ext));
+          patientBaseline+="-"+patientFile+"Results"+ext;
+          if(new File(patientBaseline).exists())
           {
-            patientFile = sce.getPatientConfiguration().getPatientFile();
-            patientFile = patientFile.trim();
-            int start = patientFile.lastIndexOf("/");
-            patientFile = patientFile.substring(start==-1?0:start+1,patientFile.indexOf(sce_ext));
-            patientBaseline+="-"+patientFile+"Results"+ext;
-            if(new File(patientBaseline).exists())
-            {
-              baseline = patientBaseline;
-              output = patientOutput+"-"+patientFile+"Results"+ext;
-              job.patientFile = patientFile+sce_ext;
-            }
+            baseline = patientBaseline;
+            output = patientOutput+"-"+patientFile+"Results"+ext;
+            job.patientFile = patientFile+sce_ext;
           }
         }
-        catch (InvalidProtocolBufferException e){} // Carry on, we'll just plot the computed
       }
+      catch (InvalidProtocolBufferException e){} // Carry on, we'll just plot the computed
     }
     
     job.baselineFiles.add(baseline);

@@ -1,21 +1,21 @@
 \anchor MechanicalVentilatorRecruitment
-@insert ./validation/scenarios/MechanicalVentilator/MechanicalVentilatorRecruitment-Introduction.md
+@insert ./validation/scenarios/MechanicalVentilator/Recruitment-Introduction.md
 
 ### Segment Validation
 
 #### Segment 1
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorRecruitment/Segment1ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/Recruitment/Segment1ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-vitals_monitor_1.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/Recruitment-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-vitals_monitor_1.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_monitor_1.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_loops_1.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_loops_1.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_1.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_loops_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_loops_1.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -25,21 +25,21 @@
 <i>@figuredef {RecruitmentSegment1Monitors}. Vitals and ventilator monitors for Segment 1.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorRecruitment/Segment1SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/Recruitment/Segment1SegmentTable.md
 
 #### Segment 2
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorRecruitment/Segment2ValidationTable.md
+@insert ./validation/tables/MechanicalVentilator/Recruitment/Segment2ValidationTable.md
 
 @htmlonly
 <center>
 <table border="0">
 <tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-vitals_monitor_2.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/MechanicalVentilator/Recruitment-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-vitals_monitor_2.jpg" width="1100"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_monitor_2.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_loops_2.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorRecruitment-ventilator_loops_2.jpg" width="275"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_2.jpg" width="825"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_loops_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_loops_2.jpg" width="275"></a></td>
 </tr>
 </table>
 <br>
@@ -49,7 +49,7 @@
 <i>@figuredef {RecruitmentSegment2Monitors}. Vitals and ventilator monitors for Segment 2.</i>
 </center><br>
 
-@insert ./validation/tables/MechanicalVentilator/MechanicalVentilatorRecruitment/Segment2SegmentTable.md
+@insert ./validation/tables/MechanicalVentilator/Recruitment/Segment2SegmentTable.md
 
 ### Scenario Output Plots
 

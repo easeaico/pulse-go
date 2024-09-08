@@ -12,9 +12,9 @@ from typing import Sequence
 from datetime import timedelta
 from timeit import default_timer as timer
 
+from pulse.cdm.utils.file_utils import adjust_filepath
 from pulse.cdm.plots import SEPlotConfig, SEPlotSource, SEMonitorPlotter
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
-
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -38,11 +38,11 @@ def generate_monitors(monitor_plotter: SEMonitorPlotter, benchmark: bool=False):
     if monitor_plotter.has_times_s():
         times_s = monitor_plotter.get_times_s()
     elif monitor_plotter.has_data_requested_file():
-        data_requested_file = monitor_plotter.get_data_requested_file()
+        data_requested_file = adjust_filepath(monitor_plotter.get_data_requested_file())
         if not data_requested_file.is_file():
             _pulse_logger.error(f"Data requested file does not exist: {data_requested_file}")
             return
-        results = serialize_data_requested_result_from_file(monitor_plotter.get_data_requested_file())
+        results = serialize_data_requested_result_from_file(adjust_filepath(monitor_plotter.get_data_requested_file()))
         for segment in results.get_segments():
             if segment.id == 0:  # Don't generate monitors for segment 0
                 continue
@@ -97,7 +97,7 @@ def generate_monitors(monitor_plotter: SEMonitorPlotter, benchmark: bool=False):
 
 def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="vitals_monitor.jpg"):
     # Read the CSV file
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(adjust_filepath(csv_file))
 
     # Filter rows between start time and end time in the "Time(s)" column
     filtered_data_long = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
@@ -233,7 +233,7 @@ def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s:
 
 def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="ventilator_monitor.jpg"):
     # Read the CSV file
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(adjust_filepath(csv_file))
 
     # Filter rows between 1.0 and 20.0 in the "Time(s)" column
     filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
@@ -372,7 +372,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
 
 def create_ventilator_loops_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="ventilator_loops.jpg"):
     # Read the CSV file
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(adjust_filepath(csv_file))
 
     # Filter rows between 1.0 and 20.0 in the "Time(s)" column
     filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]

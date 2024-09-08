@@ -731,6 +731,10 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 @insert ./validation/markdown/MechanicalVentilator.md
 
 
+@anchor cstars
+@insert ./validation/markdown/CSTARS.md
+
+
 @anchor ventilator-conclusion
 ## Conclusion
 
@@ -762,7 +766,7 @@ The inherent modularity of this model could be leveraged to add parameters and e
 
 @ref MechanicalVentilatorTable "Mechanical Ventilator"
 
-## Acronyms
+## Glossary
 
 API - Application Programming Interface
 

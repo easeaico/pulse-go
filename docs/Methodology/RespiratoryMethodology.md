@@ -263,7 +263,7 @@ The patient Alveoli Surface Area is also modified when condition/action effects 
 @anchor respiratory-feedback
 ### Feedback
 
-#### Driver Pressure Source
+#### Spontaneous Breathing Muscle Pressure Source
 
 The %Respiratory System interacts with other systems in the engine to
 receive feedback and adjust spontaneous breathing for homeostasis. To
@@ -356,7 +356,9 @@ Where <i>V</i> is the target volume, <i>FRC</i> is the functional residual capac
 <i>@equationdef {totC}.</i>
 </center><br> 
 
+##### Chemoreceptors
 @anchor respiratory-chemoreceptors
+
 The Fresnel model uses pre-selected ventilation frequencies to model various physiological and pathological conditions. The %Respiratory System extended the Fresnel, et. al. model by incorporating a chemical stimuli feedback mechanism that contributes to the overall blood gas regulation. As a chemical feedback mechanism, past works used empirical relationships between minute ventilation, <i>V<sup><b>.</b></sup><sub>E</sub></i>, or alveolar ventilation, <i>V<sup><b>.</b></sup><sub>A</sub></i>, and the blood gas partial pressures that represent the respiratory response to chemical stimuli at the peripheral and central chemoreceptors @cite Khoo1982chemicalFeedback , @cite Batzel2005chemicalFeedback . The %Respiratory Model adopted the mathematical relation  that links the alveolar ventilation with the blood gas levels. The resulting mathematical relationship implemented in the %Respiratory System is 
 
 \f[\dot{V}_{A} =G_{p} e^{-0.05P_{a} O_{2} } \max (0,P_{aCO_{2} } -I_{p} )+G_{c} \max (0,P_{aCO_{2} } -I_{c} )\f] 
@@ -429,6 +431,12 @@ The model described above is implemented in the engine with reference values and
 |I<sub>p</sub>, I<sub>c</sub>(mmHg)       |35.5  @cite Batzel2005chemicalFeedback    |35.5                    |
 |P<sub>0.1</sub>(cmH<SUB>2</SUB>O)        |0.75  @cite Budwiser2007chemicalFeedback  |0.75                    |
 </center><br>
+
+##### Mechanoreceptor Feedback Mechanism
+
+The respiratory muscle driver pressure is dynamically adjusted based on pulmonary mechanoreceptor feedback. This method reduces the inspiratory drive and respiratory muscle pressure during a breath by inhibiting the inspiratory effort through mechanoreceptor feedback, similar to the Hering-Breuer Reflex. The driver pressure is instantaneously scaled down in response to lung inflation caused by assisted positive pressure ventilation. This approach reduces the instantaneous pressure source value to align with chemoreceptor targets.
+
+##### Spontaneous Breathing Results
 
 @figureref {pressures} depicts the time-dependent driver pressure source of the %Respiratory System as obtained during simulation of the standard patient model of the engine (77 kg adult male) under normal physiological conditions. For comparison, the driver pressure is plotted with the alveolar, intrapleural, and transpulmonary pressures. The figure shows the pressures for several breathing cycles. The model driver pressure exhibits distinct waveforms during the inspiration and expiration phases. These patterns represent the active distension and passive relaxation behaviors of the inspiratory muscles. As a result of such input, the model distinguishes between the active inspiratory and passive expiratory phases of the breathing cycle. The time-dependent muscle pressure together with the atmospheric pressure and the compliances act in tandem to generate the pleural and alveolar pressure waveforms shown in the figure.
 
@@ -978,6 +986,23 @@ trachea is calculated by using the pressure and the O<SUB>2</SUB> volume fractio
 carina node. The plot shows the value of tracheal O<SUB>2</SUB> partial pressure over the course of one breathing cycle.</i>
 </center><br>
 
+#### Recruitment Shunting
+
+Recruitment plays a critical role in oxygenation by determining the extent to which alveoli are open and able to participate in gas exchange. The recruitment of alveoli directly impacts the degree of pulmonary shunting, where blood bypasses areas of the lung that are not ventilated, leading to reduced oxygenation.
+
+In the Pulse Physiology Engine, lung recruitment is modeled based on acinar ventilation and volume, which in turn influences the pulmonary shunt fraction. This approach is calibrated using empirical data that reflects changes observed with varying levels of positive end-expiratory pressure (PEEP) during mechanical ventilation. For more details on this calibration process, refer to the @ref MechanicalVentilatorMethodology.
+
+The concept of the Recruited Fraction is central to this model. It represents the fraction of lung volume below the functional residual capacity (FRC) compared to the residual volume. At or above FRC, the recruited alveoli are fully functional, resulting in a shunt resistance multiplier of 1, meaning no additional shunting occurs. However, as lung volume decreases toward the residual volume, the recruited fraction diminishes, leading to a resistance multiplier that approaches 0, which corresponds to maximum shunting.
+
+This relationship is visually depicted in @figureref {recruitment}, which illustrates the mapping of reduced alveolar volume to the shunt scaling factor across different cardiopulmonary compartments.
+
+@htmlonly
+<center><a href="./Images/Respiratory/RecruitmentShunting.png"><img src="./Images/Respiratory/RecruitmentShunting.png" style="width:60%;"></a></center>
+@endhtmlonly
+<center>
+<i>@figuredef {recruitment}. The mapping of reduced alveolar volume to shunt scaling factor for each cardiopulmonary compartment.</i>
+</center><br>
+
 @anchor respiratory-dependencies
 ### Dependencies
 
@@ -1047,9 +1072,9 @@ As drugs circulate through the system, they affect the %Respiratory System. The 
 
 A metabolic modifier is set by the %Energy System (@ref EnergyMethodology) to drive the system to reasonable levels achievable during increased metabolic exertion.  The modifier is tuned to achieve the correct respiratory response for near maximal exercise, and a linear relationship is assumed. This modifier is a direct multiplier to the target alveolar ventilation input into the system driver, and it causes an increase in both tidal volume and respiration rate.
 
-#### Anesthesia Machine Connection
+#### Equipment Connection
 
-The %Respiratory System can be hooked up to the anesthesia machine for positive-pressure ventilation (see the @ref AnesthesiaMachineMethodology).  This is achieved by connecting the two fluid circuits.  The anesthesia connection node is merely connected to the respiratory mouth node to allow for automatic calculation of the fluid mechanics by the circuit solver and transport by the substance transporter.  The mechanistic cascading effects are automatically acheived, and everything else is modeled exactly the same as when the systems are disconnected.
+The %Respiratory System can be hooked up to various equipment, including the anesthesia machine (see the @ref AnesthesiaMachineMethodology) and mechanical ventilator (see the @ref MechanicalVentilatorMethodology), for positive-pressure ventilation, as well as an inhaler model (see the @ref InhalerMethodology) for aerosol delivery. The connection of each piece of equipment is achieved by linking the respective fluid circuits. The connection nodes for the equipment are connected to the respiratory mouth node to allow for automatic calculation of fluid mechanics by the circuit solver and transport by the substance transporter. The mechanistic cascading effects are automatically achieved, and every connection is simulated as part of the overall respiratory system model.
 
 @anchor respiratory-outputs
 ### Outputs
@@ -1144,58 +1169,190 @@ Insults and Interventions
 
 ### General Approach
 
-Disease states are applied to the simulated patient by modifying various parameters. Chronic conditions stabilize to a new homeostatic point before the simulation begins. Pulse simulates both restrictive and obstructive diseases of varying severities with different continuous function mappings. @tablered {diseases} shows parameter settings for representative conditions and severities based on trends and values determined from literature @cite brunner2019lung @cite arnal2018parameters @cite harris2005pressure @cite aguirre2018lung @cite arndt1995linear @cite bikker2008end @cite brunner2012pulmonary @cite ibanez1982normal. Most respiratory-specific pathophysiology is applied as parameter multipliers (y) determined by a severity (x) setting between 0 and 1, with the following exponential or linear functions:
+In the Pulse Physiology Engine, disease states are modeled by systematically modifying a range of physiological parameters within the simulated patient. For chronic conditions, the engine stabilizes the patient to a new homeostatic baseline before initiating the simulation, ensuring a realistic depiction of the disease's progression and its impact on the body's systems over time.
 
-\f[y = {10^{\log \left( {x\frac{b}{a}} \right) + \log \left( a \right)}}\f]
-<center>
-<i>@equationdef {y1}.</i>
-</center><br> 
+Pulse is equipped to simulate both restrictive and obstructive pulmonary diseases, with each condition's severity represented through distinct continuous function mappings. These mappings are informed by extensive literature review, ensuring that the simulated disease parameters align closely with clinically observed data. As illustrated in @tableref {diseases}, parameter settings for various representative conditions and severities are based on trends and values derived from the following references: @cite brunner2019lung, @cite arnal2018parameters, @cite harris2005pressure, @cite aguirre2018lung, @cite arndt1995linear, @cite bikker2008end, @cite brunner2012pulmonary, @cite ibanez1982normal.
 
-\f[y = \left( {b - a} \right)x + a\f] 
-<center>
-<i>@equationdef {y2}.</i>
-</center><br> 
+To capture the full spectrum of respiratory pathophysiology, Pulse applies disease-specific parameter modifiers determined by a severity index, ranging from 0 (no disease) to 1 (maximum severity). These severities are mapped to corresponding modifiers through piecewise linear functions, calibrated at key transition points: 0.0 (no change), 0.3 (mild), 0.6 (moderate), 0.9 (severe), and 1.0 (maximum). Depending on the nature of the disease and its physiological impact, these modifiers are applied either as a multiplier or as an incremental adjustment to the relevant physiological parameters, as detailed in @tableref {diseases}.
 
-Growth/increasing functions define a as 1 and b as the maximum multiplier, while decay/decreasing functions define b as 1 and a as the minimum multiplier. Therefore, a severity of 0 will not change the healthy value and allows for an intuitive continuous function without any discontinuities. The respiratory system also includes logic to combine effects for each parameter when multiple insults/interventions are applied. 
+A key strength of this approach is the ability to simulate the cumulative effects of comorbid conditions by combining or stacking multiple modifiers. This feature allows for a more comprehensive representation of how various diseases interact within the body, particularly in complex scenarios involving multiple chronic conditions.
 
-When positive pressure ventilation is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
+For chronic obstructive pulmonary disease (COPD), the engine applies separate severity indices for bronchitis and emphysema, reflecting the distinct pathophysiological mechanisms at play in each condition. These severities are mapped independently, allowing for nuanced control over the progression of COPD within the simulated patient.
+
+Alveolar modifiers are applied individually to each cardiopulmonary compartment, ensuring that the localized effects of diseases like acute respiratory distress syndrome (ARDS) are accurately represented. In the case of ARDS, the shunting effect is determined by the greater of the recruitment factor (see the Recruitment Shunting section above) or the ARDS severity, allowing for dynamic adjustments as the disease progresses.
+
+The engine also accounts for changes in dead space volume, referencing these adjustments to the baseline healthy lung volumes of the standard patient. This ensures that the physiological implications of increased dead space, such as reduced gas exchange efficiency, are accurately captured.
+
+When positive pressure ventilation is introduced, the engine models the resulting changes in the respiratory circuit's resistance and compliance, in line with findings from @cite arnal2018parameters. For intubated patients, these modifiers are stacked and combined with other active modifiers to reflect the compounded effects of the disease state and the intervention.
 
 <center><br>
-<i>@tabledef {diseases}. Property changes due to the application of respiratory diseases and positive pressure ventilation. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
+<i>@tabledef {diseases}. This table outlines the property changes due to the application of various respiratory diseases and positive pressure ventilation in the Pulse Physiology Engine. ARDS and COPD are applied by defining a severity between 0 and 1. Healthy severity = 0.0, mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9, maximum severity = 1.0.</i>
 </center>
 
 <table>
-  <tr>
-    <th>Parameter</th>
-    <th>System</th>
-    <th>Standard Healthy</th>
-    <th>Positive Pressure Ventilation</th>
-    <th colspan="4">Restrictive (ARDS)</th>
-    <th colspan="4">Obstructive (COPD)</th>
-  </tr>
-  <tr>
-    <th></th>
-  <th></th>
-  <th></th>
-  <th></th>
-  <th>Severity Mapping</th>
-    <th>Mild</th>
-    <th>Moderate</th>
-    <th>Severe</th>
-    <th>Severity Mapping</th>
-    <th>Mild</th>
-    <th>Moderate</th>
-    <th>Severe</th>
-  </tr>
- <tr><td>Alveolar Dead Space (L)</td><td>Respiratory</td><td>0</td><td>0</td><td>Polynomial Growth</td><td>0</td><td>0.03</td><td>0.15</td><td>Linear Growth</td><td>0.3</td><td>0.6</td><td>0.9</td></tr>
- <tr><td>Airway Resistance (cmH2O-s/L)</td><td>Respiratory</td><td>1.125</td><td>12.375</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
- <tr><td>Bronchi Resistance (cmH2O-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Linear Growth</td><td>8.5</td><td>1.7</td><td>2.4</td></tr>
- <tr><td>Lung Compliance (L/cmH2O)</td><td>Respiratory</td><td>0.1</td><td>0.04</td><td>Exponential Decay</td><td>0.07</td><td>0.05</td><td>0.04</td><td>Exponential Growth</td><td>0.1</td><td>0.11</td><td>0.14</td></tr>
- <tr><td>Inspiratory-Expiratory Ratio</td><td>Respiratory</td><td>0.5</td><td>0.5</td><td>Linear Growth</td><td>0.7</td><td>1.1</td><td>1.5</td><td>Linear Decay</td><td>0.35</td><td>0.22</td><td>0.12</td></tr>
- <tr><td>Diffusion Surface Area (m^2)</td><td>Respiratory</td><td>68</td><td>68</td><td>Exponential Decay</td><td>34</td><td>17</td><td>9</td><td>Exponential Decay</td><td>39</td><td>22</td><td>12</td></tr>
- <tr><td>Pulmonary Capillary Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>0.062</td><td>0.062</td><td>N/A</td><td>0.062</td><td>0.062</td><td>0.062</td><td>Linear Growth</td><td>0.16</td><td>0.25</td><td>0.35</td></tr>
- <tr><td>Pulmonary Shunt Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>8.9</td><td>8.9</td><td>Exponential Decay</td><td>2.75</td><td>0.81</td><td>0.25</td><td>N/A</td><td>8.9</td><td>8.9</td><td>8.9</td></tr>
- <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.87</td><td>0.76</td><td>0.64</td></tr>
+    <tr>
+        <th>Parameter</th>
+        <th>Healthy</th>
+        <th>Positive Pressure Ventilation</th>
+        <th colspan="4">Restrictive (ARDS)</th>
+        <th colspan="4">Obstructive (COPD)</th>
+    </tr>
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>Mild</th>
+        <th>Moderate</th>
+        <th>Severe</th>
+        <th>Maximum</th>
+        <th>Mild</th>
+        <th>Moderate</th>
+        <th>Severe</th>
+        <th>Maximum</th>
+    </tr>
+    <tr>
+        <td>Airway Resistance Multiplier</td>
+        <td>1</td>
+        <td>15</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Bronchi Inhale Resistance Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>10</td>
+        <td>60</td>
+        <td>100</td>
+        <td>150</td>
+    </tr>
+    <tr>
+        <td>Bronchi Exhale Resistance Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>35</td>
+        <td>120</td>
+        <td>180</td>
+        <td>250</td>
+    </tr>
+    <tr>
+        <td>Alveoli Resistance Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>10</td>
+        <td>15</td>
+        <td>20</td>
+        <td>25</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Alveoli Compliance Multiplier</td>
+        <td>1</td>
+        <td>0.45</td>
+        <td>0.65</td>
+        <td>0.55</td>
+        <td>0.50</td>
+        <td>0.40</td>
+        <td>1.06</td>
+        <td>1.08</td>
+        <td>1.09</td>
+        <td>1.20</td>
+    </tr>
+    <tr>
+        <td>Pulmonary Shunt Resistance Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0.100</td>
+        <td>0.200</td>
+        <td>0.150</td>
+        <td>0.100</td>
+        <td>0.280</td>
+        <td>0.181</td>
+        <td>0.220</td>
+        <td>0.100</td>
+    </tr>
+    <tr>
+        <td>Alveolar Dead Space Increment</td>
+        <td>0</td>
+        <td>0</td>
+        <td>0.12</td>
+        <td>0.14</td>
+        <td>0.18</td>
+        <td>0.20</td>
+        <td>0.02</td>
+        <td>0.05</td>
+        <td>0.12</td>
+        <td>0.20</td>
+    </tr>
+    <tr>
+        <td>Diffusion Surface Area Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0.50</td>
+        <td>0.20</td>
+        <td>0.10</td>
+        <td>0.05</td>
+        <td>0.50</td>
+        <td>0.20</td>
+        <td>0.10</td>
+        <td>0.05</td>
+    </tr>
+    <tr>
+        <td>Pulmonary Capillary Resistance Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>2.5</td>
+        <td>4</td>
+        <td>5.50</td>
+        <td>6</td>
+    </tr>
+    <tr>
+        <td>Spontaneous Effort Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>0.76</td>
+        <td>0.52</td>
+        <td>0.28</td>
+        <td>0.20</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Spontaneous Inspiratory-Expiratory Ratio Multiplier</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1.30</td>
+        <td>1.60</td>
+        <td>1.90</td>
+        <td>2.00</td>
+        <td>0.85</td>
+        <td>0.70</td>
+        <td>0.55</td>
+        <td>0.50</td>
+    </tr>
 </table>
 
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. @figureref {FlowVolumeCurves} shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD. The conscious respiration action was used to exhale to the expiratory reserve volume and inhale to the inspiratory capacity.
@@ -1974,7 +2131,7 @@ Dyspnea or shortness of breath directly effects the achieved respiratory driver 
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Tidal Volume (mL)	|	Respiration Rate (breaths/min)	|
-|	---	|	---	|	---	|	---	|	---	|	---	</span>|
+|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Dysnea: Tidal Volulme Severity = 0.3	|	Mild amplitude effect	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|<span class="success">	Increase	</span>|
 |	Dysnea: Tidal Volulme Severity = 0.6	|	Moderate amplitude effect	|	30	|	210	|<span class="success">	Decrease to ~30% of healthy	</span>|<span class="success">	Increase	</span>|
 |	Dysnea: Tidal Volulme Severity = 1.0	|	Full amplitude effect	|	30	|	210	|<span class="success">	0	</span>|<span class="success">	0	</span>|
@@ -2062,7 +2219,7 @@ A respiratory control mechanism for rhythmic breathing could be added to the eng
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 
 ARDS - Acute %Respiratory Distress Syndrome

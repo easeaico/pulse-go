@@ -197,7 +197,7 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
             lines = in_file.readlines()
             in_file.close()
         except Exception as ex:
-            _pulse_logger.error(f"Could not find {fpath.resolve()}")
+            _pulse_logger.error(f"Could not find {fpath.resolve()} {ex}")
             # TODO: What happens if you can't find a file
             return [f'<img src="./images/MissingTable.jpg"><center><i>Could not find "{fpath}"</i></center><br>\n']
 

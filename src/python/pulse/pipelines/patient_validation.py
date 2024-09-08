@@ -7,6 +7,7 @@ import argparse
 from pathlib import Path
 from typing import List, Optional, Union
 
+from pulse.cdm.utils.markdown import table
 from pulse.cdm.engine import eEngineInitializationState
 from pulse.cdm.scenario import eScenarioExecutionState, SEScenarioExecStatus
 from pulse.cdm.validation import SEPatientTimeSeriesValidation
@@ -27,7 +28,8 @@ def timeseries_validation_pipeline(
         log_file: Path,
         csv_file: Path,
         table_dir: Optional[Path] = None,
-        out_file: Optional[Path] = None
+        out_file: Optional[Path] = None,
+        assessment_files: Optional[list] = None
 ) -> SEPatientTimeSeriesValidation:
     """
     Processes given log and csv file through the timeseries validation
@@ -46,7 +48,10 @@ def timeseries_validation_pipeline(
         _pulse_logger.error("Unable to generate patient targets")
         return False
 
-    validate(patient_validation=patient_validation, csv_filename=csv_file, output_file=out_file)
+    validate(patient_validation=patient_validation,
+             csv_filename=csv_file,
+             assessment_files=assessment_files,
+             output_file=out_file)
 
     # Generate Tables (Optional)
     if table_dir is not None:
@@ -103,9 +108,13 @@ def bulk_timeseries_validation_pipeline(
         for filename_base, t_dir in zip(filename_base_paths, table_dirs):
             cnt += 1
 
+            # Find all data files to validate
             log_file = filename_base.parent / f"{filename_base.name}.log"
             csv_file = filename_base.parent / f"{filename_base.name}.csv"
             sce_out_file = filename_base.parent / f"{filename_base.name}.json" if serialize_per_file else None
+            # Look for any assessment json files
+            json_files = filename_base.parent.glob('*.json')
+            assessment_files = [f for f in json_files if "@" in f.name and filename_base.name in f.name]
             # Check if the csv file should have *Results
             if not csv_file.exists():
                 csv_file = filename_base.parent / f"{filename_base.name}Results.csv"
@@ -118,7 +127,8 @@ def bulk_timeseries_validation_pipeline(
                 log_file=log_file,
                 csv_file=csv_file,
                 table_dir=t_dir,
-                out_file=sce_out_file
+                out_file=sce_out_file,
+                assessment_files=assessment_files
             )
             all_tgts.append(tgts)
     except:
@@ -211,6 +221,46 @@ if __name__ == "__main__":
         serialize_per_file=serialize_per_file
     )
 
+    # Gather totals for each patient and create a table of validation statistics
+    fields = [0, 1, 2, 3, 4]
+    headings = ["Category", "< 10%", "< 30%", "> 30%", "Total"]
+    align = []
+    for i in range(len(fields)):
+        align.append(('^', '^'))
+    for validation in all_validation:
+        data = []
+        validation_red = 0
+        validation_yellow = 0
+        validation_green = 0
+        for category, targets in validation.get_targets().items():
+            green = 0
+            yellow = 0
+            red = 0
+            for target in targets:
+                if target.get_error_value() < 10:
+                    green += 1
+                elif target.get_error_value() < 30:
+                    yellow += 1
+                else:
+                    red += 1
+            validation_red += red
+            validation_yellow += yellow
+            validation_green += green
+            total = green + yellow + red
+            data.append((f"{category}",
+                         f'<span class="success">{green}</span>',
+                         f'<span class="warning">{yellow}</span>',
+                         f'<span class="danger">{red}</span>',
+                         f'{total}'))
+        validation_total = validation_red + validation_yellow + validation_green
+        data.append(("<b>Totals</b>",
+                     f'<span class="success"><b>{validation_green}</b></span>',
+                     f'<span class="warning"><b>{validation_yellow}</b></span>',
+                     f'<span class="danger"><b>{validation_red}</b></span>',
+                     f'<b>{validation_total}</b>'))
+        f = open(table_dir / f"{validation.get_patient().get_name()}ValidationSummaryTable.md", "w")
+        table(f, data, fields, headings, align)
+
     # Only write a html file for test results
     if opts.input == "test_results":
         # Push Standard patients to the front
@@ -249,7 +299,7 @@ if __name__ == "__main__":
                     f.write("<td>" + gen_engine_val_str(tgt) + "</td>")
                     f.write(f"<td>{tgt.get_error_value():{tgt.get_table_formatting()}}</td>")
                     f.write("<td>" + tgt.get_notes() + "</td></tr>\n")
-                f.write("</table><br>\n");
-        f.write("</body>\n");
-        f.write("</html>\n");
+                f.write("</table><br>\n")
+        f.write("</body>\n")
+        f.write("</html>\n")
         f.close()

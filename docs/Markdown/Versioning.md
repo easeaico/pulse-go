@@ -1,4 +1,4 @@
-Version 4.2.0 {#version}
+Version 4.3.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -12,6 +12,46 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 ---
 
 ## Pulse Integration (Current new feature set)
+
+-TBD
+
+---
+
+## Pulse v4.3.0 (September 2024)
+
+- CDM API Changes
+  - Blood Chemistry System Data
+    - Added PlasmaOsmolality and PlasmaOsmolarity
+  - Respiratory System Data
+    - Added ExtrinsicPositiveEndExpiratoryPressure
+    - Changed InspiratoryPulmonaryResistance to InspiratoryRespiratoryResistance
+    - Changed IntrinsicPositiveEndExpiredPressure to IntrinsicPositiveEndExpiratoryPressure
+    - Changed ExpiratoryPulmonaryResistance to ExpiratoryRespiratoryResistance
+    - Changed PulmonaryCompliance to RespiratoryCompliance
+    - Changed PulmonaryElastance to RespiratoryElastance
+    - Changed PositiveEndExpiratoryPressure to TotalPositiveEndExpiratoryPressure
+  - Environmental Conditions Data
+    - Added MechanicalDeadSpace
+  - Anesthesia Machine Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  - Bag Valve Mask Data
+    - Changed ValvePositiveEndExpiredPressure to ValvePositiveEndExpiratoryPressure
+  - Mechanical Ventilator Data
+    - Added PeakInspiratoryFlow
+    - Added ExtrinsicPositiveEndExpiratoryPressure
+    - Changed PositiveEndExpiratoryPressure to TotalPositiveEndExpiratoryPressure
+    - Changed DynamicPulmonaryCompliance to DynamicRespiratoryCompliance
+    - Changed IntrinsicPositiveEndExpiredPressure to IntrinsicPositiveEndExpiratoryPressure
+    - Changed StaticPulmonaryCompliance to StaticRespiratoryCompliance
+  - Mechanical Ventilator Settings Data
+    - Added ExpiratoryResistance and InspiratoryResistance
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  - Mechanical Ventilator Continuous Positive Airway Pressure Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  -  Mechanical Ventilator Pressure Control Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  - Mechanical Ventilator Volume Control Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
 
 - Software Architecture Improvements
   - Data Set Generation Tools
@@ -40,6 +80,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Testing Utils
     - Add a run.cmake option to generate a config of all the failures for a quick and easy rebase (once they have been reviewed and approved of course)
     - Remove action vertical lines in our verification plots of actions that occur many many times. These actions are usually testing sensor driven inputs and make data interpretation difficult.
+  - Fixed improperly mapped events
 
 - Physiology Model Improvements
   - Updated dyspnea implementation
@@ -53,6 +94,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Respiratory Model
     - Improved handling of lung recruitment based on acinar ventilation for showing the pulmonary shunt changes due to increased ventilator PEEP
     - Calibrated respiratory diseases for mechanically ventilated patients, including ARDS and COPD
+    - Added mechanoreceptor feedback that inhibits the inspiratory drive and reduces the respiratory muscle pressure during an assisted breath
   - Modifier Actions (SECardiovascularMechanicsModification, SERespiratoryMechanicsModification)
     - We now provide 2 new actions to modify the respiratory and cardiovascular model parameters
     - For example, you can provide a multipliers to modify the heart rate, respiration rate, systemic vascular and pulmonary resistances
@@ -66,7 +108,10 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Fixed a bug for substance tissue diffusion between the vascular and extracellular spaces
     - Added new system data outputs for total body fluid volume, plasma osmolality, and plasma osmolarity
   - Added a dehydration condition model that directly affects the Tissue, Cardiovascular and Energy systems
+    - Associated new events: Hypernatremia Hyponatremia, MildDehydration, ModerateDehydration, SevereDehydration
   - Added a mechanical dead space parameter to the Environment
+  - Updated the urinalysis assessment with more appropriate substance thresholds
+  - Added logic for several missing events: hyperglycemia, hypoglycemia, ketoacidosis, and lactic acidosis
 
 ---
 
