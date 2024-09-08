@@ -18,6 +18,7 @@ from pulse.cdm.scalars import ElectricPotentialUnit, FrequencyUnit, \
                               PressureUnit, TemperatureUnit, VolumeUnit, VolumePerTimeUnit
 from pulse.engine import PulseConfiguration
 
+from typing import Optional
 class eModelType(Enum):
     HumanAdultWholeBody = 0
     HumanAdultVentilationMechanics = 1
@@ -33,9 +34,10 @@ class PulseEngine:
     __slots__ = ['__pulse', "_is_ready", "_dt_s",
                  "_data_request_mgr","_results",
                  "_event_handler", "_log_forward",
-                 "_spare_time_s"]
+                 "_spare_time_s", "_args"]
 
     def __init__(self, eModelType=eModelType.HumanAdultWholeBody, data_root_dir="./"):
+        self._args = (eModelType, data_root_dir)
         t = PyPulse.model_type.human_adult_whole_body
         if eModelType is eModelType.HumanAdultVentilationMechanics:
             t = PyPulse.model_type.human_adult_ventilation_mechanics
@@ -51,8 +53,32 @@ class PulseEngine:
     def clear(self):
         self.__pulse.clear();
 
+    @staticmethod
+    def _default_data_request_mgr():
+        data_request_mgr = SEDataRequestManager()
+        data_request_mgr.set_data_requests([
+            SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
+            SEDataRequest.create_physiology_request("ArterialPressure", unit=PressureUnit.mmHg),
+            SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
+            SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
+            SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
+            SEDataRequest.create_physiology_request("OxygenSaturation"),
+            SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
+            SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
+            SEDataRequest.create_physiology_request("SkinTemperature", unit=TemperatureUnit.C),
+            SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
+            SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
+            SEDataRequest.create_ecg_request("Lead3ElectricPotential", unit=ElectricPotentialUnit.mV),
+            SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg)
+
+        ])
+        return data_request_mgr
+
     def serialize_from_file(self, state_file: str,
-                                  data_request_mgr: SEDataRequestManager):
+                                  data_request_mgr: Optional[SEDataRequestManager]=None):
+        if data_request_mgr is None:
+            data_request_mgr = self._default_data_request_mgr()
+
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, eSerializationFormat.JSON)
         self._is_ready = self.__pulse.serialize_from_file(state_file, drm, PyPulse.serialization_format.json)
@@ -68,8 +94,11 @@ class PulseEngine:
 
 
     def serialize_from_string(self, state: str,
-                                    data_request_mgr: SEDataRequestManager,
+                                    data_request_mgr: Optional[SEDataRequestManager],
                                     state_format: eSerializationFormat):
+        if data_request_mgr is None:
+            data_request_mgr = self._default_data_request_mgr()
+
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, state_format)
         if state_format == eSerializationFormat.BINARY:
@@ -86,6 +115,14 @@ class PulseEngine:
         if self._is_ready:
             return self.__pulse.serialize_to_string(format)
         return None
+
+    def __getstate__(self):
+        return self._args, self.serialize_to_string(PyPulse.serialization_format.binary)
+
+    def __setstate__(self, args_state):
+        args, state = args_state
+        self.__init__(*args)
+        return self.serialize_from_string(state, None, eSerializationFormat.BINARY)
 
     def set_configuration_override(self, cfg: PulseConfiguration) -> bool:
         json = serialize_pulse_configuration_to_string(cfg, eSerializationFormat.JSON)
@@ -165,25 +202,9 @@ class PulseEngine:
         return None
 
     def _process_requests(self, data_request_mgr, fmt: eSerializationFormat):
-        self._data_request_mgr = data_request_mgr
-        if self._data_request_mgr is None:
-            self._data_request_mgr = SEDataRequestManager()
-            self._data_request_mgr.set_data_requests([
-                SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
-                SEDataRequest.create_physiology_request("ArterialPressure", unit=PressureUnit.mmHg),
-                SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
-                SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
-                SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
-                SEDataRequest.create_physiology_request("OxygenSaturation"),
-                SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
-                SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
-                SEDataRequest.create_physiology_request("SkinTemperature", unit=TemperatureUnit.C),
-                SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
-                SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
-                SEDataRequest.create_ecg_request("Lead3ElectricPotential", unit=ElectricPotentialUnit.mV),
-                SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg)
+        if data_request_mgr is None:
+            data_request_mgr = self._default_data_request_mgr()
 
-            ])
         # Simulation time is always the first result.
         self._results = [] # Clear all results
         return serialize_data_request_manager_to_string(self._data_request_mgr, fmt)
