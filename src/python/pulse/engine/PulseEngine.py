@@ -75,10 +75,7 @@ class PulseEngine:
         return data_request_mgr
 
     def serialize_from_file(self, state_file: str,
-                                  data_request_mgr: Optional[SEDataRequestManager]=None):
-        if data_request_mgr is None:
-            data_request_mgr = self._default_data_request_mgr()
-
+                            data_request_mgr: Optional[SEDataRequestManager] = None):
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, eSerializationFormat.JSON)
         self._is_ready = self.__pulse.serialize_from_file(state_file, drm, PyPulse.serialization_format.json)
@@ -92,13 +89,9 @@ class PulseEngine:
             return self.__pulse.serialize_to_file(state_file)
         return False
 
-
     def serialize_from_string(self, state: str,
-                                    data_request_mgr: Optional[SEDataRequestManager],
-                                    state_format: eSerializationFormat):
-        if data_request_mgr is None:
-            data_request_mgr = self._default_data_request_mgr()
-
+                              data_request_mgr: Optional[SEDataRequestManager],
+                              state_format: eSerializationFormat):
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, state_format)
         if state_format == eSerializationFormat.BINARY:
@@ -122,14 +115,14 @@ class PulseEngine:
     def __setstate__(self, args_state):
         args, state = args_state
         self.__init__(*args)
-        return self.serialize_from_string(state, None, eSerializationFormat.BINARY)
+        return self.serialize_from_string(state, self._data_request_mgr, eSerializationFormat.BINARY)
 
     def set_configuration_override(self, cfg: PulseConfiguration) -> bool:
         json = serialize_pulse_configuration_to_string(cfg, eSerializationFormat.JSON)
         return self.__pulse.set_configuration_override(json, PyPulse.serialization_format.json)
 
     def initialize_engine(self, patient_configuration: SEPatientConfiguration,
-                                data_request_mgr: SEDataRequestManager):
+                          data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, eSerializationFormat.JSON)
         pc = serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
@@ -204,10 +197,11 @@ class PulseEngine:
     def _process_requests(self, data_request_mgr, fmt: eSerializationFormat):
         if data_request_mgr is None:
             data_request_mgr = self._default_data_request_mgr()
+        self._data_request_mgr = data_request_mgr
 
         # Simulation time is always the first result.
-        self._results = [] # Clear all results
-        return serialize_data_request_manager_to_string(self._data_request_mgr, fmt)
+        self._results = []  # Clear all results
+        return serialize_data_request_manager_to_string(data_request_mgr, fmt)
 
     def process_action(self, action: SEAction):
         if not self._is_ready:
