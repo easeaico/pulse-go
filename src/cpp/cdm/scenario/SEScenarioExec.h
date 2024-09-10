@@ -16,9 +16,6 @@ class SEScenarioExecStatus;
 enum class eRelativeSerialization { ToWorkingDir = 0, ToOutputDir, ToScenarioDir };
 extern CDM_DECL const std::string& eRelativeSerialization_Name(eRelativeSerialization rt);
 
-enum class eRelativeSerialization { ToWorkingDir = 0, ToOutputDir, ToScenarioDir };
-extern CDM_DECL const std::string& eRelativeSerialization_Name(eRelativeSerialization rt);
-
 class CDM_DECL SEScenarioExec : public Loggable
 {
   friend class PBScenario;//friend the serialization class
