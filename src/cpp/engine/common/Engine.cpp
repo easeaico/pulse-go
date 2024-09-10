@@ -66,6 +66,10 @@ namespace pulse
   {
     return GetController().InitializeEngine(patient_configuration);
   }
+  eEngineInitializationState Engine::GetInitializationState() const
+  {
+    return GetController().GetInitializationState();
+  }
 
   void Engine::Clear()
   {
@@ -100,6 +104,11 @@ namespace pulse
   void Engine::SetSimulationTime(const SEScalarTime& time)
   {
     return  GetController().SetSimulationTime(time);
+  }
+
+  double Engine::GetStabilizationTime(const TimeUnit& unit) const
+  {
+    return  GetController().GetData().GetStabilizationTime().GetValue(unit);
   }
 
   bool Engine::AdvanceModelTime()

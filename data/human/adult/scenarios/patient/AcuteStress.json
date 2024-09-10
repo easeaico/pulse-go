@@ -3,13 +3,16 @@
   "Description": "The patient receives varying levels of acute stress.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "DrugDataRequests.json"
   ],
   "DataRequestManager":
   {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Epinephrine", "PropertyName": "Concentration", "Unit": "ug/L" }
+      { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Epinephrine", "PropertyName": "Concentration",                  "Unit": "ug/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology",                                                                    "PropertyName": "ExpiratoryRespiratoryResistance",  "Unit": "cmH2O s/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology",                                                                    "PropertyName": "InspiratoryRespiratoryResistance", "Unit": "cmH2O s/L" }
     ]
   },
   "AnyAction": [{
@@ -26,7 +29,7 @@
       "AcuteStress": {
         "Severity": {
           "Scalar0To1": {
-            "Value": 0.4
+            "Value": 0.3
           }
         }
       }
@@ -35,8 +38,8 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 200.0,
-          "Unit": "s"
+          "Value": 5,
+          "Unit": "min"
         }
       }
     }
@@ -53,8 +56,8 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 400.0,
-          "Unit": "s"
+          "Value": 5,
+          "Unit": "min"
         }
       }
     }
@@ -63,7 +66,7 @@
       "AcuteStress": {
         "Severity": {
           "Scalar0To1": {
-            "Value": 0.8
+            "Value": 0.6
           }
         }
       }
@@ -72,45 +75,8 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 200.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AcuteStress": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 400.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "AcuteStress": {
-        "Severity": {
-          "Scalar0To1": {
-            "Value": 1.0
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 200.0,
-          "Unit": "s"
+          "Value": 5,
+          "Unit": "min"
         }
       }
     }
@@ -127,8 +93,45 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 400.0,
-          "Unit": "s"
+          "Value": 5,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "AcuteStress": {
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.9
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 5,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "AcuteStress": {
+        "Severity": {
+          "Scalar0To1": {
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 5,
+          "Unit": "min"
         }
       }
     }

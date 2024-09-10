@@ -46,7 +46,7 @@ def serialize_serialize_requested_from_bind(src: SerializeRequestedData, dst: SE
 
 def serialize_serialize_state_to_bind(src: SESerializeState, dst: SerializeStateData):
     serialize_action_to_bind(src, dst.Action)
-    dst.Type = src.get_type().value
+    dst.Mode = src.get_mode().value
     if src.has_filename():
         dst.Filename = src.get_filename()
 

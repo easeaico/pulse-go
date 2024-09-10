@@ -94,7 +94,7 @@ namespace pulse
     SetConnection(eSwitch::Off);
     GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
     GetRespiratoryRate().SetValue(12.0, FrequencyUnit::Per_min);
-    GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
+    GetPositiveEndExpiratoryPressure().SetValue(3.0, PressureUnit::cmH2O);
     GetInspiratoryExpiratoryRatio().SetValue(0.5);
     GetOxygenFraction().SetValue(0.5);
     SetOxygenSource(eAnesthesiaMachine_OxygenSource::Wall);
@@ -310,7 +310,7 @@ namespace pulse
     }
 
     double CO2PreviousVolume = m_scubberCO2->GetVolume(VolumeUnit::L);
-    m_scrubberN2->GetVolume().IncrementValue(CO2PreviousVolume - CO2Volume, VolumeUnit::L);
+    m_scrubberN2->GetVolume().Increment(CO2PreviousVolume - CO2Volume, VolumeUnit::L);
     m_scubberCO2->GetVolume().SetValue(CO2Volume, VolumeUnit::L);
     m_scrubber->Balance(BalanceGasBy::Volume);
   }
@@ -638,7 +638,7 @@ namespace pulse
     }
     else
     {
-      dDriverPressure = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+      dDriverPressure = GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
     }
     if (m_actions->HasAnesthesiaMachineVentilatorPressureLoss())
     {

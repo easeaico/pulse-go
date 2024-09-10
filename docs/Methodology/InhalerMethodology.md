@@ -309,12 +309,7 @@ Data Model Implementation
 
 @ref InhalerConfigurationTable "InhalerConfiguration"
 
-Acronyms
+Glossary
 --------
 
 pMDI - Pressurized Metered Dose %Inhaler
-
-Compartments
-------------
-
-- Mouthpiece

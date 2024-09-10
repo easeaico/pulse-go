@@ -145,8 +145,13 @@ bool CreateFilePath(const std::string& filenamePath)
   {
     std::error_code e;
     std::string dirs = filenamePath.substr(0, sep);
-    if(!std::filesystem::exists(dirs))
-      result = std::filesystem::create_directories(dirs, e);
+    if (!std::filesystem::exists(dirs))
+    {
+      // Sometimes create_directories returns false even when it makes it
+      // Maybe only when there is a ending / in the dirs?
+      std::filesystem::create_directories(dirs, e);
+      result = std::filesystem::exists(dirs);
+    }
   }
   return result; // Nothing to do...
 }

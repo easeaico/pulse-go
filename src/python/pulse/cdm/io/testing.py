@@ -39,8 +39,6 @@ def serialize_test_suite_from_bind(src: TestSuiteData, dst: SETestSuite):
     dst.clear()
     dst.set_name(src.Name)
     dst.set_performed(src.Performed)
-    dst.set_num_errors(src.Errors)
-    dst.set_num_tests(src.Tests)
 
     for r in src.Requirement:
         dst.add_requirement(r)
@@ -57,6 +55,7 @@ def serialize_test_suite_to_bind(src: SETestSuite, dst: TestSuiteData):
         dst.Name = src.get_name()
     dst.Performed = src.get_performed()
     dst.Errors = src.get_num_errors()
+    dst.Warnings = src.get_num_warnings()
     dst.Tests = len(src.get_test_cases())
 
     for r in src.get_requirements():
@@ -73,9 +72,11 @@ def serialize_test_suite_to_bind(src: SETestSuite, dst: TestSuiteData):
 def serialize_test_case_from_bind(src: TestCaseData, dst: SETestCase):
     dst.clear()
     dst.set_name(src.Name)
-    serialize_scalar_time_from_bind(src.Duration, dst.get_duration())
+    #serialize_scalar_time_from_bind(src.Duration, dst.get_duration())
     for f in src.Failure:
         dst.add_failure(f)
+    for w in src.Warning:
+        dst.add_warning(w)
     '''
     for es_data in src.ErrorStats:
         es = dst.create_test_error_statistics()
@@ -88,6 +89,8 @@ def serialize_test_case_to_bind(src: SETestCase, dst: TestCaseData):
         serialize_scalar_time_to_bind(src.get_duration(), dst.Duration)
     for f in src.get_failures():
         dst.Failure.append(f)
+    for w in src.get_warnings():
+        dst.Warning.append(w)
     '''
     for es in src.get_error_statistics():
         es_data = dst.ErrorStats.add()

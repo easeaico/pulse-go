@@ -1,186 +1,293 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "PVRunner.h"
-#include "PVGenerator.h"
+#include <cstring>
 
-#include "cdm/properties/SEScalarLength.h"
+#include "engine/CommonDefs.h"
+#include "engine/PulseScenarioExec.h"
+
 #include "cdm/utils/FileUtils.h"
-#include "cdm/io/protobuf/PBUtils.h"
-#include "cdm/io/protobuf/PBPatient.h"
-#include "cdm/properties/SEScalarFrequency.h"
-#include "cdm/properties/SEScalarLength.h"
-#include "cdm/properties/SEScalarMass.h"
-#include "cdm/properties/SEScalarPressure.h"
-#include "cdm/properties/SEScalarTime.h"
+
+#include "PatientIteration.h"
+#include "TCCCIteration.h"
+#include "ValidationIteration.h"
 
 using namespace pulse::study::patient_variability;
 
 int main(int argc, char* argv[])
 {
-  bool clear                   = false;
-  bool binary                  = true;
-  bool generateOnly            = false;
-  bool postProcessOnly         = false;
-  bool validationMode          = false;
-  bool hemorrhageMode          = false;
-  eStandardValidationType vType = eStandardValidationType::None;
-  std::string data = "full";
-  eMode mode = eMode::Validation;
-  std::string rootDir = "./test_results/patient_variability/";
+  bool clear = false;// TODO
+  bool generateOnly = false;
+  std::string combinedPatientStatusFile;
 
+  std::vector<PatientIteration*> iPatients;
+  std::vector<ActionIteration*>  iActions;
+
+  std::string mode = "test";
   // Process arguments
-  for(int i = 1; i < argc; ++i)
+  if (argc > 1)
   {
-    // data
-    if(!strcmp(argv[i], "full") || !strcmp(argv[i], "solo") || !strcmp(argv[i], "test"))
+    mode = argv[1];
+    for (int i = 2; i < argc; ++i)
     {
-      data = argv[i];
-    }
+      // Clear
+      if (!strcmp(argv[i], "-c") || !strcmp(argv[i], "--clear"))
+        clear = true;
 
-    // Binary output
-    if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--binary"))
-    {
-      binary = true;
+      // Only generate
+      if (!strcmp(argv[i], "-g") || !strcmp(argv[i], "--generate"))
+        generateOnly = true;
     }
-
-    // Clear
-    if(!strcmp(argv[i], "-c") || !strcmp(argv[i], "--clear"))
-    {
-      clear = true;
-    }
-
-    // Only generate
-    if (!strcmp(argv[i], "-g") || !strcmp(argv[i], "--generate"))
-    {
-      generateOnly = true;
-    }
-
-    // Only post-processing
-    if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--post-process"))
-    {
-      postProcessOnly = true;
-      clear = false;
-    }
-
-    // Validation RunMode
-    if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--validation"))
-    {
-      validationMode = true;
-      mode = eMode::Validation;
-    }
-    // Hemorrhage RunMode
-    if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--hemorrhage"))
-    {
-      hemorrhageMode = true;
-      mode = eMode::Hemorrhage;
-    }
-
-    // Generate standard validation from baseline results for comparison
-    if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--baseline"))
-    {
-      vType = eStandardValidationType::Baseline;
-    }
-    // Generate standard validation from current code base
-    if (!strcmp(argv[i], "-rv") || !strcmp(argv[i], "--run_validation"))
-    {
-      vType = eStandardValidationType::Current;
-    }
-
   }
-  if (validationMode && hemorrhageMode)
+  std::string rootDir = "./test_results/patient_variability/" + mode;
+  if (clear)// Then we can delete the specific solo run results
+    DeleteDirectory(rootDir);
+  CreatePath(rootDir);
+
+  Logger logger;
+  logger.LogToConsole(true);
+  logger.SetLogFile(rootDir + "/PatientVariability.log");
+
+  if (mode == "validation" || mode == "hemorrhage" || mode == "itm")
   {
-    std::cerr << "Can only select one run mode\n";
-    return 1;
-  }
+    if (mode == "validation")
+    {
+      combinedPatientStatusFile = rootDir + "/scenarios/" + "Validation.json";
+      ValidationIteration* male = new ValidationIteration(logger);
+      male->SetIterationName("male");
+      male->SetScenarioExecListFilename(rootDir + "/scenarios/" + male->GetIterationName() + ".json");
+      male->SetStateDirectory(rootDir + "/states/" + male->GetIterationName());
+      male->SetResultsDirectory(rootDir + "/results/" + male->GetIterationName());
+      male->SetGenStyle(eGenStyle::Combo);
+      male->SetSex(ePatient_Sex::Male);
+      male->GetAge_yr().SetValues({ minAge_yr, maxAge_yr, stdAge_yr }, 2);
+      male->GetHR_bpm().SetValues({ minHR_bpm, maxHR_bpm, stdHR_bpm }, 2);
+      male->GetMAP_mmHg().SetValues({ minMAP_mmHg, maxMAP_mmHg, stdMAP_mmHg }, 2);
+      male->GetPP_mmHg().SetValues({ minPulsePressure_mmHg, maxPulsePressure_mmHg, stdPulsePressure_mmHg }, 2);
+      male->GetRR_bpm().SetValues({ minRR_bpm, maxRR_bpm, stdRR_bpm }, 2);
+      male->GetHeight_cm().SetValues({ minMaleHeight_cm, maxMaleHeight_cm, stdMaleHeight_cm }, 2);
+      male->GetBMI().SetValues({ minBMI, maxBMI, stdMaleBMI }, 2);
+      male->GetBFF().SetValues({ minMaleBFF, maxMaleBFF, stdMaleBFF }, 2);
+      iPatients.push_back(male);
 
-  std::string modeDir = "";
-  switch (mode)
+      ValidationIteration* female = new ValidationIteration(logger);
+      female->SetIterationName("female");
+      female->SetScenarioExecListFilename(rootDir + "/scenarios/" + female->GetIterationName() + ".json");
+      female->SetStateDirectory(rootDir + "/states/" + female->GetIterationName());
+      female->SetResultsDirectory(rootDir + "/results/" + female->GetIterationName());
+      female->SetGenStyle(eGenStyle::Combo);
+      female->SetSex(ePatient_Sex::Female);
+      female->GetAge_yr().SetValues({ minAge_yr, maxAge_yr, stdAge_yr }, 2);
+      female->GetHR_bpm().SetValues({ minHR_bpm, maxHR_bpm, stdHR_bpm }, 2);
+      female->GetMAP_mmHg().SetValues({ minMAP_mmHg, maxMAP_mmHg, stdMAP_mmHg }, 2);
+      female->GetPP_mmHg().SetValues({ minPulsePressure_mmHg, maxPulsePressure_mmHg, stdPulsePressure_mmHg }, 2);
+      female->GetRR_bpm().SetValues({ minRR_bpm, maxRR_bpm, stdRR_bpm }, 2);
+      female->GetHeight_cm().SetValues({ minFemaleHeight_cm, maxFemaleHeight_cm, stdFemaleHeight_cm }, 2);
+      female->GetBMI().SetValues({ minBMI, maxBMI, stdFemaleBMI }, 2);
+      female->GetBFF().SetValues({ minFemaleBFF, maxFemaleBFF, stdFemaleBFF }, 2);
+      iPatients.push_back(female);
+    }
+    else if (mode == "hemorrhage")
+    {
+      PatientIteration* male = new PatientIteration(logger);
+      male->SetIterationName("male");
+      male->SetScenarioExecListFilename(rootDir + "/scenarios/" + male->GetIterationName() + ".json");
+      male->SetStateDirectory(rootDir + "/states/" + male->GetIterationName());
+      male->SetResultsDirectory(rootDir + "/results/" + male->GetIterationName());
+      male->SetGenStyle(eGenStyle::Combo);
+      male->SetSex(ePatient_Sex::Male);
+      //male->GetAge_yr().SetValues({minAge_yr, maxAge_yr, stdAge_yr }, 2);
+      //male->GetHR_bpm().SetValues({minHR_bpm, maxHR_bpm, stdHR_bpm }, 2);
+      //male->GetMAP_mmHg().SetValues({ minMAP_mmHg, maxMAP_mmHg, stdMAP_mmHg }, 2);
+      //male->GetPP_mmHg().SetValues({ minPulsePressure_mmHg, maxPulsePressure_mmHg, stdPulsePressure_mmHg }, 2);
+      //male->GetRR_bpm().SetValues({ minRR_bpm, maxRR_bpm, stdRR_bpm }, 2);
+      //male->GetHeight_cm().SetValues({ minMaleHeight_cm, maxMaleHeight_cm, stdMaleHeight_cm }, 2);
+      //male->GetBMI().SetValues({ minBMI, maxBMI, stdMaleBMI }, 2);
+      //male->GetBFF().SetValues({ minMaleBFF, maxMaleBFF, stdMaleBFF }, 2);
+      iPatients.push_back(male);
+
+      PatientIteration* female = new PatientIteration(logger);
+      female->SetIterationName("female");
+      female->SetScenarioExecListFilename(rootDir + "/scenarios/" + female->GetIterationName() + ".json");
+      female->SetStateDirectory(rootDir + "/states/" + female->GetIterationName());
+      female->SetResultsDirectory(rootDir + "/results/" + female->GetIterationName());
+      female->SetGenStyle(eGenStyle::Combo);
+      female->SetSex(ePatient_Sex::Female);
+      //female->GetAge_yr().SetValues({ minAge_yr, maxAge_yr, stdAge_yr }, 2);
+      //female->GetHR_bpm().SetValues({ minHR_bpm, maxHR_bpm, stdHR_bpm }, 2);
+      //female->GetMAP_mmHg().SetValues({ minMAP_mmHg, maxMAP_mmHg, stdMAP_mmHg }, 2);
+      //female->GetPP_mmHg().SetValues({ minPulsePressure_mmHg, maxPulsePressure_mmHg, stdPulsePressure_mmHg }, 2);
+      //female->GetRR_bpm().SetValues({ minRR_bpm, maxRR_bpm, stdRR_bpm }, 2);
+      //female->GetHeight_cm().SetValues({ minFemaleHeight_cm, maxFemaleHeight_cm, stdFemaleHeight_cm }, 2);
+      //female->GetBMI().SetValues({ minBMI, maxBMI, stdFemaleBMI }, 2);
+      //female->GetBFF().SetValues({ minFemaleBFF, maxFemaleBFF, stdFemaleBFF }, 2);
+      iPatients.push_back(female);
+
+      TCCCIteration* tccc = new TCCCIteration(logger);
+      tccc->SetGenStyle(eGenStyle::Slice);
+      tccc->SetBaselineDuration_s(15);
+      tccc->SetMaxSimTime_min(60);
+      tccc->PerformInterventions(false);
+      tccc->GetHemorrhageSeverity().SetMinMaxStep(0.1, 1.0, 0.1);
+      std::vector<size_t> hemorrhageWounds;
+      for (size_t i = 0; i < (size_t)eHemorrhageWound::_COUNT; ++i)
+        hemorrhageWounds.push_back(i);
+      tccc->GetHemorrhageWound().SetValues(hemorrhageWounds);
+      tccc->GetLeftHemothoraxSeverity().SetMinMaxStep(0.1, 1.0, 0.1);
+      iActions.push_back(tccc);
+    }
+    else if (mode == "itm")
+    {
+      PatientIteration* male = new PatientIteration(logger);
+      male->SetIterationName("male");
+      male->SetScenarioExecListFilename(rootDir + "/scenarios/" + male->GetIterationName() + ".json");
+      male->SetStateDirectory(rootDir + "/states/" + male->GetIterationName());
+      male->SetResultsDirectory(rootDir + "/results/" + male->GetIterationName());
+      male->SetGenStyle(eGenStyle::Combo);
+      male->SetSex(ePatient_Sex::Male);
+      iPatients.push_back(male);
+
+      PatientIteration* female = new PatientIteration(logger);
+      female->SetIterationName("female");
+      female->SetScenarioExecListFilename(rootDir + "/scenarios/" + female->GetIterationName() + ".json");
+      female->SetStateDirectory(rootDir + "/states/" + female->GetIterationName());
+      female->SetResultsDirectory(rootDir + "/results/" + female->GetIterationName());
+      female->SetGenStyle(eGenStyle::Combo);
+      female->SetSex(ePatient_Sex::Female);
+      iPatients.push_back(female);
+
+      TCCCIteration* tccc = new TCCCIteration(logger);
+      tccc->SetIterationName("tccc");
+      tccc->SetBaselineDuration_s(15);
+      tccc->SetMaxSimTime_min(60);
+      tccc->PerformInterventions(false);
+      tccc->GetAirwayObstructionSeverity().SetMinMaxStep(0., 1.0, 0.2);
+      tccc->GetHemorrhageSeverity().SetMinMaxStep(0., 1.0, 0.2);
+      std::vector<size_t> hemorrhageWounds;
+      //for(size_t i = 0; i < (size_t)eHemorrhageWound::_COUNT; ++i)
+      //  hemorrhageWounds.push_back(i);
+      hemorrhageWounds.push_back((size_t)eHemorrhageWound::LeftLegLaceration);
+      tccc->GetHemorrhageWound().SetValues(hemorrhageWounds);
+      tccc->GetStressSeverity().SetMinMaxStep(0., 1.0, 0.3);
+      tccc->GetTBISeverity().SetMinMaxStep(0., 1.0, 0.3);
+      tccc->GetLeftTensionPneumothoraxSeverity().SetMinMaxStep(0., 1.0, 0.2);
+      std::vector<size_t> tensionPneumothoraxWounds;
+      //for(size_t i = 0; i < (size_t)eTensionPneumothoraxWound::_COUNT; ++i)
+      //  tensionPneumothoraxWounds.push_back(i);
+      tensionPneumothoraxWounds.push_back((size_t)eTensionPneumothoraxWound::Closed);
+      tccc->GetLeftTensionPneumothoraxWound().SetValues(tensionPneumothoraxWounds);
+
+      // What is our equipment variability?
+      // Let's assume we have everything in our bag
+      //tccc->GetInsultDuration_s().SetValues(5. * 60, 40. * 60, 5. * 60));
+      //tccc->GetSalineAvailable().SetValues({ 1 });
+      //tccc->GetNeedleAvailable().SetValues({ 1 });
+      //tccc->GetChestWrapAvailable().SetValues({ 1 });
+      iActions.push_back(tccc);
+    }
+  }
+  else
   {
-  case eMode::Validation:
-    modeDir = "validation/";
-    break;
-  case eMode::Hemorrhage:
-    modeDir = "hemorrhage/";
-    break;
+    combinedPatientStatusFile = rootDir + "/scenarios/" + "Validation.json";
+
+    ValidationIteration* male = new ValidationIteration(logger);
+    male->SetIterationName("default_male");
+    male->SetScenarioExecListFilename(rootDir + "/scenarios/" + male->GetIterationName() + ".json");
+    male->SetStateDirectory(rootDir + "/states/" + male->GetIterationName());
+    male->SetResultsDirectory(rootDir + "/results/" + male->GetIterationName());
+    iPatients.push_back(male);
+
+    ValidationIteration* female = new ValidationIteration(logger);
+    female->SetIterationName("default_female");
+    female->SetGenStyle(eGenStyle::Combo);
+    female->SetSex(ePatient_Sex::Female);
+    female->SetScenarioExecListFilename(rootDir + "/scenarios/" + female->GetIterationName() + ".json");
+    female->SetStateDirectory(rootDir + "/states/" + female->GetIterationName());
+    female->SetResultsDirectory(rootDir + "/results/" + female->GetIterationName());
+    iPatients.push_back(female);
+
+    if (false)
+    {
+      TCCCIteration* tccc = new TCCCIteration(logger);
+      tccc->SetIterationName("tccc");
+      tccc->CreateStates(true);
+      tccc->SetBaselineDuration_s(15);
+      tccc->SetMaxSimTime_min(60);
+      tccc->PerformInterventions(false);
+      tccc->GetTBISeverity().SetValues({ 0.2, 0.5 });
+      tccc->GetHemorrhageSeverity().SetValues({ 0.2, 0.5 });
+      std::vector<size_t> hemorrhageWounds;
+      //for(size_t i = 0; i < (size_t)eHemorrhageWound::_LOC_COUNT; ++i)
+      //  hemorrhageWounds.push_back(i);
+      hemorrhageWounds.push_back((size_t)eHemorrhageWound::LeftLegLaceration);
+      tccc->GetHemorrhageWound().SetValues(hemorrhageWounds);
+      tccc->GetInsultDuration_s().SetValues({ 5 });
+      iActions.push_back(tccc);
+    }
   }
 
-  Logger log;
-  log.LogToConsole(true);
-  std::string logName = "PatientVariability.log";
-
-  pulse::study::bind::patient_variability::PatientStateListData patients;
-  PVGenerator pvg(&log);
-  pvg.GenerateMode = mode;
-
-  if (data == "solo")
+  // Should Encapsulate this execution logic into a method
   {
-    rootDir += modeDir+"solo/";
-    // I always want to run, so remove our "compiled" results of 1
-    DeleteFile(rootDir+"patient_results.json");// If we are solo, always rerun
-    if(clear)// Then we can delete the specific solo run results
-      DeleteDirectory(rootDir);
-    log.SetLogFile(rootDir + logName);
+    for (PatientIteration* pi : iPatients)
+    {
+      if (!clear && FileExists(pi->GetScenarioExecListFilename()))
+        logger.Info("Using previously run scenario exec list file: " + pi->GetScenarioExecListFilename());
+      else
+        pi->GenerateScenarios();
 
-    /// male/age_yr18/height_cm163.000000/bmi16/hr_bpm100.000000/map_mmHg70.000000/pp_mmHg40.500000/bp_mmHg114.000000-73.500000
-    uint32_t age_yr = 18;
-    double   height_cm = 163;
-    double   bmi    = 16;
-    double   hr_bpm = 100;
-    double   map_mmHg = 70;
-    double   pp_mmHg = 40.5;
-    double systolic_mmHg = 114;// Set to -1 if you want it computed
-    double diastolic_mmHg = 73.5;// Set to -1 if you want it computed
+      // Note, not setting the output directory on the opts
+      // Our scenarios aleady have a relative (to the working dir) results csv location set,
+      // If you provide an output dir, that relative location will be concatenated to the csv relative location
 
-    SEPatient patient(&log);
-    patient.SetSex(ePatient_Sex::Male);
-    patient.GetAge().SetValue(age_yr, TimeUnit::yr);
+      if (!generateOnly)
+      {
+        PulseScenarioExec opts(&logger);
+        opts.SetModelType(eModelType::HumanAdultWholeBody);
+        opts.LogToConsole(eSwitch::Off);
+        opts.SetScenarioExecListFilename(pi->GetScenarioExecListFilename());
+        opts.Execute();
+      }
+    }
+    if (!combinedPatientStatusFile.empty())
+    {
+      std::vector<SEScenarioExecStatus> allPatients;
+      for (PatientIteration* pi : iPatients)
+      {
+        std::vector<SEScenarioExecStatus> execStatus;
+        SEScenarioExecStatus::SerializeFromFile(pi->GetScenarioExecListFilename(), execStatus, &logger);
+        for (const SEScenarioExecStatus& s : execStatus)
+          allPatients.push_back(s);
+      }
+      SEScenarioExecStatus::SerializeToFile(allPatients, combinedPatientStatusFile, &logger);
+      logger.Info("Writing all patient status to file: " + combinedPatientStatusFile);
+    }
 
-    //patientData->set_bmi(bmi);
-    patient.GetHeight().SetValue(height_cm, LengthUnit::cm);
-    patient.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
-    //patientData->set_meanarterialpressure_mmhg(map_mmHg);
-    //patientData->set_pulsepressure_mmhg(pp_mmHg);
-    patient.GetSystolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
-    patient.GetDiastolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+    for (ActionIteration* ai : iActions)
+    {
+      ai->SetScenarioExecListFilename(rootDir + "/scenarios/" + ai->GetIterationName() + ".json");
+      ai->SetStateDirectory(rootDir + "/states/" + ai->GetIterationName());
+      ai->SetResultsDirectory(rootDir + "/results/" + ai->GetIterationName());
 
-    auto p = patients.add_patientstate();
-    p->set_id(0);
+      if (!clear && FileExists(ai->GetScenarioExecListFilename()))
+        logger.Info("Using previously run scenario exec list file: " + ai->GetScenarioExecListFilename());
+      else
+      {
+        for (PatientIteration* pi : iPatients)
+          ai->GenerateScenarios(*pi);
+      }
 
-
-    p->set_outputbasefilename("solo/");
-    p->set_maxsimulationtime_s(120); // Generate 2 mins of data
-    p->mutable_validation();// Create a validation object to fill
-  }
-  else if(data == "full")
-  {
-    rootDir += modeDir+"full/";
-    if(clear)
-      DeleteDirectory(rootDir);
-    log.SetLogFile(rootDir + logName);
-
-    ////////////////////////
-    // Hemorrhage Options //
-    ////////////////////////
-
-    // Defaults are
-    // HemorrhageSeverity(0.25,1.00,0.25)
-    // HemorrhageTriageTime(1.0,5.0,1.0)
-
-    pvg.GenerateData(eSetType::Both, patients);
-  }
-
-  if (generateOnly)
-  {
-    std::string patientFile = rootDir + "/patients.json";
-    if (binary)
-      patientFile = rootDir + "/patients.pbb";
-    PBUtils::SerializeToFile(patients, patientFile, &log);
-    return 0;
+      if (!generateOnly)
+      {
+        PulseScenarioExec opts(&logger);
+        opts.SetModelType(eModelType::HumanAdultWholeBody);
+        opts.LogToConsole(eSwitch::Off);
+        opts.SetScenarioExecListFilename(ai->GetScenarioExecListFilename());
+        opts.Execute();
+      }
+    }
   }
 
-  PVRunner pvr(rootDir, vType, &log);
-  pvr.PostProcessOnly = postProcessOnly;
-  pvr.SerializationFormat = binary ? eSerializationFormat::BINARY : eSerializationFormat::JSON;
-  return !pvr.Run(patients);
+  SAFE_DELETE_VECTOR(iPatients);
+  SAFE_DELETE_VECTOR(iActions);
+  return 0;
 }

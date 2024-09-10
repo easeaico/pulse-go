@@ -49,14 +49,17 @@ public:
         break;
       }
       _last_requested_level = requested_level;
+      
     }
 
     if (_log_to_console)
-      std::cout << _str_requested_level << " " << fmtMsg << "\n";
+      std::cout << _console_prefix << _str_requested_level << " " << fmtMsg << std::endl;
     if (_log_to_file)
       _file << _str_requested_level << " " << fmtMsg << std::endl;
   }
 
+
+  std::string _console_prefix = "";
   bool _log_to_console = false;
   bool _log_to_file = false;
   Logger::Level _log_level = Logger::Level::Info;
@@ -105,11 +108,6 @@ Logger::~Logger()
   delete _log_lib;
 }
 
-void Logger::SetLogTime(const SEScalarTime* time)
-{
-  m_time = time;
-}
-
 //This function will change the priority of the logger
 void Logger::SetLogLevel(Logger::Level l)
 {
@@ -121,6 +119,17 @@ Logger::Level Logger::GetLogLevel() const
 {
   return _log_lib->_log_level;
 }
+
+void Logger::AddConsolePrefix(const std::string& p)
+{
+  _log_lib->_console_prefix = p;
+}
+
+void Logger::SetLogTime(const SEScalarTime* time)
+{
+  m_time = time;
+}
+
 
 bool Logger::HasForward() const
 {
@@ -302,7 +311,7 @@ Loggable::Loggable(std::string const& logfile)
 Loggable::~Loggable()
 {
   if (myLogger)
-    delete m_Logger;
+    SAFE_DELETE(m_Logger);
 }
 
 Logger* Loggable::GetLogger() const

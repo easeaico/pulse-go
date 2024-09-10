@@ -22,7 +22,8 @@ function(add_library_ex target)
   cmake_parse_arguments(target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
   message(STATUS "Configuring ${target}")
-  
+  string(TOLOWER ${target} _little_target)
+
   #-----------------------------------------------------------------------------
   # Verbose (display arguments)
   #-----------------------------------------------------------------------------
@@ -64,7 +65,6 @@ function(add_library_ex target)
   if(target_SHARED)
     set(target_LIB_TYPE SHARED)
   endif()
-  string(TOLOWER ${target} _little_target)
   set(target_export_header ${CMAKE_CURRENT_BINARY_DIR}/${_little_target}_export.h)
   
   string(REPLACE ${CMAKE_SOURCE_DIR}/src/cpp "" REL_PATH ${CMAKE_CURRENT_SOURCE_DIR})
@@ -94,8 +94,6 @@ function(add_library_ex target)
     add_custom_command(TARGET ${target} POST_BUILD
                        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${CMAKE_INSTALL_PREFIX}/lib)
   endif()
-
-  set_target_properties(${target} PROPERTIES PREFIX "")
 
   #-----------------------------------------------------------------------------
   # Link libraries to current target

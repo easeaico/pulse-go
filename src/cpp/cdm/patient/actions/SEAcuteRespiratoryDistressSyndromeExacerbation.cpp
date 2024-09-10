@@ -56,7 +56,7 @@ void SEAcuteRespiratoryDistressSyndromeExacerbation::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SEAcuteRespiratoryDistressSyndromeExacerbation::GetScalar(const std::string& name)
+const SEScalar* SEAcuteRespiratoryDistressSyndromeExacerbation::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

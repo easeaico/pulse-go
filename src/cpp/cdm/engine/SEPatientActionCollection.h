@@ -11,6 +11,7 @@ class SEAsthmaAttack;
 class SEArrhythmia;
 class SEBrainInjury;
 class SEBronchoconstriction;
+class SECardiovascularMechanicsModification;
 class SEChestCompression;
 class SEChestCompressionAutomated;
 class SEChestCompressionInstantaneous;
@@ -32,6 +33,7 @@ class SEPneumoniaExacerbation;
 class SEPulmonaryShuntExacerbation;
 class SERespiratoryFatigue;
 class SERespiratoryMechanicsConfiguration;
+class SERespiratoryMechanicsModification;
 class SESubstanceBolus;
 class SESubstanceCompoundInfusion;
 class SESubstanceInfusion;
@@ -87,6 +89,11 @@ public:
   SEBronchoconstriction& GetBronchoconstriction();
   const SEBronchoconstriction* GetBronchoconstriction() const;
   void RemoveBronchoconstriction();
+
+  bool HasCardiovascularMechanicsModification() const;
+  SECardiovascularMechanicsModification& GetCardiovascularMechanicsModification();
+  const SECardiovascularMechanicsModification* GetCardiovascularMechanicsModification() const;
+  void RemoveCardiovascularMechanicsModification();
 
   bool HasActiveCPRAction() const;
 
@@ -211,6 +218,11 @@ public:
   const SERespiratoryMechanicsConfiguration* GetRespiratoryMechanicsConfiguration() const;
   void RemoveRespiratoryMechanicsConfiguration();
 
+  bool HasRespiratoryMechanicsModification() const;
+  SERespiratoryMechanicsModification& GetRespiratoryMechanicsModification();
+  const SERespiratoryMechanicsModification* GetRespiratoryMechanicsModification() const;
+  void RemoveRespiratoryMechanicsModification();
+
   bool HasSubstanceBolus() const;
   bool HasSubstanceBolus(const SESubstance& sub) const;
   SESubstanceBolus& GetSubstanceBolus(const SESubstance& sub);
@@ -295,6 +307,7 @@ protected:
   SEAsthmaAttack*                                   m_AsthmaAttack;
   SEBrainInjury*                                    m_BrainInjury;
   SEBronchoconstriction*                            m_Bronchoconstriction;
+  SECardiovascularMechanicsModification*            m_CardiovascularMechanicsModification;
   SEChestCompression*                               m_ChestCompression;
   SEChestCompressionAutomated*                      m_ChestCompressionAutomated;
   SEChestCompressionInstantaneous*                  m_ChestCompressionInstantaneous;
@@ -317,6 +330,7 @@ protected:
   SEPulmonaryShuntExacerbation*                     m_PulmonaryShuntExacerbation;
   SERespiratoryFatigue*                             m_RespiratoryFatigue;
   SERespiratoryMechanicsConfiguration*              m_RespiratoryMechanicsConfiguration;
+  SERespiratoryMechanicsModification*               m_RespiratoryMechanicsModification;
   SESupplementalOxygen*                             m_SupplementalOxygen;
   SETensionPneumothorax*                            m_LeftClosedTensionPneumothorax;
   SETensionPneumothorax*                            m_LeftOpenTensionPneumothorax;

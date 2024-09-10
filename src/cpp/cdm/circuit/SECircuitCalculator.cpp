@@ -736,8 +736,10 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
   {
     if (n->IsReferenceNode())
     {
-      //jbw - Shouldn't this be NextPotential? Make sure that works with Environment ambient potential changes.
-      m_refPotential = n->GetPotential().GetValue(m_PotentialUnit);
+      if (n->HasNextPotential())
+        m_refPotential = n->GetNextPotential().GetValue(m_PotentialUnit);
+      else
+        m_refPotential = n->GetPotential().GetValue(m_PotentialUnit);
       refNodeExists = true;
       break;
     }

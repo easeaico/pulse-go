@@ -11,6 +11,7 @@
 #include "cdm/patient/conditions/SEChronicRenalStenosis.h"
 #include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "cdm/patient/conditions/SEConsumeMeal.h"
+#include "cdm/patient/conditions/SEDehydration.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
 #include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
@@ -30,6 +31,7 @@ SEConditionManager::SEConditionManager(Logger* logger) : Loggable(logger)
   m_ChronicVentricularSystolicDysfunction = nullptr;
   m_RenalStenosis = nullptr;
   m_ConsumeMeal = nullptr;
+  m_Dehydration = nullptr;
   m_PericardialEffusion = nullptr;
   m_Pneumonia = nullptr;
   m_PulmonaryFibrosis = nullptr;
@@ -47,6 +49,7 @@ SEConditionManager::~SEConditionManager()
   SAFE_DELETE(m_ChronicVentricularSystolicDysfunction);
   SAFE_DELETE(m_RenalStenosis);
   SAFE_DELETE(m_ConsumeMeal);
+  SAFE_DELETE(m_Dehydration);
   SAFE_DELETE(m_Pneumonia);
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryFibrosis);
@@ -64,6 +67,7 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_ChronicVentricularSystolicDysfunction);
   SAFE_DELETE(m_RenalStenosis);
   SAFE_DELETE(m_ConsumeMeal);
+  SAFE_DELETE(m_Dehydration);
   SAFE_DELETE(m_Pneumonia);
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryFibrosis);
@@ -169,6 +173,14 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     {
       GetConsumeMeal().Copy(*g);
       GetConsumeMeal().Activate();
+      return true;
+    }
+
+    const SEDehydration* d = dynamic_cast<const SEDehydration*>(&condition);
+    if (d != nullptr)
+    {
+      GetDehydration().Copy(*d);
+      GetDehydration().Activate();
       return true;
     }
 
@@ -337,6 +349,21 @@ const SEConsumeMeal* SEConditionManager::GetConsumeMeal() const
   return m_ConsumeMeal;
 }
 
+bool SEConditionManager::HasDehydration() const
+{
+  return m_Dehydration == nullptr ? false : m_Dehydration->IsValid();
+}
+SEDehydration& SEConditionManager::GetDehydration()
+{
+  if (m_Dehydration == nullptr)
+    m_Dehydration = new SEDehydration(GetLogger());
+  return *m_Dehydration;
+}
+const SEDehydration* SEConditionManager::GetDehydration() const
+{
+  return m_Dehydration;
+}
+
 bool SEConditionManager::HasImpairedAlveolarExchange() const
 {
   return m_ImpairedAlveolarExchange == nullptr ? false : m_ImpairedAlveolarExchange->IsValid();
@@ -443,6 +470,8 @@ void SEConditionManager::GetAllConditions(std::vector<const SECondition*>& condi
     conditions.push_back(GetChronicRenalStenosis());
   if (HasConsumeMeal())
     conditions.push_back(GetConsumeMeal());
+  if (HasDehydration())
+    conditions.push_back(GetDehydration());
   if (HasImpairedAlveolarExchange())
     conditions.push_back(GetImpairedAlveolarExchange());
   if (HasPneumonia())
@@ -473,6 +502,8 @@ bool SEConditionManager::IsEmpty() const
   if (HasChronicRenalStenosis())
     return false;
   if (HasConsumeMeal())
+    return false;
+  if (HasDehydration())
     return false;
   if (HasImpairedAlveolarExchange())
     return false;

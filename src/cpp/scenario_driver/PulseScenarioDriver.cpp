@@ -72,7 +72,18 @@ int main(int argc, char* argv[])
     if (ext.compare(".log") == 0)
       opts.SetScenarioLogFilename(input);
     else
-      opts.SetScenarioFilename(input);
+    {
+      // Peek to see what kind of file this is
+      std::string line;
+      std::fstream fs(input);
+      // Read 2 lines
+      getline(fs, line);
+      getline(fs, line);
+      if(line.find("ScenarioExecStatus")==std::string::npos)
+        opts.SetScenarioFilename(input);
+      else
+        opts.SetScenarioExecListFilename(input);
+    }
   }
 
   if (test_serialization)

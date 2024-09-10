@@ -216,7 +216,7 @@
   }, {
     "PatientAction": {
       "Dyspnea": {
-        "Severity": {
+        "TidalVolumeSeverity": {
           "Scalar0To1": {
             "Value": 0.3
           }
@@ -297,7 +297,7 @@
             }
           },
           "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
+          "PositiveEndExpiratoryPressure": {
             "ScalarPressure": {
               "Value": 1.0,
               "Unit": "cmH2O"
@@ -900,7 +900,7 @@
   }, {
     "PatientAction": {
       "Dyspnea": {
-        "Severity": {
+        "TidalVolumeSeverity": {
           "Scalar0To1": {
           }
         }

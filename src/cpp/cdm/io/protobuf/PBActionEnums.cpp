@@ -7,7 +7,7 @@ PUSH_PROTO_WARNINGS
 POP_PROTO_WARNINGS
 #include "cdm/engine/SESerializeState.h"
 
-const std::string& eSerialization_Type_Name(eSerialization_Type m)
+const std::string& eSerialization_Mode_Name(eSerialization_Mode m)
 {
-  return CDM_BIND::SerializeStateData::eType_Name((CDM_BIND::SerializeStateData::eType)m);
+  return CDM_BIND::SerializeStateData::eMode_Name((CDM_BIND::SerializeStateData::eMode)m);
 }

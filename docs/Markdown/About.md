@@ -6,14 +6,15 @@ The platform includes a common data model for standard model and data definition
 The architecture was specifically designed to reduce model development time and increase the usability of the engine in simulations by creating a modular, extensible definition for human physiology. 
 Pulse provides the following benefits to its user community:
 
-  - <b>Sound underlying physics:</b> Clear, accurate, precise first principles conservation equations
-  - <b>Standardized data model:</b> Easily understandable, widely usable, ontologies and software interfaces
-  - <b>Extensible:</b> Reusable, repeatable implementation to allow the addition of new capabilities and functionality
-  - <b>Modular:</b> Interdependent, hierarchical models for varying fidelity and complexity
-  - <b>Thorough documentation:</b> In-depth, referenced descriptions of physiology methodology and software design
-  - <b>Cross-platform deployment:</b> Easy compilation on all standard operating systems (Windows, Mac, Linux, and ARM) and multiple languages (C++, C#, Java, Unity)
-  - <b>Credible:</b> Computational models transparently derived from evidence-based literature and analyzed with extensive verification and validation tools
-  - <b>Open:</b> Public repository managed by experienced Kitware team with a permissible Apache 2.0 license for multicenter and multidisciplinary collaborative development
+  - Sound underlying physics: Clear, accurate, precise first principles conservation equations.
+  - Standardized data model: Easily understandable, widely usable ontologies and software interfaces.
+  - Extensible: Reusable, repeatable implementation to allow the addition of new capabilities and functionality.
+  - Modular: Interdependent, hierarchical models for varying fidelity and complexity.
+  - Interoperable: Seamless integration with various simulators, sensors, and software platforms, with easy cross-platform deployment on all standard operating systems (Windows, Mac, Linux, and ARM) and multiple languages (C++, C#, Java, Unity).
+  - Credible: Computational models transparently derived from evidence-based literature, analyzed with extensive verification and validation tools, ensuring reliable performance.
+  - Thorough documentation: In-depth, referenced descriptions of physiology methodology and software design.
+  - Open: Public repository managed by an experienced Kitware team with a permissible Apache 2.0 license, allowing users complete control without dependency on proprietary vendors, and facilitating multicenter and multidisciplinary collaborative development.
+  - Economical: Cost-sharing model supported by contributions from government and private entities, reducing financial barriers for users.
 
 Pulse is comprised of numerical models representing the different body systems, feedback mechanisms and interactions between the systems, PK/PD, and medical equipment. 
 The major systems are modeled using zero-dimensional lumped-parameter circuit analogs (e.g., the cardiovascular circuit) with homeostatic feedback. 
@@ -45,7 +46,13 @@ Below is a summary of our system and compartment level validation.
 |<span class="warning"> Some deviation: correct trend and/or <30% deviation from expected </span>|
 |<span class="danger"> Poor agreement: incorrect trends or >30% deviation from expected </span>|
 
-@insert ./test_results/tables/SystemSummaryValidationTable.md
+##### Standard Male Validation Summary
+
+@insert ./test_results/tables/StandardMaleValidationSummaryTable.md
+
+##### Standard Female Validation Summary
+
+@insert ./test_results/tables/StandardFemaleValidationSummaryTable.md
 
 ---------
 

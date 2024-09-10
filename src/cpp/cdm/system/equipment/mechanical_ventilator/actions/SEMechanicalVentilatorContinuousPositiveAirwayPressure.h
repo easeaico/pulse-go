@@ -56,9 +56,9 @@ public:
   virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
   virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
 
-  virtual bool HasPositiveEndExpiredPressure() const;
-  virtual SEScalarPressure& GetPositiveEndExpiredPressure();
-  virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
+  virtual bool HasPositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
+  virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
   virtual bool HasSlope() const;
   virtual SEScalarTime& GetSlope();
@@ -76,6 +76,6 @@ protected:
   eDriverWaveform                      m_InspirationWaveform;
   SEScalarVolumePerTime*               m_InspirationPatientTriggerFlow;
   SEScalarPressure*                    m_InspirationPatientTriggerPressure;
-  SEScalarPressure*                    m_PositiveEndExpiredPressure;
+  SEScalarPressure*                    m_PositiveEndExpiratoryPressure;
   SEScalarTime*                        m_Slope;
 };

@@ -9,7 +9,7 @@
 
 class CDM_DECL SEValidationTarget : public Loggable
 {
-  friend class PBEngine;//friend the serialization class
+  friend class PBValidation;//friend the serialization class
 protected:
   SEValidationTarget() { Clear(); }
 public:
@@ -43,7 +43,7 @@ protected:
 
 class CDM_DECL SESegmentValidationTarget : public SEValidationTarget
 {
-  friend class PBEngine;//friend the serialization class
+  friend class PBValidation;//friend the serialization class
 public:
   enum class eComparisonType { None=0, EqualToValue, EqualToSegment, GreaterThanValue, GreaterThanSegment,
                                LessThanValue, LessThanSegment, TrendsToValue, TrendsToSegment, Range };
@@ -77,10 +77,11 @@ protected:
 
 class CDM_DECL SETimeSeriesValidationTarget : public SEValidationTarget
 {
-  friend class PBEngine;//friend the serialization class
+  friend class PBValidation;//friend the serialization class
 public:
-  enum class eComparisonType { None=0, EqualToValue, GreaterThanValue, LessThanValue, TrendsToValue, Range };
-  enum class eTargetType { Mean=0, Minimum, Maximum };
+  enum class eComparisonType { None=0, EqualToValue, Range };
+  enum class eTargetType { Mean=0, Minimum, Maximum,
+    MeanPerIdealWeight_kg, MaxPerIdealWeight_kg, MinPerIdealWeight_kg };
   SETimeSeriesValidationTarget();
   virtual ~SETimeSeriesValidationTarget() = default;
 
@@ -95,9 +96,6 @@ public:
   eComparisonType GetComparisonType() const { return m_ComparisonType; }
 
   void   SetEqualTo(double d, eTargetType t);
-  void   SetGreaterThan(double d, eTargetType t);
-  void   SetLessThan(double d, eTargetType t);
-  void   SetTrendsTo(double d, eTargetType t);
   void   SetRange(double min, double max, eTargetType t);
 
   // Maybe we want a different class to do the comparision

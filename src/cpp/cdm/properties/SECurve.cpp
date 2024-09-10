@@ -4,8 +4,9 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/properties/SECurve.h"
 #include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/properties/SEScalarVolume.h"
 
-SECurve::SECurve()
+SECurve::SECurve(Logger* logger) : Loggable(logger)
 {
   
 }
@@ -28,13 +29,46 @@ bool SECurve::IsValid() const
     if (!s->IsValid())
       return false;
 
-  // TODO JBW Make sure no segment gaps and anything else
+  // Check for overlapping segments
+  for (size_t i = 1; i < m_Segments.size(); ++i)
+  {
+    if (m_Segments[i - 1]->GetEndVolume(VolumeUnit::L) > m_Segments[i]->GetBeginVolume(VolumeUnit::L))
+    {
+      Error("There are overlapping volume ranges in SECurve.");
+      return false;
+    }
+  }
+
+  ///\TODO Make sure no segment gaps and anything else
   return true;
+}
+
+void SECurve::SortSegments()
+{
+  // Check if segments are sorted by BeginVolume
+  bool sorted = true;
+  for (size_t i = 1; i < m_Segments.size(); ++i)
+  {
+    if (m_Segments[i - 1]->GetBeginVolume(VolumeUnit::L) > m_Segments[i]->GetBeginVolume(VolumeUnit::L))
+    {
+      sorted = false;
+      break;
+    }
+  }
+
+  if (!sorted)
+  {
+    Warning("Respiratory compliance segments are not sorted. Sorting them now.");
+    std::sort(m_Segments.begin(), m_Segments.end(), [](SESegment* a, SESegment* b) {
+      return a->GetBeginVolume(VolumeUnit::L) < b->GetBeginVolume(VolumeUnit::L);
+      });
+  }
 }
 
 void SECurve::Copy(const SECurve& src)
 {
   PBProperty::Copy(src, *this);
+  SortSegments();
 }
 
 bool SECurve::HasSegment() const

@@ -244,9 +244,9 @@ namespace pulse
       administrationTime_s = bolus->GetAdminDuration(TimeUnit::s);
       concentration_ugPermL = bolus->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
       massIncrement_ug = dose_mL * concentration_ugPermL * m_data.GetTimeStep_s() / administrationTime_s;
-      subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
+      subQ->GetMass().Increment(massIncrement_ug, MassUnit::ug);
       subQ->Balance(BalanceLiquidBy::Mass);
-      bolus->GetTotalInfusedDose().IncrementValue(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
+      bolus->GetTotalInfusedDose().Increment(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
       /// \todo Add fluid amount to fluid system
     }
     // Remove any bolus that are complete
@@ -285,7 +285,7 @@ namespace pulse
 
       concentration_ug_Per_mL = infusion->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_mL);
       rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
-      infusion->GetVolume().IncrementValue(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
+      infusion->GetVolume().Increment(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
       if (infusion->GetVolume().IsZero() || infusion->GetVolume().IsNegative())
       { /// \todo correct the mass based on what we have left in the bag
         finished.push_back(&infusion->GetSubstance());
@@ -294,7 +294,7 @@ namespace pulse
 
       massIncrement_ug = rate_mL_Per_s * concentration_ug_Per_mL * m_data.GetTimeStep_s();
       subQ = m_venaCavaVascular->GetSubstanceQuantity(infusion->GetSubstance());
-      subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
+      subQ->GetMass().Increment(massIncrement_ug, MassUnit::ug);
       //todo: Enforce limits and remove the fatal error
       if (massIncrement_ug < 0)
       {
@@ -333,8 +333,6 @@ namespace pulse
     double rate_mL_Per_s = 0;
     double totalRate_mL_Per_s = 0;
     double massIncrement_ug = 0;
-    double patientMass_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
-    double densityFluid_kg_Per_mL = 0.0;
 
     std::vector<const SESubstanceCompound*> emptyBags;
 
@@ -355,7 +353,7 @@ namespace pulse
         return;
       }
 
-      infusion->GetBagVolume().IncrementValue(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
+      infusion->GetBagVolume().Increment(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
       if (infusion->GetBagVolume().IsZero() || infusion->GetBagVolume().IsNegative())
       { /// \todo correct the mass based on what we have left in the bag
         emptyBags.push_back(compound);
@@ -366,15 +364,9 @@ namespace pulse
       {
         subQ = m_venaCavaVascular->GetSubstanceQuantity(component->GetSubstance());
         massIncrement_ug = rate_mL_Per_s * component->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * m_data.GetTimeStep_s();
-        subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
+        subQ->GetMass().Increment(massIncrement_ug, MassUnit::ug);
         subQ->Balance(BalanceLiquidBy::Mass);
       }
-
-      if (compound == m_Saline)
-        densityFluid_kg_Per_mL = m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
-      else if (compound == m_Blood)
-        densityFluid_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
-      patientMass_kg -= rate_mL_Per_s * densityFluid_kg_Per_mL * m_data.GetTimeStep_s();
     }
 
     for (const SESubstanceCompound* c : emptyBags)
@@ -383,7 +375,6 @@ namespace pulse
       m_data.GetActions().GetPatientActions().RemoveSubstanceCompoundInfusion(*c);
     }
 
-    m_data.GetCurrentPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
     m_IVToVenaCava->GetNextFlowSource().SetValue(totalRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   }
 
@@ -592,7 +583,7 @@ namespace pulse
     //Translate Diastolic and Systolic Pressure to pulse pressure and mean pressure
     double deltaMeanPressure_mmHg = (2 * deltaDiastolicBP_mmHg + deltaSystolicBP_mmHg) / 3;
 
-    double deltaPulsePressure_mmHg = (deltaSystolicBP_mmHg - deltaDiastolicBP_mmHg);
+    double deltaPulsePressure_mmHg = deltaSystolicBP_mmHg - deltaDiastolicBP_mmHg;
 
     //Bound things that are fractions
     sedationLevel = LIMIT(sedationLevel, 0.0, 1.0);
@@ -653,7 +644,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void DrugModel::CalculateSubstanceClearance()
   {
-    double PatientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
+    double PatientWeight_kg = SEScalar::Truncate(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 4);
     double HepaticClearance_mLPers = 0;
     double FractionUnboundInPlasma = 0;
     double IntrinsicClearance_mLPersPerkg = 0;

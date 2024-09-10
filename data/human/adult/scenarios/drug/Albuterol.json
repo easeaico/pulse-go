@@ -3,18 +3,16 @@
   "Description": "Albuterol inhalation by the patient.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "DrugDataRequests.json",
+    "NervousDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest":
     [
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "NeuromuscularBlockLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SedationLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-SizeModifier", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-ReactivityModifier", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance", "Unit": "L/cmH2O" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance", "Unit": "cmH2O s/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespiratoryCompliance", "Unit": "L/cmH2O" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryRespiratoryResistance", "Unit": "cmH2O s/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryRespiratoryResistance", "Unit": "cmH2O s/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BoneVasculature", "SubstanceName": "Albuterol", "PropertyName": "Concentration", "Unit": "ug/L" },

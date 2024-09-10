@@ -1,81 +1,40 @@
 {
   "Name": "Phenylephrine",
-  "Description": "Inject standard patient with Phenylephrine.",
+  "Description": "Infuse standard patient with Phenylephrine.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "DrugDataRequests.json",
+    "NervousDataRequests.json"
   ],
   "DataRequestManager": {
-    "DataRequest":
-    [
-      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "PropertyName": "BloodConcentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "NeuromuscularBlockLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SedationLevel", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-SizeModifier", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-ReactivityModifier", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Epinephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Epinephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BoneVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "FatVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "GutVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftKidneyVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLungVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LiverVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MuscleVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightKidneyVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightLungVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "SkinVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "SpleenVasculature", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "GutTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftKidneyTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLungTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MuscleTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightKidneyTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightLungTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "SkinTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "SpleenTissueExtracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BoneTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "FatTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "GutTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftKidneyTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftLungTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MuscleTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightKidneyTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightLungTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "SkinTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "SpleenTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "Concentration", "Unit": "ug/L" },
+    "DataRequest": [
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "PropertyName": "PlasmaConcentration", "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "PropertyName": "SystemicMassCleared", "Unit": "ug" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "PropertyName": "MassInBody", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "LeftKidneyTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "RightKidneyTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "BrainTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "RightLungTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "LeftLungTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "LiverTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "BoneTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "FatTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "SkinTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "MuscleTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "SpleenTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "GutTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "CompartmentName": "MyocardiumTissue", "SubstanceName": "Phenylephrine", "PropertyName": "PartitionCoefficient", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "MassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftKidneyTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "MassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightKidneyTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "MassCleared", "Unit": "ug" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LiverTissueIntracellular", "SubstanceName": "Phenylephrine", "PropertyName": "MassExcreted", "Unit": "ug" }
+      
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "LeftKidneyTissue",  "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "RightKidneyTissue", "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "BrainTissue",       "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "RightLungTissue",   "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "LeftLungTissue",    "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "LiverTissue",       "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "BoneTissue",        "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "FatTissue",         "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "SkinTissue",        "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "MuscleTissue",      "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "SpleenTissue",      "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "GutTissue",         "PropertyName": "PartitionCoefficient" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Phenylephrine", "CompartmentName": "MyocardiumTissue",  "PropertyName": "PartitionCoefficient" },
+      
+      { "DecimalFormat": { "Precision": 9 }, "Category": "LiquidCompartment", "SubstanceName": "Phenylephrine", "CompartmentName": "VenaCava",                       "PropertyName": "Concentration", "Unit": "ug/mL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "SubstanceName": "Phenylephrine", "CompartmentName": "LiverTissueIntracellular",       "PropertyName": "MassCleared",   "Unit": "ug" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "SubstanceName": "Phenylephrine", "CompartmentName": "LeftKidneyTissueIntracellular",  "PropertyName": "MassCleared",   "Unit": "ug" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "SubstanceName": "Phenylephrine", "CompartmentName": "RightKidneyTissueIntracellular", "PropertyName": "MassCleared",   "Unit": "ug" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "SubstanceName": "Phenylephrine", "CompartmentName": "LeftKidneyTissueIntracellular",  "PropertyName": "MassExcreted",  "Unit": "ug" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "SubstanceName": "Phenylephrine", "CompartmentName": "RightKidneyTissueIntracellular", "PropertyName": "MassExcreted",  "Unit": "ug" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "SubstanceName": "Phenylephrine", "CompartmentName": "LiverTissueIntracellular",       "PropertyName": "MassExcreted",  "Unit": "ug" }
+      
     ]
   },
   "AnyAction": [{
@@ -87,19 +46,19 @@
         }
       }
     }
-}, {
+  }, {
     "PatientAction": {
       "SubstanceInfusion": {
         "Substance": "Phenylephrine",
         "Concentration": {
           "ScalarMassPerVolume": {
-            "Value": 0.1,
+            "Value": 10.0,
             "Unit": "ug/mL"
           }
         },
         "Rate": {
           "ScalarVolumePerTime": {
-		    "Value": 10.0,
+            "Value": 0.064,
             "Unit": "mL/s"
           }
         }
@@ -109,24 +68,105 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 60.0,
-          "Unit": "s"
+          "Value": 6.0,
+          "Unit": "min"
         }
       }
     }
-	  }, {
+  }, {
     "PatientAction": {
       "SubstanceInfusion": {
         "Substance": "Phenylephrine",
         "Concentration": {
           "ScalarMassPerVolume": {
-            "Value": 0.1,
+            "Value": 10.0,
             "Unit": "ug/mL"
           }
         },
         "Rate": {
           "ScalarVolumePerTime": {
-		    "Value": 0.0,
+        "Value": 0.128,
+            "Unit": "mL/s"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 6.0,
+          "Unit": "min"
+        }
+      }
+    }
+    }, {
+    "PatientAction": {
+      "SubstanceInfusion": {
+        "Substance": "Phenylephrine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 10.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Rate": {
+          "ScalarVolumePerTime": {
+        "Value": 0.257,
+            "Unit": "mL/s"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 6.0,
+          "Unit": "min"
+        }
+      }
+    }
+    }, {
+    "PatientAction": {
+      "SubstanceInfusion": {
+        "Substance": "Phenylephrine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 10.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Rate": {
+          "ScalarVolumePerTime": {
+        "Value": 0.513,
+            "Unit": "mL/s"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 6.0,
+          "Unit": "min"
+        }
+      }
+    }
+    }, {
+    "PatientAction": {
+      "SubstanceInfusion": {
+        "Substance": "Phenylephrine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 10.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Rate": {
+          "ScalarVolumePerTime": {
+        "Value": 0.0,
             "Unit": "mL/s"
           }
         }

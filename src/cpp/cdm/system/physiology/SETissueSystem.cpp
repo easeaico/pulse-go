@@ -15,6 +15,7 @@ SETissueSystem::SETissueSystem(Logger* logger) : SESystem(logger)
   m_IntracellularFluidPH = nullptr;
   m_OxygenConsumptionRate = nullptr;
   m_RespiratoryExchangeRatio = nullptr;
+  m_TotalFluidVolume = nullptr;
 }
 
 SETissueSystem::~SETissueSystem()
@@ -26,6 +27,7 @@ SETissueSystem::~SETissueSystem()
   SAFE_DELETE(m_IntracellularFluidPH);
   SAFE_DELETE(m_OxygenConsumptionRate);
   SAFE_DELETE(m_RespiratoryExchangeRatio);
+  SAFE_DELETE(m_TotalFluidVolume);
 }
 
 void SETissueSystem::Clear()
@@ -38,6 +40,7 @@ void SETissueSystem::Clear()
   INVALIDATE_PROPERTY(m_IntracellularFluidPH);
   INVALIDATE_PROPERTY(m_OxygenConsumptionRate);
   INVALIDATE_PROPERTY(m_RespiratoryExchangeRatio);
+  INVALIDATE_PROPERTY(m_TotalFluidVolume);
 }
 
 const SEScalar* SETissueSystem::GetScalar(const std::string& name)
@@ -56,6 +59,8 @@ const SEScalar* SETissueSystem::GetScalar(const std::string& name)
     return &GetOxygenConsumptionRate();
   if (name.compare("RespiratoryExchangeRatio") == 0)
     return &GetRespiratoryExchangeRatio();
+  if (name.compare("TotalFluidVolume") == 0)
+    return &GetTotalFluidVolume();
   return nullptr;
 }
 
@@ -178,3 +183,19 @@ double SETissueSystem::GetRespiratoryExchangeRatio() const
   return m_RespiratoryExchangeRatio->GetValue();
 }
 
+bool SETissueSystem::HasTotalFluidVolume() const
+{
+  return m_TotalFluidVolume == nullptr ? false : m_TotalFluidVolume->IsValid();
+}
+SEScalarVolume& SETissueSystem::GetTotalFluidVolume()
+{
+  if (m_TotalFluidVolume == nullptr)
+    m_TotalFluidVolume = new SEScalarVolume();
+  return *m_TotalFluidVolume;
+}
+double SETissueSystem::GetTotalFluidVolume(const VolumeUnit& unit) const
+{
+  if (m_TotalFluidVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_TotalFluidVolume->GetValue(unit);
+}

@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import eSerializationFormat
-from google.protobuf import json_format
+from google.protobuf import json_format, text_format
 
 from pulse.cdm.patient import SEPatient, eSex, SENutrition
 from pulse.cdm.bind.Patient_pb2 import PatientData
@@ -23,7 +23,10 @@ def serialize_patient_to_file(src: SEPatient, filename: str):
 
 def serialize_patient_from_string(string: str, dst: SEPatient, fmt: eSerializationFormat):
     src = PatientData()
-    json_format.Parse(string, src)
+    if fmt == eSerializationFormat.JSON:
+        json_format.Parse(string, src)
+    elif fmt == eSerializationFormat.TEXT:
+        text_format.Parse(string, src)
     serialize_patient_from_bind(src,dst)
 
 def serialize_patient_from_file(filename: str, dst: SEPatient):

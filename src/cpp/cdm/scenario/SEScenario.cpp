@@ -152,10 +152,15 @@ bool SEScenario::ProcessDataRequestFiles(const std::set<std::string>& search)
   for (std::string drFile : m_DataRequestFiles)
   {
     found = "";
-    for (std::string s : search)
+    if (FileExists(drFile))
+      found = drFile;
+    if (found.empty())
     {
-      if (FindFileInFilePath(s, drFile, found))
-        break;
+      for (std::string s : search)
+      {
+        if (FindFileInFilePath(s, drFile, found))
+          break;
+      }
     }
     if(!found.empty())
     {
@@ -168,7 +173,7 @@ bool SEScenario::ProcessDataRequestFiles(const std::set<std::string>& search)
     }
     else
     {
-      Error("Unable to find file: " + drFile);
+      Error("Unable to find file !!!: " + drFile);
       err = true;
     }
   }

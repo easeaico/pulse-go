@@ -61,6 +61,7 @@ POP_PROTO_WARNINGS
 #include "cdm/properties/SEScalarPressureTimePerVolumeArea.h"
 #include "cdm/properties/SEScalarTemperature.h"
 #include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarUnsigned.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerPressure.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
@@ -1476,6 +1477,28 @@ CDM_BIND::ScalarTimeData* PBProperty::Unload(const SEScalarTime& src)
 void PBProperty::Serialize(const SEScalarTime& src, CDM_BIND::ScalarTimeData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalartime());
+}
+
+void PBProperty::Load(const CDM_BIND::ScalarUnsignedData& src, SEScalarUnsigned& dst)
+{
+  dst.Invalidate();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::ScalarUnsignedData& src, SEScalarUnsigned& dst)
+{
+  PBProperty::Serialize(src.scalarunsigned(), dst);
+}
+CDM_BIND::ScalarUnsignedData* PBProperty::Unload(const SEScalarUnsigned& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::ScalarUnsignedData* dst = new CDM_BIND::ScalarUnsignedData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SEScalarUnsigned& src, CDM_BIND::ScalarUnsignedData& dst)
+{
+  PBProperty::Serialize(src, *dst.mutable_scalarunsigned());
 }
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumeData& src, SEScalarVolume& dst)

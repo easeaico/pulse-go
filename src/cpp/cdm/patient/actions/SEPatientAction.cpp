@@ -13,13 +13,3 @@ SEPatientAction::~SEPatientAction()
 {
 
 }
-
-void SEPatientAction::Clear()
-{
-  SEAction::Clear();
-}
-
-bool SEPatientAction::IsValid() const
-{
-  return SEAction::IsValid();
-}

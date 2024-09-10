@@ -24,33 +24,35 @@ message AnyPatientActionData
     AsthmaAttackData                                   AsthmaAttack                                   = 6;
     BrainInjuryData                                    BrainInjury                                    = 7;
     BronchoconstrictionData                            Bronchoconstriction                            = 8;
-    ChestCompressionData                               ChestCompression                               = 9;
-    ChestCompressionAutomatedData                      ChestCompressionAutomated                      = 10;
-    ChestCompressionInstantaneousData                  ChestCompressionInstantaneous                  = 11;
-    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 12;
-    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 13;
-    ConsciousRespirationData                           ConsciousRespiration                           = 14;
-    ConsumeNutrientsData                               ConsumeNutrients                               = 15;
-    DyspneaData                                        Dyspnea                                        = 16;
-    ExerciseData                                       Exercise                                       = 17;
-    HemorrhageData                                     Hemorrhage                                     = 18;
-    HemothoraxData                                     Hemothorax                                     = 19;
-    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 20;
-    IntubationData                                     Intubation                                     = 21;
-    MechanicalVentilationData                          MechanicalVentilation                          = 22;
-    NeedleDecompressionData                            NeedleDecompression                            = 23;
-    PericardialEffusionData                            PericardialEffusion                            = 24;
-    PneumoniaExacerbationData                          PneumoniaExacerbation                          = 25;
-    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 26;
-    RespiratoryFatigueData                             RespiratoryFatigue                             = 27;
-    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 28;
-    SubstanceBolusData                                 SubstanceBolus                                 = 29;
-    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 30;
-    SubstanceInfusionData                              SubstanceInfusion                              = 31;
-    SupplementalOxygenData                             SupplementalOxygen                             = 32;
-    TensionPneumothoraxData                            TensionPneumothorax                            = 33;
-    TubeThoracostomyData                               TubeThoracostomy                               = 34;
-    UrinateData                                        Urinate                                        = 35;
+    CardiovascularMechanicsModificationData            CardiovascularMechanicsModification            = 9;
+    ChestCompressionData                               ChestCompression                               = 10;
+    ChestCompressionAutomatedData                      ChestCompressionAutomated                      = 11;
+    ChestCompressionInstantaneousData                  ChestCompressionInstantaneous                  = 12;
+    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 13;
+    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 14;
+    ConsciousRespirationData                           ConsciousRespiration                           = 15;
+    ConsumeNutrientsData                               ConsumeNutrients                               = 16;
+    DyspneaData                                        Dyspnea                                        = 17;
+    ExerciseData                                       Exercise                                       = 18;
+    HemorrhageData                                     Hemorrhage                                     = 19;
+    HemothoraxData                                     Hemothorax                                     = 20;
+    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 21;
+    IntubationData                                     Intubation                                     = 22;
+    MechanicalVentilationData                          MechanicalVentilation                          = 23;
+    NeedleDecompressionData                            NeedleDecompression                            = 24;
+    PericardialEffusionData                            PericardialEffusion                            = 25;
+    PneumoniaExacerbationData                          PneumoniaExacerbation                          = 26;
+    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 27;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 28;
+    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 29;
+    RespiratoryMechanicsModificationData               RespiratoryMechanicsModification               = 30;
+    SubstanceBolusData                                 SubstanceBolus                                 = 31;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 32;
+    SubstanceInfusionData                              SubstanceInfusion                              = 33;
+    SupplementalOxygenData                             SupplementalOxygen                             = 34;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 35;
+    TubeThoracostomyData                               TubeThoracostomy                               = 36;
+    UrinateData                                        Urinate                                        = 37;
   }
 }
 
@@ -124,6 +126,18 @@ message BronchoconstrictionData
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
+/** @brief Modify the %Cardiovascular mechanics. */
+message CardiovascularMechanicsModificationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  oneof Option
+  {
+    CardiovascularMechanicsModifiersData    Modifiers                       = 2;/**<< @brief A CardiovascularMechanicsModification object with properties to set in the system object. */
+    string                                  ModifiersFile                   = 3;/**<< @brief File containing a RespiratoryMechanics object with properties to set in the system object. */
+  }
+  bool                                      Incremental                     = 4;/**<< @brief When off (Default) the engine will Restabilize a new homeostasis state. Use true if you are incrementally driving modification with very small modifiers and the engine will not stabilize.*/
+}
+
 /** @brief A single CPR compression to the chest cavity in order to pump blood through the heart. */
 message ChestCompressionData
 {
@@ -184,11 +198,12 @@ message ChronicObstructivePulmonaryDiseaseExacerbationData
   repeated LungImpairmentData               EmphysemaSeverity               = 3;/**<<@brief A list of impairment severities for the lung compartments*/
 }
 
-/** @brief Reduction of achieved tidal volume by inhibiting the respiratory breathing mechanism (i.e., muscles of respiration).  Maximum severity will stop breathing completely. */
+/** @brief Reduction of achieved respiration rate and/or tidal volume by inhibiting the respiratory breathing mechanism (i.e., muscles of respiration).  Maximum severity of either will stop breathing completely. */
 message DyspneaData
 {
   PatientActionData                         PatientAction                   = 1;
-  Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  Scalar0To1Data                            RespirationRateSeverity         = 2;/**<<@brief Scale of affect for frequency of spontaneous breathing. */
+  Scalar0To1Data                            TidalVolumeSeverity             = 3;/**<<@brief Scale of affect for amplitude of spontaneous breathing. */
 }
 
 /** @brief Force air out of the lungs. */
@@ -408,6 +423,18 @@ message RespiratoryMechanicsConfigurationData
   }
   eAppliedRespiratoryCycle                  AppliedCycle                    = 4;/**<< @brief When to apply these mechanics in the respiratory cycle. */
   eMergeType                                MergeType                       = 5;/**<< @brief How to apply provided configuration to internal data model. */
+}
+
+/** @brief Modify the %Respiratory mechanics. */
+message RespiratoryMechanicsModificationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  oneof Option
+  {
+    RespiratoryMechanicsModifiersData       Modifiers                       = 2;/**<< @brief A RespiratoryMechanicsModification object with properties to set in the system object. */
+    string                                  ModifiersFile                   = 3;/**<< @brief File containing a RespiratoryMechanics object with properties to set in the system object. */
+  }
+  bool                                      Incremental                     = 4;/**<< @brief When off (Default) the engine will Restabilize a new homeostasis state. Use true if you are incrementally driving modification with very small modifiers and the engine will not stabilize.*/
 }
 
 /** @brief An administration of a substance that is given all at one time to raise its concentration in blood to an effective level. */

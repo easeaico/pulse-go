@@ -198,6 +198,7 @@ class SERunningAverage;
 class SEScalar; class SEUnitScalar; class SEGenericScalar; class NoUnit;
 class SEScalar0To1; 
 class SEScalarNegative1To1;
+class SEScalarUnsigned;
 class SEScalarAmount; class AmountUnit;
 class SEScalarAmountPerMass; class AmountPerMassUnit;
 class SEScalarAmountPerTime; class AmountPerTimeUnit;

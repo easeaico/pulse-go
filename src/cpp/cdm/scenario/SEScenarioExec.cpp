@@ -35,11 +35,12 @@ SEScenarioExec::~SEScenarioExec()
 
 void SEScenarioExec::Clear()
 {
-  m_LogToConsole = eSwitch::On;
+  m_LogToConsole = eSwitch::NullSwitch;
 
   m_DataRootDirectory = ".";
   m_OutputRootDirectory = "";
   m_OrganizeOutputDirectory = eSwitch::Off;
+  m_RelativeSerialization = eRelativeSerialization::ToWorkingDir;
 
   m_BaseFilename = "";
   m_LogFilename = "";
@@ -51,6 +52,7 @@ void SEScenarioExec::Clear()
   m_ScenarioContent = "";
   m_ScenarioFilename = "";
   m_ScenarioDirectory = "";
+  m_ScenarioExecListFilename = "";
   m_ContentFormat = eSerializationFormat::JSON;
 
   m_ScenarioLogFilename = "";
@@ -78,28 +80,31 @@ void SEScenarioExec::Copy(const SEScenarioExec& src)
   PBScenario::Copy(src, *this);
 }
 
-bool SEScenarioExec::SerializeToString(std::string& output, eSerializationFormat m, Logger* logger) const
+bool SEScenarioExec::SerializeToString(std::string& output, eSerializationFormat m) const
 {
-  return PBScenario::SerializeToString(*this, output, m, logger);
+  return PBScenario::SerializeToString(*this, output, m, GetLogger());
 }
-bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger)
+bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
-  return PBScenario::SerializeFromString(src, *this, m, logger);
+  return PBScenario::SerializeFromString(src, *this, m, GetLogger());
 }
 
 void SEScenarioExec::SetOutputRootDirectory(const std::string& d)
 {
   m_OutputRootDirectory = d;
-  std::replace(m_OutputRootDirectory.begin(), m_OutputRootDirectory.end(), '\\', '/');
-  if (m_OutputRootDirectory.back() != '/')
-    m_OutputRootDirectory += "/";
+  if (!m_OutputRootDirectory.empty())
+  {
+    std::replace(m_OutputRootDirectory.begin(), m_OutputRootDirectory.end(), '\\', '/');
+    if (m_OutputRootDirectory.back() != '/')
+      m_OutputRootDirectory += "/";
+  }
 }
 
-bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
+bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce, SEScenarioExecStatus* status)
 {
-  return Process(pe, sce);
+  return Process(pe, sce, status);
 }
-bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
+bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioExecStatus* status)
 {
   std::string sceRelPath = "";
   std::string scenarioDir = "";
@@ -126,7 +131,12 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
       m_OutputRootDirectory = resultsFilename;
     }
     else
+    {
+      if (!m_OutputRootDirectory.empty() &&
+         (resultsFilename.rfind("./") == 0 || resultsFilename.rfind(".\\") == 0))
+        resultsFilename = m_OutputRootDirectory + "/" + resultsFilename.substr(2);
       SplitPathFilenameExt(resultsFilename, m_OutputRootDirectory, m_BaseFilename, ext);
+    }
   }
   else if (!m_ScenarioFilename.empty())
   {
@@ -199,6 +209,12 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
   pe.GetLogger()->SetLogFile(m_LogFilename);
   pe.GetLogger()->LogToConsole(m_LogToConsole == eSwitch::On);
 
+  if (status)
+  {
+    status->SetLogFilename(m_LogFilename);
+    status->SetCSVFilename(m_DataRequestCSVFilename);
+  }
+
   if(!sce.IsValid())
   {
     pe.GetLogger()->Error("Invalid Scenario");
@@ -227,6 +243,8 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
       }
       if (!pe.SerializeFromFile(state))
       {
+        if (status)
+          status->SetEngineInitializationState(eEngineInitializationState::FailedState);
         pe.GetLogger()->Error("Unable to load state file: "+ state);
         return false;
       }
@@ -238,6 +256,7 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
         sce.Info("Creating CSV File : " + m_DataRequestCSVFilename);
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
       }
+      pe.GetEngineTracker()->TrackData(pe.GetSimulationTime(TimeUnit::s));
     }
     else if (sce.HasPatientConfiguration())
     {
@@ -252,40 +271,55 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce)
       }
       if (!pe.InitializeEngine(sce.GetPatientConfiguration()))
       {
+        if (status)
+          status->SetEngineInitializationState(pe.GetInitializationState());
         pe.GetLogger()->Error("Unable to initialize engine");
         return false;
       }
+      if (status)
+        status->SetStabilizationTime_s(pe.GetStabilizationTime(TimeUnit::s));
     }
     else
     {
+      if (status)
+        status->SetEngineInitializationState(eEngineInitializationState::FailedState);
       pe.GetLogger()->Error("No initial engine parameters set");
       return false;
     }
+    if (status)
+      status->SetEngineInitializationState(eEngineInitializationState::Initialized);
 
-    return ProcessActions(pe, sce);
+    return ProcessActions(pe, sce, status);
   }
   catch (CommonDataModelException& ex)
   {
-    pe.GetLogger()->Error(ex.what());
+    if (status)
+      status->SetFatalRuntimeError(true);
+    pe.GetLogger()->Fatal(ex.what());
     return false;
   }
   catch (std::exception& ex)
   {
-    pe.GetLogger()->Error(ex.what());
+    if (status)
+      status->SetFatalRuntimeError(true);
+    pe.GetLogger()->Fatal(ex.what());
     return false;
   }
   catch (...)
   {
-    pe.GetLogger()->Error("Caught unknown exception, ending simulation");
+    if (status)
+      status->SetFatalRuntimeError(true);
+    pe.GetLogger()->Fatal("Caught unknown exception, ending simulation");
     return false;
   }
   return true;
 }
 
-bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
+bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SEScenarioExecStatus* status)
 {
   std::stringstream ss;
   pe.GetLogger()->Info("Executing Scenario");
+  pe.GetLogger()->AddForward(status);
 
   double dT_s=pe.GetTimeStep(TimeUnit::s);
   double scenarioTime_s = 0;
@@ -307,6 +341,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   double spareAdvanceTime_s = 0;
   for (SEAction* a : sce.GetActions())
   {
+    if (!a) continue;
     // We override advance time actions in order to advance and
     // pull requested data at each time step, all other actions
     // will be processed by the engine
@@ -365,6 +400,8 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     err = true;
     pe.GetLogger()->Error("!!!! Simulation time does not equal expected end time !!!!");
   }
+  if (status)
+    status->SetFinalSimulationTime_s(simTime_s);
 
   return !err;
 }
@@ -376,7 +413,7 @@ bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
     m_SerializationActions << "AfterActions";
   }
   SESerializeState* ss = dynamic_cast<SESerializeState*>(&action);
-  if (ss != nullptr && ss->GetType() == eSerialization_Type::Save)
+  if (ss != nullptr && ss->GetMode() == eSerialization_Mode::Save)
   {
     if (!ss->HasFilename())
     {
@@ -388,10 +425,23 @@ bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
       // If its relative, we add the serialization directory
       if (IsRelativePath(ss->GetFilename()))
       {
-        std::string fp = ss->GetFilename();
-        if (ss->GetFilename().rfind("./", 0) == 0)
-          fp = fp.substr(2);
-        ss->SetFilename(m_OutputRootDirectory + fp);
+        switch (m_RelativeSerialization)
+        {
+        case eRelativeSerialization::ToWorkingDir:
+        {
+          break;
+        }
+        case eRelativeSerialization::ToOutputDir:
+        {
+          ss->SetFilename(m_OutputRootDirectory + ss->GetFilename().substr(2));
+          break;
+        }
+        case eRelativeSerialization::ToScenarioDir:
+        {
+          Error("TODO: Implement relative to scenario dir");
+          break;
+        }
+        }
       }
     }
   }
@@ -493,3 +543,50 @@ bool SEScenarioExec::ConvertLog()
 
   return true;
 }
+
+SEScenarioExecStatus::SEScenarioExecStatus()
+{
+  Clear();
+}
+SEScenarioExecStatus::~SEScenarioExecStatus()
+{
+
+}
+
+void SEScenarioExecStatus::Clear()
+{
+  ClearStatus();
+  m_ScenarioFilename = "";
+}
+
+void SEScenarioExecStatus::ClearStatus()
+{
+  SEEngineInitializationStatus::Clear();
+  m_ScenarioExecutionState = eScenarioExecutionState::Waiting;
+  m_RuntimeError = false;
+  m_FatalRuntimeError = false;
+  m_FinalSimulationTime_s = 0;
+}
+
+void SEScenarioExecStatus::Copy(const SEScenarioExecStatus& from)
+{
+  PBScenario::Copy(from, *this);
+}
+bool SEScenarioExecStatus::SerializeToString(std::string& output, eSerializationFormat m, Logger* logger) const
+{
+  return PBScenario::SerializeToString(*this, output, m, logger);
+}
+bool SEScenarioExecStatus::SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger)
+{
+  return PBScenario::SerializeFromString(src, *this, m, logger);
+}
+
+bool SEScenarioExecStatus::SerializeToFile(const std::vector<SEScenarioExecStatus>& src, const std::string& filename, Logger* logger)
+{
+  return PBScenario::SerializeToFile(src, filename, logger);
+}
+bool SEScenarioExecStatus::SerializeFromFile(const std::string& filename, std::vector<SEScenarioExecStatus>& dst, Logger* logger)
+{
+  return PBScenario::SerializeFromFile(filename, dst, logger);
+}
+

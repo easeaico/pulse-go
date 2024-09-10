@@ -23,7 +23,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
   m_Compliance = nullptr;
   m_DriverDampingParameter = nullptr;
 
-  m_PositiveEndExpiredPressure = nullptr;
+  m_PositiveEndExpiratoryPressure = nullptr;
   m_FunctionalResidualCapacity = nullptr;
 
   m_ExpirationCycleFlow = nullptr;
@@ -73,7 +73,7 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
   SAFE_DELETE(m_Compliance);
   SAFE_DELETE(m_DriverDampingParameter);
 
-  SAFE_DELETE(m_PositiveEndExpiredPressure);
+  SAFE_DELETE(m_PositiveEndExpiratoryPressure);
   SAFE_DELETE(m_FunctionalResidualCapacity);
 
   SAFE_DELETE(m_ExpirationCycleFlow);
@@ -131,7 +131,7 @@ void SEMechanicalVentilatorSettings::Clear()
   INVALIDATE_PROPERTY(m_Compliance);
   INVALIDATE_PROPERTY(m_DriverDampingParameter);
 
-  INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
+  INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
   INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
 
   INVALIDATE_PROPERTY(m_ExpirationCycleFlow);
@@ -201,7 +201,7 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   COPY_PROPERTY(DriverDampingParameter);
 
   // Oneof
-  COPY_PROPERTY(PositiveEndExpiredPressure);
+  COPY_PROPERTY(PositiveEndExpiratoryPressure);
   COPY_PROPERTY(FunctionalResidualCapacity);
 
   // Oneof
@@ -338,8 +338,8 @@ const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& nam
   if (name == "DriverDampingParameter")
     return &GetDriverDampingParameter();
 
-  if (name == "PositiveEndExpiredPressure")
-    return &GetPositiveEndExpiredPressure();
+  if (name == "PositiveEndExpiratoryPressure")
+    return &GetPositiveEndExpiratoryPressure();
   if (name == "FunctionalResidualCapacity")
     return &GetFunctionalResidualCapacity();
 
@@ -421,21 +421,21 @@ void SEMechanicalVentilatorSettings::SetConnection(eSwitch c)
   m_Connection = c;
 }
 
-bool SEMechanicalVentilatorSettings::HasPositiveEndExpiredPressure() const
+bool SEMechanicalVentilatorSettings::HasPositiveEndExpiratoryPressure() const
 {
-  return m_PositiveEndExpiredPressure == nullptr ? false : m_PositiveEndExpiredPressure->IsValid();
+  return m_PositiveEndExpiratoryPressure == nullptr ? false : m_PositiveEndExpiratoryPressure->IsValid();
 }
-SEScalarPressure& SEMechanicalVentilatorSettings::GetPositiveEndExpiredPressure()
+SEScalarPressure& SEMechanicalVentilatorSettings::GetPositiveEndExpiratoryPressure()
 {
-  if (m_PositiveEndExpiredPressure == nullptr)
-    m_PositiveEndExpiredPressure = new SEScalarPressure();
-  return *m_PositiveEndExpiredPressure;
+  if (m_PositiveEndExpiratoryPressure == nullptr)
+    m_PositiveEndExpiratoryPressure = new SEScalarPressure();
+  return *m_PositiveEndExpiratoryPressure;
 }
-double SEMechanicalVentilatorSettings::GetPositiveEndExpiredPressure(const PressureUnit& unit) const
+double SEMechanicalVentilatorSettings::GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const
 {
-  if (m_PositiveEndExpiredPressure == nullptr)
+  if (m_PositiveEndExpiratoryPressure == nullptr)
     return SEScalar::dNaN();
-  return m_PositiveEndExpiredPressure->GetValue(unit);
+  return m_PositiveEndExpiratoryPressure->GetValue(unit);
 }
 
 bool SEMechanicalVentilatorSettings::HasFunctionalResidualCapacity() const

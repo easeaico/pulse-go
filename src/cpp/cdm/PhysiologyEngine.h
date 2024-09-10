@@ -79,7 +79,7 @@ public:
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Reset engine and set it to the state in the provided file.
-  /// The file may contain json or binary. 
+  /// The file may contain json or binary.
   /// Anything but an extension of .json will be interpreted as binary.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
@@ -127,11 +127,19 @@ public:
   /// \brief
   ///
   /// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
-  /// The return value will indicate success failure of the creation of the engine.  
+  /// The return value will indicate success failure of the creation of the engine.
   /// Some combinations of patients and conditions may prevent the engine from stabilizing
   ///
   //--------------------------------------------------------------------------------------------------
   virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  ///
+  /// Get a bit more detail as to how initialization went
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual eEngineInitializationState GetInitializationState() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -188,6 +196,12 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// returns the stabilization time of the simulation (if stabilized)
+  //--------------------------------------------------------------------------------------------------
+  virtual double GetStabilizationTime(const TimeUnit& unit) const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Set the current time of the simulation.
   /// Engine Simulation time will be advanced from this time point
   //--------------------------------------------------------------------------------------------------
@@ -198,7 +212,7 @@ public:
   /// executes one pass through the time loop of the engine at the fixed timestep
   ///
   /// Events, errors, and warning as are logged to file not errors are returned
-  /// through the API at this time. 
+  /// through the API at this time.
   ///
   //--------------------------------------------------------------------------------------------------
   virtual bool AdvanceModelTime() = 0;
@@ -253,30 +267,30 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Returns the patient object used by the engine 
+  /// Returns the patient object used by the engine
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SEPatient& GetPatient() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Returns the initial simulation patient object used by the engine 
+  /// Returns the initial simulation patient object used by the engine
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SEPatient& GetInitialPatient() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Determines the assessment type and fills the data object with current data. 
+  /// Determines the assessment type and fills the data object with current data.
   ///
-  /// Assessments can be queried at any point in the calculation and as many times are desired. 
+  /// Assessments can be queried at any point in the calculation and as many times are desired.
   ///
   //--------------------------------------------------------------------------------------------------
   virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Returns the environment object used by the engine 
+  /// Returns the environment object used by the engine
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SEEnvironment* GetEnvironment() const = 0;
@@ -297,7 +311,7 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Returns the current state of the drug system  
+  /// Returns the current state of the drug system
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SEDrugSystem* GetDrugSystem() const = 0;
@@ -353,7 +367,7 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Returns the current state of the tissue system  
+  /// Returns the current state of the tissue system
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SETissueSystem* GetTissueSystem() const = 0;

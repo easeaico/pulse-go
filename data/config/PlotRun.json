@@ -47,7 +47,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/CardiovascularValidation-StandardMaleResults.csv"
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/Patient-Validation-StandardMaleResults.csv"
           }
         ],
         "Series":
@@ -58,7 +58,7 @@
           { "Comment": "P-V Loop", "Title": "", "OutputFilename": "PVLoop", "XHeader": "LeftHeart-Volume(mL)",
               "YHeader": [ "LeftHeart-Pressure(mmHg)" ],
               "PlotConfig": { "ImageProperties": { "Height_inch": 6, "Width_inch": 4 }, "LegendMode": "NoLegends",
-                "SciLimits": {}, "ZeroAxis": true } },
+                "SciLimits": {} } },
           { "Comment": "Pressure waveform - Arterial", "Title": "", "OutputFilename": "EnginePressure",
               "XBounds": { "LowerBound": 2.78, "UpperBound": 4.46 }, "YBounds": { "LowerBound": 70, "UpperBound": 120 },
               "YHeader": [ "ArterialPressure(mmHg)" ],
@@ -433,30 +433,12 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "Comment": "Heart Failure",
-        "PlotConfig":
-        {
-          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/VentricularSystolicDysfunctionResults.csv" }
-        ],
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "HeartFailure", "YHeader": [ "BloodVolume(L)" ] }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
         "Comment": "Drugs Methodology Report - Validation - Albuterol",
         "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Drugs/" },
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/AlbuterolValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/AlbuterolValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -479,7 +461,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/EtomidateValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/EtomidateValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -502,7 +484,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FentanylValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/FentanylValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -525,7 +507,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FurosemideValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/FurosemideValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -548,7 +530,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/KetamineValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/KetamineValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -571,7 +553,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/LorazepamValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/LorazepamValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -594,7 +576,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MidazolamValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/MidazolamValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -617,7 +599,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MorphineValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/MorphineValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -640,7 +622,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/NaloxoneValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/NaloxoneValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -663,7 +645,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PralidoximeValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/PralidoximeValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -686,7 +668,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PrednisoneValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/PrednisoneValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -709,7 +691,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PropofolValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/PropofolValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -732,7 +714,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/RocuroniumValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/RocuroniumValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -755,7 +737,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/SuccinylcholineValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/SuccinylcholineValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -1009,7 +991,8 @@
         "PlotConfig":
         {
           "ImageProperties": { "Height_inch": 6, "Width_inch": 8 }, "LegendMode": "NoLegends",
-          "OutputPathOverride": "./docs/html/plots/Nervous/"
+          "OutputPathOverride": "./docs/html/plots/Nervous/",
+          "YBoundsMode": "MinMax"
         },
         "PlotSource":
         [
@@ -1340,10 +1323,10 @@
       "MultiHeaderSeriesPlotter":
       {
         "Comment": "Respiratory Methodology Report - Design - Respiratory Validation Standard Male",
-        "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Respiratory/" },
+        "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Respiratory/", "YBoundsMode": "MinMax" },
         "PlotSource":
         [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/systems/RespiratoryValidation-StandardMaleResults.csv" }
+          { "CSVData": "$VERIFICATION_DIR/scenarios/validation/Patient-Validation-StandardMaleResults.csv" }
         ],
         "Series":
         [
@@ -1355,23 +1338,23 @@
           { "Title": "Transpulmonary Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
               "YHeader": [ "TranspulmonaryPressure(cmH2O)" ], "YLabel": "Pressure(cmH2O)" },
           { "Title": "Tidal Volume from Total Lung Volume", "OutputFilename": "TidalVolume_from_TotalLungVolume",
-              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 }, "YHeader": [ "TotalLungVolume(mL)" ],
+              "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 }, "YHeader": [ "TotalLungVolume(L)" ],
               "Y2Header": [ "TidalVolume(mL)" ], "PlotConfig" : { "LegendMode": "NoLegends" } },
           { "Title": "Alveoli and Dead Space Volumes", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
-              "YHeader": [ "LeftAnatomicDeadSpace-Volume(mL)", "RightAnatomicDeadSpace-Volume(mL)",
-                "LeftAlveoli-Volume(mL)", "RightAlveoli-Volume(mL)" ],
+              "YHeader": [ "LeftAnatomicDeadSpace-Volume(L)", "RightAnatomicDeadSpace-Volume(L)",
+                "LeftAlveoli-Volume(L)", "RightAlveoli-Volume(L)" ],
               "YLabel": "Volumes(mL)" },
           { "Title": "Total Flow Through Trachea", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
-              "YHeader": [ "InspiratoryFlow(L/s)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "YHeader": [ "InspiratoryFlow(L/s)" ], "Y2Header": [ "TotalLungVolume(L)" ],
               "PlotConfig" : { "LegendMode": "NoLegends" }  },
           { "Title": "Lung Pressure And Volume", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
-              "YHeader": [ "LeftAlveoli-Pressure(cmH2O)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "YHeader": [ "LeftAlveoli-Pressure(cmH2O)" ], "Y2Header": [ "TotalLungVolume(L)" ],
               "PlotConfig" : { "LegendMode": "NoLegends" }  },
           { "Title": "Engine Pressures", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
               "YHeader": [ "LeftAlveoli-Pressure(cmH2O)", "LeftPleuralCavity-Pressure(cmH2O)" ],
               "YLabel": "Pressure(cmH2O)", "PlotConfig": { "ImageProperties": { "DimensionMode": "Square" } } },
           { "Title": "Engine Lung Volume", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
-              "YHeader": [ "TotalLungVolume(mL)" ],
+              "YHeader": [ "TotalLungVolume(L)" ],
               "PlotConfig": { "ImageProperties": { "Height_inch": 5, "Width_inch": 8 } } },
           { "Title": "Alveolar Oxygen Partial Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 54.6 },
               "YHeader": [ "LeftAlveoli-Oxygen-PartialPressure(mmHg)", "RightAlveoli-Oxygen-PartialPressure(mmHg)" ],
@@ -1381,13 +1364,13 @@
                 "RightAlveoli-CarbonDioxide-PartialPressure(mmHg)" ],
               "YLabel": "Alveoli-CarbonDioxide-PartialPressure(mmHg)" },
           { "Title": "Trachea Carbon Dioxide Partial Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
-              "YHeader": [ "Carina-CarbonDioxide-PartialPressure(mmHg)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "YHeader": [ "Carina-CarbonDioxide-PartialPressure(mmHg)" ], "Y2Header": [ "TotalLungVolume(L)" ],
               "PlotConfig" : { "LegendMode": "NoLegends" }  },
           { "Title": "Trachea Oxygen Partial Pressure", "XBounds": { "LowerBound": 39.6, "UpperBound": 44.6 },
-              "YHeader": [ "Carina-Oxygen-PartialPressure(mmHg)" ], "Y2Header": [ "TotalLungVolume(mL)" ],
+              "YHeader": [ "Carina-Oxygen-PartialPressure(mmHg)" ], "Y2Header": [ "TotalLungVolume(L)" ],
               "PlotConfig" : { "LegendMode": "NoLegends" }  },
           { "Title": "Engine Pulmonary Compliance", "XHeader": "LeftPleuralCavity-Pressure(cmH2O)",
-              "YHeader": [ "TotalLungVolume(mL)" ],
+              "YHeader": [ "TotalLungVolume(L)" ],
               "PlotConfig": { "ImageProperties": { "DimensionMode": "Square" }, "SciLimits": {} } }
         ]
       }

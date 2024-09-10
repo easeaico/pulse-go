@@ -15,6 +15,7 @@ import ubelt as ub
 import numpy as np
 import pandas as pd
 from dataclasses import asdict, astuple, dataclass
+from contextlib import contextmanager
 
 import pytorch_lightning as pl
 import pytorch_forecasting as pf
@@ -23,6 +24,35 @@ import pytorch_forecasting as pf
 from neural_ode.models.recurrent import RecurrentODE
 from neural_ode.models.seq2seq import Seq2Seq
 from neural_ode.models.vae import VAE
+
+
+def calc_cvcs(map_true, map_pred):
+    THRESH = 40
+    true_ixs = []
+    pred_ixs = []
+    for pt in range(len(map_true)):
+        if len(ixs := torch.argwhere(map_true[pt] < THRESH)) > 0:
+            true_ixs.append(ixs[0][0])
+        else:
+            true_ixs.append(-1)
+
+        if len(ixs := torch.argwhere(map_pred[pt] < THRESH)) > 0:
+            pred_ixs.append(ixs[0][0])
+        else:
+            pred_ixs.append(-1)
+
+    true_ixs = np.array(true_ixs)
+    pred_ixs = np.array(pred_ixs)
+
+    import sklearn
+    from sklearn.metrics import confusion_matrix, f1_score
+    print(confusion_matrix(true_ixs > 0, pred_ixs > 0))
+    print(f1_score(true_ixs > 0, pred_ixs > 0))
+
+    valid_ixs = (true_ixs > 0) & (pred_ixs > 0)
+    diffs_ixs = pred_ixs[valid_ixs] - true_ixs[valid_ixs]
+    diffs_sec = diffs_ixs * 100 * 0.02  # * stride * base_freq
+    print(len(map_true), len(valid_ixs), np.mean(diffs_sec), np.std(diffs_sec))
 
 
 class UpdateKLCoef(pl.Callback):
@@ -46,6 +76,25 @@ class UpdateKLCoef(pl.Callback):
 # https://pytorch-lightning.readthedocs.io/en/stable/common/debugging.html
 
 
+# dropping out of lightning like this shouldn't be necessary, but some things
+# are not possible with pf and pl.Trainer:
+    # 1. logging_metrics broken, must compute by hand
+    #   https://github.com/jdb78/pytorch-forecasting/issues/1151
+    # 2. aligning y_true and y_pred instead of just getting y_pred
+
+
+# https://discuss.pytorch.org/t/opinion-eval-should-be-a-context-manager/18998/3
+@contextmanager
+def evaluating(net):
+    '''Temporarily switch to evaluation mode.'''
+    istrain = net.training
+    try:
+        net.eval()
+        yield net
+    finally:
+        if istrain:
+            net.train()
+
 @dataclass
 class Batch:  # TODO make x optional?
     y_pred: List[torch.Tensor]
@@ -57,7 +106,7 @@ class Batch:  # TODO make x optional?
     def __post_init__(self):
         # stub out t if needed
         assert (self.yt is None) == (self.xt is None)
-        if self.yt is None:
+        if self.yt is None and 0:
             print('TODO this is probably broken')
             # self.use_t_mins = False
             self.xt = [torch.arange(0, len(x)) for x in self.xs[0]]
@@ -71,13 +120,14 @@ class Batch:  # TODO make x optional?
             pass
 
     @classmethod
-    def from_net_out(cls, trainer, batch):
-        with torch.no_grad():
+    def from_net_out(cls, model, batch):
+        with evaluating(model), torch.no_grad():
             # batch = trainer.datamodule.transfer_batch_to_device(
             # batch, trainer.model.device, 0)
             # or pf.utils.move_to_device
             x, y = batch
-            y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
+            # use model.to_prediction to support quantiles
+            y_pred, y_true, xs = (model(x)['prediction'], y[0],
                                   x['encoder_target'])
 
         def _detach_fn(tensor, lens=None):
@@ -86,26 +136,38 @@ class Batch:  # TODO make x optional?
                 tensor = [t[:l] for t, l in zip(tensor, lens)]
             return tensor
 
-        try:
-            # TODO where to put this for recurrent?
-            xt, yt = (x['encoder_cont'][:, :, trainer.model.t_idx],
-                      x['decoder_cont'][:, :, trainer.model.t_idx])
+        xt, yt = (x['encoder_cont'][:, :, model.t_idx],
+                  x['decoder_cont'][:, :, model.t_idx])
 
-            return cls(
-                [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
-                [_detach_fn(y, x['decoder_lengths']) for y in y_true],
-                [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
-                [_detach_fn(yt, x['decoder_lengths'])],
-                [_detach_fn(xt, x['encoder_lengths'])],
-            )
+        return cls(
+            [
+                _detach_fn(y.squeeze(dim=-1), x['decoder_lengths'])
+                for y in y_pred
+            ],
+            [_detach_fn(y, x['decoder_lengths']) for y in y_true],
+            [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
+            [_detach_fn(yt, x['decoder_lengths'])],  # [] needed for agg
+            [_detach_fn(xt, x['encoder_lengths'])],  # [] needed for agg
+        )
 
-        except AttributeError:
+    @classmethod
+    def from_agg(cls, batches):
 
-            return cls(
-                [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
-                [_detach_fn(y, x['decoder_lengths']) for y in y_true],
-                [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
-            )
+        assert all(b.xt is not None for b in batches), 'TODO'
+
+        def _flatten(tups: List[Tuple]):
+            '''
+            [n_batches] [f] [b] t 1 -> [f] [n_batches * b] t 1
+            with [] == list, 1 being the dim of each individual feature
+            this is a huge pain with ragged arrays, and unreadable...
+            '''
+            lsts = zip(*tups)
+            return [[[item for items in batch for item in items]
+                     for batch in zip(*lst)] for lst in lsts]
+
+        args = _flatten(map(astuple, batches))
+
+        return cls(*args)
 
 
 class PlotCallback(pl.Callback):
@@ -127,13 +189,13 @@ class PlotCallback(pl.Callback):
                            batch_idx):
         if (self.ready and (batch_idx % self.every_n_batches == 0)
                 and (trainer.current_epoch % self.every_n_epochs == 0)):
-            self.tr_data.append(Batch.from_net_out(trainer, batch))
+            self.tr_data.append(Batch.from_net_out(trainer.model, batch))
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch,
                                 batch_idx, dataloader_idx):
         if (self.ready and (batch_idx % self.every_n_batches == 0)
                 and (trainer.current_epoch % self.every_n_epochs == 0)):
-            self.va_data.append(Batch.from_net_out(trainer, batch))
+            self.va_data.append(Batch.from_net_out(trainer.model, batch))
 
     @staticmethod
     def make_plot(
@@ -141,7 +203,6 @@ class PlotCallback(pl.Callback):
         y_true: List[torch.Tensor],
         yt: List[torch.Tensor],
         xt: List[torch.Tensor],
-        use_t_mins: bool,  # TODO awk
         xs: Optional[torch.Tensor] = None,
     ) -> Tuple[np.ndarray, Dict[str, float]]:
 
@@ -173,17 +234,9 @@ class PlotCallback(pl.Callback):
         if xs is None:
             xs = [[torch.zeros((0, 1)) for y in y_pred[0]]] * len(y_pred)
 
-        # 1 (b * n_batches) t -> t
-        if len(xt) == 1:
-            xt = xt[0]
-        if len(yt) == 1:
-            yt = yt[0]
-        xt = np.concatenate(xt)
-        yt = np.concatenate(yt)
-
-        if use_t_mins:
-            xt = xt / 60
-            yt = yt / 60
+        # (b * n_batches) t -> t
+        xt = np.concatenate(xt[0]) / 60
+        yt = np.concatenate(yt[0]) / 60
 
         # TODO use group_id for this after adding data aug
         pts = np.concatenate(
@@ -203,6 +256,13 @@ class PlotCallback(pl.Callback):
                           var_name='vital',
                           value_name='pred').join(
                               true_df.melt(value_name='true')['true'])
+
+        ROLL = 0
+        if ROLL:
+            df[['pred', 'true']] = (df.groupby('pt')[['pred', 'true']]
+                                      .transform(
+                                          lambda s: s.rolling(window=100).mean()))
+        df = df.dropna()
 
         # gets rid of start of THR/THV as well as padded timesteps
         df_error = df[df['true'] != 0]
@@ -279,8 +339,7 @@ class PlotCallback(pl.Callback):
             ]):
                 ax.plot(line.get_xdata()[0], line.get_ydata()[0], 'go', ms=2)
                 ax.plot(line.get_xdata()[-1], line.get_ydata()[-1], 'yo', ms=2)
-        if use_t_mins:
-            grid1.set_xlabels('t (min)')
+        grid1.set_xlabels('t (min)')
         width, height = grid1.figure.get_size_inches()
         arr1 = to_array(grid1)
 
@@ -305,8 +364,7 @@ class PlotCallback(pl.Callback):
                                   for line in ax.lines]).mean()
             errs.append(err)
             ax.set_title(f'{title}\nmean relative error = {err:.2f}')
-        if use_t_mins:
-            grid2.set_xlabels('t (min)')
+        grid2.set_xlabels('t (min)')
         # resize for stackability
         cur_w, cur_h = grid2.figure.get_size_inches()
         grid2.figure.set_size_inches(width, (width * cur_h / cur_w) * 1.2)
@@ -315,25 +373,13 @@ class PlotCallback(pl.Callback):
         return (np.vstack(
             (arr1, arr2)), dict(zip(target_labels_to_facets.keys(), errs)))
 
-    @staticmethod
-    def _flatten(tups: List[Tuple]):
-        # n_batches f b t 1 -> f (n_batches * b) t 1
-        # this is a huge pain with ragged arrays, and unreadable...
-        lsts = zip(*tups)
-        return [[[item for items in batch for item in items]
-                 for batch in zip(*lst)] for lst in lsts]
-
     # @rank_zero_only
     def on_train_epoch_end(self, trainer: pl.Trainer,
                            pl_module: pl.LightningModule) -> None:
         if self.ready and self.tr_data:
             # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
 
-            kwargs = dict(
-                zip(
-                    asdict(self.tr_data[0]).keys(),
-                    self._flatten(map(astuple, self.tr_data))))
-            arr, errs = self.make_plot(**kwargs, use_t_mins=True)
+            arr, errs = self.make_plot(**asdict(Batch.from_agg(self.tr_data)))
 
             trainer.logger.experiment.add_image(
                 'train',
@@ -351,11 +397,7 @@ class PlotCallback(pl.Callback):
     def on_validation_epoch_end(self, trainer: pl.Trainer,
                                 pl_module: pl.LightningModule) -> None:
         if self.ready and self.va_data:
-            kwargs = dict(
-                zip(
-                    asdict(self.va_data[0]).keys(),
-                    self._flatten(map(astuple, self.va_data))))
-            arr, errs = self.make_plot(**kwargs, use_t_mins=True)
+            arr, errs = self.make_plot(**asdict(Batch.from_agg(self.va_data)))
 
             trainer.logger.experiment.add_image(
                 'val', arr, global_step=trainer.global_step, dataformats='HWC')
@@ -390,13 +432,11 @@ class MyLightningCLI(LightningCLI):
     # after dm is setup.
     def instantiate_classes(self) -> None:
         """Instantiates the classes and sets their attributes."""
-        # import xdev; xdev.embed()
         self.config_init = self.parser.instantiate_classes(self.config)
         self.datamodule = self._get(self.config_init, "data")
         self.model = self._get(self.config_init, "model")
 
         # self.model = self.model.from_datamodule(self.datamodule, **self.model.hparams)
-        # import xdev; xdev.embed()
 
         self._add_configure_optimizers_method_to_model(self.subcommand)
         self.trainer = self.instantiate_trainer()
@@ -478,62 +518,81 @@ class IdMetric(pf.MultiHorizonMetric):
         return loss
 
 
-def scan_metric(trainer,
-                model,
-                dm,
-                xt_starts_mins=[0],
-                xt_ends_mins=np.arange(10, 100, 10),
-                # xt_ends_mins=[10, 20],
-                # metric=pf.MAPE(),
-                metric=IdMetric(reduction='sum'),
-                train=True):
+def scan_metric(
+        model,
+        dm,
+        xt_starts_mins=[0, 20, 40],
+        xt_ends_mins=np.arange(10, 100, 10),
+        # xt_ends_mins=[20],
+        metric=pf.MAPE(),
+        # metric=IdMetric(reduction='sum'),
+        train=True):
 
     # ensure metric
     # TODO skip MAE/MAPE step when y_true == 0
     # regular `in` check doesn't work here, don't know why
-    if not any(metric.name == m.name for m in model.logging_metrics):
-        model.logging_metrics.append(metric)
-
-    # temporarily disable logging
-    loggers, trainer.loggers = trainer.loggers, []
-    callbacks, trainer.callbacks = trainer.callbacks, []
+    # if not any(metric.name == m.name for m in model.logging_metrics):
+        # model.logging_metrics.append(metric)
+    # model.logging_metrics.append(pf.MAE())
 
     # run model and aggregate data
     dct = collections.defaultdict(list)
-    for xt_start_mins, xt_end_mins in itertools.product(
-            xt_starts_mins, xt_ends_mins):
+    kws = {
+        'train': dict(dset_nm='df_tr', xt_restrict=True),
+        'val': dict(dset_nm='df_va', xt_restrict=False),
+        # 'test': dict(dset_nm='df_te', xt_restrict=False),
+    }
+    for xt_start_mins, xt_end_mins in filter(
+            lambda tup: tup[0] < tup[1],
+            itertools.product(xt_starts_mins, xt_ends_mins)):
 
-        dl = dm.train_dataloader(xt_mins=(xt_start_mins, xt_end_mins),
-                                 xt_restrict=True)
-        trainer.test(model, dataloaders=dl)
-        metric_dct = {
-            k.split(' ')[0]: v.item()
-            for k, v in trainer.logged_metrics.items()
-            if metric.name in k.split(' ')[-1]
-        }
-        metric_dct.update(xt_start_mins=xt_start_mins,
-                          xt_end_mins=xt_end_mins,
-                          n_pts=len(dl.dataset))
-        for k, v in metric_dct.items():
-            dct[k].append(v)
+        for nm, kwargs in kws.items():
+            dl = dm._dataloader(**kwargs, xt_mins=(xt_start_mins, xt_end_mins))
 
-        n_timesteps = 0
-        for x, _ in dl:
-            # import xdev; xdev.embed()
-            n_timesteps += x['decoder_lengths'].sum()
-        print(f'{n_timesteps=}')
+            # print(nm, xt_start_mins, xt_end_mins)
+            batch = Batch.from_agg([Batch.from_net_out(model, b) for b in dl])
+            # print('...evaled')
+            metric_dct = {}
+            for i, trg in enumerate(model.target):
+                tt, pp = batch.y_true[i], batch.y_pred[i]
+                true = torch.nn.utils.rnn.pack_sequence(batch.y_true[i],
+                                                        enforce_sorted=False)
+                pred = torch.nn.utils.rnn.pack_sequence(batch.y_pred[i],
+                                                        enforce_sorted=False)
+                # TODO make real metrics work
+                # pred = torch.nn.utils.rnn.pad_sequence(pred, batch_first=True)
+                # metric_dct[trg] = type(metric)()(true, pred)
+                metric_dct[trg] = torch.mean(
+                    torch.cat([
+                        (t-p).abs() / t.abs() for t,p in zip(tt, pp)])).item()
 
-    # resume logging
-    trainer.loggers = loggers
-    trainer.callbacks = callbacks
+            n_timesteps = 0
+            for x, _ in dl:
+                n_timesteps += x['decoder_lengths'].sum()
+            n_timesteps = n_timesteps.item()
+            n_mins = n_timesteps * utils.BASE_FREQ_S * dm.stride / 60
+
+            metric_dct.update(xt_start_mins=xt_start_mins,
+                              xt_end_mins=xt_end_mins,
+                              n_pts=len(dl.dataset),
+                              n_timesteps=n_timesteps,
+                              n_mins=n_mins,
+                              dset=nm,
+            )
+            for k, v in metric_dct.items():
+                dct[k].append(v)
 
     # plot
-    df = pd.DataFrame.from_dict(dct)
-    # df = df.set_index(['xt_start_mins', 'xt_end_mins'])
-    # n_pts = df.pop('n_pts')
-    # for trg_name, series in df.iteritems():
-    # pass
-    data = df.melt(id_vars=['xt_start_mins', 'xt_end_mins', 'n_pts'])
+    var = metric.name
+    ix_vars = ['xt_start_mins', 'xt_end_mins', 'dset']
+    data = pd.DataFrame.from_dict(dct)
+    data['mins_per_pt'] = data['n_mins'] / data['n_pts']
+    data = data.drop('n_mins', axis=1)
+    data = data.melt(
+        id_vars=['n_pts', 'mins_per_pt', 'n_timesteps'] + ix_vars, var_name=var)
+    data['value'] = data['value'].replace([np.inf, -np.inf], np.nan)
+    data = data.dropna(axis=0, subset='value')
+
     grid = sns.relplot(
         kind='line',
         estimator=None,
@@ -541,7 +600,8 @@ def scan_metric(trainer,
         x='xt_end_mins',
         y='value',
         col='xt_start_mins',
-        hue='variable',
+        row='dset',
+        hue=var,
         alpha=1,
         sort=False,
         legend=True,
@@ -552,20 +612,83 @@ def scan_metric(trainer,
         # ms=1,
     )
 
-    # https://stackoverflow.com/a/65799913
-    def twin_lineplot(x, y, **kwargs):
-        ax = plt.twinx()
-        sns.lineplot(x=x, y=y, **kwargs)
 
-    grid.map(twin_lineplot,
-             'xt_end_mins',
-             'n_pts',
-             ls='--',
-             color='k',
-             markers=True,
-             legend=False,
-            )
-    import xdev; xdev.embed()
+    # https://stackoverflow.com/a/65799913
+    def twin_lineplot(x, **kwargs):
+        ax = plt.twinx()
+        ax.set_ylim(0, 200)  # TODO figure out how to eq this
+        sub_df = (data.loc[x.index, ix_vars +
+                           ['n_pts', 'mins_per_pt']].drop_duplicates(ix_vars).melt(
+                               id_vars=ix_vars, var_name='variable'))
+        sns.lineplot(data=sub_df,
+                     x='xt_end_mins',
+                     y='value',
+                     style='variable',
+                     ax=ax,
+                     **kwargs)
+
+    grid.map(
+        twin_lineplot,
+        'xt_end_mins',
+        color='k',
+        markers=True,
+        legend=True,
+    )
+    plt.show()
+
+
+def cvc(model, dl):
+
+    batch = Batch.from_agg([Batch.from_net_out(model, batch) for batch in dl])
+    map_ix = model.target.index('MeanArterialPressure(mmHg)')  # 5
+
+    true = torch.nn.utils.rnn.pad_sequence(batch.y_true[map_ix],
+                                           batch_first=True)
+    pred = torch.nn.utils.rnn.pad_sequence(batch.y_pred[map_ix],
+                                           batch_first=True)
+    prev = torch.nn.utils.rnn.pad_sequence(batch.xs[map_ix], batch_first=True)
+
+    map_cutoff = 40
+
+    # need to negate to sort by descending order
+    true_ixs = torch.searchsorted(-true,
+                                  torch.tensor([[-map_cutoff]] * len(true)))
+    pred_ixs = torch.searchsorted(-pred,
+                                  torch.tensor([[-map_cutoff]] * len(pred)))
+    prev_ixs = torch.searchsorted(-prev,
+                                  torch.tensor([[-map_cutoff]] * len(prev)))
+
+    t = torch.nn.utils.rnn.pad_sequence(batch.yt[0],
+                                        batch_first=True,
+                                        padding_value=-1)
+    xt = torch.nn.utils.rnn.pad_sequence(batch.xt[0],
+                                         batch_first=True,
+                                         padding_value=-1)
+    lens = torch.searchsorted(-t, torch.tensor([[1]] * len(t)))
+    xlens = torch.searchsorted(-xt, torch.tensor([[1]] * len(xt)))
+
+    has_true, has_pred, has_prev = (true_ixs < lens, pred_ixs < lens,
+                                    prev_ixs < xlens)
+
+    # exclude pts in cvc during x
+    has_prev = has_prev.squeeze()
+    true_ixs, pred_ixs = true_ixs[~has_prev], pred_ixs[~has_prev]
+    t = t[~has_prev]
+    has_true, has_pred = has_true[~has_prev], has_pred[~has_prev],
+
+    dt = (t.take_along_dim(pred_ixs.where(has_pred, torch.tensor(0)), 1) -
+          t.take_along_dim(true_ixs.where(has_true, torch.tensor(0)),
+                           1))[has_true & has_pred]
+
+    from sklearn.metrics import confusion_matrix, f1_score, balanced_accuracy_score
+    print(confusion_matrix(has_true, has_pred))
+    f1 = f1_score(has_true, has_pred)
+    ba = balanced_accuracy_score(has_true, has_pred)
+    print(f'{f1=} {ba=}')
+    print(torch.mean(dt), torch.std(dt))
+
+    # plt.hist(dt.numpy(), bins=30)
+    # plt.show()
 
 
 if __name__ == "__main__":
@@ -587,7 +710,14 @@ if __name__ == "__main__":
                          auto_registry=False)
 
     print('reloading model')
-    cli.model = cli.model.from_datamodule(cli.datamodule, **cli.model.hparams)
+    if ckpt_path := cli.trainer.resume_from_checkpoint:
+        # TODO ensure old vs new dm settings match here
+        # https://github.com/Lightning-AI/lightning/issues/924
+        cli.model = cli.model.from_datamodule(cli.datamodule,
+                                              ckpt_path=ckpt_path)
+    else:
+        cli.model = cli.model.from_datamodule(cli.datamodule,
+                                              **cli.model.hparams)
     # would need this if optimizer or lr scheduler is set through cli
     # cli._add_configure_optimizers_method_to_model(None)
 
@@ -613,7 +743,7 @@ if __name__ == "__main__":
         if cli.trainer.overfit_batches:
             p = cli.trainer.overfit_batches * b
         else:
-            p = len(cli.datamodule.dset_tr)
+            p = len(cli.datamodule._dset('df_tr', **cli.datamodule.kwargs))
         st = cli.datamodule.static_behavior[0]
 
         new_name = '_'.join((
@@ -631,7 +761,6 @@ if __name__ == "__main__":
     # batch = next(iter(cli.datamodule.train_dataloader()))
     # x, y = batch
     # y_pred = cli.model(x)
-    # import xdev; xdev.embed()
 
     # DUMP HPARAMS
     # from pytorch_lightning.core.saving import save_hparams_to_yaml
@@ -640,4 +769,23 @@ if __name__ == "__main__":
 
     # # fit == train + validate
     # cli.trainer.fit(cli.model, datamodule=cli.datamodule)
-    scan_metric(cli.trainer, cli.model, cli.datamodule)
+    # scan_metric(cli.model, cli.datamodule)
+    # cvc(cli.model, cli.datamodule._dataloader('df_tr', train=False))
+    # cvc(cli.model, cli.datamodule.val_dataloader())
+    # cvc(cli.model, cli.datamodule.test_dataloader())
+
+    # dl = cli.datamodule._dataloader('df_tr', train=False)
+    # dl = cli.datamodule.test_dataloader()
+    import itertools
+    dl = itertools.chain(
+        cli.datamodule._dataloader('df_tr', train=False),
+        cli.datamodule._dataloader('df_va', train=False),
+        cli.datamodule._dataloader('df_te', train=False)
+    )
+    batch = Batch.from_agg([Batch.from_net_out(cli.model, batch) for batch in dl])
+    breakpoint()
+    PlotCallback.make_plot(**asdict(batch))
+    # yt, yp = batch.y_true[5], batch.y_pred[5]
+    # calc_cvcs(yt, yp)
+    cvc(cli.model, dl)
+

@@ -10,18 +10,11 @@
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/io/protobuf/PBEngine.h"
 
-bool SETimedStabilization::StabilizeRestingState(Controller& engine)
+bool SETimedStabilization::Stabilize(Controller& engine, const std::string& criteria)
 {
-  m_RestingStabilizationTime = new SEScalarTime();
-  if (!GetRestingStabilizationTime().IsValid())
-    return true;//No stabilization time requested
-  return Stabilize(engine, GetRestingStabilizationTime());
-}
-bool SETimedStabilization::StabilizeFeedbackState(Controller& engine)
-{
-  if (!HasFeedbackStabilizationTime())
-    return true;//No stabilization time requested
-  return Stabilize(engine, GetFeedbackStabilizationTime());
+  if (!HasConvergenceCriteria(criteria))
+    return false;//No stabilization time for requested
+  return Stabilize(engine, GetConvergenceCriteria(criteria));
 }
 bool SETimedStabilization::StabilizeConditions(Controller& engine, const SEConditionManager& conditions)
 {
@@ -32,12 +25,12 @@ bool SETimedStabilization::StabilizeConditions(Controller& engine, const SECondi
   double maxTime_s = 0;
   for (const SECondition* c : m_Conditions)
   {
-    if(!HasConditionTime(c->GetName()))
+    if(!HasConvergenceCriteria(c->GetName()))
     {
       Error("Engine does not support Condition "+c->GetName());
       return false;
     }
-    const SEScalarTime& time = GetConditionTime(c->GetName());
+    const SEScalarTime& time = GetConvergenceCriteria(c->GetName());
     cTime_s= time.GetValue(TimeUnit::s);
     if (cTime_s > maxTime_s)
       maxTime_s = cTime_s;
@@ -125,8 +118,6 @@ bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& tim
 
 SETimedStabilization::SETimedStabilization(Logger *logger) : SEEngineStabilization(logger)
 {
-  m_RestingStabilizationTime = nullptr;
-  m_FeedbackStabilizationTime = nullptr;
   GetStabilizationDuration().SetValue(0, TimeUnit::s);
 }
 
@@ -138,9 +129,7 @@ SETimedStabilization::~SETimedStabilization()
 void SETimedStabilization::Clear()
 {
   SEEngineStabilization::Clear();
-  SAFE_DELETE(m_RestingStabilizationTime);
-  SAFE_DELETE(m_FeedbackStabilizationTime);
-  DELETE_MAP_SECOND(m_ConditionTimes);
+  DELETE_MAP_SECOND(m_ConvergenceCriteria);
 }
 
 bool SETimedStabilization::SerializeToString(std::string& output, eSerializationFormat m) const
@@ -160,70 +149,36 @@ bool SETimedStabilization::SerializeFromFile(const std::string& filename)
   return PBEngine::SerializeFromFile(filename, *this);
 }
 
-bool SETimedStabilization::HasRestingStabilizationTime() const
+bool SETimedStabilization::HasConvergenceCriteria(const std::string& name) const
 {
-  return m_FeedbackStabilizationTime == nullptr ? false : m_FeedbackStabilizationTime->IsValid();
+  return m_ConvergenceCriteria.find(name) != m_ConvergenceCriteria.end();
 }
-SEScalarTime& SETimedStabilization::GetRestingStabilizationTime()
+void SETimedStabilization::RemoveConvergenceCriteria(const std::string& name)
 {
-  if (m_RestingStabilizationTime == nullptr)
-    m_RestingStabilizationTime = new SEScalarTime();
-  return *m_RestingStabilizationTime;
-}
-double SETimedStabilization::GetRestingStabilizationTime(const TimeUnit& unit) const
-{
-  if (!HasRestingStabilizationTime())
-    return SEScalar::dNaN();
-  return m_RestingStabilizationTime->GetValue(unit);
-}
-
-bool SETimedStabilization::HasFeedbackStabilizationTime() const
-{
-  return m_FeedbackStabilizationTime == nullptr ? false : m_FeedbackStabilizationTime->IsValid();
-}
-SEScalarTime& SETimedStabilization::GetFeedbackStabilizationTime()
-{
-  if (m_FeedbackStabilizationTime == nullptr)
-    m_FeedbackStabilizationTime = new SEScalarTime();
-  return *m_FeedbackStabilizationTime;
-}
-double SETimedStabilization::GetFeedbackStabilizationTime(const TimeUnit& unit) const
-{
-  if (!HasFeedbackStabilizationTime())
-    return SEScalar::dNaN();
-  return m_FeedbackStabilizationTime->GetValue(unit);
-}
-
-bool SETimedStabilization::HasConditionTime(const std::string& name) const
-{
-  return m_ConditionTimes.find(name) != m_ConditionTimes.end();
-}
-void SETimedStabilization::RemoveConditionTime(const std::string& name)
-{
-  for (auto itr : m_ConditionTimes)
+  for (auto itr : m_ConvergenceCriteria)
   {
     if (itr.first == name)
     {
       SAFE_DELETE(itr.second);
-      m_ConditionTimes.erase(name);
+      m_ConvergenceCriteria.erase(name);
       return;
     }
   }
 }
-SEScalarTime& SETimedStabilization::GetConditionTime(const std::string& name)
+SEScalarTime& SETimedStabilization::GetConvergenceCriteria(const std::string& name)
 {
-  for (auto itr : m_ConditionTimes)
+  for (auto itr : m_ConvergenceCriteria)
   {
     if (itr.first == name)
       return (*itr.second);
   }
   SEScalarTime* time = new SEScalarTime();
-  m_ConditionTimes[name]=time;
+  m_ConvergenceCriteria[name]=time;
   return *time;
 }
-const SEScalarTime* SETimedStabilization::GetConditionTime(const std::string& name) const
+const SEScalarTime* SETimedStabilization::GetConvergenceCriteria(const std::string& name) const
 {
-  for (auto itr : m_ConditionTimes)
+  for (auto itr : m_ConvergenceCriteria)
   {
     if (itr.first == name)
       return itr.second;
@@ -231,7 +186,7 @@ const SEScalarTime* SETimedStabilization::GetConditionTime(const std::string& na
   return nullptr;
 }
 
-const std::map<std::string,SEScalarTime*>& SETimedStabilization::GetConditionTimes() const
+const std::map<std::string,SEScalarTime*>& SETimedStabilization::GetConvergenceCriterias() const
 {
-  return m_ConditionTimes;
+  return m_ConvergenceCriteria;
 }

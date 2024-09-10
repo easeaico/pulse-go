@@ -213,7 +213,7 @@ bool SERespiratoryMechanics::HasLeftComplianceCurve() const
 SECurve& SERespiratoryMechanics::GetLeftComplianceCurve()
 {
   if (m_LeftComplianceCurve == nullptr)
-    m_LeftComplianceCurve = new SECurve();
+    m_LeftComplianceCurve = new SECurve(GetLogger());
   return *m_LeftComplianceCurve;
 }
 const SECurve* SERespiratoryMechanics::GetLeftComplianceCurve() const
@@ -228,7 +228,7 @@ bool SERespiratoryMechanics::HasRightComplianceCurve() const
 SECurve& SERespiratoryMechanics::GetRightComplianceCurve()
 {
   if (m_RightComplianceCurve == nullptr)
-    m_RightComplianceCurve = new SECurve();
+    m_RightComplianceCurve = new SECurve(GetLogger());
   return *m_RightComplianceCurve;
 }
 const SECurve* SERespiratoryMechanics::GetRightComplianceCurve() const

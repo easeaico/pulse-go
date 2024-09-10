@@ -5,34 +5,49 @@ namespace Pulse.CDM
 {
   public class SEDyspnea : SEPatientAction
   {
-    protected SEScalar0To1 severity;
+    protected SEScalar0To1 respiration_rate_severity;
+    protected SEScalar0To1 tidal_volume_severity;
 
     public SEDyspnea()
     {
-      severity = null;
+      respiration_rate_severity = null;
+      tidal_volume_severity = null;
     }
 
     public override void Clear()
     {
       base.Clear();
-      if (severity != null)
-        severity.Invalidate();
+      if (respiration_rate_severity != null)
+        respiration_rate_severity.Invalidate();
+      if (tidal_volume_severity != null)
+        tidal_volume_severity.Invalidate();
     }
 
     public override bool IsValid()
     {
-      return HasSeverity();
+      return HasRespirationRateSeverity() || HasTidalVolumeSeverity();
     }
 
-    public bool HasSeverity()
+    public bool HasRespirationRateSeverity()
     {
-      return severity == null ? false : severity.IsValid();
+      return respiration_rate_severity == null ? false : respiration_rate_severity.IsValid();
     }
-    public SEScalar0To1 GetSeverity()
+    public SEScalar0To1 GetRespirationRateSeverity()
     {
-      if (severity == null)
-        severity = new SEScalar0To1();
-      return severity;
+      if (respiration_rate_severity == null)
+        respiration_rate_severity = new SEScalar0To1();
+      return respiration_rate_severity;
+    }
+
+    public bool HasTidalVolumeSeverity()
+    {
+      return tidal_volume_severity == null ? false : tidal_volume_severity.IsValid();
+    }
+    public SEScalar0To1 GetTidalVolumeSeverity()
+    {
+      if (tidal_volume_severity == null)
+        tidal_volume_severity = new SEScalar0To1();
+      return tidal_volume_severity;
     }
   }
 }

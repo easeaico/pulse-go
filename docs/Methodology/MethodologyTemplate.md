@@ -157,10 +157,10 @@ What should be updated and why.
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 
-Define terms and acronyms.
+Define terms, acronyms, and initialisms.
 
 Data Model Implementation
 -------------------------

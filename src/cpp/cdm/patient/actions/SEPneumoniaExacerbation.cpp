@@ -55,7 +55,7 @@ void SEPneumoniaExacerbation::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SEPneumoniaExacerbation::GetScalar(const std::string& name)
+const SEScalar* SEPneumoniaExacerbation::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

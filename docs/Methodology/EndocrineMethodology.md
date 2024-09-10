@@ -54,7 +54,7 @@ The synthesis rate is defined by:
 <center>
 *Equation 1.*
 </center><br>
-Where *G* is glucose concentration of the blood. 
+Where <i>G</i> is glucose concentration of the blood. 
 This linear function is valid for glucose levels of 80-150 mg/dL, and will compute an insulin synthesis rate between 100-475 pmol/min accordingly.
 
 Because the %Cardiovascular System does not contain a pancreas compartment, the insulin is synthesized directly in the splanchnic.
@@ -146,13 +146,13 @@ The effects of epinephrine release on the physiology can be clearly seen by trig
 *Table 1. Actions associated with the %Endocrine System were validated by comparing the engine output to expected trends and data. Engine results show favorable agreement (green), some agreement (yellow), or bad agreement (red). Results mostly matched expected trends.*
 </center>
 
-|	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Arterial Epinephrine (ug/L)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Heart Rate (1/min)	|
-|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Acute Stress	|	Severity 0.4; mild pain	|	20	|	210	|<span class="warning">	90% Increase @cite greisen2001acute Increase @cite herd1991cardiovascular	</span>|<span class="danger">	15 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="danger">	17 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="danger">	Increase @cite herd1991cardiovascular	</span>|
-|	Acute Stress	|	Severity 0	|	220	|	610	|<span class="success">	.034 ug/L @cite wortsman1984adrenomedullary	</span>|<span class="success">	100-140 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	60-90 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	72 @cite guyton2006medical	</span>|
-|	Acute Stress	|	Severity 0.8; mental stress	|	620	|	810	|<span class="success">	37-273% Increase @cite herd1991cardiovascular .09 @cite wilkinson1998sympathetic	</span>|<span class="danger">	15 mmHg Increase @cite herd1991cardiovascular 143.8 @cite wilkinson1998sympathetic	</span>|<span class="success">	8 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="success">	Increase @cite herd1991cardiovascular  82 @cite wilkinson1998sympathetic	</span>|
-|	Acute Stress	|	Severity 0	|	820	|	1210	|<span class="success">	.034 ug/L @cite wortsman1984adrenomedullary	</span>|<span class="success">	100-140 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	60-90 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	72 @cite guyton2006medical	</span>|
-|	Acute Stress	|	Severity 1; panic attack	|	1220	|	1410	|<span class="success">	54-199% Increase @cite wilkinson1998sympathetic	</span>|<span class="success">	NC to Slight Increase @cite wilkinson1998sympathetic	</span>|<span class="warning">	NC to Slight Increase @cite wilkinson1998sympathetic	</span>|<span class="success">	85-108 @cite wilkinson1998sympathetic	</span>|
+|	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Arterial Epinephrine (ug/L)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Heart Rate (1/min)	|	Pulmonary Resistance (cmH2O-s/L)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Acute Stress	|	Severity 0.3; mild pain	|	20	|	320	|<span class="success">	90% Increase @cite greisen2001acute Increase @cite herd1991cardiovascular	</span>|<span class="danger">	15 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="danger">	17 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="danger">	Increase @cite herd1991cardiovascular	</span>|<span class="success">	Decrease @cite lewis1985therapy	</span>|
+|	Acute Stress	|	Severity 0	|	320	|	620	|<span class="success">	.034 ug/L @cite wortsman1984adrenomedullary	</span>|<span class="success">	100-140 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	60-90 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	72 @cite guyton2006medical	</span>|<span class="success">	Normal	</span>|
+|	Acute Stress	|	Severity 0.6; mental stress	|	620	|	920	|<span class="success">	37-273% Increase @cite herd1991cardiovascular .09 @cite wilkinson1998sympathetic	</span>|<span class="success">	15 mmHg Increase @cite herd1991cardiovascular 143.8 @cite wilkinson1998sympathetic	</span>|<span class="success">	8 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="success">	Increase @cite herd1991cardiovascular  82 @cite wilkinson1998sympathetic	</span>|<span class="success">	Decrease @cite lewis1985therapy	</span>|
+|	Acute Stress	|	Severity 0	|	920	|	1220	|<span class="success">	.034 ug/L @cite wortsman1984adrenomedullary	</span>|<span class="success">	100-140 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	60-90 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	72 @cite guyton2006medical	</span>|<span class="success">	Normal	</span>|
+|	Acute Stress	|	Severity 0.9; panic attack	|	1220	|	1520	|<span class="success">	>50-fold increase @cite chendran2019induce, 54-199% Increase @cite wilkinson1998sympathetic	</span>|<span class="success">	24-36 mmHg Increase @cite stratton1985hemodynamic	</span>|<span class="warning">	NC to Slight Increase @cite wilkinson1998sympathetic	</span>|<span class="success">	85-108 @cite wilkinson1998sympathetic	</span>|<span class="success">	Decrease @cite lewis1985therapy	</span>|
 
 @anchor endrocrine-conclusions
 Conclusions

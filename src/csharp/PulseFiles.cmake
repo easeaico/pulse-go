@@ -52,6 +52,7 @@ set(PULSE_CSHARP_BIND_FILES
 set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_CreateState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_DeathState.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Dehydration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_EngineUse.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Environment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_ECMO.cs
@@ -59,6 +60,7 @@ set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Hemothorax.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_MechanicalVentilator.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_PatientStates.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_SystemModifiers.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RespiratoryMechanics.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RunScenarios.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_VentilationMechanics.cs
@@ -118,6 +120,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEAsthmaAttack.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBrainInjury.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBronchoconstriction.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SECardiovascularMechanicsModification.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompression.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionAutomated.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionInstantaneous.cs
@@ -139,6 +142,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEPulmonaryShuntExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SERespiratoryFatigue.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SERespiratoryMechanicsConfiguration.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SERespiratoryMechanicsModification.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SESubstanceBolus.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SESubstanceCompoundInfusion.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SESubstanceInfusion.cs
@@ -159,6 +163,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicPericardialEffusion.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicRenalStenosis.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEDehydration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEImpairedAlveolarExchange.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPatientCondition.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPneumonia.cs
@@ -193,6 +198,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SEScalarPressureTimePerVolume.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SEScalarTemperature.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SEScalarTime.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SEScalarUnsigned.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SEScalarVolume.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SEScalarVolumePerPressure.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SEScalarVolumePerTime.cs
@@ -256,7 +262,9 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorMode.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/physiology/SECardiovascularMechanicsModifiers.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/physiology/SERespiratoryMechanics.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/physiology/SERespiratoryMechanicsModifiers.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/physiology/SERespiratorySystem.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/Logger.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/RunConfiguration.cs

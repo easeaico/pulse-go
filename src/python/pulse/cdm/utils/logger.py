@@ -1,15 +1,35 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from enum import Enum
-from typing import List, NamedTuple, Set
-import logging
 import re
+import json
+import logging
+from enum import Enum
+from json import JSONDecodeError
+from typing import List, NamedTuple, Set
 
 from pulse.cdm.engine import SEAction
 
 
 _pulse_logger = logging.getLogger('pulse')
+
+
+def get_severity_str(severity: float) -> str:
+    """
+    :param severity: The severity value.
+
+    :return: Severity as a qualitative string.
+    """
+    if severity == 0:
+        raise ValueError("Severity string undefined for 0 severity")
+    elif severity <= 0.3:
+        severity_str = "Mild"
+    elif severity <= 0.6:
+        severity_str = "Moderate"
+    else:
+        severity_str = "Severe"
+
+    return severity_str
 
 
 def break_camel_case(string: str):
@@ -98,42 +118,49 @@ class eActionEventCategory(Enum):
     EVENT = 1
 class LogActionEvent(NamedTuple):
     time: float
+    name: str
     text: str
     category: eActionEventCategory
 def parse_events(log_file: str, omit: List[str] = []):
-    event_tag = "[Event]"
+    event_tag = "[Event"
     events = []
     with open(log_file) as f:
         lines = f.readlines()
         for line in lines:
             if len(line) == 0:
                 continue
-            event_idx = line.find(event_tag)
-            if event_idx == -1:
+            match = re.search(
+                r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)[01]\](?P<event_text>.*)",
+                line
+            )
+            if match is None:
                 continue
-            else:
-                event_text = line[(event_idx+len(event_tag)):].strip()
-                end_time_idx = event_text.find("(s)")
-                if end_time_idx == -1:
-                    end_time_idx = event_text.find(",")
-                event_time = float(event_text[:end_time_idx].strip())
-                event_text = event_text[(event_text.find(",")+1):].strip()
+            event_text = match.group("event_text").strip()
+            event_name = match.group("event_name").strip()
+            event_time = float(match.group("time_val"))
 
-                # Check to see if it should be omitted
-                keep_event = True
-                for o in omit:
-                    if o in event_text:
-                        keep_event = False
-                        break
-                if not keep_event:
-                    continue
+            # Check to see if it should be omitted
+            keep_event = True
+            for o in omit:
+                if o in event_text:
+                    keep_event = False
+                    break
+            if not keep_event:
+                continue
 
-                events.append(LogActionEvent(event_time, event_text, eActionEventCategory.EVENT))
+            events.append(LogActionEvent(event_time, event_name, event_text, eActionEventCategory.EVENT))
 
     return events
 def parse_actions(log_file: str, omit: List[str] = []):
-    advTime = "AdvanceTime"
-    omit.append(advTime)
+    patient_action = "PatientAction"
+    enviro_action = "EnvironmentAction"
+    equip_action = "EquipmentAction"
+    adv_stable = "AdvanceUntilStable"
+    adv_time = "AdvanceTime"
+    serialize_requested = "SerializeRequested"
+    serialize_state = "SerializeState"
+
+    omit.append(adv_time)
     action_tag = "[Action]"
     actions = []
     with open(log_file) as f:
@@ -148,14 +175,14 @@ def parse_actions(log_file: str, omit: List[str] = []):
             if action_idx == -1:
                 idx += 1
                 continue
-            elif advTime in line:
+            elif adv_time in line:
                 idx += 1
                 continue
             else:
                 action_text = line
                 # Group 0: Entire match
                 # Group 1: Time
-                match = re.search(r'\[(\d*\.?d*)\(.*\)\]', action_text)
+                match = re.search(r'\[(\d*\.?\d*)\(.*\)\]', action_text)
                 if match is None:
                     _pulse_logger.error("Could not parse actions from " + str(log_file))
                     return actions
@@ -167,6 +194,31 @@ def parse_actions(log_file: str, omit: List[str] = []):
                     idx += 1
                     line = lines[idx]
                     action_text = ''.join([action_text, line])
+
+                # Attempt to determine action name
+                try:
+                    action_data = json.loads(action_text)
+                except JSONDecodeError:
+                    _pulse_logger.error("Could not parse actions from " + str(log_file))
+                    return actions
+
+                if adv_time in action_data:
+                    action_name = adv_time
+                elif adv_stable in action_data:
+                    action_name = adv_stable
+                elif serialize_requested in action_data:
+                    action_name = serialize_requested
+                elif serialize_state in action_data:
+                    action_name = serialize_state
+                elif patient_action in action_data:
+                    action_name = list(action_data[patient_action].keys())[0]
+                elif enviro_action in action_data:
+                    action_name = list(action_data[enviro_action].keys())[0]
+                elif equip_action in action_data:
+                    action_name = list(action_data[equip_action].keys())[0]
+                else:
+                    _pulse_logger.warning(f"Unable to determine action name: {action_text}")
+                    action_name = action_data.keys()[0]
 
                 # Check to see if it should be omitted
                 keep_action = True
@@ -183,7 +235,7 @@ def parse_actions(log_file: str, omit: List[str] = []):
                 # Remove leading spaces on each line
                 action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
 
-                actions.append(LogActionEvent(action_time, action_text, eActionEventCategory.ACTION))
+                actions.append(LogActionEvent(action_time, action_name, action_text, eActionEventCategory.ACTION))
 
             idx += 1
 

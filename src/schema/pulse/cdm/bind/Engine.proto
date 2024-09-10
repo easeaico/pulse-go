@@ -10,11 +10,23 @@ import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Patient.proto";
 import "pulse/cdm/bind/PatientActions.proto";
 import "pulse/cdm/bind/PatientConditions.proto";
-import "pulse/cdm/bind/Plots.proto";
 import "pulse/cdm/bind/EnvironmentActions.proto";
 import "pulse/cdm/bind/EnvironmentConditions.proto";
 import "pulse/cdm/bind/EquipmentActions.proto";
 import "pulse/cdm/bind/Properties.proto";
+
+message EngineInitializationStatusData
+{
+  eEngineInitializationState                           InitializationState              = 2;/**<<@brief Why was the engine unable to initialize. */
+  string                                               CSVFilename                      = 3;/**<<@brief Optional csv file location. */
+  string                                               LogFilename                      = 4;/**<<@brief Optional log file location. */
+  double                                               StabilizationTime_s              = 5;/**<<@brief How long did stabilization take, 0 if a state was loaded. */
+}
+
+message EngineInitializationStatusListData
+{
+  repeated EngineInitializationStatusData              EngineInitializationStatus       = 1;
+}
 
 message DecimalFormatData
 {
@@ -97,78 +109,6 @@ message DataRequestedListData
   repeated DataRequestedData                            DataRequested                   = 1;
 }
 
-// This encapsulates a row from our System/Patient validation spreedsheet
-// It also encapsulates a segment property cell from a scenario validation spreedsheet
-
-message RangeData
-{
-  double                                                Minimum                         = 1;
-  double                                                Maximum                         = 2;
-}
-message ValidationTargetData
-{
-
-  string                                                Header                          = 1;
-  string                                                Reference                       = 2;
-  string                                                Notes                           = 3;
-}
-message SegmentValidationTargetData
-{
-
-  ValidationTargetData                                  ValidationTarget                = 1;
-  oneof Expected
-  {
-    double                                              EqualToValue                    = 2;
-    int32                                               EqualToSegment                  = 3;
-    double                                              GreaterThanValue                = 4;
-    int32                                               GreaterThanSegment              = 5;
-    double                                              LessThanValue                   = 6;
-    int32                                               LessThanSegment                 = 7;
-    double                                              TrendsToValue                   = 8;
-    int32                                               TrendsToSegment                 = 9;
-    RangeData                                           Range                           = 10;
-  }
-}
-message SegmentValidationSegmentData
-{
-
-  int32                                                 Segment                         = 1;
-  string                                                Notes                           = 2;
-  repeated SegmentValidationTargetData                  SegmentValidationTarget         = 3;
-}
-message SegmentValidationSegmentListData
-{
-  repeated SegmentValidationSegmentData                 SegmentValidationSegment   = 1;
-}
-message SegmentValidationConfigurationData
-{
-  PlotterListData                                       Plots                           = 1;
-}
-
-message TimeSeriesValidationTargetData
-{
-  enum eType
-  {
-    Mean     = 0;
-    Minimum  = 1;
-    Maximum  = 2;
-  }
-  ValidationTargetData                                  ValidationTarget                = 1;
-  eType                                                 Type                            = 2;
-  oneof Expected
-  {
-    double                                              EqualToValue                    = 3;
-    double                                              GreaterThanValue                = 4;
-    double                                              LessThanValue                   = 5;
-    double                                              TrendsToValue                   = 6;
-    RangeData                                           Range                           = 7;
-  }
-}
-message TimeSeriesValidationTargetListData
-{
-  repeated TimeSeriesValidationTargetData               TimeSeriesValidationTarget      = 1;
-}
-
 message AnyConditionData
 {
   oneof Condition
@@ -244,9 +184,7 @@ message EngineInitializationListData
 message TimedStabilizationData
 {
   eSwitch                                               TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
-  ScalarTimeData                                        RestingStabilizationTime        = 2;/**<< @brief */
-  ScalarTimeData                                        FeedbackStabilizationTime       = 3;/**<< @brief */
-  map<string,ScalarTimeData>                            ConditionStabilization          = 4;/**<< @brief */
+  map<string,ScalarTimeData>                            ConvergenceCriteria             = 2;/**<< @brief */
 }
 
 /** @brief A properties target percent difference allowed */
@@ -267,9 +205,7 @@ message DynamicStabilizationEngineConvergenceData
 message DynamicStabilizationData
 {
   eSwitch                                               TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
-  DynamicStabilizationEngineConvergenceData             RestingConvergence              = 2;/**<< @brief */
-  DynamicStabilizationEngineConvergenceData             FeedbackConvergence             = 3;/**<< @brief */
-  map<string,DynamicStabilizationEngineConvergenceData> ConditionConvergence            = 4;/**<< @brief */
+  map<string,DynamicStabilizationEngineConvergenceData> ConvergenceCriteria             = 2;/**<< @brief */
 }
 
 message LogMessagesData

@@ -61,6 +61,7 @@ CDM_BIND_DECL(ScalarPressureTimePerVolumeAreaData)
 CDM_BIND_DECL(ScalarPressureTimeSquaredPerVolumeData)
 CDM_BIND_DECL(ScalarTemperatureData)
 CDM_BIND_DECL(ScalarTimeData)
+CDM_BIND_DECL(ScalarUnsignedData)
 CDM_BIND_DECL(ScalarVolumeData)
 CDM_BIND_DECL(ScalarVolumePerPressureData)
 CDM_BIND_DECL(ScalarVolumePerTimeData)
@@ -374,6 +375,11 @@ public:
   static CDM_BIND::ScalarTimeData* Unload(const SEScalarTime& src);
   static void Serialize(const CDM_BIND::ScalarTimeData& src, SEScalarTime& dst);
   static void Serialize(const SEScalarTime& src, CDM_BIND::ScalarTimeData& dst);
+
+  static void Load(const CDM_BIND::ScalarUnsignedData& src, SEScalarUnsigned& dst);
+  static CDM_BIND::ScalarUnsignedData* Unload(const SEScalarUnsigned& src);
+  static void Serialize(const CDM_BIND::ScalarUnsignedData& src, SEScalarUnsigned& dst);
+  static void Serialize(const SEScalarUnsigned& src, CDM_BIND::ScalarUnsignedData& dst);
 
   static void Load(const CDM_BIND::ScalarVolumeData& src, SEScalarVolume& dst);
   static CDM_BIND::ScalarVolumeData* Unload(const SEScalarVolume& src);

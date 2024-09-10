@@ -15,21 +15,17 @@ import com.kitware.pulse.utilities.FileUtils;
 public class SEDynamicStabilization
 {
   protected eSwitch                                             trackingStabilization;
-  protected SEDynamicStabilizationEngineConvergence             restingConvergence;
-  protected SEDynamicStabilizationEngineConvergence             feedbackConvergence;
-  protected Map<String,SEDynamicStabilizationEngineConvergence> conditionConvergence;
+  protected Map<String,SEDynamicStabilizationEngineConvergence> convergenceCriteria;
   
   public SEDynamicStabilization()
   {
-    this.conditionConvergence=new HashMap<>();
+    this.convergenceCriteria=new HashMap<>();
   }
   
   public void clear()
   {
     this.trackingStabilization=eSwitch.Off;
-    this.restingConvergence=null;
-    this.feedbackConvergence=null;
-    this.conditionConvergence.clear();
+    this.convergenceCriteria.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -47,13 +43,9 @@ public class SEDynamicStabilization
   {
     if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED && src.getTrackingStabilization()!=eSwitch.NullSwitch)
       dst.trackingStabilization=src.getTrackingStabilization();
-    if(src.hasRestingConvergence())
-      SEDynamicStabilizationEngineConvergence.load(src.getRestingConvergence(),dst.getRestingConvergence());
-    if(src.hasFeedbackConvergence())
-      SEDynamicStabilizationEngineConvergence.load(src.getFeedbackConvergence(),dst.getFeedbackConvergence());
-    for(String name : src.getConditionConvergenceMap().keySet())
+    for(String name : src.getConvergenceCriteriaMap().keySet())
     {
-      SEDynamicStabilizationEngineConvergence.load(src.getConditionConvergenceMap().get(name), dst.createConditionConvergence(name));
+      SEDynamicStabilizationEngineConvergence.load(src.getConvergenceCriteriaMap().get(name), dst.createConvergenceCriteria(name));
     }
   }
   public static DynamicStabilizationData unload(SEDynamicStabilization src)
@@ -66,13 +58,9 @@ public class SEDynamicStabilization
   {
   	if(src.trackingStabilization!=null)
       dst.setTrackingStabilization(src.trackingStabilization);
-    if(src.hasRestingConvergence())
-      dst.setRestingConvergence(SEDynamicStabilizationEngineConvergence.unload(src.restingConvergence));
-    if(src.hasFeedbackConvergence())
-      dst.setFeedbackConvergence(SEDynamicStabilizationEngineConvergence.unload(src.feedbackConvergence));
-    for(String name : src.conditionConvergence.keySet())
+    for(String name : src.convergenceCriteria.keySet())
     {
-    	dst.putConditionConvergence(name, SEDynamicStabilizationEngineConvergence.unload(src.conditionConvergence.get(name)));
+    	dst.putConvergenceCriteria(name, SEDynamicStabilizationEngineConvergence.unload(src.convergenceCriteria.get(name)));
     }
   }
   
@@ -85,40 +73,18 @@ public class SEDynamicStabilization
     this.trackingStabilization = (b==eSwitch.NullSwitch) ? eSwitch.Off : b;
   }
   
-  public boolean hasRestingConvergence()
-  {
-    return restingConvergence != null;
-  }
-  public SEDynamicStabilizationEngineConvergence getRestingConvergence()
-  {
-    if (restingConvergence == null)
-      restingConvergence = new SEDynamicStabilizationEngineConvergence();
-    return restingConvergence;
-  }
-  
-  public boolean hasFeedbackConvergence()
-  {
-    return feedbackConvergence != null;
-  }
-  public SEDynamicStabilizationEngineConvergence getFeedbackConvergence()
-  {
-    if (feedbackConvergence == null)
-    	feedbackConvergence = new SEDynamicStabilizationEngineConvergence();
-    return feedbackConvergence;
-  }
-  
-  public SEDynamicStabilizationEngineConvergence createConditionConvergence(String type)
+  public SEDynamicStabilizationEngineConvergence createConvergenceCriteria(String type)
   {
     SEDynamicStabilizationEngineConvergence c = new SEDynamicStabilizationEngineConvergence();
-    this.conditionConvergence.put(type, c);
+    this.convergenceCriteria.put(type, c);
     return c;
   }
-  public boolean hasConditionConvergence(String type)
+  public boolean hasConvergenceCriteria(String type)
   {
-    return this.conditionConvergence.containsKey(type);
+    return this.convergenceCriteria.containsKey(type);
   }
-  public SEDynamicStabilizationEngineConvergence getConditionConvergence(String type)
+  public SEDynamicStabilizationEngineConvergence getConvergenceCriteria(String type)
   {
-    return this.conditionConvergence.get(type);
+    return this.convergenceCriteria.get(type);
   }
 }

@@ -28,9 +28,9 @@ enum eHeartRhythm
     @details */
 message PupillaryResponseData
 {
-  ScalarNegative1To1Data              ReactivityModifier                             = 1; /**<< @brief Change in pupil reaction time -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time. */
-  ScalarNegative1To1Data              ShapeModifier                                  = 2; /**<< @brief Percentage change in pupil shape from normal. Positive is vertical ovoid. Negative is horizontal ovoid. */
-  ScalarNegative1To1Data              SizeModifier                                   = 3; /**<< @brief Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated. */
+  ScalarNegative1To1Data               ReactivityModifier                             = 1; /**<< @brief Change in pupil reaction time -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time. */
+  ScalarNegative1To1Data               ShapeModifier                                  = 2; /**<< @brief Percentage change in pupil shape from normal. Positive is vertical ovoid. Negative is horizontal ovoid. */
+  ScalarNegative1To1Data               SizeModifier                                   = 3; /**<< @brief Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated. */
 }
 
 
@@ -40,35 +40,52 @@ message PupillaryResponseData
     and will be improved in future releases to include more substances that can provide clinician level details and assessments, such as a CBC and blood panel.*/
 message BloodChemistrySystemData
 {
-  ScalarAmountPerVolumeData           BaseExcess                                     = 1;/**<< @brief Excess or deficit, respectively, in the amount of base present in the blood. */
-  ScalarMassPerVolumeData             BloodDensity                                   = 2; /**<< @brief Mass per unit volume of the blood. */
-  ScalarData                          BloodPH                                        = 3; /**<< @brief Measure of acidity or basicity of the blood. */
-  ScalarHeatCapacitancePerMassData    BloodSpecificHeat                              = 4; /**<< @brief The amount of energy required to raise one kilogram of blood by one degree Celsius. */
-  ScalarMassPerVolumeData             BloodUreaNitrogenConcentration                 = 5; /**<< @brief The BUN concentration in the blood.*/  
-  Scalar0To1Data                      CarbonDioxideSaturation                        = 6; /**<< @brief The fraction of hemoglobin that is carbon dioxide bound.*/          
-  Scalar0To1Data                      CarbonMonoxideSaturation                       = 7; /**<< @brief The fraction of hemoglobin that is carbon monoxide bound.*/  
-  Scalar0To1Data                      Hematocrit                                     = 8; /**<< @brief Volume percentage of red blood cells in the blood.*/
-  ScalarMassData                      HemoglobinContent                              = 9; /**<< @brief The total amount of hemoglobin in the blood.*/
-  Scalar0To1Data                      OxygenSaturation                               = 10; /**<< @brief The fraction of hemoglobin that is oxygen bound.*/
-  ScalarAmountPerVolumeData           Phosphate                                      = 11;/**<< @brief Sum of all inorganic phosphate in the blood.*/
-  ScalarVolumeData                    PlasmaVolume                                   = 12;/**<< @brief Volume of the plasma.*/
-  Scalar0To1Data                      PulseOximetry                                  = 13;/**<< @brief The fraction of hemoglobin with bound oxygen as measured optically, which can include Carbon Monoxide.*/
-  ScalarAmountPerVolumeData           RedBloodCellCount                              = 14;/**<< @brief Total number of red blood cells in the blood.*/
-  Scalar0To1Data                      ShuntFraction                                  = 15;/**<< @brief Fraction of the blood flow that bypasses the alveoli; therefore, does not engage is gas exchange.*/
-  ScalarAmountPerVolumeData           StrongIonDifference                            = 16;/**<< @brief Difference between the positive and negative strong ion concentrations in the blood.*/
-  ScalarMassPerVolumeData             TotalProteinConcentration                      = 17;/**<< @brief The concentration of urea in the blood.*/
-  Scalar0To1Data                      VolumeFractionNeutralLipidInPlasma             = 18;/**<< @brief Fraction of the plasma that is made up of neutral lipids.*/
-  Scalar0To1Data                      VolumeFractionNeutralPhospholipidInPlasma      = 19;/**<< @brief Fraction of the plasma that is made up of neutral phospholipids.*/
-  ScalarAmountPerVolumeData           WhiteBloodCellCount                            = 20;/**<< @brief Total number of white blood cells in the blood.*/
+  ScalarAmountPerVolumeData            BaseExcess                                     = 1;/**<< @brief Excess or deficit, respectively, in the amount of base present in the blood. */
+  ScalarMassPerVolumeData              BloodDensity                                   = 2; /**<< @brief Mass per unit volume of the blood. */
+  ScalarData                           BloodPH                                        = 3; /**<< @brief Measure of acidity or basicity of the blood. */
+  ScalarHeatCapacitancePerMassData     BloodSpecificHeat                              = 4; /**<< @brief The amount of energy required to raise one kilogram of blood by one degree Celsius. */
+  ScalarMassPerVolumeData              BloodUreaNitrogenConcentration                 = 5; /**<< @brief The BUN concentration in the blood.*/  
+  Scalar0To1Data                       CarbonDioxideSaturation                        = 6; /**<< @brief The fraction of hemoglobin that is carbon dioxide bound.*/          
+  Scalar0To1Data                       CarbonMonoxideSaturation                       = 7; /**<< @brief The fraction of hemoglobin that is carbon monoxide bound.*/  
+  Scalar0To1Data                       Hematocrit                                     = 8; /**<< @brief Volume percentage of red blood cells in the blood.*/
+  ScalarMassData                       HemoglobinContent                              = 9; /**<< @brief The total amount of hemoglobin in the blood.*/
+  Scalar0To1Data                       OxygenSaturation                               = 10;/**<< @brief The fraction of hemoglobin that is oxygen bound.*/
+  ScalarAmountPerVolumeData            Phosphate                                      = 11;/**<< @brief Sum of all inorganic phosphate in the blood.*/
+  ScalarOsmolalityData                 PlasmaOsmolality                               = 12;/**<< @brief The osmolar pressure contributions of the sodium, urea and glucose divided by the mass of the fluid */
+  ScalarOsmolarityData                 PlasmaOsmolarity                               = 13;/**<< @brief The osmolar pressure contributions of the sodium, urea and glucose divided by the volume of the fluid */
+  ScalarVolumeData                     PlasmaVolume                                   = 14;/**<< @brief Volume of the plasma.*/
+  Scalar0To1Data                       PulseOximetry                                  = 15;/**<< @brief The fraction of hemoglobin with bound oxygen as measured optically, which can include Carbon Monoxide.*/
+  ScalarAmountPerVolumeData            RedBloodCellCount                              = 16;/**<< @brief Total number of red blood cells in the blood.*/
+  Scalar0To1Data                       ShuntFraction                                  = 17;/**<< @brief Fraction of the blood flow that bypasses the alveoli; therefore, does not engage is gas exchange.*/
+  ScalarAmountPerVolumeData            StrongIonDifference                            = 18;/**<< @brief Difference between the positive and negative strong ion concentrations in the blood.*/
+  ScalarMassPerVolumeData              TotalProteinConcentration                      = 19;/**<< @brief The concentration of urea in the blood.*/
+  Scalar0To1Data                       VolumeFractionNeutralLipidInPlasma             = 20;/**<< @brief Fraction of the plasma that is made up of neutral lipids.*/
+  Scalar0To1Data                       VolumeFractionNeutralPhospholipidInPlasma      = 21;/**<< @brief Fraction of the plasma that is made up of neutral phospholipids.*/
+  ScalarAmountPerVolumeData            WhiteBloodCellCount                            = 22;/**<< @brief Total number of white blood cells in the blood.*/
   /** Substance Pressures */
-  ScalarPressureData                  ArterialCarbonDioxidePressure                  = 21;/**<< @brief Partial pressure of carbon dioxide in the aorta.*/
-  ScalarPressureData                  ArterialOxygenPressure                         = 22;/**<< @brief Partial pressure of oxygen in the aorta.*/
-  ScalarPressureData                  PulmonaryArterialCarbonDioxidePressure         = 23;/**<< @brief Partial pressure of carbon dioxide in the pulmonary arteries.*/
-  ScalarPressureData                  PulmonaryArterialOxygenPressure                = 24;/**<< @brief Partial pressure of oxygen in the pulmonary arteries.*/
-  ScalarPressureData                  PulmonaryVenousCarbonDioxidePressure           = 25;/**<< @brief Partial pressure of carbon dioxide in the pulmonary veins.*/
-  ScalarPressureData                  PulmonaryVenousOxygenPressure                  = 26;/**<< @brief Partial pressure of oxygen in the pulmonary veins.*/
-  ScalarPressureData                  VenousCarbonDioxidePressure                    = 27;/**<< @brief Partial pressure of carbon dioxide in the vena cava.*/        
-  ScalarPressureData                  VenousOxygenPressure                           = 28;/**<< @brief Partial pressure of oxygen in the vena cava.*/  
+  ScalarPressureData                   ArterialCarbonDioxidePressure                  = 23;/**<< @brief Partial pressure of carbon dioxide in the aorta.*/
+  ScalarPressureData                   ArterialOxygenPressure                         = 24;/**<< @brief Partial pressure of oxygen in the aorta.*/
+  ScalarPressureData                   PulmonaryArterialCarbonDioxidePressure         = 25;/**<< @brief Partial pressure of carbon dioxide in the pulmonary arteries.*/
+  ScalarPressureData                   PulmonaryArterialOxygenPressure                = 26;/**<< @brief Partial pressure of oxygen in the pulmonary arteries.*/
+  ScalarPressureData                   PulmonaryVenousCarbonDioxidePressure           = 27;/**<< @brief Partial pressure of carbon dioxide in the pulmonary veins.*/
+  ScalarPressureData                   PulmonaryVenousOxygenPressure                  = 28;/**<< @brief Partial pressure of oxygen in the pulmonary veins.*/
+  ScalarPressureData                   VenousCarbonDioxidePressure                    = 29;/**<< @brief Partial pressure of carbon dioxide in the vena cava.*/        
+  ScalarPressureData                   VenousOxygenPressure                           = 30;/**<< @brief Partial pressure of oxygen in the vena cava.*/  
+}
+
+message CardiovascularMechanicsModifiersData
+{
+  ScalarUnsignedData                   ArterialComplianceMultiplier                   = 1; /**<< @brief Updates the aorta compliance.*/
+  ScalarUnsignedData                   ArterialResistanceMultiplier                   = 2; /**<< @brief Updates the aorta resistance.*/
+  ScalarUnsignedData                   PulmonaryComplianceMultiplier                  = 3; /**<< @brief Updates the pulmonary veins, capillaries, and arteries compliances.*/
+  ScalarUnsignedData                   PulmonaryResistanceMultiplier                  = 4; /**<< @brief Updates the pulmonary veins, capillaries, and arteries resistances.*/
+  ScalarUnsignedData                   SystemicResistanceMultiplier                   = 5; /**<< @brief Updates the the entire systemic vasculature resistances, excluding pulmonary.*/
+  ScalarUnsignedData                   SystemicComplianceMultiplier                   = 6; /**<< @brief Updates the the entire systemic vasculature compliances, excluding pulmonary.*/
+  ScalarUnsignedData                   VenousComplianceMultiplier                     = 7; /**<< @brief Updates the vena cava compliance.*/
+  ScalarUnsignedData                   VenousResistanceMultiplier                     = 8; /**<< @brief Updates the vena cava resistance.*/
+  
+  ScalarUnsignedData                   HeartRateMultiplier                            = 9; /**<< @brief Updates the heart driver frequency.*/
+  ScalarUnsignedData                   StrokeVolumeMultiplier                         = 10;/**<< @brief Updates the heart driver amplitude.*/
 }
 
 /** @brief Provides a representation of the human vasculature.
@@ -98,24 +115,25 @@ message CardiovascularSystemData
   ScalarPressureData                  MeanArterialCarbonDioxidePartialPressureDelta  = 19;/**<< @brief The change of the the mean of the partial pressure of carbon dioxide in the aorta from the previous cardiac cycle.*/
   ScalarPressureData                  MeanCentralVenousPressure                      = 20;/**<< @brief The average pressure in the vena cava over the course of a cardiac cycle.*/
   ScalarVolumePerTimeData             MeanSkinFlow                                   = 21;/**<< @brief The blood flow to the skin  averaged over the current cardiac cycle time*/
-  ScalarPressureData                  PulmonaryArterialPressure                      = 22;/**<< @brief The current pressure in the pulmonary arteries.*/
-  Scalar0To1Data                      PulmonaryCapillariesCoverageFraction           = 23;/**<< @brief The fraction of the capillaries interacting with blood.*/
-  ScalarPressureData                  PulmonaryCapillariesWedgePressure              = 24;/**<< @brief The pressure within the pulmonary capillaries.*/
-  ScalarPressureData                  PulmonaryDiastolicArterialPressure             = 25;/**<< @brief The minimum pressure that occurs in the pulmonary arteries over the course of a cardiac cycle.*/
-  ScalarPressureData                  PulmonaryMeanArterialPressure                  = 26;/**<< @brief The average pressure that occurs in the pulmonary arteries over the course of a cardiac cycle.*/
-  ScalarVolumePerTimeData             PulmonaryMeanCapillaryFlow                     = 27;/**<< @brief The average blood flow in the pulmonary capillaries over the course of a cardiac cycle.*/
-  ScalarVolumePerTimeData             PulmonaryMeanShuntFlow                         = 28;/**<< @brief The average blood flow diverted from the pulmonary capillaries (not oxygenated) over the course of a cardiac cycle.*/
-  ScalarPressureData                  PulmonarySystolicArterialPressure              = 29;/**<< @brief The maximum pressure in the pulmonary arteries over the course of a cardiac cycle.*/
-  ScalarPressureTimePerVolumeData     PulmonaryVascularResistance                    = 30;/**<< @brief The resistance offered by the pulmonary circulation.*/
-  ScalarPressureTimePerVolumeAreaData PulmonaryVascularResistanceIndex               = 31;/**<< @brief Relates pulmonary circulation performance to the size of the individual. */
-  ScalarPressureData                  PulsePressure                                  = 32;/**<< @brief The difference between the systolic and diastolic pressures.*/
-  ScalarPressureTimePerVolumeData     SystemicVascularResistance                     = 33;/**<< @brief The resistance to blood flow through the entire systemic vasculature, not including the pulmonary circulation.*/
-  ScalarPressureData                  SystolicArterialPressure                       = 34;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
-  ScalarPressureData                  SystolicLeftHeartPressure                      = 35;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
-  ScalarPressureData                  SystolicRightHeartPressure                     = 36;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
-  ScalarVolumePerTimeData             TotalHemorrhageRate                            = 37;/**<< @brief The total rate of blood loss due to all active hemorrhages.*/
-  ScalarVolumeData                    TotalHemorrhagedVolume                         = 38;/**<< @brief The total amount of blood lost due to all hemorrhages.*/
-  ScalarVolumePerTimeData             TotalPulmonaryPerfusion                        = 39;/**<< @brief The total blood flow that participates in gas exchange over the course of a cardiac cycle. */
+  Scalar0To1Data                      PeripheralPerfusionIndex                       = 22;/**<< @brief The ratio of pulsatile blood flow to non-pulsatile blood flow in the peripheral tissue.*/
+  ScalarPressureData                  PulmonaryArterialPressure                      = 23;/**<< @brief The current pressure in the pulmonary arteries.*/
+  Scalar0To1Data                      PulmonaryCapillariesCoverageFraction           = 24;/**<< @brief The fraction of the capillaries interacting with blood.*/
+  ScalarPressureData                  PulmonaryCapillariesWedgePressure              = 25;/**<< @brief The pressure within the pulmonary capillaries.*/
+  ScalarPressureData                  PulmonaryDiastolicArterialPressure             = 26;/**<< @brief The minimum pressure that occurs in the pulmonary arteries over the course of a cardiac cycle.*/
+  ScalarPressureData                  PulmonaryMeanArterialPressure                  = 27;/**<< @brief The average pressure that occurs in the pulmonary arteries over the course of a cardiac cycle.*/
+  ScalarVolumePerTimeData             PulmonaryMeanCapillaryFlow                     = 28;/**<< @brief The average blood flow in the pulmonary capillaries over the course of a cardiac cycle.*/
+  ScalarVolumePerTimeData             PulmonaryMeanShuntFlow                         = 29;/**<< @brief The average blood flow diverted from the pulmonary capillaries (not oxygenated) over the course of a cardiac cycle.*/
+  ScalarPressureData                  PulmonarySystolicArterialPressure              = 30;/**<< @brief The maximum pressure in the pulmonary arteries over the course of a cardiac cycle.*/
+  ScalarPressureTimePerVolumeData     PulmonaryVascularResistance                    = 31;/**<< @brief The resistance offered by the pulmonary circulation.*/
+  ScalarPressureTimePerVolumeAreaData PulmonaryVascularResistanceIndex               = 32;/**<< @brief Relates pulmonary circulation performance to the size of the individual. */
+  ScalarPressureData                  PulsePressure                                  = 33;/**<< @brief The difference between the systolic and diastolic pressures.*/
+  ScalarPressureTimePerVolumeData     SystemicVascularResistance                     = 34;/**<< @brief The resistance to blood flow through the entire systemic vasculature, not including the pulmonary circulation.*/
+  ScalarPressureData                  SystolicArterialPressure                       = 35;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
+  ScalarPressureData                  SystolicLeftHeartPressure                      = 36;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
+  ScalarPressureData                  SystolicRightHeartPressure                     = 37;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
+  ScalarVolumePerTimeData             TotalHemorrhageRate                            = 38;/**<< @brief The total rate of blood loss due to all active hemorrhages.*/
+  ScalarVolumeData                    TotalHemorrhagedVolume                         = 39;/**<< @brief The total amount of blood lost due to all hemorrhages.*/
+  ScalarVolumePerTimeData             TotalPulmonaryPerfusion                        = 40;/**<< @brief The total blood flow that participates in gas exchange over the course of a cardiac cycle. */
 }
 
 /** @brief Provides transport of drugs through the blood and air in the cardiovascular and respiratory systems, respectively.
@@ -125,16 +143,16 @@ message CardiovascularSystemData
     Totals are from all active drugs in the body.*/
 message DrugSystemData
 {
-  ScalarNegative1To1Data              BronchodilationLevel                           = 1; /**<< @brief */
-  ScalarFrequencyData                 HeartRateChange                                = 2; /**<< @brief */
-  ScalarPressureData                  MeanBloodPressureChange                        = 3; /**<< @brief */
-  Scalar0To1Data                      NeuromuscularBlockLevel                        = 4; /**<< @brief */
-  ScalarPressureData                  PulsePressureChange                            = 5; /**<< @brief */
-  PupillaryResponseData               PupillaryResponse                              = 6; /**<< @brief */
-  ScalarFrequencyData                 RespirationRateChange                          = 7; /**<< @brief */
-  Scalar0To1Data                      SedationLevel                                  = 8; /**<< @brief */
-  ScalarVolumeData                    TidalVolumeChange                              = 9; /**<< @brief */
-  ScalarNegative1To1Data              TubularPermeabilityChange                      = 10;/**<< @brief */
+  ScalarNegative1To1Data               BronchodilationLevel                           = 1; /**<< @brief */
+  ScalarFrequencyData                  HeartRateChange                                = 2; /**<< @brief */
+  ScalarPressureData                   MeanBloodPressureChange                        = 3; /**<< @brief */
+  Scalar0To1Data                       NeuromuscularBlockLevel                        = 4; /**<< @brief */
+  ScalarPressureData                   PulsePressureChange                            = 5; /**<< @brief */
+  PupillaryResponseData                PupillaryResponse                              = 6; /**<< @brief */
+  ScalarFrequencyData                  RespirationRateChange                          = 7; /**<< @brief */
+  Scalar0To1Data                       SedationLevel                                  = 8; /**<< @brief */
+  ScalarVolumeData                     TidalVolumeChange                              = 9; /**<< @brief */
+  ScalarNegative1To1Data               TubularPermeabilityChange                      = 10;/**<< @brief */
 }
 
 /** @brief Releases hormones to maintain homeostasis and regulate body functions, including metabolism and behavior.
@@ -142,7 +160,7 @@ message DrugSystemData
 message EndocrineSystemData
 {
 
-  ScalarAmountPerTimeData             InsulinSynthesisRate                           = 1; /**<< @brief Insulin production rate. */
+  ScalarAmountPerTimeData              InsulinSynthesisRate                           = 1; /**<< @brief Insulin production rate. */
                 
 }
 
@@ -150,25 +168,25 @@ message EndocrineSystemData
     @details */
 message EnergySystemData
 {
-  Scalar0To1Data                      AchievedExerciseLevel                          = 1;/**<< @brief The fraction of how much of the requested exercise the patient is able to achieve. 1.0 means the the patient is performing at the requested level. Nan is the patient is not exercising (no Action)*/
-  ScalarTemperatureData               CoreTemperature                                = 2; /**<< @brief The internal body temperature.*/
-  ScalarAmountPerTimeData             CreatinineProductionRate                       = 3; /**<< @brief The generation of creatinine in the muscle tissue per */  
-  ScalarPressureData                  ExerciseMeanArterialPressureDelta              = 4;/**<< @brief The pressure delta that occurs during exercise. Used to modify the baroreceptor set-point */
-  Scalar0To1Data                      FatigueLevel                                   = 5; /**<< @brief The exhaustion level of the body, or inability to perform physical exercise @details The amount of energy available for activity divided by the normal rested energy */
-  ScalarAmountPerTimeData             KetoneProductionRate                           = 6; /**<< @brief The molar amount of ketones generated in the liver */          
-  ScalarAmountPerTimeData             LactateProductionRate                          = 7; /**<< @brief The molar amount of lactate generated on the tissue level from anaerobic metabolism */
-  ScalarTemperatureData               SkinTemperature                                = 8; /**<< @brief The skin surface temperature.*/
-  ScalarMassPerTimeData               SweatRate                                      = 9; /**<< @brief Mass of sweat generated per unit time due to elevated core temperature */
-  ScalarPowerData                     TotalMetabolicRate                             = 10;/**<< @brief The basal metabolic rate plus additional energy expenditure rates due to activity.*/
-  Scalar0To1Data                      TotalWorkRateLevel                             = 11;/**<< @brief The current patient work rate above basal over the maximum work rate capable by the patient */
+  Scalar0To1Data                       AchievedExerciseLevel                          = 1;/**<< @brief The fraction of how much of the requested exercise the patient is able to achieve. 1.0 means the the patient is performing at the requested level. Nan is the patient is not exercising (no Action)*/
+  ScalarTemperatureData                CoreTemperature                                = 2; /**<< @brief The internal body temperature.*/
+  ScalarAmountPerTimeData              CreatinineProductionRate                       = 3; /**<< @brief The generation of creatinine in the muscle tissue per */  
+  ScalarPressureData                   ExerciseMeanArterialPressureDelta              = 4;/**<< @brief The pressure delta that occurs during exercise. Used to modify the baroreceptor set-point */
+  Scalar0To1Data                       FatigueLevel                                   = 5; /**<< @brief The exhaustion level of the body, or inability to perform physical exercise @details The amount of energy available for activity divided by the normal rested energy */
+  ScalarAmountPerTimeData              KetoneProductionRate                           = 6; /**<< @brief The molar amount of ketones generated in the liver */          
+  ScalarAmountPerTimeData              LactateProductionRate                          = 7; /**<< @brief The molar amount of lactate generated on the tissue level from anaerobic metabolism */
+  ScalarTemperatureData                SkinTemperature                                = 8; /**<< @brief The skin surface temperature.*/
+  ScalarMassPerTimeData                SweatRate                                      = 9; /**<< @brief Mass of sweat generated per unit time due to elevated core temperature */
+  ScalarPowerData                      TotalMetabolicRate                             = 10;/**<< @brief The basal metabolic rate plus additional energy expenditure rates due to activity.*/
+  Scalar0To1Data                       TotalWorkRateLevel                             = 11;/**<< @brief The current patient work rate above basal over the maximum work rate capable by the patient */
 }
 
 /** @brief Provides nutrients to the body
     @details Balances out the fluid and substances lost through other functionalities such as urination, sweating, and water loss from breathing.*/
 message GastrointestinalSystemData
 {
-  ScalarVolumePerTimeData             WaterAbsorptionRate                            = 1; /**<< @brief Rate of the absorption of water from the stomach into the blood stream*/
-  NutritionData                       StomachContents                                = 2; /**<< @brief The contents in the stomach*/
+  ScalarVolumePerTimeData              WaterAbsorptionRate                            = 1; /**<< @brief Rate of the absorption of water from the stomach into the blood stream*/
+  NutritionData                        StomachContents                                = 2; /**<< @brief The contents in the stomach*/
 }
 
 /** @brief Provides liver function by clearing and maintaining substances in the blood
@@ -183,16 +201,16 @@ message HepaticSystemData
  */
 message NervousSystemData
 {
-  eSwitch                             ChemoreceptorFeedback                          = 1;/**<< @brief Signals if the Chemoreceptors are on or off. */
-  ScalarData                          ChemoreceptorHeartRateScale                    = 2;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          ChemoreceptorHeartElastanceScale               = 3;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
-  eSwitch                             BaroreceptorFeedback                           = 4;/**<< @brief Signals if the Baroreceptors are on or off. */
-  ScalarData                          BaroreceptorHeartRateScale                     = 5;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorHeartElastanceScale                = 6;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorResistanceScale                    = 7;/**<< @brief %Cardiovascular resistance multiplier used to scale the heart rate due to baroreceptor feedback*/
-  ScalarData                          BaroreceptorComplianceScale                    = 8;/**<< @brief %Cardiovascular compliance multiplier used to scale the heart rate due to baroreceptor feedback*/  
-  PupillaryResponseData               LeftEyePupillaryResponse                       = 9;/**<< @brief */  
-  PupillaryResponseData               RightEyePupillaryResponse                      = 10;/**<< @brief */
+  eSwitch                              ChemoreceptorFeedback                          = 1;/**<< @brief Signals if the Chemoreceptors are on or off. */
+  ScalarData                           ChemoreceptorHeartRateScale                    = 2;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                           ChemoreceptorHeartElastanceScale               = 3;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  eSwitch                              BaroreceptorFeedback                           = 4;/**<< @brief Signals if the Baroreceptors are on or off. */
+  ScalarData                           BaroreceptorHeartRateScale                     = 5;/**<< @brief Heart rate multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                           BaroreceptorHeartElastanceScale                = 6;/**<< @brief Heart elastance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                           BaroreceptorResistanceScale                    = 7;/**<< @brief %Cardiovascular resistance multiplier used to scale the heart rate due to baroreceptor feedback*/
+  ScalarData                           BaroreceptorComplianceScale                    = 8;/**<< @brief %Cardiovascular compliance multiplier used to scale the heart rate due to baroreceptor feedback*/  
+  PupillaryResponseData                LeftEyePupillaryResponse                       = 9;/**<< @brief */  
+  PupillaryResponseData                RightEyePupillaryResponse                      = 10;/**<< @brief */
 }
 
 /** @brief Provides kidney function by clearing and maintaining substances in the blood
@@ -200,93 +218,111 @@ message NervousSystemData
     substances in the blood with behavior dependent upon factors such as dehydration and the presence of diuretics.*/
 message RenalSystemData
 {
-  Scalar0To1Data                      FiltrationFraction                             = 1; /**<< @brief Scalar used to compute reabsorption for substances*/
-  ScalarVolumePerTimeData             GlomerularFiltrationRate                       = 2; /**<< @brief Flow rate of filtrate into the tubules */
+  Scalar0To1Data                       FiltrationFraction                             = 1; /**<< @brief Scalar used to compute reabsorption for substances*/
+  ScalarVolumePerTimeData              GlomerularFiltrationRate                       = 2; /**<< @brief Flow rate of filtrate into the tubules */
   
-  ScalarPressureTimePerVolumeData     LeftAfferentArterioleResistance                = 3; /**<< @brief resistance to flow going into the glomerular capillaries in the left Kidney*/
-  ScalarPressureData                  LeftBowmansCapsulesHydrostaticPressure         = 4; /**<< @brief Pressure generated from fluid in the bowmans capsules in the left Kidney */
-  ScalarPressureData                  LeftBowmansCapsulesOsmoticPressure             = 5; /**<< @brief Pressure generated from substances in the bowmans capsules in the left Kidney*/
-  ScalarPressureTimePerVolumeData     LeftEfferentArterioleResistance                = 6; /**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
-  ScalarPressureData                  LeftGlomerularCapillariesHydrostaticPressure   = 7; /**<< @brief Pressure generated from fluid in the glomerular capillaries in the left Kidney */
-  ScalarPressureData                  LeftGlomerularCapillariesOsmoticPressure       = 8; /**<< @brief Pressure generated from substances in the capillaries in the left Kidney */
-  ScalarVolumePerTimePressureData     LeftGlomerularFiltrationCoefficient            = 9; /**<< @brief Calculated for each substance to determine ease of transport into the tubules in the left Kidney */
-  ScalarVolumePerTimeData             LeftGlomerularFiltrationRate                   = 10;/**<< @brief Flow rate of filtrate into the tubules in left Kidney */
-  ScalarAreaData                      LeftGlomerularFiltrationSurfaceArea            = 11;/**<< @brief Surface area of glomerular capillaries that experiance filtration in the left Kidney */
-  ScalarVolumePerTimePressureAreaData LeftGlomerularFluidPermeability                = 12;/**<< @brief Permeability coefficient of the capillary tissue in the left Kidney */
-  Scalar0To1Data                      LeftFiltrationFraction                         = 13;/**<< @brief Scalar used to compute reabsorption for substances in left Kidney */
-  ScalarPressureData                  LeftNetFiltrationPressure                      = 14;/**<< @brief Total pressure directed into the tubules in the left Kidney */
-  ScalarPressureData                  LeftNetReabsorptionPressure                    = 15;/**<< @brief Total pressure directed into the peritubular capillaries in the left Kidney */
-  ScalarPressureData                  LeftPeritubularCapillariesHydrostaticPressure  = 16;/**<< @brief Pressure generated by the fluid in the peritubular capillaries in the left Kidney */
-  ScalarPressureData                  LeftPeritubularCapillariesOsmoticPressure      = 17;/**<< @brief Pressure generated by the substance concentration in the peritubular capillaries in the left Kidney*/
-  ScalarVolumePerTimePressureData     LeftReabsorptionFiltrationCoefficient          = 18;/**<< @brief Value which determines how much of a substance is reabsorbed into the blood stream in the left Kidney*/
-  ScalarVolumePerTimeData             LeftReabsorptionRate                           = 19;/**<< @brief Rate at which fluid or a substance is transported into the peritubular capillaries in the left Kidney */  
-  ScalarPressureData                  LeftTubularOsmoticPressure                     = 20;/**<< @brief Pressure generated by substances in the tubules in the left Kidney */  
-  ScalarPressureData                  LeftTubularHydrostaticPressure                 = 21;/**<< @brief Pressure generated by the fluid in the tubules in the left Kidney */
-  ScalarAreaData                      LeftTubularReabsorptionFiltrationSurfaceArea   = 22;/**<< @brief Surface ares of the tubules which is subject to fluid transport (reabsorption) in the left Kidney */
-  ScalarVolumePerTimePressureAreaData LeftTubularReabsorptionFluidPermeability       = 23;/**<< @brief Permeability of the tissue in the tubules, influencing resistance to flow into peritubular capillaries in the left Kidney */
+  ScalarPressureTimePerVolumeData      LeftAfferentArterioleResistance                = 3; /**<< @brief resistance to flow going into the glomerular capillaries in the left Kidney*/
+  ScalarPressureData                   LeftBowmansCapsulesHydrostaticPressure         = 4; /**<< @brief Pressure generated from fluid in the bowmans capsules in the left Kidney */
+  ScalarPressureData                   LeftBowmansCapsulesOsmoticPressure             = 5; /**<< @brief Pressure generated from substances in the bowmans capsules in the left Kidney*/
+  ScalarPressureTimePerVolumeData      LeftEfferentArterioleResistance                = 6; /**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
+  ScalarPressureData                   LeftGlomerularCapillariesHydrostaticPressure   = 7; /**<< @brief Pressure generated from fluid in the glomerular capillaries in the left Kidney */
+  ScalarPressureData                   LeftGlomerularCapillariesOsmoticPressure       = 8; /**<< @brief Pressure generated from substances in the capillaries in the left Kidney */
+  ScalarVolumePerTimePressureData      LeftGlomerularFiltrationCoefficient            = 9; /**<< @brief Calculated for each substance to determine ease of transport into the tubules in the left Kidney */
+  ScalarVolumePerTimeData              LeftGlomerularFiltrationRate                   = 10;/**<< @brief Flow rate of filtrate into the tubules in left Kidney */
+  ScalarAreaData                       LeftGlomerularFiltrationSurfaceArea            = 11;/**<< @brief Surface area of glomerular capillaries that experiance filtration in the left Kidney */
+  ScalarVolumePerTimePressureAreaData  LeftGlomerularFluidPermeability                = 12;/**<< @brief Permeability coefficient of the capillary tissue in the left Kidney */
+  Scalar0To1Data                       LeftFiltrationFraction                         = 13;/**<< @brief Scalar used to compute reabsorption for substances in left Kidney */
+  ScalarPressureData                   LeftNetFiltrationPressure                      = 14;/**<< @brief Total pressure directed into the tubules in the left Kidney */
+  ScalarPressureData                   LeftNetReabsorptionPressure                    = 15;/**<< @brief Total pressure directed into the peritubular capillaries in the left Kidney */
+  ScalarPressureData                   LeftPeritubularCapillariesHydrostaticPressure  = 16;/**<< @brief Pressure generated by the fluid in the peritubular capillaries in the left Kidney */
+  ScalarPressureData                   LeftPeritubularCapillariesOsmoticPressure      = 17;/**<< @brief Pressure generated by the substance concentration in the peritubular capillaries in the left Kidney*/
+  ScalarVolumePerTimePressureData      LeftReabsorptionFiltrationCoefficient          = 18;/**<< @brief Value which determines how much of a substance is reabsorbed into the blood stream in the left Kidney*/
+  ScalarVolumePerTimeData              LeftReabsorptionRate                           = 19;/**<< @brief Rate at which fluid or a substance is transported into the peritubular capillaries in the left Kidney */  
+  ScalarPressureData                   LeftTubularOsmoticPressure                     = 20;/**<< @brief Pressure generated by substances in the tubules in the left Kidney */  
+  ScalarPressureData                   LeftTubularHydrostaticPressure                 = 21;/**<< @brief Pressure generated by the fluid in the tubules in the left Kidney */
+  ScalarAreaData                       LeftTubularReabsorptionFiltrationSurfaceArea   = 22;/**<< @brief Surface ares of the tubules which is subject to fluid transport (reabsorption) in the left Kidney */
+  ScalarVolumePerTimePressureAreaData  LeftTubularReabsorptionFluidPermeability       = 23;/**<< @brief Permeability of the tissue in the tubules, influencing resistance to flow into peritubular capillaries in the left Kidney */
 
-  ScalarVolumePerTimeData             RenalBloodFlow                                 = 24;/**<< @brief Blood flow into the kidney that is not filtered into the tubules */
-  ScalarVolumePerTimeData             RenalPlasmaFlow                                = 25;/**<< @brief Plasma flow into the kidney that is not filtered into the tubules */  
-  ScalarPressureTimePerVolumeData     RenalVascularResistance                        = 26;/**<< @brief Total resistance o f the kidney vasculature  */
+  ScalarVolumePerTimeData              RenalBloodFlow                                 = 24;/**<< @brief Blood flow into the kidney that is not filtered into the tubules */
+  ScalarVolumePerTimeData              RenalPlasmaFlow                                = 25;/**<< @brief Plasma flow into the kidney that is not filtered into the tubules */  
+  ScalarPressureTimePerVolumeData      RenalVascularResistance                        = 26;/**<< @brief Total resistance o f the kidney vasculature  */
 
-  ScalarPressureTimePerVolumeData     RightAfferentArterioleResistance               = 27;/**<< @brief resistance to flow going into the glomerular capillaries in the right Kidney */
-  ScalarPressureData                  RightBowmansCapsulesHydrostaticPressure        = 28;/**<< @brief Pressure generated from fluid in the bowmans capsules in the right Kidney  */
-  ScalarPressureData                  RightBowmansCapsulesOsmoticPressure            = 29;/**<< @brief Pressure generated from substances in the bowmans capsules in the right Kidney  */
-  ScalarPressureTimePerVolumeData     RightEfferentArterioleResistance               = 30;/**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
-  ScalarPressureData                  RightGlomerularCapillariesHydrostaticPressure  = 31;/**<< @brief Pressure generated from fluid in the glomerular capillaries in the left Kidney */
-  ScalarPressureData                  RightGlomerularCapillariesOsmoticPressure      = 32;/**<< @brief Pressure generated from substances in the capillaries in the left Kidney */
-  ScalarVolumePerTimePressureData     RightGlomerularFiltrationCoefficient           = 33;/**<< @brief Calculated for each substance to determine ease of transport into the tubules in the left Kidney */
-  ScalarVolumePerTimeData             RightGlomerularFiltrationRate                  = 34;/**<< @brief Flow rate of filtrate into the tubules in left Kidney */
-  ScalarAreaData                      RightGlomerularFiltrationSurfaceArea           = 35;/**<< @brief Surface area of glomerular capillaries that experiance filtration in the left Kidney */
-  ScalarVolumePerTimePressureAreaData RightGlomerularFluidPermeability               = 36;/**<< @brief Permeability coefficient of the capillary tissue in the left Kidney*/
-  Scalar0To1Data                      RightFiltrationFraction                        = 37;/**<< @brief Scalar used to compute reabsorption for substances in left Kidney */
-  ScalarPressureData                  RightNetFiltrationPressure                     = 38;/**<< @brief  Total pressure directed into the tubules in the left Kidney */
-  ScalarPressureData                  RightNetReabsorptionPressure                   = 39;/**<< @brief Total pressure directed into the peritubular capillaries in the left Kidney */
-  ScalarPressureData                  RightPeritubularCapillariesHydrostaticPressure = 40;/**<< @brief Pressure generated by the fluid in the peritubular capillaries in the left Kidney */
-  ScalarPressureData                  RightPeritubularCapillariesOsmoticPressure     = 41;/**<< @brief Pressure generated by the substance concentration in the peritubular capillaries in the left Kidney */
-  ScalarVolumePerTimePressureData     RightReabsorptionFiltrationCoefficient         = 42;/**<< @brief Value which determines how much of a substance is reabsorbed into the blood stream in the left Kidney */
-  ScalarVolumePerTimeData             RightReabsorptionRate                          = 43;/**<< @brief Rate at which fluid or a substance is transported into the peritubular capillaries in the left Kidney */
-  ScalarPressureData                  RightTubularOsmoticPressure                    = 44;/**<< @brief Pressure generated by substances in the tubules in the left Kidney  */  
-  ScalarPressureData                  RightTubularHydrostaticPressure                = 45;/**<< @brief Pressure generated by the fluid in the tubules in the left Kidney */            
-  ScalarAreaData                      RightTubularReabsorptionFiltrationSurfaceArea  = 46;/**<< @brief Surface ares of the tubules which is subject to fluid transport (reabsorption) in the left Kidney */
-  ScalarVolumePerTimePressureAreaData RightTubularReabsorptionFluidPermeability      = 47;/**<< @brief Permeability of the tissue in the tubules, influencing resistance to flow into peritubular capillaries in the left Kidney */
+  ScalarPressureTimePerVolumeData      RightAfferentArterioleResistance               = 27;/**<< @brief resistance to flow going into the glomerular capillaries in the right Kidney */
+  ScalarPressureData                   RightBowmansCapsulesHydrostaticPressure        = 28;/**<< @brief Pressure generated from fluid in the bowmans capsules in the right Kidney  */
+  ScalarPressureData                   RightBowmansCapsulesOsmoticPressure            = 29;/**<< @brief Pressure generated from substances in the bowmans capsules in the right Kidney  */
+  ScalarPressureTimePerVolumeData      RightEfferentArterioleResistance               = 30;/**<< @brief Resistance to flow into the peritubular capillaries in the left Kidney */
+  ScalarPressureData                   RightGlomerularCapillariesHydrostaticPressure  = 31;/**<< @brief Pressure generated from fluid in the glomerular capillaries in the left Kidney */
+  ScalarPressureData                   RightGlomerularCapillariesOsmoticPressure      = 32;/**<< @brief Pressure generated from substances in the capillaries in the left Kidney */
+  ScalarVolumePerTimePressureData      RightGlomerularFiltrationCoefficient           = 33;/**<< @brief Calculated for each substance to determine ease of transport into the tubules in the left Kidney */
+  ScalarVolumePerTimeData              RightGlomerularFiltrationRate                  = 34;/**<< @brief Flow rate of filtrate into the tubules in left Kidney */
+  ScalarAreaData                       RightGlomerularFiltrationSurfaceArea           = 35;/**<< @brief Surface area of glomerular capillaries that experiance filtration in the left Kidney */
+  ScalarVolumePerTimePressureAreaData  RightGlomerularFluidPermeability               = 36;/**<< @brief Permeability coefficient of the capillary tissue in the left Kidney*/
+  Scalar0To1Data                       RightFiltrationFraction                        = 37;/**<< @brief Scalar used to compute reabsorption for substances in left Kidney */
+  ScalarPressureData                   RightNetFiltrationPressure                     = 38;/**<< @brief  Total pressure directed into the tubules in the left Kidney */
+  ScalarPressureData                   RightNetReabsorptionPressure                   = 39;/**<< @brief Total pressure directed into the peritubular capillaries in the left Kidney */
+  ScalarPressureData                   RightPeritubularCapillariesHydrostaticPressure = 40;/**<< @brief Pressure generated by the fluid in the peritubular capillaries in the left Kidney */
+  ScalarPressureData                   RightPeritubularCapillariesOsmoticPressure     = 41;/**<< @brief Pressure generated by the substance concentration in the peritubular capillaries in the left Kidney */
+  ScalarVolumePerTimePressureData      RightReabsorptionFiltrationCoefficient         = 42;/**<< @brief Value which determines how much of a substance is reabsorbed into the blood stream in the left Kidney */
+  ScalarVolumePerTimeData              RightReabsorptionRate                          = 43;/**<< @brief Rate at which fluid or a substance is transported into the peritubular capillaries in the left Kidney */
+  ScalarPressureData                   RightTubularOsmoticPressure                    = 44;/**<< @brief Pressure generated by substances in the tubules in the left Kidney  */  
+  ScalarPressureData                   RightTubularHydrostaticPressure                = 45;/**<< @brief Pressure generated by the fluid in the tubules in the left Kidney */            
+  ScalarAreaData                       RightTubularReabsorptionFiltrationSurfaceArea  = 46;/**<< @brief Surface ares of the tubules which is subject to fluid transport (reabsorption) in the left Kidney */
+  ScalarVolumePerTimePressureAreaData  RightTubularReabsorptionFluidPermeability      = 47;/**<< @brief Permeability of the tissue in the tubules, influencing resistance to flow into peritubular capillaries in the left Kidney */
 
-  ScalarVolumePerTimeData             UrinationRate                                  = 48;/**<< @brief Rate that fluid exits the bladder  */ 
-  ScalarOsmolalityData                UrineOsmolality                                = 49;/**<< @brief The osmolar pressure contributions of the sodium, urea and glucose divided by the mass of the fluid */
-  ScalarOsmolarityData                UrineOsmolarity                                = 50;/**<< @brief The osmolar pressure contributions of the sodium, urea and glucose divided by the volume of the fluid */
-  ScalarVolumePerTimeData             UrineProductionRate                            = 51;/**<< @brief The rate of fluid flow to the bladder */
-  ScalarData                          UrineSpecificGravity                           = 52;/**<< @brief The density of the fluid relative to water */
-  ScalarVolumeData                    UrineVolume                                    = 53;/**<< @brief The volume of the urine in the bladder */ 
-  ScalarMassPerVolumeData             UrineUreaNitrogenConcentration                 = 54;/**<< @brief Scaled concentration of Urea in the bladder  */ 
+  ScalarVolumePerTimeData              UrinationRate                                  = 48;/**<< @brief Rate that fluid exits the bladder  */ 
+  ScalarOsmolalityData                 UrineOsmolality                                = 49;/**<< @brief The osmolar pressure contributions of the sodium, urea and glucose divided by the mass of the fluid */
+  ScalarOsmolarityData                 UrineOsmolarity                                = 50;/**<< @brief The osmolar pressure contributions of the sodium, urea and glucose divided by the volume of the fluid */
+  ScalarVolumePerTimeData              UrineProductionRate                            = 51;/**<< @brief The rate of fluid flow to the bladder */
+  ScalarData                           UrineSpecificGravity                           = 52;/**<< @brief The density of the fluid relative to water */
+  ScalarVolumeData                     UrineVolume                                    = 53;/**<< @brief The volume of the urine in the bladder */ 
+  ScalarMassPerVolumeData              UrineUreaNitrogenConcentration                 = 54;/**<< @brief Scaled concentration of Urea in the bladder  */ 
 }
 
 /**@brief A set of properties to specify and customize the respiratory circuit and driver.*/
 message RespiratoryMechanicsData
 {
-  eSwitch                             Active                                         = 1; /**<< @brief Turn on or off the use of this structure in the physiology implementation. */
-  eDefaultType                        DefaultType                                    = 2; /**<< @brief What values to use if optional properties are not set. */
-  CurveData                           LeftComplianceCurve                            = 3; /**<< @brief Left static compliance definition as a pressure vs. volume piecewise function.*/
-  CurveData                           RightComplianceCurve                           = 4; /**<< @brief Right static compliance definition as a pressure vs. volume piecewise function.*/
+  eSwitch                              Active                                         = 1; /**<< @brief Turn on or off the use of this structure in the physiology implementation. */
+  eDefaultType                         DefaultType                                    = 2; /**<< @brief What values to use if optional properties are not set. */
+  CurveData                            LeftComplianceCurve                            = 3; /**<< @brief Left static compliance definition as a pressure vs. volume piecewise function.*/
+  CurveData                            RightComplianceCurve                           = 4; /**<< @brief Right static compliance definition as a pressure vs. volume piecewise function.*/
   
-  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 5; /**<< @brief Left lung airway resistance during expiration.*/
-  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 6; /**<< @brief Left lung airway resistance during inspiration.*/
-  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 7; /**<< @brief Right lung airway resistance during expiration.*/
-  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 8; /**<< @brief Right lung airway resistance during inspiration.*/
-  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 9; /**<< @brief Upper airway respiratory resistance during expiration.*/
-  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 10; /**<< @brief Upper airway respiratory resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData      LeftExpiratoryResistance                       = 5; /**<< @brief Left lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData      LeftInspiratoryResistance                      = 6; /**<< @brief Left lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData      RightExpiratoryResistance                      = 7; /**<< @brief Right lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData      RightInspiratoryResistance                     = 8; /**<< @brief Right lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData      UpperExpiratoryResistance                      = 9; /**<< @brief Upper airway respiratory resistance during expiration.*/
+  ScalarPressureTimePerVolumeData      UpperInspiratoryResistance                     = 10; /**<< @brief Upper airway respiratory resistance during inspiration.*/
   
   // Muscle Pressure Driver
-  ScalarPressureData                  InspiratoryPeakPressure                        = 11;/**<< @brief The maximum negative pressure during spontaneous inspiration.*/
-  ScalarPressureData                  ExpiratoryPeakPressure                         = 12;/**<< @brief The maximum positive pressure during spontaneous expiration (usually 0).*/
+  ScalarPressureData                   InspiratoryPeakPressure                        = 11;/**<< @brief The maximum negative pressure during spontaneous inspiration.*/
+  ScalarPressureData                   ExpiratoryPeakPressure                         = 12;/**<< @brief The maximum positive pressure during spontaneous expiration (usually 0).*/
   
-  ScalarTimeData                      InspiratoryRiseTime                            = 13;/**<< @brief Spontaneous inspiration rise period length.*/
-  ScalarTimeData                      InspiratoryHoldTime                            = 14;/**<< @brief Spontaneous hold period length at top of breath.*/
-  ScalarTimeData                      InspiratoryReleaseTime                         = 15;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
-  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 16;/**<< @brief Spontaneous hold period length between inspiration and expiration.*/
-  ScalarTimeData                      ExpiratoryRiseTime                             = 17;/**<< @brief Spontaneous expiration rise period length.*/
-  ScalarTimeData                      ExpiratoryHoldTime                             = 18;/**<< @brief Spontaneous hold period length at bottom of breath.*/
-  ScalarTimeData                      ExpiratoryReleaseTime                          = 19;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
-  ScalarTimeData                      ResidueTime                                    = 20;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
+  ScalarTimeData                       InspiratoryRiseTime                            = 13;/**<< @brief Spontaneous inspiration rise period length.*/
+  ScalarTimeData                       InspiratoryHoldTime                            = 14;/**<< @brief Spontaneous hold period length at top of breath.*/
+  ScalarTimeData                       InspiratoryReleaseTime                         = 15;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                       InspiratoryToExpiratoryPauseTime               = 16;/**<< @brief Spontaneous hold period length between inspiration and expiration.*/
+  ScalarTimeData                       ExpiratoryRiseTime                             = 17;/**<< @brief Spontaneous expiration rise period length.*/
+  ScalarTimeData                       ExpiratoryHoldTime                             = 18;/**<< @brief Spontaneous hold period length at bottom of breath.*/
+  ScalarTimeData                       ExpiratoryReleaseTime                          = 19;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                       ResidueTime                                    = 20;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
+}
+
+message RespiratoryMechanicsModifiersData
+{
+  ScalarUnsignedData                   LeftComplianceMultiplier                       = 1; /**<< @brief Updates the left lung static compliance.*/
+  ScalarUnsignedData                   RightComplianceMultiplier                      = 2; /**<< @brief Updates the right lung static compliance.*/
+  
+  ScalarUnsignedData                   LeftExpiratoryResistanceMultiplier             = 3; /**<< @brief Updates the left lung resistance during expiration.*/
+  ScalarUnsignedData                   LeftInspiratoryResistanceMultiplier            = 4; /**<< @brief Updates the left lung resistance during inspiration.*/
+  ScalarUnsignedData                   RightExpiratoryResistanceMultiplier            = 5; /**<< @brief Updates the right lung resistance during expiration.*/
+  ScalarUnsignedData                   RightInspiratoryResistanceMultiplier           = 6; /**<< @brief Updates the right lung resistance during inspiration.*/
+  ScalarUnsignedData                   UpperExpiratoryResistanceMultiplier            = 7; /**<< @brief Updates the upper airway resistance during expiration.*/
+  ScalarUnsignedData                   UpperInspiratoryResistanceMultiplier           = 8; /**<< @brief Updates the upper airway resistance during inspiration.*/
+  
+  ScalarUnsignedData                   RespirationRateMultiplier                      = 9;/**<< @brief Updates the spontaneous inspiration period.*/
+  ScalarUnsignedData                   TidalVolumeMultiplier                          = 10;/**<< @brief Updates the maximum negative pressure during spontaneous inspiration.*/
+  
+  repeated LungVolumeIncrementData     VolumeIncrement                                = 11;/**<< @brief Updates the volume in the specified lung compartment (e.g., dead space).*/
 }
 
 
@@ -301,10 +337,18 @@ enum eLungCompartment
   RightMiddleLobe   = 5;
   RightInferiorLobe = 6;
 }
+
+// Protobuf does not support enum's as map keys
 message LungImpairmentData
 {
   eLungCompartment Compartment = 1;
   Scalar0To1Data   Severity    = 2;
+}
+
+message LungVolumeIncrementData
+{
+  eLungCompartment Compartment = 1;
+  ScalarVolumeData Increment   = 2;
 }
 
 /**@brief Provides ventilation and gas exchange of the human respiratory system.
@@ -312,78 +356,80 @@ message LungImpairmentData
    and transfer of gases between the lungs, the blood and the outside environment.*/
 message RespiratorySystemData
 {
-  ScalarPressureData                  AirwayPressure                                 = 1; /**<< @brief Instantaneous pressure applied during positive-pressure mechanical ventilation. */
-  ScalarPressureData                  AlveolarArterialGradient                       = 2; /**<< @brief Measure of the difference between the alveolar concentration of oxygen and the arterial concentration of oxygen to assess the integrity of the alveolar capillary unit.*/
-  ScalarVolumeData                    AlveolarDeadSpace                              = 3; /**<< @brief The volume of unperfused alveoli.*/
-  ScalarVolumeData                    AnatomicDeadSpace                              = 4; /**<< @brief The total volume of the conducting airways from the nose or mouth down to the level of the terminal bronchioles that does not participate in gas exchange.*/
-  ScalarVolumePerPressureData         ChestWallCompliance                            = 5; /**<< @brief The static relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
-  ScalarEnergyData                    ElasticWorkOfBreathing                         = 6; /**<< @brief The work (generally during the inhalation phase) that is stored as potential energy which is recovered during exhalation.*/
-  Scalar0To1Data                      EndTidalCarbonDioxideFraction                  = 7; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
-  ScalarPressureData                  EndTidalCarbonDioxidePressure                  = 8; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
-  Scalar0To1Data                      EndTidalOxygenFraction                         = 9; /**<< @brief The fraction of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
-  ScalarPressureData                  EndTidalOxygenPressure                         = 10;/**<< @brief The pressure of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
-  ScalarVolumePerTimeData             ExpiratoryFlow                                 = 11;/**<< @brief Instantaneous airflow out of the lungs (negative value when inhaling).*/
-  ScalarPressureTimePerVolumeData     ExpiratoryPulmonaryResistance                  = 12;/**<< @brief The total resistance to airflow through the lungs during exhalation. */
-  ScalarVolumeData                    ExpiratoryTidalVolume                          = 13;/**<< @brief The volume of air moved into or out of the lungs during normal expiration.*/
-  Scalar0To1Data                      FractionOfInspiredOxygen                       = 14;/**<< @brief Fraction of Oxygen being taking into the body. */
-  ScalarPressureData                  HorowitzIndex                                  = 15;/**<< @brief (AKA P/F Ratio) The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
-  ScalarPowerData                     ImposedPowerOfBreathing                        = 16;/**<< @brief Externally imposed work of breathing (e.g., from a ventilator).*/
-  ScalarEnergyData                    ImposedWorkOfBreathing                         = 17;/**<< @brief Externally imposed power of breathing (e.g., from a ventilator).*/
-  ScalarData                          InspiratoryExpiratoryRatio                     = 18;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
-  ScalarVolumePerTimeData             InspiratoryFlow                                = 19;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
-  ScalarPressureTimePerVolumeData     InspiratoryPulmonaryResistance                 = 20;/**<< @brief The total resistance to airflow through the lungs during inhalation. */
-  ScalarVolumeData                    InspiratoryTidalVolume                         = 21;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
-  ScalarPressureData                  IntrapleuralPressure                           = 22;/**<< @brief The pressure difference across the whole lung.*/
-  ScalarPressureData                  IntrapulmonaryPressure                         = 23;/**<< @brief The total respiratory recoil pressure relative to body surface.*/
-  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure            = 24;/**<< @brief The alveolar pressure at the end of expiration - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
-  ScalarVolumePerPressureData         LungCompliance                                 = 25;/**<< @brief The static measure of the lung's ability to stretch and expand.*/
-  ScalarPressureData                  MaximalInspiratoryPressure                     = 26;/**<< @brief The strength of inspiratory muscles.*/
-  ScalarPressureData                  MeanAirwayPressure                             = 27;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
-  ScalarData                          OxygenationIndex                               = 28;/**<< @brief Used in intensive care medicine to measure the usage of oxygen within the body and predict outcomes.  A lower oxygenation index is better. */
-  ScalarPressureData                  OxygenSaturationIndex                          = 29;/**<< @brief Usage of oxygen within the body and predict outcomes. */
-  ScalarPowerData                     PatientPowerOfBreathing                        = 30;/**<< @brief Internally imposed work of breathing from the respiratory muscles.*/
-  ScalarEnergyData                    PatientWorkOfBreathing                         = 31;/**<< @brief Internally imposed power of breathing from the respiratory muscles.*/
-  ScalarPressureData                  PeakInspiratoryPressure                        = 32;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
-  ScalarVolumeData                    PhysiologicDeadSpace                           = 33;/**<< @brief The sum of the anatomic and alveolar dead space.*/
-  ScalarData                          PhysiologicDeadSpaceTidalVolumeRatio           = 34;/**<< @brief (AKA VD/VT Ratio) The ratio of dead-space ventilation (VD) to tidal ventilation (VT).*/
-  ScalarPressureData                  PositiveEndExpiratoryPressure                  = 35;/**<< @brief The pressure in the lungs (alveolar pressure) above atmospheric pressure at the end of expiration.*/
-  ScalarVolumePerPressureData         PulmonaryCompliance                            = 36;/**<< @brief The total static compliance of the lungs.*/
-  ScalarPressurePerVolumeData         PulmonaryElastance                             = 37;/**<< @brief The inverse of lung static compliance.*/
-  ScalarVolumeData                    RelativeTotalLungVolume                        = 38;/**<< @brief The total volume of air within the lungs at any given time above the previous breath minimum volume.*/
-  ScalarEnergyData                    ResistiveExpiratoryWorkOfBreathing             = 39;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during exhalation.*/
-  ScalarEnergyData                    ResistiveInspiratoryWorkOfBreathing            = 40;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during inhalation.*/
-  ScalarFrequencyData                 RespirationRate                                = 41;/**<< @brief The frequency of the respiratory cycle.*/
-  Scalar0To1Data                      RespiratoryMuscleFatigue                       = 42;/**<< @brief A measure of respiratory muscle weakness caused by excessive effort relative to the strength and endurance of the muscles.*/
-  ScalarPressureData                  RespiratoryMusclePressure                      = 43;/**<< @brief Pressure of the muscles that contribute to inhalation and exhalation, by aiding in the expansion and contraction of the thoracic cavity.*/
-  ScalarData                          SaturationAndFractionOfInspiredOxygenRatio     = 44;/**<< @brief A noninvasive surrogate for PiO2/FiO2 ratio (horowitz index). */
-  ScalarData                          SpecificVentilation                            = 45;/**<< @brief The ratio of the volume of gas entering a region of the lung following an inspiration and the end-expiratory volume of that same lung region.*/
-  ScalarVolumeData                    TidalVolume                                    = 46;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
-  ScalarVolumePerTimeData             TotalAlveolarVentilation                       = 47;/**<< @brief The air flow to the alveoli.*/
-  ScalarVolumePerTimeData             TotalDeadSpaceVentilation                      = 48;/**<< @brief The air flow to the dead space.*/
-  ScalarVolumeData                    TotalLungVolume                                = 49;/**<< @brief The total volume of air within the lungs at any given time.*/
-  ScalarPowerData                     TotalPowerOfBreathing                          = 50;/**<< @brief The sum of the imposed and patient power of breathing.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                      = 51;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
-  ScalarEnergyData                    TotalWorkOfBreathing                           = 52;/**<< @brief The sum of the imposed and patient work of breathing.*/
-  ScalarPressureData                  TransairwayPressure                            = 53;/**<< @brief The pressure difference between the airway opening and alveoli.*/
-  ScalarPressureData                  TransalveolarPressure                          = 54;/**<< @brief The pressure difference between the alveoli and pleural space.*/
-  ScalarPressureData                  TransChestWallPressure                         = 55;/**<< @brief The pressure difference between the pleural space and body surface.*/
-  ScalarPressureData                  TransMusclePressure                            = 56;/**<< @brief The respiratory muscle driver pressure relative to body surface.*/
-  ScalarPressureData                  TranspulmonaryPressure                         = 57;/**<< @brief The pressure difference between the alveoli and the intrapleural space.*/
-  ScalarPressureData                  TransrespiratoryPressure                       = 58;/**<< @brief The pressure difference between the airway opening and body surface.*/
-  ScalarPressureData                  TransthoracicPressure                          = 59;/**<< @brief The pressure difference between the alveoli and body surface.*/
-  ScalarData                          VentilationPerfusionRatio                      = 60;/**<< @brief (AKA V/Q Ratio) The ratio of the air that reaches the alveoli (ventilation) to the blood that reaches the alveoli via the capillaries (perfusion).*/
+  ScalarPressureData                   AirwayPressure                                 = 1; /**<< @brief Instantaneous pressure applied during positive-pressure mechanical ventilation. */
+  ScalarPressureData                   AlveolarArterialGradient                       = 2; /**<< @brief Measure of the difference between the alveolar concentration of oxygen and the arterial concentration of oxygen to assess the integrity of the alveolar capillary unit.*/
+  ScalarVolumeData                     AlveolarDeadSpace                              = 3; /**<< @brief The volume of unperfused alveoli.*/
+  ScalarVolumeData                     AnatomicDeadSpace                              = 4; /**<< @brief The total volume of the conducting airways from the nose or mouth down to the level of the terminal bronchioles that does not participate in gas exchange.*/
+  ScalarVolumePerPressureData          ChestWallCompliance                            = 5; /**<< @brief The static relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
+  ScalarEnergyData                     ElasticWorkOfBreathing                         = 6; /**<< @brief The work (generally during the inhalation phase) that is stored as potential energy which is recovered during exhalation.*/
+  Scalar0To1Data                       EndTidalCarbonDioxideFraction                  = 7; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
+  ScalarPressureData                   EndTidalCarbonDioxidePressure                  = 8; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
+  Scalar0To1Data                       EndTidalOxygenFraction                         = 9; /**<< @brief The fraction of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
+  ScalarPressureData                   EndTidalOxygenPressure                         = 10;/**<< @brief The pressure of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
+  ScalarVolumePerTimeData              ExpiratoryFlow                                 = 11;/**<< @brief Instantaneous airflow out of the lungs (negative value when inhaling).*/
+  ScalarPressureTimePerVolumeData      ExpiratoryRespiratoryResistance                = 12;/**<< @brief The total resistance to airflow through the lungs during exhalation. */
+  ScalarVolumeData                     ExpiratoryTidalVolume                          = 13;/**<< @brief The volume of air moved into or out of the lungs during normal expiration.*/
+  ScalarPressureData                   ExtrinsicPositiveEndExpiratoryPressure         = 14;/**<< @brief The positive pressure intentionally applied to the airways at the end of expiration (i.e., the PEEP setting). */
+  Scalar0To1Data                       FractionOfInspiredOxygen                       = 15;/**<< @brief Fraction of Oxygen being taking into the body. */
+  ScalarPressureData                   HorowitzIndex                                  = 16;/**<< @brief (AKA P/F Ratio) The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
+  ScalarPowerData                      ImposedPowerOfBreathing                        = 17;/**<< @brief Externally imposed work of breathing (e.g., from a ventilator).*/
+  ScalarEnergyData                     ImposedWorkOfBreathing                         = 18;/**<< @brief Externally imposed power of breathing (e.g., from a ventilator).*/
+  ScalarData                           InspiratoryExpiratoryRatio                     = 19;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
+  ScalarVolumePerTimeData              InspiratoryFlow                                = 20;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
+  ScalarPressureTimePerVolumeData      InspiratoryRespiratoryResistance               = 21;/**<< @brief The total resistance to airflow through the lungs during inhalation. */
+  ScalarVolumeData                     InspiratoryTidalVolume                         = 22;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
+  ScalarPressureData                   IntrapleuralPressure                           = 23;/**<< @brief The pressure difference across the whole lung.*/
+  ScalarPressureData                   IntrapulmonaryPressure                         = 24;/**<< @brief The total respiratory recoil pressure relative to body surface.*/
+  ScalarPressureData                   IntrinsicPositiveEndExpiratoryPressure         = 25;/**<< @brief The alveolar pressure at the end of expiration - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
+  ScalarVolumePerPressureData          LungCompliance                                 = 26;/**<< @brief The static measure of the lung's ability to stretch and expand.*/
+  ScalarPressureData                   MaximalInspiratoryPressure                     = 27;/**<< @brief The strength of inspiratory muscles.*/
+  ScalarPressureData                   MeanAirwayPressure                             = 28;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
+  ScalarData                           OxygenationIndex                               = 29;/**<< @brief Used in intensive care medicine to measure the usage of oxygen within the body and predict outcomes.  A lower oxygenation index is better. */
+  ScalarPressureData                   OxygenSaturationIndex                          = 30;/**<< @brief Usage of oxygen within the body and predict outcomes. */
+  ScalarPowerData                      PatientPowerOfBreathing                        = 31;/**<< @brief Internally imposed work of breathing from the respiratory muscles.*/
+  ScalarEnergyData                     PatientWorkOfBreathing                         = 32;/**<< @brief Internally imposed power of breathing from the respiratory muscles.*/
+  ScalarPressureData                   PeakInspiratoryPressure                        = 33;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
+  ScalarVolumeData                     PhysiologicDeadSpace                           = 34;/**<< @brief The sum of the anatomic and alveolar dead space.*/
+  ScalarData                           PhysiologicDeadSpaceTidalVolumeRatio           = 35;/**<< @brief (AKA VD/VT Ratio) The ratio of dead-space ventilation (VD) to tidal ventilation (VT).*/
+  ScalarVolumePerPressureData          RespiratoryCompliance                          = 36;/**<< @brief The total static compliance of the respiratory system.*/
+  ScalarPressurePerVolumeData          RespiratoryElastance                           = 37;/**<< @brief The inverse of respiratory static compliance.*/
+  ScalarVolumeData                     RelativeTotalLungVolume                        = 38;/**<< @brief The total volume of air within the lungs at any given time above the functional residual capacity.*/
+  ScalarEnergyData                     ResistiveExpiratoryWorkOfBreathing             = 39;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during exhalation.*/
+  ScalarEnergyData                     ResistiveInspiratoryWorkOfBreathing            = 40;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during inhalation.*/
+  ScalarFrequencyData                  RespirationRate                                = 41;/**<< @brief The frequency of the respiratory cycle.*/
+  Scalar0To1Data                       RespiratoryMuscleFatigue                       = 42;/**<< @brief A measure of respiratory muscle weakness caused by excessive effort relative to the strength and endurance of the muscles.*/
+  ScalarPressureData                   RespiratoryMusclePressure                      = 43;/**<< @brief Pressure of the muscles that contribute to inhalation and exhalation, by aiding in the expansion and contraction of the thoracic cavity.*/
+  ScalarData                           SaturationAndFractionOfInspiredOxygenRatio     = 44;/**<< @brief A noninvasive surrogate for PiO2/FiO2 ratio (horowitz index). */
+  ScalarData                           SpecificVentilation                            = 45;/**<< @brief The ratio of the volume of gas entering a region of the lung following an inspiration and the end-expiratory volume of that same lung region.*/
+  ScalarVolumeData                     TidalVolume                                    = 46;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
+  ScalarVolumePerTimeData              TotalAlveolarVentilation                       = 47;/**<< @brief The air flow to the alveoli.*/
+  ScalarVolumePerTimeData              TotalDeadSpaceVentilation                      = 48;/**<< @brief The air flow to the dead space.*/
+  ScalarVolumeData                     TotalLungVolume                                = 49;/**<< @brief The total volume of air within the lungs at any given time.*/
+    ScalarPressureData                 TotalPositiveEndExpiratoryPressure             = 50;/**<< @brief The overall pressure in the alveoli at the end of expiration above atmospheric pressure.*/
+  ScalarPowerData                      TotalPowerOfBreathing                          = 51;/**<< @brief The sum of the imposed and patient power of breathing.*/
+  ScalarVolumePerTimeData              TotalPulmonaryVentilation                      = 52;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
+  ScalarEnergyData                     TotalWorkOfBreathing                           = 53;/**<< @brief The sum of the imposed and patient work of breathing.*/
+  ScalarPressureData                   TransairwayPressure                            = 54;/**<< @brief The pressure difference between the airway opening and alveoli.*/
+  ScalarPressureData                   TransalveolarPressure                          = 55;/**<< @brief The pressure difference between the alveoli and pleural space.*/
+  ScalarPressureData                   TransChestWallPressure                         = 56;/**<< @brief The pressure difference between the pleural space and body surface.*/
+  ScalarPressureData                   TransMusclePressure                            = 57;/**<< @brief The respiratory muscle driver pressure relative to body surface.*/
+  ScalarPressureData                   TranspulmonaryPressure                         = 58;/**<< @brief The pressure difference between the alveoli and the intrapleural space.*/
+  ScalarPressureData                   TransrespiratoryPressure                       = 59;/**<< @brief The pressure difference between the airway opening and body surface.*/
+  ScalarPressureData                   TransthoracicPressure                          = 60;/**<< @brief The pressure difference between the alveoli and body surface.*/
+  ScalarData                           VentilationPerfusionRatio                      = 61;/**<< @brief (AKA V/Q Ratio) The ratio of the air that reaches the alveoli (ventilation) to the blood that reaches the alveoli via the capillaries (perfusion).*/
   
-  RespiratoryMechanicsData            RespiratoryMechanics                           = 61;
+  RespiratoryMechanicsData             Mechanics                                      = 62;
 }
 
 /** @brief Provides data pertaining to the extracellular and intracelluar space */
 message TissueSystemData
 {
-  ScalarVolumePerTimeData             CarbonDioxideProductionRate                    = 1;/**<< @brief The carbon dioxide generated on the tissue level from aerobic metabolism*/
-  ScalarVolumeData                    ExtracellularFluidVolume                       = 2;/**<< @brief Volume of fluid outside of cells AND outside of the blood vessels*/
-  ScalarVolumeData                    ExtravascularFluidVolume                       = 3;/**<< @brief Total fluid volume outside of the blood vessels. */
-  ScalarData                          IntracellularFluidPH                           = 4;/**<< @brief The acidity or alkalinity of the extravascular intercellular fluid.*/
-  ScalarVolumeData                    IntracellularFluidVolume                       = 5;/**<< @brief Volume of fluid in the cells outside of the blood vessels. */  
-  ScalarVolumePerTimeData             OxygenConsumptionRate                          = 6; /**<< @brief The oxygen consumed on the tissue level from aerobic metabolism*/
-  ScalarData                          RespiratoryExchangeRatio                       = 7; /**<< @brief The true ratio of carbon dioxide produced to oxygen consumed */   
+  ScalarVolumePerTimeData              CarbonDioxideProductionRate                    = 1;/**<< @brief The carbon dioxide generated on the tissue level from aerobic metabolism*/
+  ScalarVolumeData                     ExtracellularFluidVolume                       = 2;/**<< @brief Volume of fluid outside of cells AND outside of the blood vessels*/
+  ScalarVolumeData                     ExtravascularFluidVolume                       = 3;/**<< @brief Total fluid volume outside of the blood vessels.*/
+  ScalarData                           IntracellularFluidPH                           = 4;/**<< @brief The acidity or alkalinity of the extravascular intercellular fluid.*/
+  ScalarVolumeData                     IntracellularFluidVolume                       = 5;/**<< @brief Volume of fluid in the cells outside of the blood vessels.*/
+  ScalarVolumePerTimeData              OxygenConsumptionRate                          = 6; /**<< @brief The oxygen consumed on the tissue level from aerobic metabolism*/
+  ScalarData                           RespiratoryExchangeRatio                       = 7; /**<< @brief The true ratio of carbon dioxide produced to oxygen consumed*/
+  ScalarVolumeData                     TotalFluidVolume                               = 8; /**<< @brief Sum of extravascular and intravascular/blood volumes.*/
 }

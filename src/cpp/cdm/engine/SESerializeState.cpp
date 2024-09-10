@@ -7,7 +7,7 @@
 SESerializeState::SESerializeState(Logger* logger) : SEAction(logger)
 {
   m_Filename="";
-  m_Type = eSerialization_Type::Save;
+  m_Mode = eSerialization_Mode::Save;
 }
 
 SESerializeState::~SESerializeState()
@@ -19,7 +19,7 @@ void SESerializeState::Clear()
 {
   SEAction::Clear();
   m_Filename = "";
-  m_Type = eSerialization_Type::Save;
+  m_Mode = eSerialization_Mode::Save;
 }
 
 bool SESerializeState::IsValid() const
@@ -27,13 +27,13 @@ bool SESerializeState::IsValid() const
   return HasFilename();
 }
 
-eSerialization_Type SESerializeState::GetType() const
+eSerialization_Mode SESerializeState::GetMode() const
 {
-  return m_Type;
+  return m_Mode;
 }
-void SESerializeState::SetType(eSerialization_Type Type)
+void SESerializeState::SetMode(eSerialization_Mode Mode)
 {
-  m_Type = Type;
+  m_Mode = Mode;
 }
 
 bool SESerializeState::HasFilename() const

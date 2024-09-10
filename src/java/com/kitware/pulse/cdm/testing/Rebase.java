@@ -96,7 +96,7 @@ public class Rebase
           Log.error("A job has no expected result files!?!?");
           continue;
         }
-        if(!job.plottableResults && !job.isAssessment)
+        if(!job.plottableResults)
           continue;// Nothing to plot/compare, nothing to zip  
         // We assume all json will have something to zip...
         
@@ -108,9 +108,10 @@ public class Rebase
           Log.error("Unable to find file to rebase for "+job.name+" at path "+result_path);
           continue;
         }
+        String basename = result_path.replaceAll("Results.csv", "");
         
         // If there is no baselineDirectory, then this must be an assessment...
-        if(job.name.endsWith(".json") && !job.isAssessment)
+        if(job.name.endsWith(".json"))
         {
           if(job.computedFiles.size()>1)
           {
@@ -118,8 +119,26 @@ public class Rebase
             continue;
           }
           result_files.add(result_path);
-          log_file = result_files.get(0).replaceAll("Results"+SETestConfiguration.ext, ".log");
-          result_files.add(log_file);
+          // See if the log file is named EXACTLY like the csv file
+          log_file = result_path.replaceAll(SETestConfiguration.ext, ".log");
+          if (new File(log_file).exists())
+            result_files.add(log_file);
+          else
+          {
+            // If not, take off 'Results'
+            log_file = result_files.get(0).replaceAll("Results"+SETestConfiguration.ext, ".log");
+            if (new File(log_file).exists())
+              result_files.add(log_file);
+          }
+          // Are there any assessment json's here?
+          int split = basename.lastIndexOf('/');
+          List<String> file_list = FileUtils.findFiles(basename.substring(0, split), basename.substring(split+1), false);
+          for(String file : file_list)
+          {
+            if(file.indexOf('@') >= 0)
+              result_files.add(file.substring(file.indexOf('.')).replaceAll("\\\\", "/"));
+          }
+          
           if (job.isValidation)
             result_files.add(result_path.replace(".csv", "-Segments.json"));
           Log.info("Creating zip for "+result_files.get(0));

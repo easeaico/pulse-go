@@ -67,9 +67,9 @@ public class CDM2MD
   {
     JNIBridge.initialize();
     // Table names that link to classes (and we don't want them to)
-    tableNameLinks.add("Environment");
-    tableNameLinks.add("Inhaler");
-    tableNameLinks.add("AnesthesiaMachine");
+    // For example, tableNameLinks.add("Environment"); will ensure % is prefixed 
+    // so doxygen won't hyperlink this word
+    // I don't think we have any of these anymore... 
     convert(args.length> 0 ? args[0] : "./docs/markdown");
   }
   
@@ -193,7 +193,7 @@ public class CDM2MD
         WriteDoxyTable(c, "", writer, skipProperties);
       
       // ECG
-      writer.append("#### The following tables describe the %ECG\n<hr>\n");
+      writer.append("#### The following tables describe the ECG\n<hr>\n");
       Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.electrocardiogram");
       for(Class<?> c : ecg)
         WriteDoxyTable(c, "", writer, skipProperties);

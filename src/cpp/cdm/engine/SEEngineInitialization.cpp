@@ -75,7 +75,7 @@ SEPatientConfiguration& SEEngineInitialization::GetPatientConfiguration()
     m_PatientConfiguration = new SEPatientConfiguration(GetLogger());
   return *m_PatientConfiguration;
 }
-const SEPatientConfiguration* SEEngineInitialization::GetPatientConfiguration() const 
+const SEPatientConfiguration* SEEngineInitialization::GetPatientConfiguration() const
 {
   return m_PatientConfiguration;
 }
@@ -155,4 +155,34 @@ bool SEEngineInitialization::KeepEventChanges() const
 void SEEngineInitialization::KeepEventChanges(bool b)
 {
   m_KeepEventChanges = b;
+}
+
+SEEngineInitializationStatus::SEEngineInitializationStatus()
+{
+  Clear();
+}
+SEEngineInitializationStatus::~SEEngineInitializationStatus()
+{
+
+}
+
+void SEEngineInitializationStatus::Clear()
+{
+  m_EngineInitializationState = eEngineInitializationState::Uninitialized;
+  m_CSVFilename = "";
+  m_LogFilename = "";
+  m_StabilizationTime_s = 0;
+}
+
+void SEEngineInitializationStatus::Copy(const SEEngineInitializationStatus& from)
+{
+  PBEngine::Copy(from, *this);
+}
+bool SEEngineInitializationStatus::SerializeToString(std::string& output, eSerializationFormat m, Logger* logger) const
+{
+  return PBEngine::SerializeToString(*this, output, m, logger);
+}
+bool SEEngineInitializationStatus::SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger)
+{
+  return PBEngine::SerializeFromString(src, *this, m, logger);
 }

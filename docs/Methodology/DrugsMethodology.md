@@ -21,7 +21,7 @@ System Design
 
 Background and Scope
 --------------------
-*Pharmacokinetics* is the study of the relationship between the dose of a drug and the time-evolution of the concentration of the drug throughout the body. The relationship between the concentration of a drug and the physiological response is described by the *pharmacodynamics* @cite rosenbaum2012basic. The engine has both pharmacokinetic and pharmacodynamic models. Because it is physiologically-based, the pharmacokinetic model has resolution at the same scale as the cardiovascular and respiratory systems. Physiologically-based pharmacokinetic (PBPK) modeling is a technique that mathematically models the distribution, uptake, metabolism, and clearance of a drug with consideration of the relevant physiological processes @cite khalil2011physiologically. The PBPK model provides more resolution than the classic one and two compartment models. The PBPK model also provides a base on which to build a receptor-based pharmacodynamic (PD) model, although the PD model is currently a lower-fidelity phenomenological model based solely on the concentration of a drug in the blood. %Drugs impact body-level physiologic behavior such as heart rate, respiration rate, and blood pressure as result of cellular-level interactions caused by a drug that changes the behavior of physiologic entities, such as blood vessels and electrical activity in the heart. The cellular-level processes are not modeled in the engine, and instead the PD model is a direct relationship between concentration and maximum effect for a body-level response.
+<i>Pharmacokinetics</i> is the study of the relationship between the dose of a drug and the time-evolution of the concentration of the drug throughout the body. The relationship between the concentration of a drug and the physiological response is described by the <i>pharmacodynamics</i> @cite rosenbaum2012basic. The engine has both pharmacokinetic and pharmacodynamic models. Because it is physiologically-based, the pharmacokinetic model has resolution at the same scale as the cardiovascular and respiratory systems. Physiologically-based pharmacokinetic (PBPK) modeling is a technique that mathematically models the distribution, uptake, metabolism, and clearance of a drug with consideration of the relevant physiological processes @cite khalil2011physiologically. The PBPK model provides more resolution than the classic one and two compartment models. The PBPK model also provides a base on which to build a receptor-based pharmacodynamic (PD) model, although the PD model is currently a lower-fidelity phenomenological model based solely on the concentration of a drug in the blood. %Drugs impact body-level physiologic behavior such as heart rate, respiration rate, and blood pressure as result of cellular-level interactions caused by a drug that changes the behavior of physiologic entities, such as blood vessels and electrical activity in the heart. The cellular-level processes are not modeled in the engine, and instead the PD model is a direct relationship between concentration and maximum effect for a body-level response.
 
 @anchor drugs-data-flow
 Data Flow
@@ -59,7 +59,7 @@ For moderate to strong bases, Equation 2 is used to calculate the partition coef
 <i>Equation 2.</i>
 </center><br>
 
-Where *X* and *Y* are the different relationships for pH, as shown in Table 1, *f<sub>IW</sub>* is the fraction of intracellular water, *f<sub>EW</sub>* is the fraction of extracellular water,  *f<sub>NP</sub>* is the fraction of neutral phospholipids in the tissue, *f<sub>NL</sub>* is the fraction of lipids in the tissue, *P* is the octanol:water partition coefficient for the drug, *f<sub>u</sub>* is the fraction of the drug unbound in plasma,  *f<sub>NL,P</sub>* is the fraction of neutral lipids in plasma, *f<sub>NP,P</sub>* is the fraction of phospholipids in plasma,  and *PR<sub>T</sub>* / *PR<sub>B</sub>* is the tissue to plasma ratio of the binding protein. 
+Where <i>X</i> and <i>Y</i> are the different relationships for pH, as shown in Table 1, <i>f<sub>IW</sub></i> is the fraction of intracellular water, <i>f<sub>EW</sub></i> is the fraction of extracellular water,  <i>f<sub>NP</sub></i> is the fraction of neutral phospholipids in the tissue, <i>f<sub>NL</sub></i> is the fraction of lipids in the tissue, <i>P</i> is the octanol:water partition coefficient for the drug, <i>f<sub>u</sub></i> is the fraction of the drug unbound in plasma,  *f<sub>NL,P</sub>* is the fraction of neutral lipids in plasma, *f<sub>NP,P</sub>* is the fraction of phospholipids in plasma,  and <i>PR<sub>T</sub></i> / <i>PR<sub>B</sub></i> is the tissue to plasma ratio of the binding protein. 
 
 <center>
 <i>Table 1. The pH effects on the partition coefficient are described based on the drug type, i.e., very weak base, acid, or neutral. X relates the drug property pK<sub>a</sub> to the pH<sub>IW</sub>, intracellular water pH, while Y relates the pK<sub>a</sub> to the pH of the plasma.</i> </center>
@@ -76,7 +76,7 @@ A number of these values are drug parameters found in the substance file definit
 <i>Table 2. The volume fractions for neutral lipids and phospholipids vary by compartment. These values are specified for each compartment as outlined below and used to calculate the partition coefficient of each drug for each tissue compartment in the engine. These values were found in @cite rodgers2005physiologically.</i>
 </center>
 
-|	%Tissue Compartment	|	Extracellular Water (*f<sub>EW</sub>*) 	|   Intracellular Water (*f<sub>IW</sub>*)  |    Neutral Lipd (*f<sub>NL</sub>*)  |  Neutral Phospholipid (*f<sub>NP</sub>*)   |
+|	%Tissue Compartment	|	Extracellular Water (<i>f<sub>EW</sub></i>) 	|   Intracellular Water (<i>f<sub>IW</sub></i>)  |    Neutral Lipd (<i>f<sub>NL</sub></i>)  |  Neutral Phospholipid (<i>f<sub>NP</sub></i>)   |
 | :---- | :---- | :---- |  :---- | :---- |
 |	Adipose (Fat)	|  0.135  |  0.017  |  0.853  |  0.0016  |
 |	Bone	        |  0.1    |  0.346  |  0.017  |  0.0017  |
@@ -128,7 +128,7 @@ The PBPK model represents renal, hepatic, and systemic clearance. The renal clea
 <i>Equation 3.</i>
 </center><br>
 
-Where *Cl<sub>H</sub>* is the hepatic clearance, *f<sub>u</sub>* is the fraction of the drug unbound in plasma, *Cl<sub>I</sub>* is the intrinsic clearance, and *BW* is the patient body weight.
+Where <i>Cl<sub>H</sub></i> is the hepatic clearance, <i>f<sub>u</sub></i> is the fraction of the drug unbound in plasma, <i>Cl<sub>I</sub></i> is the intrinsic clearance, and <i>BW</i> is the patient body weight.
 
 The amount of drug removed (cleared) from the system is found by calculating the amount of fluid volume that can be cleared by a healthy organ. The volume is calculated, as shown in Equation 4. This process is completed for the renal and hepatic clearance. 
 
@@ -137,21 +137,21 @@ The amount of drug removed (cleared) from the system is found by calculating the
 <i>Equation 4.</i>
 </center><br>
 
-Where *V<sub>cl</sub>* is the volume cleared, *Cl<sub>H</sub>* is the organ clearance rate, *BW* is the body weight, and *dt* is the time step. The actual mass of the substance removed during this process is found by determining the amount of the drug in the volume cleared, as shown in Equation 5.
+Where <i>V<sub>cl</sub></i> is the volume cleared, <i>Cl<sub>H</sub></i> is the organ clearance rate, <i>BW</i> is the body weight, and <i>dt</i> is the time step. The actual mass of the substance removed during this process is found by determining the amount of the drug in the volume cleared, as shown in Equation 5.
 
 \f[M_{Cl} = V_{Cl}*C \f]
 <center>
 <i>Equation 5.</i>
 </center><br>
 
-Where *M<sub>cl</sub>* is the mass cleared, *V<sub>cl</sub>* is the volume cleared, and *C* is the concentration in the tissue. The systemic clearance represents the total clearance for the body, including the renal and hepatic clearance. Therefore, the total volume cleared is calculated, then the renal and hepatic clearance volumes are removed, as shown in Equation 6. The &ldquo;remaining&rdquo; systemic mass cleared is calculated as shown in Equation 5. Half of the mass cleared from renal clearance is removed from each of the kidney tissue compartments, the mass cleared from hepatic clearance is removed from the liver tissue compartment, and the mass removed from the &ldquo;remaining&rdquo; systemic clearance is removed from the vena cava compartment. This is assumed to be from various metabolic processes in the plasma.
+Where <i>M<sub>cl</sub></i> is the mass cleared, <i>V<sub>cl</sub></i> is the volume cleared, and <i>C</i> is the concentration in the tissue. The systemic clearance represents the total clearance for the body, including the renal and hepatic clearance. Therefore, the total volume cleared is calculated, then the renal and hepatic clearance volumes are removed, as shown in Equation 6. The &ldquo;remaining&rdquo; systemic mass cleared is calculated as shown in Equation 5. Half of the mass cleared from renal clearance is removed from each of the kidney tissue compartments, the mass cleared from hepatic clearance is removed from the liver tissue compartment, and the mass removed from the &ldquo;remaining&rdquo; systemic clearance is removed from the vena cava compartment. This is assumed to be from various metabolic processes in the plasma.
 
 \f[V_{Cl} = \left(Cl_{s}*BW*dt\right) - V_{ClR} - V_{ClH} \f]
 <center>
 <i>Equation 6.</i>
 </center><br>
 
-Where *V<sub>cl</sub>* is the remaining systemic volume cleared, *Cl<sub>s</sub>* is the systemic clearance rate, *BW* is the patient body weight, *dt* is the time step, *V<sub>clR</sub>* is the renal volume cleared, and *V<sub>clH</sub>* is the hepatic volume cleared.
+Where <i>V<sub>cl</sub></i> is the remaining systemic volume cleared, <i>Cl<sub>s</sub></i> is the systemic clearance rate, <i>BW</i> is the patient body weight, <i>dt</i> is the time step, <i>V<sub>clR</sub></i> is the renal volume cleared, and <i>V<sub>clH</sub></i> is the hepatic volume cleared.
 
 @anchor drugs-pharmacodynamics
 ### Pharmacodynamics
@@ -187,18 +187,18 @@ The drug effects are specified for each drug in the substance file. The level of
 <i>Equation 7.</i>
 </center><br>
 
-Where *E<sub>m</sub>* is the expected (or maximum) effect of the drug, *EC<sub>50</sub>* is the concentration at 50% of the effect, *C<sub>p</sub>* is the drug concentration in plasma, *E<sub>bl</sub>* is the baseline for that effect (i.e., heart rate baseline), <i>&Delta;E</i> is the calculated effect of the drug, and <i>&eta;</i> is the slope factor @cite rosenbaum2012basic. This calculation is repeated for each of the effects in Table 4. 
+Where <i>E<sub>m</sub></i> is the expected (or maximum) effect of the drug, <i>EC<sub>50</sub></i> is the concentration at 50% of the effect, <i>C<sub>p</sub></i> is the drug concentration in plasma, <i>E<sub>bl</sub></i> is the baseline for that effect (i.e., heart rate baseline), <i>&Delta;E</i> is the calculated effect of the drug, and <i>&eta;</i> is the slope factor @cite rosenbaum2012basic. This calculation is repeated for each of the effects in Table 4. 
 
 The drug effect is applied as a fraction of the baseline for the biomarker, which is a patient variable in the engine. For example, a person with a resting heart rate of 72 bpm may have a physiological process happening during simulation, perhaps as a condition, which increases his/her baseline heart rate to 80 bpm. If this patient is given a drug with a heart rate effect of 0.2, then at maximum the patient's heart rate will be 96 bpm (80 + 0.2 * 80). If the same drug were given to the same patient but without the condition, the maximum heart rate will be 86.4 bpm (72 + 0.2 * 72).
 
-The *EC<sub>50</sub>* values were unknown for the majority of the drugs, so it was estimated from the maximum concentration of the drug at a standard adult dose, as shown in Equation 8.
+The <i>EC<sub>50</sub></i> values were unknown for the majority of the drugs, so it was estimated from the maximum concentration of the drug at a standard adult dose, as shown in Equation 8.
 
 \f[EC_{50} = \frac{C_{max}}{32} \f]
 <center>
 <i>Equation 8.</i>
 </center><br>
 
-Where *C<sub>max</sub>* is the maximum plasma concentration for the standard adult dose and *EC<sub>50</sub>* is the concentration at which 50% of the effect should be present.
+Where <i>C<sub>max</sub></i> is the maximum plasma concentration for the standard adult dose and <i>EC<sub>50</sub></i> is the concentration at which 50% of the effect should be present.
 
 @anchor drugs-cardiovascular-effects
 ##### Cardiovascular Effects
@@ -214,7 +214,7 @@ Equation 7 provides a straightforward calculation for the heart rate. However, t
 <i>Equation 10.</i>
 </center><br>
 
-Where *MAP* is the mean arterial blood pressure, *DBP* is the diastolic blood pressure, and *SBP* is the systolic blood pressure. These changes to the heart rate, mean arterial pressure, and pulse pressure are then system outputs for the drug system. The changes are then applied in the %Cardiovascular System. For more details on the implementation of the effects see the @ref CardiovascularMethodology.
+Where <i>MAP</i> is the mean arterial blood pressure, <i>DBP</i> is the diastolic blood pressure, and <i>SBP</i> is the systolic blood pressure. These changes to the heart rate, mean arterial pressure, and pulse pressure are then system outputs for the drug system. The changes are then applied in the %Cardiovascular System. For more details on the implementation of the effects see the @ref CardiovascularMethodology.
 
 @anchor drugs-respiratory-effects
 ##### Respiratory Effects
@@ -411,21 +411,24 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Albuterol	|	Administer 90 ug metered dose of Albuterol	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Albuterol	|	Administer 90 ug metered dose of Albuterol	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	Etomidate	|	Administer 21 ug injection of Etomidate	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Epinephrine	|	Administer 10 ug injection of Epinephrine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	Epinephrine	|	Administer 10 ug injection of Epinephrine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Fentanyl	|	Administer 17 mg injection of Fentanyl	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Ketamine	|	Administer 115 mg injection of Ketamine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	Furosemide	|	Administer 40 mg injection of Furosemide	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Ketamine	|	Administer 115 mg injection of Ketamine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Lorazepam	|	Administer 2 mg injection of Lorazepam	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Midazolam	|	Administer 5 mg injection of Midazolam	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Morphine	|	Administer 42 mg injection of Morphine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Naloxone	|	Administer 17 mg injection of Fentanyl Followed by 30 ug injection of Naloxone *Validating only Naloxone	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Pralidoxime	|	Administer 700 mg injection of Pralidoxime	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Prednisone	|	Administer 20 mg injection of Prednisone	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Propofol	|	Administer 135 mg injection of Propofol	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
+|	Propofol	|	Administer 135 mg injection of Propofol	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Rocuronium	|	Administer 52 mg injection of Rocuronium	|<span class="success">	2	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Succinylcholine	|	Administer 96 mg injection of Succinylcholine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	64	</span>|<span class="warning">	2	</span>|<span class="danger">	4	</span>|
+|	Norepinephrine	|	Norepinephrine	|<span class="success">	20	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Phenylephrine	|	Phenylephrine	|<span class="success">	12	</span>|<span class="warning">	2	</span>|<span class="danger">	4	</span>|
+|		|	Total	|<span class="success">	102	</span>|<span class="warning">	2	</span>|<span class="danger">	8	</span>|
 
 <center>
 <i>Table 6. The validation results for liquid-modeled drugs.</i>
@@ -433,18 +436,18 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 
 |	Event	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (breaths/min)	|	Oxygen Saturation	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Administer Epinephrine - 10ug	|	Drug Onset < 1 minute	|	30	|	150	|<span class="success">	25-50% Increase @cite dukeSME	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC 	</span>|
+|	Administer Epinephrine - 10ug	|	Drug Onset < 1 minute	|	30	|	150	|<span class="success">	25-50% Increase @cite dukeSME	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	0-25% Decrease @cite chase2010model 	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC 	</span>|
 |	Administer Etomidate - 21 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Little Respiratory Depression @cite Valk2021etomidate	</span>|<span class="success">	NC	</span>|
 |	Administer Fentanyl - 17 mg	|	Drug Onset < two minutes	|	30	|	100	|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 15-25% Decrease @cite dukeSME	</span>|<span class="success">	NC 	</span>|
-|	Administer Ketamine - 115 mg	|	Drug Onset < 1 minute	|	30	|	200	|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="warning">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 25-50% Decrease @cite dukeSME     	</span>|<span class="success">	NC 	</span>|
+|	Administer Ketamine - 115 mg	|	Drug Onset < 1 minute	|	30	|	200	|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 25-50% Decrease @cite dukeSME     	</span>|<span class="success">	NC 	</span>|
 |	Administer Lorazepam - 2 mg	|	Drug Onset < 2 minutes	|	30	|	350	|<span class="success">	Mild Decrease @cite Tulen1991dose	</span>|<span class="success">	Mild Decrease @cite Tulen1991dose	</span>|<span class="success">	Mild Decrease @cite Tulen1991dose	</span>|<span class="success">	Mild Decrease @cite Ghiasi2021lorazepam	</span>|<span class="success">	NC	</span>|
-|	Administer Midazolam - 5 mg	|	Drug Onset in 1-3 min and lasts 30-60 minutes	|	30	|	70	|<span class="success">	Mild Increase @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; Marked Decrease To 0 @cite dukeSME    	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
+|	Administer Midazolam - 5 mg	|	Drug Onset in 1-3 min and lasts 30-60 minutes	|	30	|	70	|<span class="success">	Mild Increase @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; Slight decrease @cite Tulen1991dose    	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
 |	Administer Morphine- 42 mg	|	Drug Onset in less than 2 minutes	|	30	|	100	|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME     	</span>|<span class="success">	Decrease - dose dependent @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Decrease - dose dependent @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME   	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
 |	Administer Fentanyl - 17 mg	|	Drug Onset < two minutes	|	30	|	100	|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277;  5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 15-25% Decrease @cite dukeSME	</span>|<span class="success">	NC 	</span>|
 |	Administer Naloxone - 30ug	|	Drug Onset in one to two minutes	|	330	|	350	|<span class="success">	NC or Increase @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; 5-10% Increase @cite dukeSME   	</span>|<span class="success">	NC or Increase @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; 5-10% Increase @cite dukeSME   	</span>|<span class="success">	NC or Increase @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; 5-10% Increase @cite dukeSME   	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; Return to resting physiology @cite dukeSME   	</span>|<span class="success">	NC or Increase  	</span>|
 |	Administer Pralidoxime - 135 mg	|	Drug Onset in less than 1 minute	|	30	|	100	|<span class="success">	Tachycardia @cite rxlist	</span>|<span class="success">	Increased @cite rxlist   	</span>|<span class="success">	Increased @cite rxlist   	</span>|<span class="success">	Increased @cite rxlist	</span>|<span class="success">	NC @cite safety  	</span>|
 |	Administer Prednisone - 135 mg	|	Drug Onset in less than 1 minute	|	30	|	100	|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|
-|	Administer Propofol - 135 mg	|	Drug Onset in less than 1 minute	|	30	|	100	|<span class="danger">	NC @cite Morgan2006Clinical p200; NC @cite dukeSME     	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 25-40% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 25-40% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 100% Decrease @cite dukeSME    	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
+|	Administer Propofol - 135 mg	|	Drug Onset in less than 1 minute	|	30	|	100	|<span class="success">	Significant Decrease @cite Kanaya2003differential 	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 25-40% Significant Decrease @cite Kanaya2003differential  	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 25-40% Significant Decrease @cite Kanaya2003differential 	</span>|<span class="success">	Slight Increase, Decrease in Tidal Volume @cite Lee2011effect	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
 |	Administer Rocuronium - 52 mg	|	Drug Onset in 60-90 seconds	|	30	|	100	|<span class="danger">	NC @cite PaulGBarash2009 p299; NC @cite dukeSME     	</span>|<span class="danger">	NC @cite PaulGBarash2009 p299; NC @cite dukeSME     	</span>|<span class="danger">	NC @cite PaulGBarash2009 p299; NC @cite dukeSME     	</span>|<span class="success">	Goes to Zero @cite Morgan2006Clinical p224; Goes to Zero @cite dukeSME     	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
 |	Administer Succinylcholine - 96 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Goes to Zero @cite Morgan2006Clinical p224; Goes to Zero @cite dukeSME     	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
 
@@ -498,11 +501,11 @@ Norepinephrine occurs naturally in the body and its basal metabolic value is val
 
 |	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate (beats/min)	|	Computed Heart Rate (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite Ensinger1992relationship	|<span class="warning">	0.761	</span>|	[46, 66] NC to neglible @cite Ensinger1992relationship	|<span class="success">	73	</span>|	[125, 145] Minimal Increase @cite Ensinger1992relationship	|<span class="warning">	118	</span>|	[65, 75] NC @cite Ensinger1992relationship	|<span class="warning">	72	</span>|
-|	Norepinephrine	|	0.06	|	[2.265, 3.391] @cite Ensinger1992relationship	|<span class="success">	2.32	</span>|	[41, 57]Minimal Decrease @cite Ensinger1992relationship	|<span class="success">	70	</span>|	[136, 160]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	118	</span>|	[70, 84]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	72	</span>|
-|	Norepinephrine	|	0.1	|	[3.608, 4.408] @cite Ensinger1992relationship	|<span class="success">	3.71	</span>|	[40, 56] Minimal Decrease @cite Ensinger1992relationship	|<span class="success">	68	</span>|	[146, 168]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	125	</span>|	[74, 86] Minimal Increase @cite Ensinger1992relationship	|<span class="success">	84	</span>|
-|	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite Ensinger1992relationship	|<span class="success">	5.05	</span>|	[39, 55] Minimal Decrease@cite Ensinger1992relationship	|<span class="success">	69	</span>|	[152, 182]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	135	</span>|	[77, 93] Minimal Increase @cite Ensinger1992relationship	|<span class="success">	98	</span>|
-|	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite Ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite Ensinger1992relationship	|<span class="success">	69	</span>|	[174, 192]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	136	</span>|	[83, 99] Minimal Increase @cite Ensinger1992relationship	|<span class="success">	100	</span>|
+|	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite ensinger1992relationship	|<span class="success">	0.761	</span>|	[46, 66] NC to neglible @cite ensinger1992relationship	|<span class="success">	73	</span>|	[125, 145] Minimal Increase @cite ensinger1992relationship	|<span class="success">	118	</span>|	[65, 75] NC @cite ensinger1992relationship	|<span class="success">	72	</span>|
+|	Norepinephrine	|	0.06	|	[2.265, 3.391] @cite ensinger1992relationship	|<span class="success">	2.32	</span>|	[41, 57]Minimal Decrease @cite ensinger1992relationship	|<span class="success">	70	</span>|	[136, 160]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	118	</span>|	[70, 84]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	72	</span>|
+|	Norepinephrine	|	0.1	|	[3.608, 4.408] @cite ensinger1992relationship	|<span class="success">	3.71	</span>|	[40, 56] Minimal Decrease @cite ensinger1992relationship	|<span class="success">	72	</span>|	[146, 168]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	125	</span>|	[74, 86] Minimal Increase @cite ensinger1992relationship	|<span class="success">	82	</span>|
+|	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite ensinger1992relationship	|<span class="success">	5.05	</span>|	[39, 55] Minimal Decrease@cite ensinger1992relationship	|<span class="success">	75	</span>|	[152, 182]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	138	</span>|	[77, 93] Minimal Increase @cite ensinger1992relationship	|<span class="success">	95	</span>|
+|	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite ensinger1992relationship	|<span class="success">	76	</span>|	[174, 192]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	140	</span>|	[83, 99] Minimal Increase @cite ensinger1992relationship	|<span class="success">	98	</span>|
 
 The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
 
@@ -510,13 +513,12 @@ The infusion of phenylephrine was validated for the plasma concentration and the
 <i>Table 10. The validation results for Phenylephrine.</i>
 </center>
 
-|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate Change (beats/min)	|	Computed Heart Rate Change (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
+|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate Change (beats/min)	|	Computed Heart Rate Change (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure Change (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure Change (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Phenylephrine	|	0.5	|	[2.5, 5.2] @cite martinsson1986analysis	|<span class="warning">	6	</span>|	[1, -5]  @cite martinsson1986analysis	|<span class="success">	-2	</span>|	[0, 6] @cite martinsson1986analysis	|<span class="success">	6	</span>|	[2, 9] @cite martinsson1986analysis	|<span class="success">	9	</span>|
-|	Phenylephrine	|	1	|	[5.02, 13.0] @cite martinsson1986analysis	|<span class="success">	12.4	</span>|	[-3, -8]  @cite martinsson1986analysis	|<span class="warning">	-2	</span>|	[6, 20] @cite martinsson1986analysis	|<span class="success">	9	</span>|	[9, 15] @cite martinsson1986analysis	|<span class="success">	13	</span>|
-|	Phenylephrine	|	2	|	[12.4, 26.3] @cite martinsson1986analysis	|<span class="success">	24.9	</span>|	[-8, -12]  @cite martinsson1986analysis	|<span class="danger">	-1	</span>|	[16, 53] @cite martinsson1986analysis	|<span class="warning">	13	</span>|	[15, 21] @cite martinsson1986analysis	|<span class="success">	19	</span>|
-|	Phenylephrine	|	4	|	[35.6, 77.8] @cite martinsson1986analysis	|<span class="success">	48.4	</span>|	[-10, -13]  @cite martinsson1986analysis	|<span class="danger">	2	</span>|	[30, 86] @cite martinsson1986analysis	|<span class="warning">	17	</span>|	[25, 32] @cite martinsson1986analysis	|<span class="success">	25	</span>|
-
+|	Phenylephrine	|	0.5	|	[2.5, 5.2] @cite martinsson1986analysis	|<span class="success">	6	</span>|	[1, -5]  @cite martinsson1986analysis	|<span class="danger">	-2	</span>|	[0, 6] @cite martinsson1986analysis	|<span class="success">	6	</span>|	[2, 9] @cite martinsson1986analysis	|<span class="success">	9	</span>|
+|	Phenylephrine	|	1	|	[5.02, 13.0] @cite martinsson1986analysis	|<span class="success">	12.4	</span>|	[-3, -8]  @cite martinsson1986analysis	|<span class="danger">	-2	</span>|	[6, 20] @cite martinsson1986analysis	|<span class="success">	9	</span>|	[9, 15] @cite martinsson1986analysis	|<span class="success">	13	</span>|
+|	Phenylephrine	|	2	|	[12.4, 26.3] @cite martinsson1986analysis	|<span class="success">	24.9	</span>|	[-8, -12]  @cite martinsson1986analysis	|<span class="danger">	-1	</span>|	[16, 53] @cite martinsson1986analysis	|<span class="success">	13	</span>|	[15, 21] @cite martinsson1986analysis	|<span class="success">	19	</span>|
+|	Phenylephrine	|	4	|	[35.6, 77.8] @cite martinsson1986analysis	|<span class="success">	48.4	</span>|	[-10, -13]  @cite martinsson1986analysis	|<span class="danger">	2	</span>|	[30, 86] @cite martinsson1986analysis	|<span class="success">	17	</span>|	[25, 32] @cite martinsson1986analysis	|<span class="success">	25	</span>|
 
 
 @anchor drugs-conclusions
@@ -549,7 +551,7 @@ Recommended Improvements
 @anchor drugs-appendices
 # Appendices
 
-## Acronyms
+## Glossary
 
 MAP - Mean Arterial Pressure
 

@@ -3,7 +3,9 @@
   "Description": "The patient receives a TBI and then gets a bolus Fentanyl.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
-    "StandardDataRequests.json"
+    "StandardDataRequests.json",
+    "DrugDataRequests.json",
+    "NervousDataRequests.json"
   ],
   "DataRequestManager": {
     "DataRequest":
@@ -15,13 +17,7 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "Oxygen", "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "Oxygen", "PropertyName": "Saturation", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "Saturation", "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-SizeModifier" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PupillaryResponse-ReactivityModifier" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "LeftEyePupillaryResponse-SizeModifier" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "RightEyePupillaryResponse-SizeModifier" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "LeftEyePupillaryResponse-ReactivityModifier" },
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "RightEyePupillaryResponse-ReactivityModifier" }
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "CarbonDioxide", "PropertyName": "Saturation", "Unit": "unitless" }
     ]
   },
   "AnyAction": [{

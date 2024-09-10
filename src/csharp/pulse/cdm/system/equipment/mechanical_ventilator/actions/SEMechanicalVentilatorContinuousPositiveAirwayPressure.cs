@@ -54,8 +54,8 @@ namespace Pulse.CDM
         GetInspirationPatientTriggerPressure().Set(other.GetInspirationPatientTriggerPressure());
       if (other.HasInspirationWaveform())
         SetInspirationWaveform(other.GetInspirationWaveform());
-      if (other.HasPositiveEndExpiredPressure())
-        GetPositiveEndExpiredPressure().Set(other.GetPositiveEndExpiredPressure());
+      if (other.HasPositiveEndExpiratoryPressure())
+        GetPositiveEndExpiratoryPressure().Set(other.GetPositiveEndExpiratoryPressure());
       if (other.HasSlope())
         GetSlope().Set(other.GetSlope());
     }
@@ -87,7 +87,7 @@ namespace Pulse.CDM
     {
       return HasDeltaPressureSupport() &&
              HasFractionInspiredOxygen() &&
-             HasPositiveEndExpiredPressure();
+             HasPositiveEndExpiratoryPressure();
       //Everything else is optional
     }
 
@@ -148,11 +148,11 @@ namespace Pulse.CDM
       return expirationCyclePressure;
     }
 
-    public bool HasPositiveEndExpiredPressure()
+    public bool HasPositiveEndExpiratoryPressure()
     {
       return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.IsValid();
     }
-    public SEScalarPressure GetPositiveEndExpiredPressure()
+    public SEScalarPressure GetPositiveEndExpiratoryPressure()
     {
       if (positiveEndExpiredPressure == null)
         positiveEndExpiredPressure = new SEScalarPressure();
@@ -216,7 +216,7 @@ namespace Pulse.CDM
       str += "\n\tInspirationPatientTriggerFlow: " + (HasInspirationPatientTriggerFlow() ? GetInspirationPatientTriggerFlow().ToString() : "Not Provided");
       str += "\n\tInspirationPatientTriggerPressure: " + (HasInspirationPatientTriggerPressure() ? GetInspirationPatientTriggerPressure().ToString() : "Not Provided");
       str += "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? GetInspirationWaveform().ToString() : "Not Provided");
-      str += "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided");
+      str += "\n\tPositiveEndExpiratoryPressure: " + (HasPositiveEndExpiratoryPressure() ? GetPositiveEndExpiratoryPressure().ToString() : "Not Provided");
       str += "\n\tSlope: " + (HasSlope() ? GetSlope().ToString() : "Not Provided");
 
 

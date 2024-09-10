@@ -1,10 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from enum import Enum
-from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEAcuteStress
 from pulse.engine.PulseEngine import PulseEngine
+
 
 def HowTo_AcuteStress():
     pulse = PulseEngine()
@@ -29,6 +28,7 @@ def HowTo_AcuteStress():
     pulse.advance_time_s(60)
     results = pulse.pull_data()
     pulse.print_results()
+
 
 HowTo_AcuteStress()
 

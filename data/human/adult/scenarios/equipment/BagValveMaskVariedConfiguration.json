@@ -20,7 +20,7 @@
   [
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
 
-  { "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
+  { "PatientAction": { "Dyspnea": { "TidalVolumeSeverity": { "Scalar0To1": { "Value": 1.0 } } } } },
 
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
 
@@ -60,7 +60,7 @@
           "Configuration":
           {
             "Connection": "On",
-            "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
+            "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
           }
       }
     }
@@ -86,7 +86,7 @@
           "Configuration":
           {
             "Connection": "On",
-            "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } }
+            "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } }
           }
       }
     }
@@ -110,7 +110,7 @@
           "Configuration":
           {
             "Connection": "On",
-            "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
+            "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.52, "Unit": "" } } }
             ]

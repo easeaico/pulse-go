@@ -9,21 +9,21 @@ import com.kitware.pulse.cdm.bind.TestReport.TestSuiteData;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.utilities.SEEqualOptions;
 
-public class SETestSuite 
+public class SETestSuite
 {
 	protected String             name;
 	protected boolean            performed;
 	protected List<String>       requirements = new ArrayList<>();
 	protected List<SETestCase>   testCases = new ArrayList<>();
-	
+
 	protected SETestCase         activeCase;
 	protected SETestCaseListener activeCaseListener = new SETestCaseListener();
-	
+
 	protected SETestSuite()
 	{
 	  clear();
 	}
-	
+
 	public void clear()
 	{
 		this.name=null;
@@ -33,7 +33,7 @@ public class SETestSuite
 		this.activeCase = null;
 		this.activeCaseListener.clear();
 	}
-	
+
 	public static void load(TestSuiteData src, SETestSuite dst)
   {
     dst.clear();
@@ -47,7 +47,7 @@ public class SETestSuite
     	SETestCase.load(tcd, tc);
     }
   }
-	
+
 	public static TestSuiteData unload(SETestSuite src)
   {
 		TestSuiteData.Builder dst = TestSuiteData.newBuilder();
@@ -60,25 +60,26 @@ public class SETestSuite
       dst.setName(src.name);
     dst.setPerformed(src.performed);
     dst.setErrors(src.getNumErrors());
+    dst.setWarnings(src.getNumWarnings());
     dst.setTests(src.testCases.size());
 
     for(String req : src.requirements)
     	dst.addRequirement(req);
-    
+
     for(SETestCase tc : src.testCases)
     	dst.addTestCase(SETestCase.unload(tc));
   }
-  
+
   public String  getName() { return this.name;}
   public void    setName(String name){this.name=name;}
   public boolean hasName(){return this.name==null?false:true;}
-  
+
   public boolean getPerformed() { return this.performed;}
   public void    setPerformed(boolean b){this.performed=b;}
-  
+
   public void AddRequirement(String f){requirements.add(f);}
   public List<String> getRequirements(){ return Collections.unmodifiableList(this.requirements); }
-  
+
   public SETestCase createTestCase()
   {
   	SETestCase tc = new SETestCase();
@@ -89,7 +90,7 @@ public class SETestSuite
   {
   	return Collections.unmodifiableList(this.testCases);
   }
-  public SEEqualOptions getCaseEqualOptions() 
+  public SEEqualOptions getCaseEqualOptions()
 	{
 		if(activeCase==null)
 			return null;
@@ -110,13 +111,21 @@ public class SETestSuite
   {
   	activeCaseListener.clear();
   }
-  public int getNumErrors() 
-  { 
+  public int getNumErrors()
+  {
   	int errs=0;
   	for(SETestCase tc : this.testCases)
   		if(!tc.failures.isEmpty())
   			errs++;
   	return errs;
+  }
+  public int getNumWarnings()
+  {
+  	int warns=0;
+  	for(SETestCase tc : this.testCases)
+  		if(!tc.warnings.isEmpty())
+  			warns++;
+  	return warns;
   }
   public double getDuration(TimeUnit unit)
   {

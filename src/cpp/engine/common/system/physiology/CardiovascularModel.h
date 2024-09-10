@@ -18,6 +18,7 @@ class SELiquidCompartmentLink;
 class SEFluidCircuit;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;
+class SECardiovascularMechanicsModifiers;
 
 namespace pulse
 {
@@ -124,7 +125,7 @@ namespace pulse
     SETemporalInterpolator* m_HeartComplianceModifier;
     SETemporalInterpolator* m_AortaComplianceModifier;
     SETemporalInterpolator* m_VenaCavaComplianceModifier;
-    SETemporalInterpolator* m_PulmonaryComplianceModifier;
+    SETemporalInterpolator* m_RespiratoryComplianceModifier;
     SETemporalInterpolator* m_SystemicVascularResistanceModifier;
     SETemporalInterpolator* m_SystemicVascularComplianceModifier;
     //CPR
@@ -144,6 +145,8 @@ namespace pulse
     double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
+    double m_PeripheralVolumeHigh_mL; // Max cycle volume in arms and legs
+    double m_PeripheralVolumeLow_mL; // Min cycle volume in arms and legs
     //Needed for expanded pulmonary methodology
     std::vector<double> m_LeftCardiacCyclePerfusionVolumes_mL;
     std::vector<double> m_RightCardiacCyclePerfusionVolumes_mL;
@@ -159,7 +162,7 @@ namespace pulse
 
 
     // Stateless member variable (Set in SetUp())
-
+    SECardiovascularMechanicsModifiers* m_MechanicsModifiers;
     // Hemorrhage
     struct HemorrhageTrack
     {
@@ -189,6 +192,7 @@ namespace pulse
     SEFluidCircuitNode*              m_RightPulmonaryVeinsNode;
 
     SEFluidCircuitPath*              m_VenaCavaCompliancePath;
+    SEFluidCircuitPath*              m_VenaCavaResistancePath;
 
     SEFluidCircuitPath*              m_BrainToVenaCava;
     SEFluidCircuitPath*              m_MyocardiumToVenaCava;
@@ -207,6 +211,9 @@ namespace pulse
     SEFluidCircuitPath*              m_LeftHeartToAorta;
     SEFluidCircuitPath*              m_LeftHeartCompliancePath;
 
+    SEFluidCircuitPath*              m_RightPulmonaryVenousReturnResistancePath;
+    SEFluidCircuitPath*              m_LeftPulmonaryVenousReturnResistancePath;
+
     SEFluidCircuitPath*              m_BrainResistanceUpstreamPath;
     SEFluidCircuitPath*              m_BrainResistanceDownstreamPath;
 
@@ -222,12 +229,16 @@ namespace pulse
     SELiquidSubstanceQuantity*       m_AortaCO2;
     SELiquidCompartment*             m_Brain;
     SELiquidCompartment*             m_Ground;
+    SELiquidCompartment*             m_LeftArm;
     SELiquidCompartment*             m_LeftHeart;
+    SELiquidCompartment*             m_LeftLeg;
     SELiquidCompartment*             m_LeftPulmonaryCapillaries;
     SELiquidCompartment*             m_LeftPulmonaryArteries;
     SELiquidCompartment*             m_LeftPulmonaryVeins;
     SELiquidCompartment*             m_Pericardium;
+    SELiquidCompartment*             m_RightArm;
     SELiquidCompartment*             m_RightHeart;
+    SELiquidCompartment*             m_RightLeg;
     SELiquidCompartment*             m_RightPulmonaryCapillaries;
     SELiquidCompartment*             m_RightPulmonaryArteries;
     SELiquidCompartment*             m_RightPulmonaryVeins;
@@ -240,8 +251,11 @@ namespace pulse
 
     std::vector<SEFluidCircuitPath*> m_HeartCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_AortaCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_AortaResistancePaths;
     std::vector<SEFluidCircuitPath*> m_VenaCavaCompliancePaths;
-    std::vector<SEFluidCircuitPath*> m_PulmonaryCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_VenaCavaResistancePaths;
+    std::vector<SEFluidCircuitPath*> m_RespiratoryCompliancePaths;
+    std::vector<SEFluidCircuitPath*> m_PulmonaryResistancePaths;
     std::vector<SEFluidCircuitPath*> m_SystemicCompliancePaths;
     std::vector<SEFluidCircuitPath*> m_SystemicResistancePaths;
     std::vector<SEFluidCircuitPath*> m_MuscleResistancePaths;

@@ -16,23 +16,19 @@ import com.kitware.pulse.utilities.FileUtils;
 public class SETimedStabilization
 {
   protected eSwitch                  trackingStabilization;
-  protected SEScalarTime             restingStabilizationTime;
-  protected SEScalarTime             feedbackStabilizationTime;
-  protected Map<String,SEScalarTime> conditionStabilizationTimes;
+  protected Map<String,SEScalarTime> convergenceCriteria;
   
   public SETimedStabilization()
   {
     super();
-    this.conditionStabilizationTimes=new HashMap<>();
+    this.convergenceCriteria=new HashMap<>();
   }
   
   public void clear()
   {
     clear();
     this.trackingStabilization=eSwitch.Off;
-    this.restingStabilizationTime=null;
-    this.feedbackStabilizationTime=null;
-    this.conditionStabilizationTimes.clear();
+    this.convergenceCriteria.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -50,13 +46,9 @@ public class SETimedStabilization
   {
     if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED && src.getTrackingStabilization()!=eSwitch.NullSwitch)
       dst.trackingStabilization=src.getTrackingStabilization();
-    if(src.hasRestingStabilizationTime())
-      SEScalarTime.load(src.getRestingStabilizationTime(),dst.getRestingStabilizationTime());
-    if(src.hasFeedbackStabilizationTime())
-      SEScalarTime.load(src.getFeedbackStabilizationTime(),dst.getFeedbackStabilizationTime());
-    for(String name : src.getConditionStabilizationMap().keySet())
+    for(String name : src.getConvergenceCriteriaMap().keySet())
     {
-      SEScalarTime.load(src.getConditionStabilizationMap().get(name),dst.createConditionStabilizationTime(name));     
+      SEScalarTime.load(src.getConvergenceCriteriaMap().get(name),dst.createConvergenceCriteria(name));     
     }
   }
   
@@ -71,13 +63,9 @@ public class SETimedStabilization
   {
   	if(src.trackingStabilization!=null)
   		dst.setTrackingStabilization(src.trackingStabilization);
-    if(src.hasRestingStabilizationTime())
-      dst.setRestingStabilizationTime(SEScalarTime.unload(src.restingStabilizationTime));
-    if(src.hasFeedbackStabilizationTime())
-      dst.setFeedbackStabilizationTime(SEScalarTime.unload(src.feedbackStabilizationTime));
-    for(String name : src.conditionStabilizationTimes.keySet())
+    for(String name : src.convergenceCriteria.keySet())
     {
-    	dst.putConditionStabilization(name, SEScalarTime.unload(src.conditionStabilizationTimes.get(name)));
+    	dst.putConvergenceCriteria(name, SEScalarTime.unload(src.convergenceCriteria.get(name)));
     }
   }
   
@@ -90,40 +78,18 @@ public class SETimedStabilization
   	this.trackingStabilization = (b==eSwitch.NullSwitch) ? eSwitch.Off : b;
   }
   
-  public boolean hasRestingStabilizationTime()
-  {
-    return restingStabilizationTime == null ? false : restingStabilizationTime.isValid();
-  }
-  public SEScalarTime getRestingStabilizationTime()
-  {
-    if (restingStabilizationTime == null)
-      restingStabilizationTime = new SEScalarTime();
-    return restingStabilizationTime;
-  }
-  
-  public boolean hasFeedbackStabilizationTime()
-  {
-    return feedbackStabilizationTime == null ? false : feedbackStabilizationTime.isValid();
-  }
-  public SEScalarTime getFeedbackStabilizationTime()
-  {
-    if (feedbackStabilizationTime == null)
-      feedbackStabilizationTime = new SEScalarTime();
-    return feedbackStabilizationTime;
-  }
-  
-  public SEScalarTime createConditionStabilizationTime(String type)
+  public SEScalarTime createConvergenceCriteria(String type)
   {
     SEScalarTime stabilizationTime = new SEScalarTime();
-    this.conditionStabilizationTimes.put(type, stabilizationTime);
+    this.convergenceCriteria.put(type, stabilizationTime);
     return stabilizationTime;
   }
-  public boolean hasConditionStabilizationTime(String type)
+  public boolean hasConvergenceCriteria(String type)
   {
-    return this.conditionStabilizationTimes.containsKey(type);
+    return this.convergenceCriteria.containsKey(type);
   }
-  public SEScalarTime getConditionStabilizationTime(String type)
+  public SEScalarTime getConvergenceCriteria(String type)
   {
-    return this.conditionStabilizationTimes.get(type);
+    return this.convergenceCriteria.get(type);
   }
 }

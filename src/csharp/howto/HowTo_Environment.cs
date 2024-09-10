@@ -76,6 +76,7 @@ namespace HowTo_Environment
       envConditions.GetAmbientTemperature().SetValue(22, TemperatureUnit.C);
       envConditions.GetAtmosphericPressure().SetValue(525, PressureUnit.mmHg);
       envConditions.GetClothingResistance().SetValue(0.5, HeatResistanceAreaUnit.clo);
+      envConditions.GetMechanicalDeadSpace().SetValue(0.5, VolumeUnit.L);
       envConditions.GetRelativeHumidity().SetValue(0.5);
       // When changing ambient gas mixture, fractions must sum to 1
       envConditions.RemoveAmbientGases();

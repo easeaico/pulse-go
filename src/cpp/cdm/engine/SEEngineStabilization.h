@@ -10,6 +10,10 @@ class SEEngineConfiguration;
 class CDM_DECL SEEngineStabilization : public Loggable
 {
 public:
+
+  static constexpr char const* Resting = "Resting";
+  static constexpr char const* AdvanceUntilStable = "AdvanceUntilStable";
+
   class Controller
   {
   public:
@@ -28,8 +32,10 @@ public:
   virtual bool SerializeFromString(const std::string& src, eSerializationFormat) = 0;
   virtual bool SerializeFromFile(const std::string& filename) = 0;
 
-  virtual bool StabilizeRestingState(Controller& engine)=0;
-  virtual bool StabilizeFeedbackState(Controller& engine) = 0;
+  virtual bool HasConvergenceCriteria(const std::string& criteria) const = 0;
+  virtual void RemoveConvergenceCriteria(const std::string& name) = 0;
+
+  virtual bool Stabilize(Controller& engine, const std::string& criteria)=0;
   virtual bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions)=0;
   
   virtual void LogProgress(bool b);

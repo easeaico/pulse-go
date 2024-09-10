@@ -30,6 +30,9 @@
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarLength.h"
 
+#include "cdm/system/environment/SEEnvironment.h"
+#include "cdm/system/environment/SEEnvironmentalConditions.h"
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// A class used to forward log messages for application specific handling logic
@@ -135,6 +138,8 @@ void HowToEngineUse()
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  pe->GetEnvironment()->GetEnvironmentalConditions()->GetMechanicalDeadSpace(VolumeUnit::mL);
+
   // You can specify a specific simulation time for the engine to use as its initial simulation time
   // If no time is provided, the simulation time that is in the state file will be used
   // Note the provided state files are named to include what is simulation time is
@@ -159,6 +164,7 @@ void HowToEngineUse()
   const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
   // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequest& hrDR = 
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
@@ -267,6 +273,8 @@ void HowToEngineUse()
   pe->GetLogger()->Info(std::stringstream() << "Lactate Concentration : " << pe->GetSubstanceManager().GetSubstance("Lactate")->GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL) << MassPerVolumeUnit::mg_Per_dL);
   pe->GetLogger()->Info(std::stringstream() << "Core Body Temperature : " << pe->GetEnergySystem()->GetCoreTemperature(TemperatureUnit::C) << TemperatureUnit::C);
 
+  // Here is how we can pull data from the engine using a data request
+  double hr = pe->GetEngineTracker()->GetValue(hrDR);
 
   // Save the state of the engine
   pe->SerializeToFile("./test_results/howto/HowToEngineUse-FinalState.json");

@@ -36,6 +36,7 @@ set(BIND_H_FILES
   "${DST_ROOT}/cpp/${CDM_PACKAGE}/Substance.pb.h"
   "${DST_ROOT}/cpp/${CDM_PACKAGE}/SubstanceQuantity.pb.h"
   "${DST_ROOT}/cpp/${CDM_PACKAGE}/TestReport.pb.h"
+  "${DST_ROOT}/cpp/${CDM_PACKAGE}/Validation.pb.h"
 # engine bindings
   "${DST_ROOT}/cpp/${ENGINE_PACKAGE}/Configuration.pb.h"
   "${DST_ROOT}/cpp/${ENGINE_PACKAGE}/Enums.pb.h"
@@ -88,6 +89,7 @@ set(BIND_CPP_FILES
   "${DST_ROOT}/cpp/${CDM_PACKAGE}/Substance.pb.cc"
   "${DST_ROOT}/cpp/${CDM_PACKAGE}/SubstanceQuantity.pb.cc"
   "${DST_ROOT}/cpp/${CDM_PACKAGE}/TestReport.pb.cc"
+  "${DST_ROOT}/cpp/${CDM_PACKAGE}/Validation.pb.cc"
 # engine bindings
   "${DST_ROOT}/cpp/${ENGINE_PACKAGE}/Configuration.pb.cc"
   "${DST_ROOT}/cpp/${ENGINE_PACKAGE}/Enums.pb.cc"

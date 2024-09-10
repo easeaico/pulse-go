@@ -21,67 +21,69 @@ namespace pulse
     Engine(Logger* logger=nullptr);
     virtual ~Engine();
 
-    virtual Logger* GetLogger() const override;
+    Logger* GetLogger() const override;
 
-    virtual std::string GetTypeName() const override;
+    std::string GetTypeName() const override;
 
-    virtual bool SerializeFromFile(const std::string& file) override;
-    virtual bool SerializeToFile(const std::string& file) const override;
+    bool SerializeFromFile(const std::string& file) override;
+    bool SerializeToFile(const std::string& file) const override;
 
-    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
-    virtual bool SerializeToString(std::string& state, eSerializationFormat m) const override;
+    bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
+    bool SerializeToString(std::string& state, eSerializationFormat m) const override;
 
-    virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) override;
-    virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) override;
+    bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) override;
+    bool InitializeEngine(const SEPatientConfiguration& patient_configuration) override;
+    eEngineInitializationState GetInitializationState() const override;
 
-    virtual void Clear() override;
+    void Clear() override;
 
-    virtual bool SetConfigurationOverride(const SEEngineConfiguration* config) override;
+    bool SetConfigurationOverride(const SEEngineConfiguration* config) override;
 
-    virtual const SEConditionManager& GetConditionManager() const override;
+    const SEConditionManager& GetConditionManager() const override;
 
-    virtual SEEngineTracker* GetEngineTracker() const override;
+    SEEngineTracker* GetEngineTracker() const override;
 
-    virtual const SEEngineConfiguration* GetConfiguration() const override;
+    const SEEngineConfiguration* GetConfiguration() const override;
 
-    virtual double GetTimeStep(const TimeUnit& unit) const override;
-    virtual double GetSimulationTime(const TimeUnit& unit) const override;
-    virtual void  SetSimulationTime(const SEScalarTime& time) override;
+    double GetTimeStep(const TimeUnit& unit) const override;
+    double GetSimulationTime(const TimeUnit& unit) const override;
+    void   SetSimulationTime(const SEScalarTime& time) override;
+    double GetStabilizationTime(const TimeUnit& unit) const override;
 
-    virtual bool  AdvanceModelTime() override;
-    virtual bool  AdvanceModelTime(double time, const TimeUnit& unit) override;
-    virtual bool  ProcessAction(const SEAction& action) override;
-    virtual const SEActionManager& GetActionManager() const override;
+    bool  AdvanceModelTime() override;
+    bool  AdvanceModelTime(double time, const TimeUnit& unit) override;
+    bool  ProcessAction(const SEAction& action) override;
+    const SEActionManager& GetActionManager() const override;
 
-    virtual const SESubstanceManager& GetSubstanceManager() const override;
-    virtual void  SetAdvanceHandler(SEAdvanceHandler* handler) override;
-    virtual const SEPatient& GetPatient() const override;
-    virtual const SEPatient& GetInitialPatient() const override;
-    virtual bool  GetPatientAssessment(SEPatientAssessment& assessment) const override;
+    const SESubstanceManager& GetSubstanceManager() const override;
+    void  SetAdvanceHandler(SEAdvanceHandler* handler) override;
+    const SEPatient& GetPatient() const override;
+    const SEPatient& GetInitialPatient() const override;
+    bool  GetPatientAssessment(SEPatientAssessment& assessment) const override;
 
-    virtual const SEEnvironment* GetEnvironment() const override;
-    virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() const override;
-    virtual const SECardiovascularSystem* GetCardiovascularSystem() const override;
-    virtual const SEDrugSystem* GetDrugSystem() const override;
-    virtual const SEEndocrineSystem* GetEndocrineSystem() const override;
-    virtual const SEEnergySystem* GetEnergySystem() const override;
-    virtual const SEGastrointestinalSystem* GetGastrointestinalSystem() const override;
-    virtual const SEHepaticSystem* GetHepaticSystem() const override;
-    virtual const SENervousSystem* GetNervousSystem() const override;
-    virtual const SERenalSystem* GetRenalSystem() const override;
-    virtual const SERespiratorySystem* GetRespiratorySystem() const override;
-    virtual const SETissueSystem* GetTissueSystem() const override;
-    virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() const override;
-    virtual const SEBagValveMask* GetBagValveMask() const override;
-    virtual const SEECMO* GetECMO() const override;
-    virtual const SEElectroCardioGram* GetElectroCardioGram() const override;
-    virtual const SEInhaler* GetInhaler() const override;
-    virtual const SEMechanicalVentilator* GetMechanicalVentilator() const override;
+    const SEEnvironment* GetEnvironment() const override;
+    const SEBloodChemistrySystem* GetBloodChemistrySystem() const override;
+    const SECardiovascularSystem* GetCardiovascularSystem() const override;
+    const SEDrugSystem* GetDrugSystem() const override;
+    const SEEndocrineSystem* GetEndocrineSystem() const override;
+    const SEEnergySystem* GetEnergySystem() const override;
+    const SEGastrointestinalSystem* GetGastrointestinalSystem() const override;
+    const SEHepaticSystem* GetHepaticSystem() const override;
+    const SENervousSystem* GetNervousSystem() const override;
+    const SERenalSystem* GetRenalSystem() const override;
+    const SERespiratorySystem* GetRespiratorySystem() const override;
+    const SETissueSystem* GetTissueSystem() const override;
+    const SEAnesthesiaMachine* GetAnesthesiaMachine() const override;
+    const SEBagValveMask* GetBagValveMask() const override;
+    const SEECMO* GetECMO() const override;
+    const SEElectroCardioGram* GetElectroCardioGram() const override;
+    const SEInhaler* GetInhaler() const override;
+    const SEMechanicalVentilator* GetMechanicalVentilator() const override;
 
-    virtual const SECompartmentManager& GetCompartments() const override;
-    virtual SEBlackBoxManager& GetBlackBoxes() const override;
+    const SECompartmentManager& GetCompartments() const override;
+    SEBlackBoxManager& GetBlackBoxes() const override;
 
-    virtual const SEEventManager& GetEventManager() const override;
+    const SEEventManager& GetEventManager() const override;
 
     Controller& GetController() const;
   protected:

@@ -222,7 +222,7 @@ namespace Pulse.CDM
       Serialize(src.Action, dst);
       if (!string.IsNullOrEmpty(src.Filename))
         dst.SetFilename(src.Filename);
-      dst.SetType((eSerialization_Type)src.Type);
+      dst.SetMode((eSerialization_Mode)src.Mode);
     }
     public static pulse.cdm.bind.SerializeStateData Unload(SESerializeState src)
     {
@@ -236,7 +236,7 @@ namespace Pulse.CDM
       Serialize(src, dst.Action);
       if (src.HasFilename())
         dst.Filename = src.GetFilename();
-      dst.Type = (pulse.cdm.bind.SerializeStateData.Types.eType)src.GetType();
+      dst.Mode = (pulse.cdm.bind.SerializeStateData.Types.eMode)src.GetMode();
     }
     #endregion
   }

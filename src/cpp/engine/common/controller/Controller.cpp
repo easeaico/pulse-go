@@ -23,6 +23,8 @@
 #include "engine/common/system/physiology/TissueModel.h"
 #include "engine/io/protobuf/PBState.h"
 
+#include "cdm/system/physiology/SECardiovascularMechanicsModifiers.h"
+#include "cdm/system/physiology/SERespiratoryMechanicsModifiers.h"
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/engine/SEConditionManager.h"
@@ -39,8 +41,10 @@
 #include "cdm/engine/SEAdvanceHandler.h"
 #include "cdm/engine/SEEngineStabilization.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/patient/actions/SECardiovascularMechanicsModification.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SEPatientAssessmentRequest.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsModification.h"
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
@@ -51,6 +55,7 @@ namespace pulse
 {
   Data::Data(Logger* logger) : Loggable(logger)
   {
+    m_EngineInitializationState = eEngineInitializationState::Uninitialized;
     m_State = EngineState::NotReady;
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
@@ -60,6 +65,7 @@ namespace pulse
 
     m_CurrentTime.SetValue(0, TimeUnit::s);
     m_SimulationTime.SetValue(0, TimeUnit::s);
+    m_StabilizationTime.SetValue(0, TimeUnit::s);
     m_SpareAdvanceTime_s = 0;
 
     m_Logger->SetLogTime(&m_SimulationTime);
@@ -174,6 +180,7 @@ namespace pulse
 
   const SEScalarTime& Data::GetEngineTime() const { return m_CurrentTime; }
   const SEScalarTime& Data::GetSimulationTime() const { return m_SimulationTime; }
+  const SEScalarTime& Data::GetStabilizationTime() const { return m_StabilizationTime; }
   const SEScalarTime& Data::GetTimeStep() const { return m_Config->GetTimeStep(); }
   double Data::GetTimeStep_s() const { return GetTimeStep().GetValue(TimeUnit::s); }
 
@@ -286,7 +293,12 @@ namespace pulse
   {
     Info("[SerializingFromFile] " + filename);
     LogBuildInfo();
-    return PBState::SerializeFromFile(filename, *this, m_ConfigOverride);
+    if (!PBState::SerializeFromFile(filename, *this, m_ConfigOverride))
+    {
+      m_EngineInitializationState = eEngineInitializationState::FailedState;
+      return false;
+    }
+    return true;
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
@@ -298,7 +310,12 @@ namespace pulse
   {
     Info("[SerializingFromString]");
     LogBuildInfo();
-    return PBState::SerializeFromString(src, *this, m);
+    if (!PBState::SerializeFromString(src, *this, m))
+    {
+      m_EngineInitializationState = eEngineInitializationState::FailedState;
+      return false;
+    }
+    return true;
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
@@ -326,6 +343,7 @@ namespace pulse
     m_Intubation = eSwitch::Off;
     m_CurrentTime.SetValue(0, TimeUnit::s);
     m_SimulationTime.SetValue(0, TimeUnit::s);
+    m_StabilizationTime.SetValue(0, TimeUnit::s);
     m_Logger->SetLogTime(&m_SimulationTime);
 
     Info("Looking for files in " + patient_configuration.GetDataRoot());
@@ -338,7 +356,10 @@ namespace pulse
     if (patient_configuration.HasPatient())
     {
       if (!Initialize(*patient_configuration.GetPatient()))
+      {
+        m_EngineInitializationState = eEngineInitializationState::FailedPatientSetup;
         return false;
+      }
     }
     else if (patient_configuration.HasPatientFile())
     {
@@ -356,12 +377,21 @@ namespace pulse
         }
       }
       if (!patient.SerializeFromFile(pFile))// TODO Support all serialization formats
+      {
+        m_EngineInitializationState = eEngineInitializationState::FailedPatientSetup;
         return false;
+      }
       if (!Initialize(patient))
+      {
+        m_EngineInitializationState = eEngineInitializationState::FailedPatientSetup;
         return false;
+      }
     }
     else
+    {
+      m_EngineInitializationState = eEngineInitializationState::FailedPatientSetup;
       return false;
+    }
 
     InitializeModels();
     AdvanceCallback(-1);
@@ -370,11 +400,10 @@ namespace pulse
     SEEventHandler* event_handler = m_EventManager->GetEventHandler();
     m_EventManager->ForwardEvents(nullptr);
 
-    // Setup any data requests
-
     if (!Stabilize(patient_configuration))
     {
       Error("Pulse needs stabilization criteria, none provided in configuration file");
+      m_EngineInitializationState = eEngineInitializationState::FailedStabilization;
       return false;
     }
 
@@ -382,6 +411,7 @@ namespace pulse
     // Use Quantity/Potential/Flux Sources
     m_Circuits->SetReadOnly(true);
 
+    m_StabilizationTime.Set(m_SimulationTime);
     if (!m_Config->GetStabilization()->IsTrackingStabilization())
     {
       m_SimulationTime.SetValue(0, TimeUnit::s);
@@ -397,10 +427,13 @@ namespace pulse
 
   bool Controller::Initialize(SEPatient const& patient)
   {
-    m_ss << "[Patient] " << patient;
+    m_ss << "[Provided Patient] " << patient;
     Info(m_ss);
     if (!SetupPatient(patient))
       return false;
+    std::string str;
+    m_InitialPatient->SerializeToString(str, eSerializationFormat::JSON);
+    Info("[Patient] \n" + str);
 
     Info("Resetting Substances");
     m_Substances->LoadSubstanceDirectory(m_DataDir);
@@ -428,22 +461,6 @@ namespace pulse
 
     if (!m_Config->IsPDEnabled())
       Info("PD IS DISABLED!!!!");
-
-    // Now we can check the config
-    if (m_Config->IsWritingPatientBaselineFile())
-    {
-      std::string out = m_Config->GetInitialPatientBaselineFilepath();
-      if (out.empty())
-      {
-        out = m_DataDir + "/stable/";
-        MakeDirectory(out.c_str());
-        m_CurrentPatient->SerializeToFile(out + m_CurrentPatient->GetName() + ".json");
-      }
-      else
-      {
-        m_CurrentPatient->SerializeToFile(out);
-      }
-    }
 
     // This will also Initialize the environment
     // Due to needing the initial environment values for circuits to construct properly
@@ -487,6 +504,7 @@ namespace pulse
 
   bool Controller::Stabilize(const SEPatientConfiguration& patient_configuration)
   {
+    m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
     // Stabilize the engine to a resting state (with a standard meal and environment)
     if (!m_Config->HasStabilization())
     {
@@ -495,20 +513,20 @@ namespace pulse
     }
 
     m_State = EngineState::InitialStabilization;
-    if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
+    if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, SEEngineStabilization::Resting))
       return false;
 
     // Copy any changes to the current patient to the initial patient
     m_InitialPatient->Copy(*m_CurrentPatient);
 
+    // Apply conditions and anything else to the physiology
+    // now that it's steady with provided patient, environment, and feedback
     // We need to copy conditions here, so models can prepare for them in their AtSteadyState method
     if (patient_configuration.HasConditions())
       m_Conditions->Copy(*patient_configuration.GetConditions(), *m_Substances);
     AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
 
     m_State = EngineState::SecondaryStabilization;
-    // Apply conditions and anything else to the physiology
-    // now that it's steady with provided patient, environment, and feedback
     if (!m_Conditions->IsEmpty())
     {// Now restabilize the patient with any conditions that were applied
      // Push conditions into condition manager
@@ -516,6 +534,7 @@ namespace pulse
         return false;
     }
     AtSteadyState(EngineState::AtSecondaryStableState);
+    m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
     return true;
   }
 
@@ -536,6 +555,11 @@ namespace pulse
     return true;
   }
 
+  eEngineInitializationState Controller::GetInitializationState() const
+  {
+    return m_EngineInitializationState;
+  }
+
   void Controller::Clear()
   {
     m_State = EngineState::NotReady;
@@ -543,6 +567,7 @@ namespace pulse
     m_Conditions->Clear();
     m_EventManager->Clear();
 
+    m_EngineInitializationState = eEngineInitializationState::Uninitialized;
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
     if (m_EngineTrack)
@@ -647,9 +672,21 @@ namespace pulse
     const SEAdvanceUntilStable* adv2Stable = dynamic_cast<const SEAdvanceUntilStable*>(&action);
     if (adv2Stable != nullptr)
     {
+      m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
       m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
-      if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
-        Error("Engine was unable to AdvanceUntilStable");
+      std::string criteria = SEEngineStabilization::AdvanceUntilStable;
+      if (adv2Stable->HasCriteria())
+        criteria = adv2Stable->GetCriteria();
+      if (!m_Config->GetStabilization()->HasConvergenceCriteria(criteria))
+        Error("Provided criteria not found: " + criteria);
+      else
+      {
+        Info("Advancing until stable using criteria: " + criteria);
+        if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, criteria))
+          Error("Engine was unable to AdvanceUntilStable");
+      }
+
+      m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
       return true;
     }
 
@@ -678,7 +715,7 @@ namespace pulse
     const SESerializeState* serializeState = dynamic_cast<const SESerializeState*>(&action);
     if (serializeState != nullptr)
     {
-      if (serializeState->GetType() == eSerialization_Type::Save)
+      if (serializeState->GetMode() == eSerialization_Mode::Save)
       {
         if (serializeState->HasFilename())
         {
@@ -788,7 +825,41 @@ namespace pulse
       return true;
     }
 
-    return GetActions().ProcessAction(action);
+    if (!GetActions().ProcessAction(action))
+      return false;
+
+    const SECardiovascularMechanicsModification* cvMod = dynamic_cast<const SECardiovascularMechanicsModification*>(&action);
+    if (cvMod != nullptr && !cvMod->GetIncremental())
+    {
+      m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
+      m_NervousModel->SetBaroreceptorFeedback(eSwitch::Off);
+      m_NervousModel->SetChemoreceptorFeedback(eSwitch::Off);
+      m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
+      if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, SEEngineStabilization::AdvanceUntilStable))
+        Error("Unable to restabilize to provided cardiovascular modifiers");
+      m_Actions->GetPatientActions().GetCardiovascularMechanicsModification().SetIncremental(true);
+
+      m_NervousModel->SetBaroreceptorFeedback(eSwitch::On);
+      m_NervousModel->SetChemoreceptorFeedback(eSwitch::On);
+      GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetCardiovascular().GetMeanArterialPressure());
+      GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetCardiovascular().GetSystolicArterialPressure());
+      GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetCardiovascular().GetDiastolicArterialPressure());
+
+      m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
+    }
+
+    const SERespiratoryMechanicsModification* rMod = dynamic_cast<const SERespiratoryMechanicsModification*>(&action);
+    if (rMod != nullptr && !rMod->GetIncremental())
+    {
+      m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
+      m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
+      if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, SEEngineStabilization::AdvanceUntilStable))
+        Error("Unable to restabilize to provided respiratory modifiers");
+      m_Actions->GetPatientActions().GetRespiratoryMechanicsModification().SetIncremental(true);
+      m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
+    }
+
+    return true;
   }
 
   void Controller::InitializeModels()

@@ -199,6 +199,29 @@ class SEChronicVentricularSystolicDysfunction(SEPatientCondition):
     def is_valid(self):
         return True
 
+
+class SEDehydration(SEPatientCondition):
+    __slots__ = ["_severity"]
+
+    def __init__(self):
+        super().__init__()
+        self._severity = None
+    def clear(self):
+        if self._severity is not None:
+            self._severity.invalidate()
+    def is_valid(self):
+        return self.has_severity()
+    def has_severity(self):
+        return self._severity is not None
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
+    def __repr__(self):
+        return ("Pulmonary Shunt\n"
+                "  Severity: {}\n").format(self._severity)
+
+
 class SEImpairedAlveolarExchange(SEPatientCondition):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]
 

@@ -135,14 +135,14 @@ Many of the small ions like sodium are quickly absorbed with active transport in
 An exception to this is calcium, which is carefully regulated by parathyroid hormone to ensure that the body's requirements are met @cite hall2011guyton.
 Water is absorbed via the osmotic gradient that either naturally exists between the gut chyme and the blood or that is created by the active transport of substances across the intestinal wall @cite hall2011guyton.
 <center>
-| Macronutrient | Resultant Substance |                       Digestion Rate (R)                         | Absorption Fraction (A<sub>frac</sub>) | Gut Substance Mass(M<sub>g</sub>) Stomach Nutrient Mass (M<sub>s</sub>)|
-|:---:          |:---:                |:---:                                                             |:---:                                   |:---:                                                                   |
-| Carbohydrate  | Glucose             | 0.5 - 0.625 g/min @cite hall2011guyton @cite wolever1991glycemic | 0.800 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
-| Fat           | Tristearin          | 0.055 g/min @cite hall2011guyton                                 | 0.248 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
-| Protein       | Urea                | 0.071 - 0.157 g/min @cite dangin2001digestion                    | 0.405 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
-| Calcium       | Calcium             | 2.7 mg/min @cite gallagher1979intestinal                         | 0.25  @cite haussinger1990nitrogen     | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
-| Sodium        | Sodium              | N/A                                                              | 1.0                                    | M<sub>g</sub> = M<sub>s</sub>/V<sub>H2O</sub>*R<sub>H2O</sub>*&Delta;T |
-| Water         | Water               | 0.417 mL/s @cite Peronnet2012Pharmacokinetic                     | 1.0                                    | V<sub>H2O</sub> = R*&Delta;T                                           |
+| Macronutrient | Resultant Substance |                       Digestion Rate (R)                         | Absorption Fraction (A<sub>frac</sub>) | Gut Substance Mass(M<sub>g</sub>) Stomach Nutrient Mass (M<sub>s</sub>)     |
+|:---:          |:---:                |:---:                                                             |:---:                                   |:---:                                                                        |
+| Carbohydrate  | Glucose             | 0.5 - 0.625 g/min @cite hall2011guyton @cite wolever1991glycemic | 0.800 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                                 |
+| Fat           | Tristearin          | 0.055 g/min @cite hall2011guyton                                 | 0.248 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                                 |
+| Protein       | Urea                | 0.071 - 0.157 g/min @cite dangin2001digestion                    | 0.405 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                                 |
+| Calcium       | Calcium             | 2.7 mg/min @cite gallagher1979intestinal                         | 0.25  @cite haussinger1990nitrogen     | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                                 |
+| Sodium        | Sodium              | N/A                                                              | 1.0                                    | M<sub>g</sub> = M<sub>s</sub>/V<sub>H2O</sub><i>R<sub>H2O</sub></i>&Delta;T |
+| Water         | Water               | 0.417 mL/s @cite Peronnet2012Pharmacokinetic                     | 1.0                                    | V<sub>H2O</sub> = R*&Delta;T                                                |
 
 *Table 1. How macronutrients are converted into substances.*
 </center>
@@ -220,7 +220,7 @@ Recommended Improvements
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 
 GI - %Gastrointestinal

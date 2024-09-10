@@ -1,6 +1,6 @@
 {
   "Name": "DyspneaVaried",
-  "Description": "Test the Dyspnea action by giving various severities and ensuring trends back to stable physiology when removed.",
+  "Description": "Test the Dyspnea action by giving various severities effecting the tidal volume and respiration rate.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestFile": [
     "StandardDataRequests.json",
@@ -18,7 +18,7 @@
   }, {
     "PatientAction": {
       "Dyspnea": {
-        "Severity": {
+        "TidalVolumeSeverity": {
           "Scalar0To1": {
             "Value": 0.3
           }
@@ -29,33 +29,15 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
+          "Value": 3.0,
+          "Unit": "min"
         }
       }
     }
   }, {
     "PatientAction": {
       "Dyspnea": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 300.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Dyspnea": {
-        "Severity": {
+        "TidalVolumeSeverity": {
           "Scalar0To1": {
             "Value": 0.6
           }
@@ -66,33 +48,15 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
+          "Value": 3.0,
+          "Unit": "min"
         }
       }
     }
   }, {
     "PatientAction": {
       "Dyspnea": {
-        "Severity": {
-          "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 300.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Dyspnea": {
-        "Severity": {
+        "TidalVolumeSeverity": {
           "Scalar0To1": {
             "Value": 1.0
           }
@@ -103,15 +67,15 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 180.0,
-          "Unit": "s"
+          "Value": 3.0,
+          "Unit": "min"
         }
       }
     }
   }, {
     "PatientAction": {
       "Dyspnea": {
-        "Severity": {
+        "TidalVolumeSeverity": {
           "Scalar0To1": {
           }
         }
@@ -121,8 +85,155 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 500.0,
-          "Unit": "s"
+          "Value": 3.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+            "Value": 0.3
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 3.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+            "Value": 0.6
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 3.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+            "Value": 1.0
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 3.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 3.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+            "Value": 0.3
+          }
+        },
+        "TidalVolumeSeverity": {
+          "Scalar0To1": {
+            "Value": 0.3
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 3.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+            "Value": 0.6
+          }
+        },
+        "TidalVolumeSeverity": {
+          "Scalar0To1": {
+            "Value": 0.6
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 3.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+            "Value": 1.0
+          }
+        },
+        "TidalVolumeSeverity": {
+          "Scalar0To1": {
+            "Value": 1.0
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 3.0,
+          "Unit": "min"
         }
       }
     }

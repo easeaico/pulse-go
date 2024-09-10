@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include "engine/SEEngineInitialization.h"
 #include "cdm/utils/Logger.h"
 #include "cdm/utils/FileUtils.h"
 
@@ -10,12 +11,17 @@ class SEScenario;
 class SEScenarioLog;
 class PhysiologyEngine;
 class SEEngineConfiguration;
+class SEScenarioExecStatus;
+
+enum class eRelativeSerialization { ToWorkingDir = 0, ToOutputDir, ToScenarioDir };
+extern CDM_DECL const std::string& eRelativeSerialization_Name(eRelativeSerialization rt);
 
 enum class eRelativeSerialization { ToWorkingDir = 0, ToOutputDir, ToScenarioDir };
 extern CDM_DECL const std::string& eRelativeSerialization_Name(eRelativeSerialization rt);
 
 class CDM_DECL SEScenarioExec : public Loggable
 {
+  friend class PBScenario;//friend the serialization class
 public:
   SEScenarioExec(Logger* logger);
   virtual ~SEScenarioExec();
@@ -25,6 +31,9 @@ public:
 
   eSwitch LogToConsole() const { return m_LogToConsole; }
   void LogToConsole(eSwitch s) { m_LogToConsole = s; }
+
+  virtual eRelativeSerialization GetRelativeSerialization() const { return m_RelativeSerialization; }
+  virtual void SetRelativeSerialization(eRelativeSerialization rt) { m_RelativeSerialization = rt; }
 
   std::string GetDataRootDirectory() const { return m_DataRootDirectory; }
   void SetDataRootDirectory(const std::string& fn) { m_DataRootDirectory = fn; }
@@ -41,6 +50,7 @@ public:
     m_ScenarioContent = sc;
     m_ScenarioFilename = "";
     m_ScenarioDirectory = "";
+    m_ScenarioExecListFilename = "";
     m_ScenarioLogFilename = "";
     m_ScenarioLogDirectory = "";
   }
@@ -50,6 +60,7 @@ public:
     m_ScenarioContent = "";
     m_ScenarioFilename = fn;
     m_ScenarioDirectory = "";
+    m_ScenarioExecListFilename = "";
     m_ScenarioLogFilename = "";
     m_ScenarioLogDirectory = "";
   }
@@ -59,6 +70,18 @@ public:
     m_ScenarioContent = "";
     m_ScenarioFilename = "";
     m_ScenarioDirectory = dir;
+    m_ScenarioExecListFilename = "";
+    m_ScenarioLogFilename = "";
+    m_ScenarioLogDirectory = "";
+  }
+
+  std::string GetScenarioExecListFilename() const { return m_ScenarioExecListFilename; }
+  void SetScenarioExecListFilename(const std::string& fn)
+  {
+    m_ScenarioContent = "";
+    m_ScenarioFilename = "";
+    m_ScenarioDirectory = "";
+    m_ScenarioExecListFilename = fn;
     m_ScenarioLogFilename = "";
     m_ScenarioLogDirectory = "";
   }
@@ -71,6 +94,7 @@ public:
     m_ScenarioContent = "";
     m_ScenarioFilename = "";
     m_ScenarioDirectory = "";
+    m_ScenarioExecListFilename = "";
   }
   std::string GetScenarioLogDirectory() const { return m_ScenarioLogDirectory; }
   void SetScenarioLogDirectory(const std::string& dir)
@@ -80,6 +104,7 @@ public:
     m_ScenarioContent = "";
     m_ScenarioFilename = "";
     m_ScenarioDirectory = "";
+    m_ScenarioExecListFilename = "";
   }
 
   std::set<std::string>& GetDataRequestFilesSearch() { return m_DataRequestFilesSearch; }
@@ -89,6 +114,9 @@ public:
   void SetContentFormat(eSerializationFormat s) { m_ContentFormat = s; }
 
   int GetThreadCount() const { return m_ThreadCount; }
+  // if > 0, we will create min of (that many threads) or (number of cores available on the host system)
+  // if 0, we will create the number of cores available on the host system many threads
+  // if <0 we will the number of cores available on the host system plus that value many threads
   void SetThreadCount(int c) { m_ThreadCount = c; }
 
   std::string GetEngineConfigurationContent() const { return m_EngineConfigurationContent; }
@@ -130,14 +158,14 @@ public:
   eSwitch TimeStampSerializedStates() const { return m_TimeStampSerializedStates; }
   void TimeStampSerializedStates(eSwitch s) { m_TimeStampSerializedStates = s; }
 
-  bool SerializeToString(std::string& output, eSerializationFormat m, Logger* logger=nullptr) const;
-  bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger=nullptr);
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
 
 protected:
   bool ConvertLog();
-  bool Execute(PhysiologyEngine& pe, SEScenario& sce);
-  bool Process(PhysiologyEngine& pe, SEScenario& sce);
-  bool ProcessActions(PhysiologyEngine& pe, SEScenario& sce);
+  bool Execute(PhysiologyEngine& pe, SEScenario& sce, SEScenarioExecStatus* status=nullptr);
+  bool Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioExecStatus* status=nullptr);
+  bool ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SEScenarioExecStatus* status=nullptr);
   /// This does not include advance time actions
   /// To override default functionality with those
   /// actions override the ProcessActions method
@@ -161,20 +189,21 @@ protected:
 
   std::string m_ScenarioContent;
   std::string m_ScenarioFilename;
-  std::string m_ScenarioDirectory;
+  std::string m_ScenarioDirectory;       // TheadedExec
+  std::string m_ScenarioExecListFilename;// TheadedExec
 
   std::string m_ScenarioLogFilename;
-  std::string m_ScenarioLogDirectory;
+  std::string m_ScenarioLogDirectory;    // TheadedExec
 
   std::set<std::string> m_DataRequestFilesSearch;
 
   // For both the EC and Scenrio Content
-  eSerializationFormat m_ContentFormat;
-
+  eSerializationFormat       m_ContentFormat;
   int                        m_ThreadCount;
 
   // Settings for serialization
   bool                       m_SaveNextStep;
+  eRelativeSerialization     m_RelativeSerialization;
   std::string                m_AutoSerializeFilename;
   std::string                m_AutoSerializeBaseFilename;
   std::string                m_AutoSerializeFilenameExt;
@@ -185,4 +214,50 @@ protected:
   eSwitch                    m_ReloadSerializedState;
   std::stringstream          m_SerializationOutput;
   std::stringstream          m_SerializationActions;
+};
+
+enum class eScenarioExecutionState { Waiting = 0, Executing, Complete };
+extern CDM_DECL const std::string& eScenarioExecutionState_Name(eScenarioExecutionState s);
+
+class CDM_DECL SEScenarioExecStatus : public SEEngineInitializationStatus
+{
+  friend class PBScenario;//friend the serialization class
+public:
+  SEScenarioExecStatus();
+  virtual ~SEScenarioExecStatus();
+
+  void ForwardError(std::string const& /*msg*/) override { m_RuntimeError = true; }
+  void ForwardFatal(std::string const& /*msg*/) override { m_FatalRuntimeError = true; }
+
+  void Clear() override;
+  void ClearStatus(); // Clear everything but the scenario filename
+  void Copy(const SEScenarioExecStatus& src);
+
+  bool SerializeToString(std::string& output, eSerializationFormat m, Logger* logger) const override;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger) override;
+  static bool SerializeToFile(const std::vector<SEScenarioExecStatus>& src, const std::string& filename, Logger* logger);
+  static bool SerializeFromFile(const std::string& filename, std::vector<SEScenarioExecStatus>& dst, Logger* logger);
+
+  bool HasScenarioFilename() const { return !m_ScenarioFilename.empty(); }
+  std::string GetScenarioFilename() const { return m_ScenarioFilename; }
+  void SetScenarioFilename(const std::string& fn) { m_ScenarioFilename = fn; }
+
+  eScenarioExecutionState GetScenarioExecutionState() const { return m_ScenarioExecutionState; }
+  void SetScenarioExecutionState(eScenarioExecutionState s) { m_ScenarioExecutionState = s; }
+
+  bool HasRuntimeError() const { return m_RuntimeError; }
+  void SetRuntimeError(bool e) { m_RuntimeError = e; }
+
+  bool HasFatalRuntimeError() const { return m_FatalRuntimeError; }
+  void SetFatalRuntimeError(bool e) { m_FatalRuntimeError = e; }
+
+  double GetFinalSimulationTime_s() const { return m_FinalSimulationTime_s; }
+  void SetFinalSimulationTime_s(double t) { m_FinalSimulationTime_s = t; }
+
+protected:
+  std::string                m_ScenarioFilename;
+  eScenarioExecutionState    m_ScenarioExecutionState;
+  bool                       m_RuntimeError;
+  bool                       m_FatalRuntimeError;
+  double                     m_FinalSimulationTime_s;
 };

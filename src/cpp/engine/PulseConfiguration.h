@@ -56,12 +56,6 @@ public:
   virtual const SEDynamicStabilization* GetDynamicStabilization() const;
   virtual void RemoveDynamicStabilization();
 
-  virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == eSwitch::On; }
-  virtual void EnableWritePatientBaselineFile(eSwitch s) { m_WritePatientBaselineFile = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
-
-  virtual void SetInitialPatientBaselineFilepath(const std::string& filepath) { m_InitialPatientBaselineFilepath = filepath; }
-  virtual std::string GetInitialPatientBaselineFilepath() { return m_InitialPatientBaselineFilepath; }
-
   virtual bool HasOverrides() const;
   virtual SEScalarProperties& GetOverrides();
   virtual const SEScalarProperties& GetOverrides() const;
@@ -75,8 +69,6 @@ protected:
   eSwitch                       m_AllowDynamicTimeStep;
   SETimedStabilization*         m_TimedStabilization;
   SEDynamicStabilization*       m_DynamicStabilization;
-  eSwitch                       m_WritePatientBaselineFile;
-  std::string                   m_InitialPatientBaselineFilepath;
 
   SEScalarProperties            m_Overrides;
   SEScalarProperties            m_Modifiers;
@@ -475,21 +467,21 @@ protected:
   eSwitch         m_CerebrospinalFluidEnabled;
   eSwitch         m_ChemoreceptorFeedback;
   eSwitch         m_BaroreceptorFeedback;
-  SEScalarTime* m_HeartElastanceDistributedTimeDelay;
-  SEScalarTime* m_HeartRateDistributedTimeDelay;
-  SEScalar* m_NormalizedHeartRateIntercept;
-  SEScalar* m_NormalizedHeartRateSympatheticSlope;
-  SEScalar* m_NormalizedHeartRateParasympatheticSlope;
-  SEScalar* m_NormalizedHeartElastanceIntercept;
-  SEScalar* m_NormalizedHeartElastanceSympatheticSlope;
-  SEScalar* m_NormalizedResistanceIntercept;
-  SEScalar* m_NormalizedResistanceSympatheticSlope;
-  SEScalar* m_NormalizedComplianceIntercept;
-  SEScalar* m_NormalizedComplianceParasympatheticSlope;
+  SEScalarTime*   m_HeartElastanceDistributedTimeDelay;
+  SEScalarTime*   m_HeartRateDistributedTimeDelay;
+  SEScalar*       m_NormalizedHeartRateIntercept;
+  SEScalar*       m_NormalizedHeartRateSympatheticSlope;
+  SEScalar*       m_NormalizedHeartRateParasympatheticSlope;
+  SEScalar*       m_NormalizedHeartElastanceIntercept;
+  SEScalar*       m_NormalizedHeartElastanceSympatheticSlope;
+  SEScalar*       m_NormalizedResistanceIntercept;
+  SEScalar*       m_NormalizedResistanceSympatheticSlope;
+  SEScalar*       m_NormalizedComplianceIntercept;
+  SEScalar*       m_NormalizedComplianceParasympatheticSlope;
   SEScalarLength* m_PupilDiameterBaseline;
-  SEScalar* m_ResponseSlope;
-  SEScalarTime* m_SystemicResistanceDistributedTimeDelay;
-  SEScalarTime* m_VenousComplianceDistributedTimeDelay;
+  SEScalar*       m_ResponseSlope;
+  SEScalarTime*   m_SystemicResistanceDistributedTimeDelay;
+  SEScalarTime*   m_VenousComplianceDistributedTimeDelay;
 
   ////////////
   /** Renal */

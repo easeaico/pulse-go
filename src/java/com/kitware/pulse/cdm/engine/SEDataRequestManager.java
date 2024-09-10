@@ -9,7 +9,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestManagerData;
-import com.kitware.pulse.cdm.bind.Engine.ValidationTargetData;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.properties.CommonUnits.Unit;
 import com.kitware.pulse.utilities.FileUtils;

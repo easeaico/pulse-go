@@ -201,18 +201,10 @@ The bag could be modeled as a compliance to be closer to reality.
 @ref BagValveMaskInstantaneousTable "BagValveMaskInstantaneous"
 
 
-## Acronyms
+## Glossary
 
 FiO2 - Fraction of Inpspired Oxygen
 
 PEEP - Positive End Expired Pressure
 
 SpO2 - Oxygen Saturation
-
-## Compartments
-
-* Reservoir
-* Bag
-* Valve
-* Filter
-* Connection

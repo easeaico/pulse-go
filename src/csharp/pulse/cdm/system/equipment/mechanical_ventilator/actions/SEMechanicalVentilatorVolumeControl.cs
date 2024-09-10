@@ -57,8 +57,8 @@ namespace Pulse.CDM
         SetInspirationWaveform(other.GetInspirationWaveform());
       if (other.HasInspiratoryPeriod())
         GetInspiratoryPeriod().Set(other.GetInspiratoryPeriod());
-      if (other.HasPositiveEndExpiredPressure())
-        GetPositiveEndExpiredPressure().Set(other.GetPositiveEndExpiredPressure());
+      if (other.HasPositiveEndExpiratoryPressure())
+        GetPositiveEndExpiratoryPressure().Set(other.GetPositiveEndExpiratoryPressure());
       if (other.HasRespirationRate())
         GetRespirationRate().Set(other.GetRespirationRate());
       if (other.HasSlope())
@@ -96,7 +96,7 @@ namespace Pulse.CDM
     {
       return HasFlow() &&
              HasFractionInspiredOxygen() &&
-             HasPositiveEndExpiredPressure() &&
+             HasPositiveEndExpiratoryPressure() &&
              HasRespirationRate() &&
              HasTidalVolume();
       // Everything else is optional
@@ -178,11 +178,11 @@ namespace Pulse.CDM
         inspiratoryPeriod = new SEScalarTime();
       return inspiratoryPeriod;
     }
-    public bool HasPositiveEndExpiredPressure()
+    public bool HasPositiveEndExpiratoryPressure()
     {
       return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.IsValid();
     }
-    public SEScalarPressure GetPositiveEndExpiredPressure()
+    public SEScalarPressure GetPositiveEndExpiratoryPressure()
     {
       if (positiveEndExpiredPressure == null)
         positiveEndExpiredPressure = new SEScalarPressure();
@@ -231,7 +231,7 @@ namespace Pulse.CDM
       str += "\n\tInspirationPatientTriggerPressure: " + (HasInspirationPatientTriggerPressure() ? GetInspirationPatientTriggerPressure().ToString() : "Not Provided");
       str += "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? GetInspirationWaveform().ToString() : "Not Provided");
       str += "\n\tInspiratoryPeriod: " + (HasInspiratoryPeriod() ? GetInspiratoryPeriod().ToString() : "Not Provided");
-      str += "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided");
+      str += "\n\tPositiveEndExpiratoryPressure: " + (HasPositiveEndExpiratoryPressure() ? GetPositiveEndExpiratoryPressure().ToString() : "Not Provided");
       str += "\n\tRespirationRate: " + (HasRespirationRate() ? GetRespirationRate().ToString() : "Not Provided");
       str += "\n\tSlope: " + (HasSlope() ? GetSlope().ToString() : "Not Provided");
       str += "\n\tTidalVolume: " + (HasTidalVolume() ? GetTidalVolume().ToString() : "Not Provided");

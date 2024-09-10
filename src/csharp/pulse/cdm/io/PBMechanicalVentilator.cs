@@ -21,8 +21,8 @@ namespace Pulse.CDM
       if (src.DriverDampingParameter != null)
         PBProperty.Load(src.DriverDampingParameter, dst.GetDriverDampingParameter());
 
-      if (src.PositiveEndExpiredPressure != null)
-        PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
+      if (src.PositiveEndExpiratoryPressure != null)
+        PBProperty.Load(src.PositiveEndExpiratoryPressure, dst.GetPositiveEndExpiratoryPressure());
       else if (src.FunctionalResidualCapacity != null)
         PBProperty.Load(src.FunctionalResidualCapacity, dst.GetFunctionalResidualCapacity());
 
@@ -118,8 +118,8 @@ namespace Pulse.CDM
       if (src.HasDriverDampingParameter())
         dst.DriverDampingParameter = PBProperty.Unload(src.GetDriverDampingParameter());
 
-      if (src.HasPositiveEndExpiredPressure())
-        dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
+      if (src.HasPositiveEndExpiratoryPressure())
+        dst.PositiveEndExpiratoryPressure = PBProperty.Unload(src.GetPositiveEndExpiratoryPressure());
       else if (src.HasFunctionalResidualCapacity())
         dst.FunctionalResidualCapacity = PBProperty.Unload(src.GetFunctionalResidualCapacity());
 

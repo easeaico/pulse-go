@@ -89,6 +89,12 @@ public abstract class SEPatientAction extends SEAction
       SEBronchoconstriction.load(c.getBronchoconstriction(), dst);
       return dst;
     }
+    case CARDIOVASCULARMECHANICSMODIFICATION:
+    {
+      SECardiovascularMechanicsModification dst = new SECardiovascularMechanicsModification();
+      SECardiovascularMechanicsModification.load(c.getCardiovascularMechanicsModification(), dst);
+      return dst;
+    }
     case CHESTCOMPRESSION:
     {
       SEChestCompression dst = new SEChestCompression();
@@ -210,6 +216,12 @@ public abstract class SEPatientAction extends SEAction
       SERespiratoryMechanicsConfiguration.load(c.getRespiratoryMechanicsConfiguration(), dst);
       return dst;
     }
+    case RESPIRATORYMECHANICSMODIFICATION:
+    {
+      SERespiratoryMechanicsModification dst = new SERespiratoryMechanicsModification();
+      SERespiratoryMechanicsModification.load(c.getRespiratoryMechanicsModification(), dst);
+      return dst;
+    }
     case SUBSTANCEBOLUS:
     {
       SESubstanceBolus dst = new SESubstanceBolus();
@@ -300,6 +312,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEBronchoconstriction)
     {
       dst.setBronchoconstriction(SEBronchoconstriction.unload((SEBronchoconstriction)c));
+      return dst.build();
+    }
+    if(c instanceof SECardiovascularMechanicsModification)
+    {
+      dst.setCardiovascularMechanicsModification(SECardiovascularMechanicsModification.unload((SECardiovascularMechanicsModification)c));
       return dst.build();
     }
     if(c instanceof SEChestCompression)
@@ -400,6 +417,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SERespiratoryMechanicsConfiguration)
     {
       dst.setRespiratoryMechanicsConfiguration(SERespiratoryMechanicsConfiguration.unload((SERespiratoryMechanicsConfiguration)c));
+      return dst.build();
+    }
+    if(c instanceof SERespiratoryMechanicsModification)
+    {
+      dst.setRespiratoryMechanicsModification(SERespiratoryMechanicsModification.unload((SERespiratoryMechanicsModification)c));
       return dst.build();
     }
     if(c instanceof SESubstanceBolus)

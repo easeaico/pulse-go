@@ -14,35 +14,25 @@ public:
 
   void Clear() override;
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
-  bool SerializeToFile(const std::string& filename) const override;
-  bool SerializeFromString(const std::string& src, eSerializationFormat m) override;
-  bool SerializeFromFile(const std::string& filename) override;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
-  virtual bool StabilizeRestingState(Controller& engine) override;
-  virtual bool StabilizeFeedbackState(Controller& engine) override;
-  virtual bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions) override;
+  bool Stabilize(Controller& engine, const std::string& criteria) override;
+  bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions) override;
 
-  virtual SEDynamicStabilizationEngineConvergence& GetRestingConvergence();
-  virtual const SEDynamicStabilizationEngineConvergence& GetRestingConvergence() const;
-
-  virtual bool HasFeedbackConvergence() const;
-  virtual SEDynamicStabilizationEngineConvergence& GetFeedbackConvergence();
-  virtual const SEDynamicStabilizationEngineConvergence* GetFeedbackConvergence() const;
-
-  virtual bool HasConditionConvergence(const std::string& name) const;
-  virtual void RemoveConditionConvergence(const std::string& name);
-  virtual SEDynamicStabilizationEngineConvergence& GetConditionConvergence(const std::string& name);
-  virtual const SEDynamicStabilizationEngineConvergence* GetConditionConvergence(const std::string& name) const;
-  virtual const std::map<std::string, SEDynamicStabilizationEngineConvergence*>& GetConditionConvergence() const;
+  bool HasConvergenceCriteria(const std::string& name) const override;
+  void RemoveConvergenceCriteria(const std::string& name) override;
+  virtual SEDynamicStabilizationEngineConvergence& GetConvergenceCriteria(const std::string& name);
+  virtual const SEDynamicStabilizationEngineConvergence* GetConvergenceCriteria(const std::string& name) const;
+  virtual const std::map<std::string, SEDynamicStabilizationEngineConvergence*>& GetConvergenceCriteria() const;
 
 protected:
 
   virtual bool Stabilize(Controller& engine, const SEDynamicStabilizationEngineConvergence& criteria);
 
-  SEDynamicStabilizationEngineConvergence* m_RestingConvergence;
-  SEDynamicStabilizationEngineConvergence* m_FeedbackConvergence;
-  std::map<std::string, SEDynamicStabilizationEngineConvergence*> m_ConditionConvergence;
+  std::map<std::string, SEDynamicStabilizationEngineConvergence*> m_ConvergenceCriteria;
 
   bool Merge();
   SEDynamicStabilizationEngineConvergence* m_MergedConditions;

@@ -1,5 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+
 from enum import Enum
 from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarArea, SEScalarFrequency, SEScalarLength, \
                               SEScalarMass, SEScalarMassPerTime, SEScalarMassPerVolume, SEScalarPower, \
@@ -65,7 +66,7 @@ class SEPatient():
                  "_lean_body_mass", "_alveoli_surface_area", "_right_lung_ratio",
                  "_skin_surface_area", "_basal_metabolic_rate", "_blood_volume_baseline",
                  "_diastolic_arterial_pressure_baseline", "_heart_rate_baseline",
-                 "_mean_arterial_pressure_baseline", "_pulse_pressure_baseline", 
+                 "_mean_arterial_pressure_baseline", "_pulse_pressure_baseline",
                  "_respiration_rate_baseline", "_systolic_arterial_pressure_baseline",
                  "_tidal_volume_baseline", "_heart_rate_maximum",  "_heart_rate_minimum",
                  "_expiratory_reserve_volume",  "_functional_residual_capacity",
@@ -145,7 +146,7 @@ class SEPatient():
         if self._vital_capacity is not None: self._vital_capacity.invalidate()
 
     def copy(self, src):
-        if not isinstance(SEPatient, src):
+        if not isinstance(src, SEPatient):
             raise Exception("Provided argument must be a SEPatient")
         self.clear()
         if src.has_name(): self._name = src._name
@@ -168,7 +169,7 @@ class SEPatient():
         if src.has_diastolic_arterial_pressure_baseline(): self.get_diastolic_arterial_pressure_baseline().set(src._diastolic_arterial_pressure_baseline)
         if src.has_heart_rate_baseline(): self.get_heart_rate_baseline().set(src._heart_rate_baseline)
         if src.has_mean_arterial_pressure_baseline(): self.get_mean_arterial_pressure_baseline().set(src._mean_arterial_pressure_baseline)
-        if src.has_pulse_pressure_baseline(): self.get_pulse_baseline().set(src._pulse_pressure_baseline)
+        if src.has_pulse_pressure_baseline(): self.get_pulse_pressure_baseline().set(src._pulse_pressure_baseline)
         if src.has_respiration_rate_baseline(): self.get_respiration_rate_baseline().set(src._respiration_rate_baseline)
         if src.has_systolic_arterial_pressure_baseline(): self.get_systolic_arterial_pressure_baseline().set(src._systolic_arterial_pressure_baseline)
         if src.has_tidal_volume_baseline(): self.get_tidal_volume_baseline().set(src._tidal_volume_baseline)

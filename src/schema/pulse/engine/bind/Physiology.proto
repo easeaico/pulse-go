@@ -68,15 +68,17 @@ message CardiovascularData
   double                                    CardiacCycleStrokeVolume_mL                         = 41;
   repeated double                           LeftCardiacCyclePerfusionVolumes_mL                 = 42;
   repeated double                           RightCardiacCyclePerfusionVolumes_mL                = 43;
-  
-  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialPressure_mmHg                   = 44;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialCO2PartialPressure_mmHg         = 45;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesWedgePressure_mmHg  = 46;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesFlow_mL_Per_s       = 47;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryShuntFlow_mL_Per_s             = 48;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 49;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 50;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 51;
+  double                                    PeripheralVolumeHigh_mL                             = 44;
+  double                                    PeripheralVolumeLow_mL                              = 45;
+
+  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialPressure_mmHg                   = 46;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialCO2PartialPressure_mmHg         = 47;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesWedgePressure_mmHg  = 48;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesFlow_mL_Per_s       = 49;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryShuntFlow_mL_Per_s             = 50;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 51;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 52;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 53;
 
 }
 
@@ -125,7 +127,6 @@ message NervousData
   double                                    LastMeanArterialPressure_mmHg                       = 9;
   double                                    PreviousBloodVolume_mL                              = 10;
   pulse.cdm.bind.eHeartRhythm               PreviousHeartRhythm                                 = 11;
-  double                                    TotalSympatheticFraction                            = 12;
 }
 
 message RenalData
@@ -160,48 +161,51 @@ message RespiratoryData
   double                                   BottomBreathElapsedTime_min                         = 8;
   double                                   BottomBreathTotalVolume_L                           = 9;
   double                                   BottomBreathAlveoliPressure_cmH2O                   = 10;
-  double                                   PeakAlveolarPressure_cmH2O                          = 11;
-  double                                   MaximalAlveolarPressure_cmH2O                       = 12;
-  pulse.cdm.bind.RunningAverageData        BloodPHRunningAverage                               = 13;
-  pulse.cdm.bind.RunningAverageData        MeanAirwayPressure_cmH2O                            = 14;
+  double                                   BottomBreathAirwayPressure_cmH2O                    = 11;
+  double                                   PeakAlveolarPressure_cmH2O                          = 12;
+  double                                   MaximalAlveolarPressure_cmH2O                       = 13;
+  pulse.cdm.bind.RunningAverageData        BloodPHRunningAverage                               = 14;
+  pulse.cdm.bind.RunningAverageData        MeanAirwayPressure_cmH2O                            = 15;
   
-  repeated double                          AlveoliVolumeIncrement_L                            = 15;
-  repeated double                          TopBreathAcinarZoneVolumes_L                        = 16;
-  repeated double                          BottomBreathAcinarZoneVolumes_L                     = 17;
-  double                                   PreviousPleuralVolume_L                             = 18;
+  repeated double                          AlveoliVolumeIncrement_L                            = 16;
+  repeated double                          TopBreathAcinarZoneVolumes_L                        = 17;
+  repeated double                          BottomBreathAcinarZoneVolumes_L                     = 18;
+  double                                   PreviousPleuralVolume_L                             = 19;
   
-  double                                   ArterialO2PartialPressure_mmHg                      = 19;
-  double                                   ArterialCO2PartialPressure_mmHg                     = 20;
-  double                                   BreathingCycleTime_s                                = 21;
-  double                                   DriverPressure_cmH2O                                = 22;
-  double                                   ElapsedBreathingCycleTime_min                       = 23;
-  double                                   IERatioScaleFactor                                  = 24;
-  double                                   PeakInspiratoryPressure_cmH2O                       = 25;
-  double                                   PeakExpiratoryPressure_cmH2O                        = 26;
-  double                                   PreviousTargetAlveolarVentilation_L_Per_min         = 27;
-  double                                   VentilationFrequency_Per_min                        = 28;
-  double                                   VentilationToTidalVolumeSlope                       = 29;
-  pulse.cdm.bind.RunningAverageData        ArterialO2RunningAverage_mmHg                       = 30;
-  pulse.cdm.bind.RunningAverageData        ArterialCO2RunningAverage_mmHg                      = 31;
+  double                                   ArterialO2PartialPressure_mmHg                      = 20;
+  double                                   ArterialCO2PartialPressure_mmHg                     = 21;
+  double                                   BreathingCycleTime_s                                = 22;
+  double                                   DriverPressure_cmH2O                                = 23;
+  double                                   ElapsedBreathingCycleTime_min                       = 24;
+  double                                   IERatioScaleFactor                                  = 25;
+  double                                   PeakInspiratoryPressure_cmH2O                       = 26;
+  double                                   PeakExpiratoryPressure_cmH2O                        = 27;
+  double                                   PreviousTargetAlveolarVentilation_L_Per_min         = 28;
+  double                                   VentilationFrequency_Per_min                        = 29;
+  double                                   VentilationPeriod_s                                 = 30;
+  double                                   VentilationToTidalVolumeSlope                       = 31;
+  pulse.cdm.bind.RunningAverageData        ArterialO2RunningAverage_mmHg                       = 32;
+  pulse.cdm.bind.RunningAverageData        ArterialCO2RunningAverage_mmHg                      = 33;
   // Muscle Pressure Waveform
-  double                                   ExpiratoryHoldFraction                              = 32;
-  double                                   ExpiratoryReleaseFraction                           = 33;
-  double                                   ExpiratoryRiseFraction                              = 34;
-  double                                   InspiratoryHoldFraction                             = 35;
-  double                                   InspiratoryReleaseFraction                          = 36;
-  double                                   InspiratoryRiseFraction                             = 37;
-  double                                   InspiratoryToExpiratoryPauseFraction                = 38;
-  double                                   ResidueFraction                                     = 39;
-  double                                   PreviousDyspneaSeverity                             = 40;
+  double                                   ExpiratoryHoldFraction                              = 34;
+  double                                   ExpiratoryReleaseFraction                           = 35;
+  double                                   ExpiratoryRiseFraction                              = 36;
+  double                                   InspiratoryHoldFraction                             = 37;
+  double                                   InspiratoryReleaseFraction                          = 38;
+  double                                   InspiratoryRiseFraction                             = 39;
+  double                                   InspiratoryToExpiratoryPauseFraction                = 40;
+  double                                   ResidueFraction                                     = 41;
+  double                                   PreviousDyspneaSeverity                             = 42;
+  double                                   MechanoreceptorsDyspneaFactor                       = 43;
   
   // Conscious Breathing
-  bool                                     ActiveConsciousRespirationCommand                   = 41;
+  bool                                     ActiveConsciousRespirationCommand                   = 44;
   // Disease States
-  double                                   LeftAlveoliDecrease_L                               = 42;
-  double                                   RightAlveoliDecrease_L                              = 43;
+  double                                   LeftAlveoliDecrease_L                               = 45;
+  double                                   RightAlveoliDecrease_L                              = 46;
   // Overrides
-  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 44;
-  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 45;
+  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 47;
+  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 48;
 }
 
 message TissueData
@@ -213,4 +217,5 @@ message TissueData
   double                                   RestingBloodLipid_mg_Per_mL                         = 5;
   double                                   RestingBloodInsulin_mg_Per_mL                       = 6;
   double                                   RestingFluidMass_kg                                 = 7;
+  double                                   PreviousFluidMass_kg                                = 8;
 }

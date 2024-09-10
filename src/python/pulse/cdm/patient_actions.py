@@ -2,7 +2,8 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.patient import SENutrition
-from pulse.cdm.physiology import SERespiratoryMechanics, eLungCompartment
+from pulse.cdm.physiology import SERespiratoryMechanics, eLungCompartment, \
+                                 SECardiovascularMechanicsModifiers, SERespiratoryMechanicsModifiers
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, \
                               SEScalarForce, SEScalarLength, SEScalarMassPerVolume, \
@@ -57,10 +58,13 @@ class SEAcuteRespiratoryDistressSyndromeExacerbation(SEPatientAction):
             self._severities[cmpt] = s
         return s
 
+    def get_severities(self):
+        return self._severities
+
     def __repr__(self):
         out = "Acute Respiratory Distress Syndrome Exacerbation\n";
-        for c,s in self._severities.items():
-            out += ("\t{}  Severity: {}\n").format(c, s)
+        for c, s in self._severities.items():
+            out += "\t{}  Severity: {}\n".format(c, s)
         return out
 
 class SEAcuteStress(SEPatientAction):
@@ -240,6 +244,59 @@ class SEBronchoconstriction(SEPatientAction):
     def __repr__(self):
         return ("Bronchoconstriction\n"
                 "  Severity: {}").format(self._severity)
+
+
+class SECardiovascularMechanicsModification(SEPatientAction):
+    __slots__ = ["_modifiers_file",
+                 "_modifiers", "_incremental"]
+
+    def __init__(self):
+        super().__init__()
+        self._modifiers_file = None
+        self._modifiers = None
+        self._incremental = False
+
+    def clear(self):
+        self._modifiers_file = None
+        self._modifiers = None
+        self._incremental = False
+
+    def copy(self, src):
+        if not isinstance(SECardiovascularMechanicsModification, src):
+            raise Exception("Provided argument must be a SECardiovascularMechanicsModification")
+        self.clear()
+        self._modifiers_file = src._modifiers_file
+        self._modifiers.copy(src._modifiers)
+        self._incremental = src._incremental
+
+    def is_valid(self):
+        return self.has_modifiers() or self.has_modifiers_file()
+
+    def is_active(self):
+        return True
+
+    def get_incremental(self):
+        return self._incremental
+    def set_incremental(self, b: bool):
+        self._incremental = b
+
+    def has_modifiers_file(self):
+        return self._modifiers_file is not None
+    def get_modifiers_file(self):
+        return self._modifiers_file
+    def set_modifiers_file(self, filename: str):
+        self._modifiers_file = filename
+
+    def has_modifiers(self):
+        return self._modifiers is not None
+    def get_modifiers(self):
+        if self._modifiers is None:
+            self._modifiers = SECardiovascularMechanicsModifiers()
+        return self._modifiers
+    def __repr__(self):
+        return ("Cardiovascular Mechanics Modification\n"
+                "  Modifier File: {}").format(self._modifiers_file)
+
 
 class SEChestCompression(SEPatientAction):
     __slots__ = ["_force", "_depth", "_compression_period"]
@@ -706,31 +763,43 @@ class SEConsumeNutrients(SEPatientAction):
         return self._nutrition
 
 class SEDyspnea(SEPatientAction):
-    __slots__ = ["_severity"]
+    __slots__ = ["_respiration_rate_severity", "_tidal_volume_severity"]
 
     def __init__(self):
         super().__init__()
-        self._severity = None
+        self._respiration_rate_severity = None
+        self._tidal_volume_severity = None
 
     def clear(self):
         super().clear()
-        if self._severity is not None:
-            self._severity.invalidate()
+        if self._respiration_rate_severity is not None:
+            self._respiration_rate_severity.invalidate()
+        if self._tidal_volume_severity is not None:
+            self._tidal_volume_severity.invalidate()
 
     def is_valid(self):
-        return self.has_severity()
+        return self.has_respiration_rate_severity()  or self.has_tidal_volume_severity()
 
-    def has_severity(self):
-        return self._severity is not None
+    def has_respiration_rate_severity(self):
+        return self._respiration_rate_severity is not None
 
-    def get_severity(self):
-        if self._severity is None:
-            self._severity = SEScalar0To1()
-        return self._severity
+    def get_respiration_rate_severity(self):
+        if self._respiration_rate_severity is None:
+            self._respiration_rate_severity = SEScalar0To1()
+        return self._respiration_rate_severity
+
+    def has_tidal_volume_severity(self):
+        return self._tidal_volume_severity is not None
+
+    def get_tidal_volume_severity(self):
+        if self._tidal_volume_severity is None:
+            self._tidal_volume_severity = SEScalar0To1()
+        return self._tidal_volume_severity
 
     def __repr__(self):
         return ("Dyspnea\n"
-                "  Severity: {}").format(self._severity)
+                "  Respiration Rate Severity: {}\n"
+                "  Tidal Volume Severity: {}").format(self._respiration_rate_severity, self._tidal_volume_severity)
 
 class SEExercise(SEPatientAction):
     __slots__ = ["_intensity"]
@@ -949,6 +1018,7 @@ class SEIntubation(SEPatientAction):
     def get_type(self):
         return self._type
 
+
     def set_type(self, type: eIntubationType):
         self._type = type
 
@@ -1155,7 +1225,7 @@ class SERespiratoryMechanicsConfiguration(SEPatientAction):
 
     def copy(self, src):
         if not isinstance(SERespiratoryMechanicsConfiguration, src):
-            raise Exception("Provided argument must be a SEMechanicalVentilatorConfiguration")
+            raise Exception("Provided argument must be a SERespiratoryMechanicsConfiguration")
         self.clear()
         self._settings_file = src._settings_file
         self._settings.copy(src._settings)
@@ -1182,6 +1252,59 @@ class SERespiratoryMechanicsConfiguration(SEPatientAction):
     def __repr__(self):
         return ("Respiratory Mechanics Configuration\n"
                 "  Setting File: {}").format(self._settings_file)
+
+
+class SERespiratoryMechanicsModification(SEPatientAction):
+    __slots__ = ["_modifiers_file",
+                 "_modifiers", "_incremental"]
+
+    def __init__(self):
+        super().__init__()
+        self._modifiers_file = None
+        self._modifiers = None
+        self._incremental = False
+
+    def clear(self):
+        self._modifiers_file = None
+        self._modifiers = None
+        self._incremental = False
+
+    def copy(self, src):
+        if not isinstance(SERespiratoryMechanicsModification, src):
+            raise Exception("Provided argument must be a SERespiratoryMechanicsModification")
+        self.clear()
+        self._modifiers_file = src._modifiers_file
+        self._modifiers.copy(src._modifiers)
+        self._incremental = src._incremental
+
+    def is_valid(self):
+        return self.has_modifiers() or self.has_modifiers_file()
+
+    def is_active(self):
+        return True
+    
+    def get_incremental(self):
+        return self._incremental
+    def set_incremental(self, b: bool):
+        self._incremental = b
+
+    def has_modifiers_file(self):
+        return self._modifiers_file is not None
+    def get_modifiers_file(self):
+        return self._modifiers_file
+    def set_modifiers_file(self, filename: str):
+        self._modifiers_file = filename
+
+    def has_modifiers(self):
+        return self._modifiers is not None
+    def get_modifiers(self):
+        if self._modifiers is None:
+            self._modifiers = SERespiratoryMechanicsModifiers()
+        return self._modifiers
+    def __repr__(self):
+        return ("Respiratory Mechanics Modification\n"
+                "  Modifier File: {}").format(self._modifiers_file)
+
 
 class eSubstance_Administration(Enum):
     Intravenous = 0,

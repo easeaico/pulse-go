@@ -846,7 +846,7 @@ These are some recommended improvements and additions:
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 
 BUN - Blood Urea Nitrogen

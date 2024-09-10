@@ -113,7 +113,7 @@ The Post Process step moves everything calculated in Process from the next time 
 Features and Capabilities
 -------------------------
 ### Definitions
-Acronyms and a nomenclature table are available in the [appendix](@ref environment-appendices).
+An acronyms, initialisms, and a nomenclature table are available in the Glossary section.
 
 ### Circuit
 The one-dimensional model shown in Figure 1 is further simplified to a zero-dimensional model (Figure 3) by averaging the thermal effects over the entire patient.  The %Environment system uses the generic circuit solver in the same way as fluid systems (@ref CircuitMethodology).
@@ -155,7 +155,7 @@ The clothing thermal insulation/resistance in this model is an average lumped va
 </center>
 | Garment Description | Icl (clo) | Garment Description	 | Icl (clo) |
 | :----     | :----   | :----   | :----   |
-| **Underwear** |  | **Dress and Skirts** |  |
+| <b>Underwear</b> |  | <b>Dress and Skirts</b> |  |
 | Bra | 0.01 | Skirt (thin) | 0.14 |
 | Panties | 0.03 | Skirt (thick) | 0.23 |
 | Men's briefs | 0.04 | Sleeveless, scoop neck (thin) | 0.23 |
@@ -164,7 +164,7 @@ The clothing thermal insulation/resistance in this model is an average lumped va
 | Long underwear bottoms | 0.15 | Long-sleeve shirtdress (thin) | 0.33 |
 | Full slip | 0.16 | Long-sleeve shirtdress (thick) | 0.47 |
 | Long underwear top | 0.20 |  |  |
-| **Footwear** |  | **Sweaters** |  |
+| <b>Footwear</b> |  | <b>Sweaters</b> |  |
 | Ankle-length athletic socks | 0.02 | Sleeveless vest (thin) | 0.13 |
 | Pantyhose/stockings | 0.02 | Sleeveless vest (thick) | 0.22 |
 | Sandals/thongs | 0.02 | Long-sleeve (thin) | 0.25 |
@@ -173,14 +173,14 @@ The clothing thermal insulation/resistance in this model is an average lumped va
 | Calf-length socks | 0.03 | **Suit Jackets and Vests (lined)** |  |
 | Knee socks (thick) | 0.06 | Sleeveless vest (thin) | 0.10 |
 | Boots | 0.10 | Sleeveless vest (thick) | 0.17 |
-| **Shirts and Blouses** |  | Single-breasted (thin) | 0.36 |
+| <b>Shirts and Blouses</b> |  | Single-breasted (thin) | 0.36 |
 | Sleeveless/scoop-neck blouse | 0.12 | Single-breasted (thick) | 0.44 |
 | Short-sleeve knit sport shirt | 0.17 | Double-breasted (thin) | 0.42 |
 | Short-sleeve dress shirt | 0.19 | Double-breasted (thick) | 0.48 |
 | Long-sleeve dress shirt | 0.25 |  |  |
-| Long-sleeve flannel shirt | 0.34 | **Sleepwear and Robes** |  |
+| Long-sleeve flannel shirt | 0.34 | <b>Sleepwear and Robes</b> |  |
 | Long-sleeve sweatshirt | 0.34 | Sleeveless short gown (thin) | 0.18 |
-| **Trousers and Coveralls** |  | Sleeveless long gown (thin) | 0.20 |
+| <b>Trousers and Coveralls</b> |  | Sleeveless long gown (thin) | 0.20 |
 | Short shorts | 0.06 | Short-sleeve hospital gown | 0.31 |
 | Walking shorts | 0.08 | Short-sleeve short robe (thin) | 0.34 |
 | Straight trousers (thin) | 0.15 | Short-sleeve pajamas (thin) | 0.42 |
@@ -205,25 +205,25 @@ The size-independent deposition efficiencies are computed from the deposition fr
 *Equation 1.*
 </center><br>
 
-Here *K<sub>B</sub>* is the size independent deposition efficiency coefficient for compartment *B*, *b<sub>i</sub>* is the fraction of total particles of size *i* entering the body that deposit in compartment *B*, and *f<sub>i</sub>* is the fraction of total particles in the environment that are of size *i*. Likewise, *a<sub>i</sub>* is the fraction of total particles of size *i* entering the body that deposit in compartment *A*. This equation is derived by first considering a polydispersed aerosol with particles divided by size into *n* number of bins. The total mass of particles in an aliquot of to-be-inhaled air prior to inhalation is equal to the sum of the masses of the particles in each bin, as described by Equation 2.
+Here <i>K<sub>B</sub></i> is the size independent deposition efficiency coefficient for compartment <i>B</i>, <i>b<sub>i</sub></i> is the fraction of total particles of size <i>i</i> entering the body that deposit in compartment <i>B</i>, and <i>f<sub>i</sub></i> is the fraction of total particles in the environment that are of size <i>i</i>. Likewise, <i>a<sub>i</sub></i> is the fraction of total particles of size <i>i</i> entering the body that deposit in compartment <i>A</i>. This equation is derived by first considering a polydispersed aerosol with particles divided by size into <i>n</i> number of bins. The total mass of particles in an aliquot of to-be-inhaled air prior to inhalation is equal to the sum of the masses of the particles in each bin, as described by Equation 2.
 <center>
 \f[m_t = \Sigma_{i=1}^{n}m_i \f]
 *Equation 2.*
 </center><br>
 
-The mass of the particles in each bin must be defined by a fraction specified in a histogram. The size of the histogram is arbitrary. The only requirement is that a histogram is supplied rather than a density function. Equation 3 describes the mass of particle *i* within the aliquot of aerosol.
+The mass of the particles in each bin must be defined by a fraction specified in a histogram. The size of the histogram is arbitrary. The only requirement is that a histogram is supplied rather than a density function. Equation 3 describes the mass of particle <i>i</i> within the aliquot of aerosol.
 <center>
 \f[m_i = f_im_t \f]
 *Equation 3.*
 </center><br>
 
-Likewise, the total mass of particles in compartment *A* is equal to the sum of the masses of the particles in each bin, and the same is true for compartments *B*, *C*, *D*, etc., described by Equation 4.
+Likewise, the total mass of particles in compartment <i>A</i> is equal to the sum of the masses of the particles in each bin, and the same is true for compartments <i>B</i>, <i>C</i>, <i>D</i>, etc., described by Equation 4.
 <center>
 \f[m_{tA} = \Sigma_{i=1}^{n}m_{iA} \f]
 *Equation 4.*
 </center><br>
 
-The mass of particles in compartment *B* is also equal to the mass of the particles that did not deposit in the adjacent upstream compartment *A*.
+The mass of particles in compartment <i>B</i> is also equal to the mass of the particles that did not deposit in the adjacent upstream compartment <i>A</i>.
 <center>
 \f[m_{iB} = \left(1-a_i \right)m_i \f]
 *Equation 5.*
@@ -235,13 +235,13 @@ Combining Equations 2-5 yields Equation 6.
 *Equation 6.*
 </center><br>
 
-The total mass of particles that deposit in compartment *B* is some fraction of the total particles in compartment *B*, which is the sum of the amount deposited from each bin in compartment *B*.
+The total mass of particles that deposit in compartment <i>B</i> is some fraction of the total particles in compartment <i>B</i>, which is the sum of the amount deposited from each bin in compartment <i>B</i>.
 <center>
 \f[K_{B}m_{tB} = \left(b_1f_1 + \cdots + b_nf_n \right)m_t \f]
 *Equation 7.*
 </center><br>
 
-Rearranging Equation 7 and combining with Equation 6 yields [Equation 1](@ref SIDE), the size-independent deposition efficiency coefficient for compartment *B*.
+Rearranging Equation 7 and combining with Equation 6 yields [Equation 1](@ref SIDE), the size-independent deposition efficiency coefficient for compartment <i>B</i>.
 
 The mass deposited in each compartment is computed by multiplying the size-independent deposition efficiency coefficient by the mass in the compartment at each time step. Once an aerosol substance deposits in a respiratory compartment it stays in the respiratory compartment. In other words, coughing is not productive in the engine. The direct effect of a deposited substance depends on the mass deposited and the value of the inflammation coefficient that is defined in the substance file. The inflammation coefficient defines the amount of damage, by any mode, that the substance does to the respiratory tissue. Figure 5 visually describes the direct effects of an aerosol on the %Respiratory system.
 
@@ -286,7 +286,7 @@ The distribution of carbon monoxide species (dissolved and bound to hemoglobin) 
 \f[T_{CO} = CO_{Hb} + k_{CO}P_{CO} \f]
 *Equation 8.*
 </center><br>
-where *T<sub>CO</sub>* is the total carbon monoxide in the blood, *CO<sub>Hb</sub>* is the carbon monoxide bound to hemoglobin, *P<sub>CO</sub>* is the partial pressure of carbon monoxide in the blood, and *k<sub>CO</sub>* is the Henry's Law solubility coefficient for carbon monoxide. Equation 9, the Haldane relationship, provides the second equation necessary to solve for the two unknown values. In Equation 9, *M<sub>H</sub>* is the Haldane affinity ratio for hemoglobin, *P<sub>gas</sub>* is the partial pressure of the gas, and *Gas<sub>Hb</sub>* is the amount of gas bound to hemoglobin.
+where <i>T<sub>CO</sub></i> is the total carbon monoxide in the blood, <i>CO<sub>Hb</sub></i> is the carbon monoxide bound to hemoglobin, <i>P<sub>CO</sub></i> is the partial pressure of carbon monoxide in the blood, and <i>k<sub>CO</sub></i> is the Henry's Law solubility coefficient for carbon monoxide. Equation 9, the Haldane relationship, provides the second equation necessary to solve for the two unknown values. In Equation 9, <i>M<sub>H</sub></i> is the Haldane affinity ratio for hemoglobin, <i>P<sub>gas</sub></i> is the partial pressure of the gas, and <i>Gas<sub>Hb</sub></i> is the amount of gas bound to hemoglobin.
 <center>
 \f[M_H \frac{P_{CO}}{CO_{Hb}} = \frac{P_{O_2}}{O_{2_{Hb}}} \f]
 *Equation 9.*
@@ -294,7 +294,7 @@ where *T<sub>CO</sub>* is the total carbon monoxide in the blood, *CO<sub>Hb</su
 The model is implemented by first totaling the carbon monoxide in a compartment post diffusion, then computing the partial pressure of carbon monoxide, and finally computing the carboxyhemoglobin in the compartment. After the target distribution is calculated, the hemoglobin species (unbound, oxyhemoglobin, carboxyhemoglobin, carbaminohemoglobin, and oxycarbaminohemoglobin) amounts are updated by assuming that unbound hemoglobin is consumed first followed by oxyhemoglobin then oxycarbaminohemoglobin and finally carbaminohemoglobin. If all hemoglobin is converted to carboxyhemoglobin before the necessary adjustment is made to conserve CO mass, then the remaining CO is distributed back to the dissolved species. This acts as an automatic negative feedback device to ensure that the perfusion contribution to the diffusing capacity is saturated when the hemoglobin becomes saturated. See the [C++ code](@ref CalculateCarbonMonoxideSpeciesDistribution) for more details.
 
 #### Carbon Monoxide Effects on Oxygen Saturation Curve
-The oxygen saturation curve effects model implemented is adapted from the regression model described by @ref bruce2003multicompartment. We have simplified the model by assuming a linear relationship between carboxyhemoglobin and both the Hill coefficient and the 50% saturation shaping parameter. We then applied the linear relationship to the Dash and Bassingthwaithe oxygen saturation model already implemented in the engine (see the [Tissue Methodology](@ref tissue-approach)). Equations 10 and 11 describe the adjustments made to the oxygen saturation curve in the presence of carboxyhemoglobin, and Figure 7 shows the shift in the curve at various carboxyhemoglobin concentrations. In the equations, *&eta;* is the Hill coefficient, *S<sub>CO</sub>* is the fraction of carboxyhemoglobin to total hemoglobin (i.e. CO saturation), and *P<sub>50</sub>* is the standard partial pressure of oxygen at 50% oxygen saturation.
+The oxygen saturation curve effects model implemented is adapted from the regression model described by @ref bruce2003multicompartment. We have simplified the model by assuming a linear relationship between carboxyhemoglobin and both the Hill coefficient and the 50% saturation shaping parameter. We then applied the linear relationship to the Dash and Bassingthwaithe oxygen saturation model already implemented in the engine (see the [Tissue Methodology](@ref tissue-approach)). Equations 10 and 11 describe the adjustments made to the oxygen saturation curve in the presence of carboxyhemoglobin, and Figure 7 shows the shift in the curve at various carboxyhemoglobin concentrations. In the equations, *&eta;* is the Hill coefficient, <i>S<sub>CO</sub></i> is the fraction of carboxyhemoglobin to total hemoglobin (i.e. CO saturation), and <i>P<sub>50</sub></i> is the standard partial pressure of oxygen at 50% oxygen saturation.
 <center>
 \f[\eta = 1.7 - 1.1 \cdot S_{CO} \f]
 *Equation 10.*
@@ -696,7 +696,7 @@ Table 8.
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Pulse Oximetry	|	Oxygen Saturation	|	Percent Carboxyhemoglobin	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Environment Change: Carbon Monoxide 200ppm	|	Person is exposed to 200ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical pg. 690	</span>|
+|	Environment Change: Carbon Monoxide 200ppm	|	Person is exposed to 200ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical	</span>|
 |	None	|	10 minutes	|	N/A	|	605	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="warning">	1 to 2 % @cite stewart1975effect	</span>|
 |	None	|	30 minutes	|	N/A	|	1805	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="warning">	3 to 4 % @cite stewart1975effect	</span>|
 |	None	|	1 hour	|	N/A	|	3605	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="warning">	5 to 6 % @cite stewart1975effect	</span>|
@@ -709,7 +709,7 @@ Table 9.
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Pulse Oximetry	|	Oxygen Saturation	|	Percent Carboxyhemoglobin	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Environment Change: Carbon Monoxide 5000ppm	|	Person is exposed to 5000ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical pg. 690	</span>|
+|	Environment Change: Carbon Monoxide 5000ppm	|	Person is exposed to 5000ppm carbon monoxide. The maximal steady-state concentration 	|	5	|	N/A	|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	95 to 98% @cite guyton2006medical	</span>|<span class="success">	Approx. 0 @cite boron2012medical	</span>|
 |	None	|	1 hour	|	N/A	|	3605	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Decreased	</span>|<span class="success">	approx. 80% @cite stewart1975effect Increased @cite turino1981effect	</span>|
 |	None	|	2 hours - Irreversible state should happen by this point	|	N/A	|	7205	|<span class="success">	Normal @cite rose2016carbon	</span>|<span class="success">	Death (Irreversible State)	</span>|<span class="success">	Death (Irreversible State)	</span>|
 

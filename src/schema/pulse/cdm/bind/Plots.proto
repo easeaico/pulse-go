@@ -50,6 +50,13 @@ message PlotConfigData
     Plain                                                       = 1; /**<< @brief "Plain" values will be used on the y-axis. */
   }
 
+  /** @brief Enumeration for Y-bounds modes. */
+  enum eYBoundsMode
+  {
+    ZeroMax                                                     = 0; /**<< @brief Will include y=0 within the plot window. */
+    MinMax                                                      = 1; /**<< @brief Plot window will be determined by min/max y-value. */
+  }
+
   /** @brief If scientific tick style is used, only apply scientific notation outside of the range 10^M to 10^N.*/
   message SciLimitsData
   {
@@ -65,15 +72,17 @@ message PlotConfigData
   optional double                     LegendFontSize            = 6;  /**<< @brief Set the font size of the legend. */
   optional eLegendMode                LegendMode                = 7;
   optional bool                       LogAxis                   = 8;  /**<< @brief Make all Y axes logarithmic. */
-  repeated string                     OmitActionsWith           = 9;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
-  repeated string                     OmitEventsWith            = 10; /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
-  optional string                     OutputPathOverride        = 11; /**<< @brief Specify the path (relative to bin) to output the plot. */
-  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 12;
-  optional bool                       PlotActions               = 13; /**<< @brief Plot actions parsed from log file. */
-  optional bool                       PlotEvents                = 14; /**<< @brief Plot events parsed from log file. */
-  optional SciLimitsData              SciLimits                 = 15;
-  optional eTickStyle                 TickStyle                 = 16;
-  optional bool                       ZeroAxis                  = 17; /**<< @brief Will ensure that zero is included on the Y axis rather than zooming away from it based on the plot's min/max Y values. */
+  repeated string                     AllowActionsWith          = 9;  /**<< @brief Will atempt to include only actions that contain any of the specified case-senstitive words. If specified, an action must pass both this and OmitActionsWith to be included. */
+  repeated string                     AllowEventsWith           = 10; /**<< @brief Will atempt to include only events that contain any of the specified case-senstitive words. If specified, an event must pass both this and OmitEventWith to be included.  */
+  repeated string                     OmitActionsWith           = 11;  /**<< @brief Will attempt to omit from the plot actions that contain any of the specified case-sensitive words, i.e. OmitActionsWith=Hemorrhage,Infusion */
+  repeated string                     OmitEventsWith            = 12; /**<< @brief Will attempt to omit from the plot events that contain any of the specified case-sensitive words, i.e. OmitEventsWith=Tachycardia */
+  optional string                     OutputPathOverride        = 13; /**<< @brief Specify the path (relative to bin) to output the plot. */
+  optional ePercentageOfBaselineMode  PercentOfBaselineMode     = 14;
+  optional bool                       PlotActions               = 15; /**<< @brief Plot actions parsed from log file. */
+  optional bool                       PlotEvents                = 16; /**<< @brief Plot events parsed from log file. */
+  optional SciLimitsData              SciLimits                 = 17;
+  optional eTickStyle                 TickStyle                 = 18;
+  optional eYBoundsMode               YBoundsMode               = 19; /**<< @brief Set mode for y-axis bounds. Note: Log axis plots are always MinMax mode. */
 }
 
 /** @brief Data used to configure a plot source. */
@@ -138,10 +147,10 @@ message MultiHeaderSeriesPlotterData
     optional string                   X2Header                  = 8;  /**<< @brief Specify the header for x-data corresponding to the secondary y-axis. Assumed to be the same as XHeader if not provided. */
     repeated string                   YHeader                   = 9;  /**<< @brief Specify the header(s) for the y-axis. */
     optional string                   YLabel                    = 10; /**<< @brief Specify the y-axis label for this plot. */
-    optional BoundsData               YBounds                   = 11; /**<< @brief Specify the desired y-axis bounds.  */
+    optional BoundsData               YBounds                   = 11; /**<< @brief Specify the desired y-axis bounds. Overrides YBoundsMode in plot config. */
     repeated string                   Y2Header                  = 12; /**<< @bried Specify the header(s) for the secondary y-axis. Data pulled from PlotSources unless ValidationSource provided. */
     optional string                   Y2Label                   = 13; /**<< @brief Specify the secondary y-axis label for this plot. */
-    optional BoundsData               Y2Bounds                  = 14; /**<< @brief Specify the desired secondary y-axis bounds. */
+    optional BoundsData               Y2Bounds                  = 14; /**<< @brief Specify the desired secondary y-axis bounds. Overrides YBoundsMode in plot config.*/
   }
 }
 

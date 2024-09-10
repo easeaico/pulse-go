@@ -36,8 +36,8 @@ public:
 
   /** Actions can be turned off or on with various data combinations
   *  This method will encapsulate that logic in a single function */
-  virtual bool IsActive() const { return !m_Active ? false : IsValid(); }
   virtual void Activate() { m_Active = true; }
+  virtual bool IsActive() const { return !m_Active ? false : IsValid(); }
   virtual void Deactivate() { m_Active = false; }
 
   virtual std::string GetComment() const;

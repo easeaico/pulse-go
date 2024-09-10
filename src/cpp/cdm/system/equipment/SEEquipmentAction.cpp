@@ -12,13 +12,3 @@ SEEquipmentAction::~SEEquipmentAction()
 {
   Clear();
 }
-
-void SEEquipmentAction::Clear()
-{
-  SEAction::Clear();
-}
-
-bool SEEquipmentAction::IsValid() const
-{
-  return SEAction::IsValid();
-}

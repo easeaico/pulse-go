@@ -4,6 +4,15 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
+enum eEngineInitializationState
+{
+  Uninitialized       = 0;/**<< @brief Engine is not initialized. */
+  FailedState         = 1;/**<< @brief Unable to load state file. */
+  FailedPatientSetup  = 2;/**<< @brief Failed to setup the Pulse engine to the provided patient values. */
+  FailedStabilization = 3;/**<< @brief Pulse was unable to stabilize to provided/computed patient values. */
+  Initialized         = 4;/**<< @brief Engine successfully initialized. */
+}
+
 /** @brief Enumeration for left/right side */
 enum eSide
 {

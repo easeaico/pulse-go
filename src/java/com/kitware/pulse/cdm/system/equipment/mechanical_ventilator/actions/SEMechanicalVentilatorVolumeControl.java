@@ -58,8 +58,8 @@ public class SEMechanicalVentilatorVolumeControl extends SEMechanicalVentilatorM
     setInspirationWaveform(other.getInspirationWaveform());
     if (other.hasInspiratoryPeriod())
       getInspiratoryPeriod().set(other.getInspiratoryPeriod());
-    if (other.hasPositiveEndExpiredPressure())
-      getPositiveEndExpiredPressure().set(other.getPositiveEndExpiredPressure());
+    if (other.hasPositiveEndExpiratoryPressure())
+      getPositiveEndExpiratoryPressure().set(other.getPositiveEndExpiratoryPressure());
     if (other.hasRespirationRate())
       getRespirationRate().set(other.getRespirationRate());
     if (other.hasSlope())
@@ -109,8 +109,8 @@ public class SEMechanicalVentilatorVolumeControl extends SEMechanicalVentilatorM
     dst.setInspirationWaveform(src.getInspirationWaveform());
     if (src.hasInspiratoryPeriod())
       SEScalarTime.load(src.getInspiratoryPeriod(), dst.getInspiratoryPeriod());
-    if (src.hasPositiveEndExpiredPressure())
-      SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
+    if (src.hasPositiveEndExpiratoryPressure())
+      SEScalarPressure.load(src.getPositiveEndExpiratoryPressure(), dst.getPositiveEndExpiratoryPressure());
     if (src.hasRespirationRate())
       SEScalarFrequency.load(src.getRespirationRate(), dst.getRespirationRate());
     if (src.hasSlope())
@@ -139,8 +139,8 @@ public class SEMechanicalVentilatorVolumeControl extends SEMechanicalVentilatorM
     dst.setInspirationWaveform(src.inspirationWaveform);
     if (src.hasInspiratoryPeriod())
       dst.setInspiratoryPeriod(SEScalarTime.unload(src.getInspiratoryPeriod()));
-    if (src.hasPositiveEndExpiredPressure())
-      dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.getPositiveEndExpiredPressure()));
+    if (src.hasPositiveEndExpiratoryPressure())
+      dst.setPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.getPositiveEndExpiratoryPressure()));
     if (src.hasRespirationRate())
       dst.setRespirationRate(SEScalarFrequency.unload(src.getRespirationRate()));
     if (src.hasSlope())
@@ -154,7 +154,7 @@ public class SEMechanicalVentilatorVolumeControl extends SEMechanicalVentilatorM
     return super.isValid() &&
       hasFlow() &&
       hasFractionInspiredOxygen() &&
-      hasPositiveEndExpiredPressure() &&
+      hasPositiveEndExpiratoryPressure() &&
       hasRespirationRate() &&
       hasTidalVolume();
   }
@@ -232,11 +232,11 @@ public class SEMechanicalVentilatorVolumeControl extends SEMechanicalVentilatorM
     return inspiratoryPeriod;
   }
 
-  public boolean hasPositiveEndExpiredPressure()
+  public boolean hasPositiveEndExpiratoryPressure()
   {
     return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.isValid();
   }
-  public SEScalarPressure getPositiveEndExpiredPressure()
+  public SEScalarPressure getPositiveEndExpiratoryPressure()
   {
     if (positiveEndExpiredPressure == null)
       positiveEndExpiredPressure = new SEScalarPressure();
@@ -289,8 +289,8 @@ public class SEMechanicalVentilatorVolumeControl extends SEMechanicalVentilatorM
         + (hasInspirationPatientTriggerPressure() ? getInspirationPatientTriggerPressure().toString() : "Not Provided");
     str += "\n\tInspirationWaveform: " + getInspirationWaveform();
     str += "\n\tInspiratoryPeriod: " + (hasInspiratoryPeriod() ? getInspiratoryPeriod().toString() : "Not Provided");
-    str += "\n\tPositiveEndExpiredPressure: "
-        + (hasPositiveEndExpiredPressure() ? getPositiveEndExpiredPressure().toString() : "Not Provided");
+    str += "\n\tPositiveEndExpiratoryPressure: "
+        + (hasPositiveEndExpiratoryPressure() ? getPositiveEndExpiratoryPressure().toString() : "Not Provided");
     str += "\n\tRespirationRate: " + (hasRespirationRate() ? getRespirationRate().toString() : "Not Provided");
     str += "\n\tSlope: " + (hasSlope() ? getSlope().toString() : "Not Provided");
     str += "\n\tTidalVolume: " + (hasTidalVolume() ? getTidalVolume().toString() : "Not Provided");

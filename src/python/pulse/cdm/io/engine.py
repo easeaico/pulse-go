@@ -1,28 +1,24 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from typing import List
-
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, SEDecimalFormat, \
-                             SEConditionManager, SEEngineInitialization, SEValidationTarget, \
-                             SESegmentValidationTarget, SESegmentValidationSegment, \
-                             SETimeSeriesValidationTarget
+                             SEConditionManager, SEEngineInitialization, SEEngineInitializationStatus
 from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
                                       ActionListData, ActionMapData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
-                                      DataRequestData, DataRequestManagerData, \
+                                      DataRequestData, DataRequestListData, DataRequestManagerData, \
                                       DataRequestedData, DataRequestedListData, DecimalFormatData, \
                                       EngineInitializationData, EngineInitializationListData, \
-                                      LogMessagesData, ValidationTargetData, \
-                                      SegmentValidationTargetData, SegmentValidationSegmentData,\
-                                      SegmentValidationSegmentListData, SegmentValidationConfigurationData, \
-                                      TimeSeriesValidationTargetData, TimeSeriesValidationTargetListData
+                                      EngineInitializationStatusData, EngineInitializationStatusListData, \
+                                      LogMessagesData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.equipment_actions import SEEquipmentAction
-from pulse.cdm.engine import SEEventChange, eEvent, SESegmentValidationConfig
+from pulse.cdm.engine import SEEventChange, eEvent, eDataRequest_category, \
+                             eDecimalFormat_type, eEngineInitializationState
+from pulse.cdm.scalars import get_unit
 
 from pulse.cdm.io.action import *
 from pulse.cdm.io.patient_actions import *
@@ -129,6 +125,11 @@ def serialize_condition_manager_to_bind(condition_manager: SEConditionManager, d
         serialize_chronic_ventricular_systolic_dysfunction_to_bind(condition_manager.get_chronic_ventricular_systolic_dysfunction(),
                                                                    any_condition.PatientCondition.ChronicVentricularSystolicDysfunction)
         dst.AnyCondition.append(any_condition)
+    if condition_manager.has_dehydration():
+        any_condition = AnyConditionData()
+        serialize_dehydration_to_bind(condition_manager.get_dehydration(),
+                                          any_condition.PatientCondition.Dehydration)
+        dst.AnyCondition.append(any_condition)
     if condition_manager.has_impaired_alveolar_exchange():
         any_condition = AnyConditionData()
         serialize_impaired_alveolar_exchange_to_bind(condition_manager.get_impaired_alveolar_exchange(),
@@ -217,6 +218,10 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_bronchoconstriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SECardiovascularMechanicsModification):
+                serialize_cardiovascular_mechanics_modification_to_bind(action, any_action.PatientAction.CardiovascularMechanicsModification)
+                dst.AnyAction.append(any_action)
+                continue
             if isinstance(action, SEChestCompression):
                 serialize_chest_compression_to_bind(action, any_action.PatientAction.ChestCompression)
                 dst.AnyAction.append(any_action)
@@ -297,6 +302,10 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_respiratory_mechanics_configuration_to_bind(action, any_action.PatientAction.RespiratoryMechanicsConfiguration)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SERespiratoryMechanicsModification):
+                serialize_respiratory_mechanics_modification_to_bind(action, any_action.PatientAction.RespiratoryMechanicsModification)
+                dst.AnyAction.append(any_action)
+                continue
             if isinstance(action, SESubstanceBolus):
                 serialize_substance_bolus_to_bind(action, any_action.PatientAction.SubstanceBolus)
                 dst.AnyAction.append(any_action)
@@ -325,7 +334,7 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_urinate_to_bind(action, any_action.PatientAction.Urinate)
                 dst.AnyAction.append(any_action)
                 continue
-            print("Uknown Patient Action")
+            print("Unknown Patient Action")
 
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
@@ -336,7 +345,7 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_thermal_application_to_bind(action, any_action.EnvironmentAction.ThermalApplication)
                 dst.AnyAction.append(any_action)
                 continue
-            print("Uknown Environment Action")
+            print("Unknown Environment Action")
 
         if isinstance(action, SEEquipmentAction):
             if isinstance(action, SEBagValveMaskConfiguration):
@@ -452,9 +461,55 @@ def serialize_data_request_to_bind(src: SEDataRequest, dst: DataRequestData):
     dst.PropertyName = src.get_property_name()
     dst.Category = src.get_category().value
 
-def serialize_data_request_from_bind(src: DataRequestData, dst: SEDataRequest):
-    raise Exception("serialize_data_request_from_bind not implemented")
+def serialize_data_request_from_bind(src: DataRequestData) -> SEDataRequest:
+    return SEDataRequest(
+        category=eDataRequest_category(src.Category),
+        action=src.ActionName if src.ActionName else None,
+        compartment=src.CompartmentName if src.CompartmentName else None,
+        substance=src.SubstanceName if src.SubstanceName else None,
+        property=src.PropertyName if src.PropertyName else None,
+        unit=get_unit(src.Unit),
+        precision=src.DecimalFormat.Precision,
+        notation=eDecimalFormat_type(src.DecimalFormat.Type) if src.DecimalFormat.Type else None
+    )
 
+def serialize_data_request_list_to_bind(src: [SEDataRequest], dst: DataRequestListData):
+    for dr in src:
+        dr_data = DataRequestData()
+        serialize_data_request_to_bind(dr, dr_data)
+        dst.DataRequest.append(dr_data)
+def serialize_data_request_list_to_string(src: [SEDataRequest], fmt: eSerializationFormat) -> str:
+    dst = DataRequestListData()
+    serialize_data_request_list_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+def serialize_data_request_list_to_file(src: [SEDataRequest], filename: str):
+    string = serialize_data_request_list_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    file.write(string)
+    file.close()
+def serialize_data_request_list_from_bind(src: DataRequestListData, dst: List[SEDataRequest]) -> None:
+    for dr_data in src.DataRequest:
+        dst.append(serialize_data_request_from_bind(dr_data))
+def serialize_data_request_list_from_string(
+    string: str,
+    dst: List[SEDataRequest],
+    fmt: eSerializationFormat
+) -> None:
+    src = DataRequestListData()
+    json_format.Parse(string, src)
+    serialize_data_request_list_from_bind(src, dst)
+def serialize_data_request_list_from_file(
+    filename: str,
+    dst: List[SEDataRequest]
+) -> None:
+    with open(filename) as f:
+        string = f.read()
+    serialize_data_request_list_from_string(string, dst, eSerializationFormat.JSON)
+
+def serialize_data_request_manager_from_file(filename: str, dst: SEDataRequestManager):
+    with open(filename) as f:
+        string = f.read()
+    serialize_data_request_manager_from_string(string, dst, eSerializationFormat.JSON)
 def serialize_data_request_manager_to_file(src: SEDataRequestManager, filename: str):
     string = serialize_data_request_manager_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
@@ -468,7 +523,7 @@ def serialize_data_request_manager_to_string(src: SEDataRequestManager, fmt: eSe
 def serialize_data_request_manager_from_string(string: str, dst: SEDataRequestManager, fmt: eSerializationFormat):
     src = DataRequestManagerData()
     json_format.Parse(string, src)
-    serialize_data_request_manager_from_bind(src,dst)
+    serialize_data_request_manager_from_bind(src, dst)
 
 def serialize_data_request_manager_to_bind(src: SEDataRequestManager, dst: DataRequestManagerData):
     if src.has_data_requests():
@@ -477,9 +532,13 @@ def serialize_data_request_manager_to_bind(src: SEDataRequestManager, dst: DataR
             serialize_data_request_to_bind(dr, dst_dr)
             dst.DataRequest.append(dst_dr)
     dst.ResultsFilename = src.get_results_filename()
+    dst.SamplesPerSecond = src.get_samples_per_second()
 
 def serialize_data_request_manager_from_bind(src: DataRequestManagerData, dst: SEDataRequestManager):
-    raise Exception("serialize_data_request_manager_from_bind not implemented")
+    if src.ResultsFilename:
+        dst.set_results_filename(src.ResultsFilename)
+    dst.set_samples_per_second(src.SamplesPerSecond)
+    dst.set_data_requests([serialize_data_request_from_bind(dr) for dr in src.DataRequest])
 
 def serialize_engine_initialization_to_bind(src: SEEngineInitialization, dst: EngineInitializationData):
     if src.id is not None:
@@ -510,6 +569,99 @@ def serialize_engine_initializations_to_string(src: [SEEngineInitialization], fm
         serialize_engine_initialization_to_bind(ec, bind)
         dst.EngineInitialization.append(bind)
     return json_format.MessageToJson(dst, True, True)
+
+def serialize_engine_initialization_status_to_bind(
+    src: SEEngineInitializationStatus,
+    dst: EngineInitializationStatusData
+) -> None:
+    dst.InitializationState = src.get_initialization_state().value
+    if src.has_csv_filename():
+        dst.CSVFilename = src.get_csv_filename()
+    if src.has_log_filename():
+        dst.LogFilename = src.get_log_filename()
+    dst.StabilizationTime_s = src.get_stabilization_time_s()
+
+def serialize_engine_initialization_status_to_string(
+    src: SEEngineInitializationStatus,
+    fmt: eSerializationFormat
+) -> str:
+    dst = EngineInitializationStatusData()
+    serialize_engine_initialization_status_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+
+def serialize_engine_initialization_status_to_file(
+    src: SEEngineInitializationStatus,
+    filename: str
+) -> None:
+    string = serialize_engine_initialization_status_to_string(src, eSerializationFormat.JSON)
+    with open(filename, "w") as f:
+        f.write(string)
+
+def serialize_engine_initialization_status_from_bind(
+    src: EngineInitializationStatusData,
+    dst: SEEngineInitializationStatus
+) -> None:
+    dst.set_initialization_state(eEngineInitializationState(src.InitializationState))
+    dst.set_csv_filename(src.CSVFilename)
+    dst.set_log_filename(src.LogFilename)
+    dst.set_stabilization_time_s(src.StabilizationTime_s)
+
+def serialize_engine_initialization_status_from_string(
+    string: str,
+    dst: SEEngineInitializationStatus,
+    fmt: eSerializationFormat
+) -> None:
+    src = EngineInitializationStatusData()
+    json_format.Parse(string, src)
+    serialize_engine_initialization_status_from_bind(src, dst)
+
+def serialize_engine_initialization_status_from_file(filename: str, dst: SEEngineInitializationStatus):
+    with open(filename) as f:
+        string = f.read()
+    serialize_engine_initialization_status_from_string(string, dst, eSerializationFormat.JSON)
+
+def serialize_engine_initialization_status_list_to_bind(
+    src: List[SEEngineInitializationStatus],
+    dst: EngineInitializationStatusListData
+) -> None:
+    for status in src:
+        serialize_engine_initialization_status_to_bind(status, dst.EngineInitializationStatus.add())
+
+def serialize_engine_initialization_status_list_to_string(
+    src: List[SEEngineInitializationStatus],
+    fmt: eSerializationFormat
+) -> str:
+    dst = EngineInitializationStatusListData()
+    serialize_engine_initialization_status_list_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+
+def serialize_engine_initialization_status_list_to_file(src: List[SEEngineInitializationStatus], filename: str):
+    string = serialize_engine_initialization_status_list_to_string(src, eSerializationFormat.JSON)
+    with open(filename, "w") as file:
+        file.write(string)
+
+def serialize_engine_initialization_status_list_from_bind(
+    src: EngineInitializationStatusListData,
+    dst: List[SEEngineInitializationStatus]
+) -> None:
+    for statusData in src.EngineInitializationStatus:
+        dst.append(SEEngineInitializationStatus())
+        serialize_engine_initialization_status_from_bind(statusData, dst[-1])
+
+def serialize_engine_initialization_status_list_from_string(
+    string: str,
+    dst: List[SEEngineInitializationStatus],
+    fmt: eSerializationFormat
+) -> None:
+    src = EngineInitializationStatusListData()
+    json_format.Parse(string, src)
+    serialize_engine_initialization_status_list_from_bind(src, dst)
+
+def serialize_engine_initialization_status_list_from_file(filename: str, dst: List[SEEngineInitializationStatus]):
+    with open(filename) as f:
+        string = f.read()
+    serialize_engine_initialization_status_list_from_string(string, dst, eSerializationFormat.JSON)
+
 
 def serialize_data_requested_result_from_bind(src: DataRequestedData, dst: SEDataRequested):
     dst.set_id(src.ID)
@@ -547,189 +699,3 @@ def serialize_decimal_format_from_bind(src: DecimalFormatData, dst: SEDecimalFor
     dst.clear()
     dst.set_notation(eDecimalFormat_type(dst.Type))
     dst.set_precision(dst.Precision)
-
-# Validation Targets
-def serialize_validation_target_to_bind(src: SEValidationTarget, dst: ValidationTargetData):
-    dst.Header = src.get_header()
-    dst.Reference = src.get_reference()
-    dst.Notes = src.get_notes()
-def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEValidationTarget):
-    dst.clear()
-    dst.set_header(src.Header)
-    dst.set_reference(src.Reference)
-    dst.set_notes(src.Notes)
-
-def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, dst: SegmentValidationTargetData):
-    serialize_validation_target_to_bind(src, dst.ValidationTarget)
-    if src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToSegment:
-        dst.EqualToSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToValue:
-        dst.EqualToValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanSegment:
-        dst.GreaterThanSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanValue:
-        dst.GreaterThanValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanSegment:
-        dst.LessThanSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanValue:
-        dst.LessThanValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToSegment:
-        dst.TrendsToSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToValue:
-        dst.TrendsToValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.Range:
-        dst.Range.Minimum = src.get_target_minimum()
-        dst.Range.Maximum = src.get_target_maximum()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.NotValidating:
-        pass
-    else:
-        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
-def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetData, dst: SESegmentValidationTarget):
-    dst.clear()
-    serialize_validation_target_from_bind(src.ValidationTarget, dst)
-    if src.HasField("EqualToSegment"):
-        dst.set_equal_to_segment(src.EqualToSegment)
-    elif src.HasField("EqualToValue"):
-        dst.set_equal_to_value(src.EqualToValue)
-    elif src.HasField("GreaterThanSegment"):
-        dst.set_greater_than_segment(src.GreaterThanSegment)
-    elif src.HasField("GreaterThanValue"):
-        dst.set_greater_than_value(src.GreaterThanValue)
-    elif src.HasField("LessThanSegment"):
-        dst.set_less_than_segment(src.LessThanSegment)
-    elif src.HasField("LessThanValue"):
-        dst.set_less_than_value(src.LessThanValue)
-    elif src.HasField("TrendsToSegment"):
-        dst.set_trends_to_segment(src.TrendsToSegment)
-    elif src.HasField("TrendsToValue"):
-        dst.set_trends_to_value(src.TrendsTo)
-    elif src.HasField("Range"):
-        dst.set_range(src.Range.Minimum, src.Range.Maximum)
-    elif src.WhichOneof('Expected') is None:  # Not validating
-        pass
-    else:
-        raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
-def serialize_segment_validation_segment_to_bind(src: SESegmentValidationSegment, dst: SegmentValidationSegmentData):
-    dst.Segment = src.get_segment_id()
-    dst.Notes = src.get_notes()
-    for tgt in src.get_validation_targets():
-        serialize_segment_validation_target_to_bind(tgt, dst.SegmentValidationTarget.add())
-def serialize_segment_validation_segment_from_bind(src: SegmentValidationSegmentData):
-    dst = SESegmentValidationSegment()
-
-    dst.set_notes(src.Notes)
-    dst.set_segment_id(src.Segment)
-
-    tgts = []
-    for tgtData in src.SegmentValidationTarget:
-        tgt = SESegmentValidationTarget()
-        serialize_segment_validation_target_from_bind(tgtData, tgt)
-        tgts.append(tgt)
-    dst.set_validation_targets(tgts)
-
-    return dst
-
-def serialize_segment_validation_segment_list_to_bind(src: List[SESegmentValidationSegment], dst: SegmentValidationSegmentListData):
-    for segment in src:
-        serialize_segment_validation_segment_to_bind(segment, dst.SegmentValidationSegment.add())
-def serialize_segment_validation_segment_list_from_bind(src: SegmentValidationSegmentListData):
-    dst = []
-    for segmentData in src.SegmentValidationSegment:
-        dst.append(serialize_segment_validation_segment_from_bind(segmentData))
-
-    return dst
-
-def serialize_segment_validation_segment_list_to_string(src: List[SESegmentValidationSegment], fmt: eSerializationFormat):
-    dst = SegmentValidationSegmentListData()
-    serialize_segment_validation_segment_list_to_bind(src, dst)
-    return json_format.MessageToJson(dst, True, True)
-def serialize_segment_validation_segment_list_to_file(src: List[SESegmentValidationSegment], filename: str):
-    string = serialize_segment_validation_segment_list_to_string(src, eSerializationFormat.JSON)
-    file = open(filename, "w")
-    n = file.write(string)
-    file.close()
-def serialize_segment_validation_segment_list_from_string(string: str, fmt: eSerializationFormat):
-    src = SegmentValidationSegmentListData()
-    json_format.Parse(string, src)
-    return serialize_segment_validation_segment_list_from_bind(src)
-def serialize_segment_validation_segment_list_from_file(filename: str):
-    with open(filename) as f:
-        string = f.read()
-    return serialize_segment_validation_segment_list_from_string(string, eSerializationFormat.JSON)
-
-def serialize_segment_validation_config_from_file(filename: str, dst: SESegmentValidationConfig):
-    with open(filename) as f:
-        string = f.read()
-    serialize_segment_validation_config_from_string(string, dst, eSerializationFormat.JSON)
-def serialize_segment_validation_config_from_string(string: str, dst: SESegmentValidationConfig, fmt: eSerializationFormat):
-    src = SegmentValidationConfigurationData()
-    json_format.Parse(string, src)
-    serialize_segment_validation_config_from_bind(src, dst)
-def serialize_segment_validation_config_from_bind(src: SegmentValidationConfigurationData, dst: SESegmentValidationConfig):
-    dst.clear()
-
-    serialize_plotter_list_from_bind(src.Plots, dst.get_plotters())
-
-def serialize_time_series_validation_target_to_bind(src: SETimeSeriesValidationTarget, dst: TimeSeriesValidationTargetData):
-    serialize_validation_target_to_bind(src, dst.ValidationTarget)
-    if src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.EqualToValue:
-        dst.EqualToValue = src.get_target()
-    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.GreaterThanValue:
-        dst.GreaterThanValue = src.get_target()
-    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.LessThanValue:
-        dst.LessThanValue = src.get_target()
-    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.TrendsToValue:
-        dst.TrendsToValue = src.get_target()
-    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.Range:
-        dst.Range.Minimum = src.get_target_minimum()
-        dst.Range.Maximum = src.get_target_maximum()
-    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.NotValidating:
-        pass
-    else:
-        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
-    dst.Type = src.get_target_type().value
-def serialize_time_series_validation_target_from_bind(src: TimeSeriesValidationTargetData, dst: SETimeSeriesValidationTarget):
-    dst.clear()
-    serialize_validation_target_from_bind(src.ValidationTarget, dst)
-    if src.HasField("EqualToValue"):
-        dst.set_equal_to(src.EqualToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif src.HasField("GreaterThanValue"):
-        dst.set_greater_than(src.GreaterThanValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif src.HasField("LessThanValue"):
-        dst.set_less_than(src.LessThanValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif src.HasField("TrendsToValue"):
-        dst.set_trends_to(src.TrendsToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif src.HasField("Range"):
-        dst.set_range(src.Range.Minimum, src.Range.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif src.WhichOneof('Expected') is None:  # Not validating
-        pass
-    else:
-        raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
-def serialize_time_series_validation_target_list_to_bind(src: List[SETimeSeriesValidationTarget], dst: TimeSeriesValidationTargetListData):
-    for tgt in src:
-        serialize_time_series_validation_target_to_bind(tgt, dst.TimeSeriesValidationTarget.add())
-def serialize_time_series_validation_target_list_from_bind(src: TimeSeriesValidationTargetListData):
-    dst = []
-    for tgtData in src.TimeSeriesValidationTarget:
-        tgt = SETimeSeriesValidationTarget()
-        serialize_time_series_validation_target_from_bind(tgtData, tgt)
-        dst.append(tgt)
-
-    return dst
-def serialize_time_series_validation_target_list_to_string(src: List[SETimeSeriesValidationTarget], fmt: eSerializationFormat):
-    dst = TimeSeriesValidationTargetListData()
-    serialize_time_series_validation_target_list_to_bind(src, dst)
-    return json_format.MessageToJson(dst, True, True)
-def serialize_time_series_validation_target_list_to_file(src: List[SETimeSeriesValidationTarget], filename: str):
-    string = serialize_time_series_validation_target_list_to_string(src, eSerializationFormat.JSON)
-    file = open(filename, "w")
-    n = file.write(string)
-    file.close()
-def serialize_time_series_validation_target_list_from_string(string: str, fmt: eSerializationFormat):
-    src = TimeSeriesValidationTargetListData()
-    json_format.Parse(string, src)
-    return serialize_time_series_validation_target_list_from_bind(src)
-def serialize_time_series_validation_target_list_from_file(filename: str):
-    with open(filename) as f:
-        string = f.read()
-    return serialize_time_series_validation_target_list_from_string(string, eSerializationFormat.JSON)

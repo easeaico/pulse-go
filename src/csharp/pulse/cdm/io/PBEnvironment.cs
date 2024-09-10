@@ -104,6 +104,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.Emissivity, dst.GetEmissivity());
       if (src.MeanRadiantTemperature != null)
         PBProperty.Load(src.MeanRadiantTemperature, dst.GetMeanRadiantTemperature());
+      if (src.MechanicalDeadSpace != null)
+        PBProperty.Load(src.MechanicalDeadSpace, dst.GetMechanicalDeadSpace());
       if (src.RelativeHumidity != null)
         PBProperty.Load(src.RelativeHumidity, dst.GetRelativeHumidity());
       if (src.RespirationAmbientTemperature != null)
@@ -143,6 +145,8 @@ namespace Pulse.CDM
         dst.Emissivity = PBProperty.Unload(src.GetEmissivity());
       if (src.HasMeanRadiantTemperature())
         dst.MeanRadiantTemperature = PBProperty.Unload(src.GetMeanRadiantTemperature());
+      if (src.HasMechanicalDeadSpace())
+        dst.MechanicalDeadSpace = PBProperty.Unload(src.GetMechanicalDeadSpace());
       if (src.HasRelativeHumidity())
         dst.RelativeHumidity = PBProperty.Unload(src.GetRelativeHumidity());
       if (src.HasRespirationAmbientTemperature())

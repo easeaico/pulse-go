@@ -9,6 +9,8 @@ import com.kitware.pulse.cdm.properties.SEScalarAmountPerVolume;
 import com.kitware.pulse.cdm.properties.SEScalarHeatCapacitancePerMass;
 import com.kitware.pulse.cdm.properties.SEScalarMass;
 import com.kitware.pulse.cdm.properties.SEScalarMassPerVolume;
+import com.kitware.pulse.cdm.properties.SEScalarOsmolality;
+import com.kitware.pulse.cdm.properties.SEScalarOsmolarity;
 import com.kitware.pulse.cdm.properties.SEScalarPressure;
 import com.kitware.pulse.cdm.properties.SEScalarVolume;
 import com.kitware.pulse.cdm.system.SESystem;
@@ -27,6 +29,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   protected SEScalar0To1                   oxygenSaturation;
   protected SEScalarAmountPerVolume        phosphate;
   protected SEScalarVolume                 plasmaVolume;
+  protected SEScalarOsmolality             plasmaOsmolality;
+  protected SEScalarOsmolarity             plasmaOsmolarity;
   protected SEScalar0To1                   pulseOximetry;
   protected SEScalarAmountPerVolume        redBloodCellCount;
   protected SEScalar0To1                   shuntFraction;
@@ -58,6 +62,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
     hemoglobinContent = null;
     oxygenSaturation = null;
     phosphate = null;
+    plasmaOsmolality = null;
+    plasmaOsmolarity = null;
     plasmaVolume = null;
     pulseOximetry = null;
     redBloodCellCount = null;
@@ -103,6 +109,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       oxygenSaturation.invalidate();
     if (phosphate != null)
       phosphate.invalidate();
+    if (plasmaOsmolality != null)
+      plasmaOsmolality.invalidate();
+    if (plasmaOsmolarity != null)
+      plasmaOsmolarity.invalidate();
     if (plasmaVolume != null)
       plasmaVolume.invalidate();
     if (pulseOximetry != null)
@@ -163,7 +173,11 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
     if (src.hasOxygenSaturation())
       SEScalar0To1.load(src.getOxygenSaturation(),dst.getOxygenSaturation());
     if (src.hasPhosphate())
-      SEScalarAmountPerVolume.load(src.getPhosphate(),dst.getPhosphate());  
+      SEScalarAmountPerVolume.load(src.getPhosphate(),dst.getPhosphate());
+    if (src.hasPlasmaOsmolality())
+        SEScalarOsmolality.load(src.getPlasmaOsmolality(),dst.getPlasmaOsmolality());
+    if (src.hasPlasmaOsmolarity())
+        SEScalarOsmolarity.load(src.getPlasmaOsmolarity(),dst.getPlasmaOsmolarity());
     if (src.hasPlasmaVolume())
       SEScalarVolume.load(src.getPlasmaVolume(),dst.getPlasmaVolume());  
     if (src.hasPulseOximetry())
@@ -232,6 +246,10 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       dst.setOxygenSaturation(SEScalar0To1.unload(src.getOxygenSaturation()));
     if (src.hasPhosphate())
       dst.setPhosphate(SEScalarAmountPerVolume.unload(src.getPhosphate()));
+    if (src.hasPlasmaOsmolality())
+      dst.setPlasmaOsmolality(SEScalarOsmolality.unload(src.getPlasmaOsmolality()));
+    if (src.hasPlasmaOsmolarity())
+      dst.setPlasmaOsmolarity(SEScalarOsmolarity.unload(src.getPlasmaOsmolarity()));
     if (src.hasPlasmaVolume())
       dst.setPlasmaVolume(SEScalarVolume.unload(src.getPlasmaVolume()));
     if (src.hasPulseOximetry())
@@ -384,6 +402,28 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
     if (phosphate == null)
       phosphate = new SEScalarAmountPerVolume();
     return phosphate;
+  }
+  
+  public boolean hasPlasmaOsmolality()
+  {
+    return plasmaOsmolality == null ? false : plasmaOsmolality.isValid();
+  }
+  public SEScalarOsmolality getPlasmaOsmolality()
+  {
+    if (plasmaOsmolality == null)
+      plasmaOsmolality = new SEScalarOsmolality();
+    return plasmaOsmolality;
+  }
+
+  public boolean hasPlasmaOsmolarity()
+  {
+    return plasmaOsmolarity == null ? false : plasmaOsmolarity.isValid();
+  }
+  public SEScalarOsmolarity getPlasmaOsmolarity()
+  {
+    if (plasmaOsmolarity == null)
+      plasmaOsmolarity = new SEScalarOsmolarity();
+    return plasmaOsmolarity;
   }
   
   public boolean hasPlasmaVolume()

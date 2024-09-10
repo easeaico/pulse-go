@@ -36,7 +36,7 @@ inline size_t _Hash_value(_InIt _Begin, _InIt _End)
 #define DEFINE_STATIC_STRING_EX(name,value) static constexpr char const* name = #value;
 
 #define SAFE_DELETE(obj) {delete obj; obj=nullptr;}
-
+#define SAFE_DELETE_VECTOR(vec) {for(auto i:vec) delete i; vec.clear();}
 #define SAFE_DELETE_ARRAY(ary) {delete [] ary; *ary=nullptr;}
 
 #define INVALIDATE_PROPERTY(name) \

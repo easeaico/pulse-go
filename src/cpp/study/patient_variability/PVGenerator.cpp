@@ -16,6 +16,13 @@
 #include "cdm/properties/SEScalarVolumePerPressure.h"
 #include "engine/human_adult/whole_body/Engine.h"
 
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEAdvanceTime.h"
+
 #include <map>
 
 using eFailure = pulse::study::bind::patient_variability::PatientStateData_eFailure;
@@ -377,5 +384,179 @@ namespace pulse::study::patient_variability
     out += p.GetRespirationRateBaseline().ToString();
 
     return out;
+  }
+
+  void PVGenerator::GenerateTriagePatientData(std::string rootDir, PatientStateListData& pList)
+  {
+    Logger* logger = GetLogger();
+    logger->LogToConsole(true);
+
+    std::string patientsDir = rootDir + "patients/";
+
+    GenerateTriagePatients(pList, patientsDir);
+
+    return;
+  }
+
+  void PVGenerator::GenerateTriageInsultData(std::string rootDir, PatientStateListData& pList, PatientStateListData& pInsultsList)
+  {
+    Logger* logger = GetLogger();
+    logger->LogToConsole(true);
+
+    std::string insultsDir = rootDir + "insults/";
+
+    GenerateTriageInsults(pList, pInsultsList, insultsDir);
+
+    return;
+  }
+
+  std::string PVGenerator::PatientToDescriptionString(SEPatient& p)
+  {
+    std::string out;
+    out = "Patient: ";
+    out += "Sex = " + ePatient_Sex_Name(p.GetSex()) + ", ";
+    out += "Age = " + p.GetAge().ToString() + ", ";
+    out += "Height = " + p.GetHeight().ToString() + ", ";
+    out += "Body Mass Index = " + p.GetBodyMassIndex().ToString() + ", ";
+    out += "Body Fat Fraction = " + p.GetBodyFatFraction().ToString();
+    return out;
+  }
+
+  std::string PVGenerator::InsultsToDescriptionString(double hemorrhageSeverity, double airwayObstructionSeverity, double pneumothoraxSeverity)
+  {
+    std::stringstream out;
+    out << "Insults: ";
+    out << "Hemorrhage Severity = ";
+    out << hemorrhageSeverity;
+    out << ", Airway Obstruction Severity = ";
+    out << airwayObstructionSeverity;
+    out << ", Tension Pneumothorax Severity = ";
+    out << pneumothoraxSeverity;
+    return out.str();
+  }
+
+  void PVGenerator::GenerateTriagePatients(PatientStateListData& pList, const std::string& directory)
+  {
+    m_TotalRuns = 0;
+    m_Duplicates = 0;
+    m_TotalPatients = 0;
+    m_NumPatientsFailedToSetup = 0;
+
+    Info("Generating combinatorial patient data set");
+    // Each parameter we want to include in our permutations, has 3 options, min, max, standard/default
+    std::vector<size_t> opts = { 2,2,2,2 }; // max index is 2
+    std::vector<std::vector<size_t>> combinations;
+    GeneralMath::Combinations(opts, combinations);
+
+    std::vector<ePatient_Sex> sexes = { ePatient_Sex::Male, ePatient_Sex::Female };
+    for (auto sex : sexes)
+    {
+      ResetParameters(sex);
+      for (auto idxs : combinations)
+      {
+        SEPatient patient(GetLogger());
+        patient.SetSex(sex);
+
+        patient.GetAge().SetValue(Age_yr.Values()[idxs[0]], TimeUnit::yr);
+        patient.GetHeight().SetValue(Height_cm.Values()[idxs[1]], LengthUnit::cm);
+        patient.GetBodyFatFraction().SetValue(BFF.Values()[idxs[2]]);
+        patient.GetBodyMassIndex().SetValue(BMI.Values()[idxs[3]]);
+
+        CreateTriagePatient(pList, patient, directory);
+      }
+    }
+
+    Info("Removed " + std::to_string(m_Duplicates) + " duplicates");
+    Info("Created " + std::to_string(m_TotalPatients) + " patients");
+    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
+  }
+
+  void PVGenerator::GenerateTriageInsults(PatientStateListData& pList, PatientStateListData& pInsultsList, const std::string& directory)
+  {
+    double severities[] = { 0.0, 0.3, 0.6, 0.9 };
+
+    m_TotalRuns = 0;
+    m_Duplicates = 0;
+    m_TotalPatients = 0;
+    m_NumPatientsFailedToSetup = 0;
+
+    Info("Generating combinatorial patient data set");
+    std::vector<size_t> opts = { 3,3,3 }; // max index is 3
+    std::vector<std::vector<size_t>> combinations;
+    GeneralMath::Combinations(opts, combinations);
+
+    for (unsigned int i = 0; i < pList.patientstate_size(); i++)
+    {
+      pulse::study::bind::patient_variability::PatientStateData* startingPatientState = &(*pList.mutable_patientstate())[i];
+      std::string patientStatePath = startingPatientState->statefilename();
+
+      for (auto idxs : combinations)
+      {
+        std::string patientName = "Insults" + std::to_string(m_TotalPatients);
+        std::string patientFileName = directory + patientName;
+
+        Info("Creating insult: " + patientFileName);
+        pulse::study::bind::patient_variability::PatientStateData* patientStateData = pInsultsList.add_patientstate();
+        patientStateData->set_id(m_TotalRuns);
+        patientStateData->set_outputbasefilename(patientFileName);
+        patientStateData->set_statefilename(patientStatePath);
+        patientStateData->mutable_validation();// Create a validation object to fill
+        pulse::cdm::bind::PatientData* patientData = patientStateData->mutable_patient();
+
+        patientData->set_name(patientName);
+
+        double hemorrhageSeverity = severities[idxs[0]];
+        double airwayObstructionSeverity = severities[idxs[1]];
+        double pneumothoraxSeverity = severities[idxs[2]];
+
+        auto triage = patientStateData->mutable_triage();
+        auto hemorrhage = triage->mutable_hemorrhageaction();
+        hemorrhage->set_compartment(CDM_BIND::HemorrhageData_eCompartment_VenaCava);
+        hemorrhage->mutable_severity()->mutable_scalar0to1()->set_value(hemorrhageSeverity);
+
+        auto airwayObstruction = triage->mutable_airwayobstructionaction();
+        airwayObstruction->mutable_severity()->mutable_scalar0to1()->set_value(airwayObstructionSeverity);
+
+        auto pneumothorax = triage->mutable_tensionpneumothoraxaction();
+        pneumothorax->set_type(CDM_BIND::Open);
+        pneumothorax->set_side(CDM_BIND::Right);
+        pneumothorax->mutable_severity()->mutable_scalar0to1()->set_value(pneumothoraxSeverity);
+
+        patientStateData->set_description(InsultsToDescriptionString(hemorrhageSeverity, airwayObstructionSeverity, pneumothoraxSeverity));
+
+        m_TotalRuns++;
+        m_TotalPatients++;
+      }
+    }
+
+    Info("Removed " + std::to_string(m_Duplicates) + " duplicates");
+    Info("Created " + std::to_string(m_TotalPatients) + " patients");
+    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
+  }
+
+  void PVGenerator::CreateTriagePatient(PatientStateListData& pList, SEPatient& patient, const std::string& directory)
+  {
+    std::string patientName = "Patient" + std::to_string(m_TotalPatients);
+    patient.SetName(patientName);
+    std::string patientFileName = directory + patientName;
+
+    AddTriagePatientToList(pList, patient, patientFileName);
+    m_TotalPatients++;
+  }
+
+  pulse::study::bind::patient_variability::PatientStateData* PVGenerator::AddTriagePatientToList(PatientStateListData& pList, SEPatient& patient, const std::string& full_dir_path)
+  {
+    Info("Creating patient: " + full_dir_path);
+    pulse::study::bind::patient_variability::PatientStateData* patientStateData = pList.add_patientstate();
+    patientStateData->set_id(m_TotalRuns);
+    patientStateData->set_description(PatientToDescriptionString(patient));
+    patientStateData->set_outputbasefilename(full_dir_path);
+    patientStateData->set_statefilename(full_dir_path +"InitialState.json");
+    patientStateData->mutable_validation();// Create a validation object to fill
+    pulse::cdm::bind::PatientData* patientData = patientStateData->mutable_patient();
+    PBPatient::Serialize(patient, *patientData);
+    m_TotalRuns++;
+
+    return patientStateData;
   }
 }

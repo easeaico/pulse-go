@@ -12,8 +12,8 @@ from pulse.cdm.scalars import SEScalarTime, TimeUnit
 _pulse_logger = logging.getLogger('pulse')
 
 
-class SETestCase():
-    __slots__ = ["name", "duration", "failures", "eq_opts"]
+class SETestCase:
+    __slots__ = ["name", "duration", "failures", "warnings", "eq_opts"]
 
     def __init__(self):
         self.duration = None
@@ -25,6 +25,7 @@ class SETestCase():
         if self.duration is not None:
             self.duration.invalidate()
         self.failures = []
+        self.warnings = []
 
     def get_name(self):
         return self.name
@@ -47,6 +48,13 @@ class SETestCase():
     def get_failures(self):
         return list(self.failures)
 
+    def has_warnings(self):
+        return len(self.warnings) > 0
+    def add_warning(self, w: str):
+        self.warnings.append(w)
+    def get_warnings(self):
+        return list(self.warnings)
+
 
 class SETestCaseHandler(logging.Handler):
     __slots__ = ["test_case"]
@@ -58,7 +66,13 @@ class SETestCaseHandler(logging.Handler):
 
     def emit(self, record: logging.LogRecord):
         if self.test_case:
-            self.test_case.add_failure(record.msg)
+            if record.levelno == logging.WARNING:
+                self.test_case.add_warning(record.msg)
+            elif (
+                record.levelno == logging.ERROR or
+                record.levelno == logging.CRITICAL
+            ):
+                self.test_case.add_failure(record.msg)
 
     def clear(self):
         self.test_case = None
@@ -67,12 +81,12 @@ class SETestCaseHandler(logging.Handler):
         self.test_case = tc
 
 
-class SETestSuite():
+class SETestSuite:
     __slots__ = ["name", "performed", "requirements", "test_cases", "active_case", "active_case_listener"]
 
     def __init__(self):
         self.active_case_listener = SETestCaseHandler()
-        self.active_case_listener.setLevel(logging.ERROR)
+        self.active_case_listener.setLevel(logging.WARNING)
         _pulse_logger.addHandler(self.active_case_listener)
         self.clear()
 
@@ -132,6 +146,13 @@ class SETestSuite():
                 errs += 1
         return errs
 
+    def get_num_warnings(self):
+        warns = 0
+        for tc in self.test_cases:
+            if tc.has_warnings():
+                warns += 1
+        return warns
+
     def get_duration(self, unit: TimeUnit):
         time = 0
         for tc in self.test_cases:
@@ -139,7 +160,7 @@ class SETestSuite():
         return time
 
 
-class SETestReport():
+class SETestReport:
     __slots__ = ["name", "file_name", "report_dir", "test_suites", "known_failing_suites"]
 
     @dataclass
@@ -147,8 +168,10 @@ class SETestReport():
         name: str
         runs: int = field(compare=False)
         errors: int = field(compare=False)
+        warns: int = field(compare=False)
         duration_s: float = field(compare=False)
         failures: List[str] = field(default_factory=list, compare=False)
+        warnings: List[str] = field(default_factory=list, compare=False)
         requirements: List[str] = field(default_factory=list, compare=False)
         html: str = field(default="", compare=False)
 
@@ -194,11 +217,17 @@ class SETestReport():
                 self.name = file_name
                 self.file_name = file_name + ".json"
 
-    def get_errors(self):
+    def get_num_errors(self):
         errors = 0
         for suite in self.test_suites:
             errors += suite.get_num_errors()
         return errors
+
+    def get_num_warnings(self):
+        warnings = 0
+        for suite in self.test_suites:
+            warnings += suite.get_num_warnings()
+        return warnings
 
     def create_test_suite(self):
         ts = SETestSuite()
@@ -223,9 +252,7 @@ class SETestReport():
     def add_test_suite(self, ts: SETestSuite):
         self.test_suites.append(ts)
 
-    def to_html(self, title: str):
-        return to_html(title, None)
-    def to_html(self, title: str, groups: Optional[Dict[str, List[str]]]):
+    def to_html(self, title: str, groups: Optional[Dict[str, List[str]]]=None):
         sort_results = True
         html = '<html>\n'
         html += f'<head><title>{title}</title></head>\n'
@@ -273,6 +300,7 @@ class SETestReport():
             total_errors = 0
             total_duration_s = 0
             error_data = []
+            warn_data = []
             passed_data = []
 
             for ts in self.test_suites:
@@ -285,24 +313,30 @@ class SETestReport():
 
                 if ts.get_performed():
                     runs += 1
+
                     data = self.Data(
-                        ts.get_name(),
-                        len(ts.get_test_cases()),
-                        ts.get_num_errors(),
-                        ts.get_duration(TimeUnit.s),
+                        name=ts.get_name(),
+                        runs=len(ts.get_test_cases()),
+                        errors=ts.get_num_errors(),
+                        warns=ts.get_num_warnings(),
+                        duration_s=ts.get_duration(TimeUnit.s),
                     )
                     for tc in ts.get_test_cases():
                         data.failures.extend(tc.get_failures())
+                        data.warnings.extend(tc.get_warnings())
                     data.requirements.extend(ts.get_requirements())
-                    if ts.get_num_errors() > 0:
+                    if data.errors > 0:
                         error_data.append(data)
                         data.html += '<tr bgcolor="#FF0000">'
+                    elif data.warns > 0:
+                        warn_data.append(data)
+                        data.html += '<tr bgcolor="#FFFF00">'
                     else:
                         passed_data.append(data)
                         data.html += '<tr bgcolor="#00FF00">'
                     data.html += f'<td align="left">{data.name}</td>'
                     data.html += '<td>'
-                    if len(data.failures) > 0:
+                    if data.errors > 0:
                         i = 0
                         while i < len(data.failures) - 1:
                             f = data.failures[i]
@@ -315,6 +349,19 @@ class SETestReport():
 
                         f = data.failures[i].replace("\n", "<br>")
                         data.html += f'{f}'
+                    if data.warns > 0:
+                        i = 0
+                        while i < len(data.warnings) - 1:
+                            f = data.warnings[i]
+                            f = f.replace("\n", "<br>")
+                            data.html += f'{f}<br>'
+                            i += 1
+                            # Only write out the first few warnings, could be a LOT of warnings
+                            if i > 5:
+                                break
+
+                        f = data.warnings[i].replace("\n", "<br>")
+                        data.html += f'{f}'
 
                     data.html += '</td>'
                     data.html += '</tr>\n'
@@ -326,8 +373,11 @@ class SETestReport():
 
             if sort_results:
                 error_data.sort()
+                warn_data.sort()
                 passed_data.sort()
             for d in error_data:
+                html += d.html
+            for d in warn_data:
                 html += d.html
             for d in passed_data:
                 html += d.html

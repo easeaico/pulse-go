@@ -3,7 +3,7 @@
 
 from pulse.cdm.curve import SECurve
 from pulse.cdm.engine import eSwitch
-from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarPressure, SEScalarTime
+from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarPressure, SEScalarTime, SEScalarUnsigned
 
 from enum import Enum
 
@@ -21,7 +21,130 @@ class eLungCompartment(Enum):
     RightMiddleLobe = 5
     RightInferiorLobe = 6
 
-class SERespiratoryMechanics():
+
+class SECardiovascularMechanicsModifiers:
+    __slots__ = ["_arterial_compliance_multiplier",
+                 "_arterial_resistance_multiplier",
+                 "_pulmonary_compliance_multiplier",
+                 "_pulmonary_resistance_multiplier",
+                 "_systemic_resistance_multiplier",
+                 "_systemic_compliance_multiplier",
+                 "_venous_compliance_multiplier",
+                 "_venous_resistance_multiplier",
+                 "_heart_rate_multiplier",
+                 "_stroke_volume_multiplier"]
+
+    def __init__(self):
+        self._arterial_compliance_multiplier = None
+        self._arterial_resistance_multiplier = None
+        self._pulmonary_compliance_multiplier = None
+        self._pulmonary_resistance_multiplier = None
+        self._systemic_resistance_multiplier = None
+        self._systemic_compliance_multiplier = None
+        self._venous_compliance_multiplier = None
+        self._venous_resistance_multiplier = None
+        self._heart_rate_multiplier = None
+        self._stroke_volume_multiplier = None
+
+    def clear(self):
+        if self._arterial_compliance_multiplier is not None: self._arterial_compliance_multiplier.invalidate()
+        if self._arterial_resistance_multiplier is not None: self._arterial_resistance_multiplier.invalidate()
+        if self._pulmonary_compliance_multiplier is not None: self._pulmonary_compliance_multiplier.invalidate()
+        if self._pulmonary_resistance_multiplier is not None: self._pulmonary_resistance_multiplier.invalidate()
+        if self._systemic_resistance_multiplier is not None: self._systemic_resistance_multiplier.invalidate()
+        if self._systemic_compliance_multiplier is not None: self._systemic_compliance_multiplier.invalidate()
+        if self._venous_compliance_multiplier is not None: self._venous_compliance_multiplier.invalidate()
+        if self._venous_resistance_multiplier is not None: self._venous_resistance_multiplier.invalidate()
+        if self._heart_rate_multiplier is not None: self._heart_rate_multiplier.invalidate()
+        if self._stroke_volume_multiplier is not None: self._stroke_volume_multiplier.invalidate()
+
+    def copy(self, src):
+        if not isinstance(SERespiratoryMechanics, src):
+            raise Exception("Provided argument must be a SERespiratoryMechanics")
+        self.clear()
+        if src.has_arterial_compliance_multiplier() is not None: self.get_arterial_compliance_multiplier().set(src._arterial_compliance_multiplier)
+        if src.has_arterial_resistance_multiplier() is not None: self.get_arterial_resistance_multiplier().set(src._arterial_resistance_multiplier)
+        if src.has_pulmonary_compliance_multiplier() is not None: self.get_pulmonary_compliance_multiplier.set(src._pulmonary_compliance_multiplier)
+        if src.has_pulmonary_resistance_multiplier() is not None: self.get_pulmonary_resistance_multiplier.set(src._pulmonary_resistance_multiplier)
+        if src.has_systemic_resistance_multiplier() is not None: self.get_systemic_resistance_multiplier.set(src._systemic_resistance_multiplier)
+        if src.has_systemic_compliance_multiplier() is not None: self.get_systemic_compliance_multiplier.set(src._systemic_compliance_multiplier)
+        if src.has_venous_compliance_multiplier() is not None: self.get_venous_compliance_multiplier.set(src._venous_compliance_multiplier)
+        if src.has_venous_resistance_multiplier() is not None: self.get_venous_resistance_multiplier.set(src._venous_resistance_multiplier)
+        if src.has_heart_rate_multiplier() is not None: self.get_heart_rate_multiplier.set(src._heart_rate_multiplier)
+        if src.has_stroke_volume_multiplier() is not None: self.get_stroke_volume_multiplier.set(src._stroke_volume_multiplier)
+
+    def has_arterial_compliance_multiplier(self):
+        return False if self._arterial_compliance_multiplier is None else self._arterial_compliance_multiplier.is_valid()
+    def get_arterial_compliance_multiplier(self):
+        if self._arterial_compliance_multiplier is None:
+            self._arterial_compliance_multiplier = SEScalarUnsigned()
+        return self._arterial_compliance_multiplier
+
+    def has_arterial_resistance_multiplier(self):
+        return False if self._arterial_resistance_multiplier is None else self._arterial_resistance_multiplier.is_valid()
+    def get_arterial_resistance_multiplier(self):
+        if self._arterial_resistance_multiplier is None:
+            self._arterial_resistance_multiplier = SEScalarUnsigned()
+        return self._arterial_resistance_multiplier
+
+    def has_pulmonary_compliance_multiplier(self):
+        return False if self._pulmonary_compliance_multiplier is None else self._pulmonary_compliance_multiplier.is_valid()
+    def get_pulmonary_compliance_multiplier(self):
+        if self._pulmonary_compliance_multiplier is None:
+            self._pulmonary_compliance_multiplier = SEScalarUnsigned()
+        return self._pulmonary_compliance_multiplier
+
+    def has_pulmonary_resistance_multiplier(self):
+        return False if self._pulmonary_resistance_multiplier is None else self._pulmonary_resistance_multiplier.is_valid()
+    def get_pulmonary_resistance_multiplier(self):
+        if self._pulmonary_resistance_multiplier is None:
+            self._pulmonary_resistance_multiplier = SEScalarUnsigned()
+        return self._pulmonary_resistance_multiplier
+
+    def has_systemic_resistance_multiplier(self):
+        return False if self._systemic_resistance_multiplier is None else self._systemic_resistance_multiplier.is_valid()
+    def get_systemic_resistance_multiplier(self):
+        if self._systemic_resistance_multiplier is None:
+            self._systemic_resistance_multiplier = SEScalarUnsigned()
+        return self._systemic_resistance_multiplier
+
+    def has_systemic_compliance_multiplier(self):
+        return False if self._systemic_compliance_multiplier is None else self._systemic_compliance_multiplier.is_valid()
+    def get_systemic_compliance_multiplier(self):
+        if self._systemic_compliance_multiplier is None:
+            self._systemic_compliance_multiplier = SEScalarUnsigned()
+        return self._systemic_compliance_multiplier
+
+    def has_venous_compliance_multiplier(self):
+        return False if self._venous_compliance_multiplier is None else self._venous_compliance_multiplier.is_valid()
+    def get_venous_compliance_multiplier(self):
+        if self._venous_compliance_multiplier is None:
+            self._venous_compliance_multiplier = SEScalarUnsigned()
+        return self._venous_compliance_multiplier
+
+    def has_venous_resistance_multiplier(self):
+        return False if self._venous_resistance_multiplier is None else self._venous_resistance_multiplier.is_valid()
+    def get_venous_resistance_multiplier(self):
+        if self._venous_resistance_multiplier is None:
+            self._venous_resistance_multiplier = SEScalarUnsigned()
+        return self._venous_resistance_multiplier
+
+    def has_heart_rate_multiplier(self):
+        return False if self._heart_rate_multiplier is None else self._heart_rate_multiplier.is_valid()
+    def get_heart_rate_multiplier(self):
+        if self._heart_rate_multiplier is None:
+            self._heart_rate_multiplier = SEScalarUnsigned()
+        return self._heart_rate_multiplier
+
+    def has_stroke_volume_multiplier(self):
+        return False if self._stroke_volume_multiplier is None else self._stroke_volume_multiplier.is_valid()
+    def get_stroke_volume_multiplier(self):
+        if self._stroke_volume_multiplier is None:
+            self._stroke_volume_multiplier = SEScalarUnsigned()
+        return self._stroke_volume_multiplier
+
+
+class SERespiratoryMechanics:
     __slots__ = ["_active",
                  "_default_type",
                  "_left_compliance_curve",
@@ -247,3 +370,147 @@ class SERespiratoryMechanics():
         if self._residue_time is None:
             self._residue_time = SEScalarTime()
         return self._residue_time
+
+
+class SERespiratoryMechanicsModifiers:
+    __slots__ = ["_left_compliance_multiplier",
+                 "_right_compliance_multiplier",
+                 "_left_expiratory_resistance_multiplier",
+                 "_left_inspiratory_resistance_multiplier",
+                 "_right_expiratory_resistance_multiplier",
+                 "_right_inspiratory_resistance_multiplier",
+                 "_upper_expiratory_resistance_multiplier",
+                 "_upper_inspiratory_resistance_multiplier",
+                 "_respiration_rate_multiplier",
+                 "_tidal_volume_multiplier",
+                 "_volume_increments"]
+
+    def __init__(self):
+        self._left_compliance_multiplier = None
+        self._right_compliance_multiplier = None
+        self._left_expiratory_resistance_multiplier = None
+        self._left_inspiratory_resistance_multiplier = None
+        self._right_expiratory_resistance_multiplier = None
+        self._right_inspiratory_resistance_multiplier = None
+        self._upper_expiratory_resistance_multiplier = None
+        self._upper_inspiratory_resistance_multiplier = None
+        self._respiration_rate_multiplier = None
+        self._tidal_volume_multiplier = None
+        self._volume_increments = {}
+
+    def clear(self):
+        if self._left_compliance_multiplier is not None: self._left_compliance_multiplier.invalidate()
+        if self._right_compliance_multiplier is not None: self._right_compliance_multiplier.invalidate()
+        if self._left_expiratory_resistance_multiplier is not None: self._left_expiratory_resistance_multiplier.invalidate()
+        if self._left_inspiratory_resistance_multiplier is not None: self._left_inspiratory_resistance_multiplier.invalidate()
+        if self._right_expiratory_resistance_multiplier is not None: self._right_expiratory_resistance_multiplier.invalidate()
+        if self._right_inspiratory_resistance_multiplier is not None: self._right_inspiratory_resistance_multiplier.invalidate()
+        if self._upper_expiratory_resistance_multiplier is not None: self._upper_expiratory_resistance_multiplier.invalidate()
+        if self._upper_inspiratory_resistance_multiplier is not None: self._upper_inspiratory_resistance_multiplier.invalidate()
+        if self._respiration_rate_multiplier is not None: self._respiration_rate_multiplier.invalidate()
+        if self._tidal_volume_multiplier is not None: self._tidal_volume_multiplier.invalidate()
+        for s in self._volume_increments.values():
+            if s is not None:
+                s.invalidate()
+    def copy(self, src):
+        if not isinstance(SERespiratoryMechanics, src):
+            raise Exception("Provided argument must be a SERespiratoryMechanics")
+        self.clear()
+        if src.has_left_compliance_multiplier() is not None: self.get_left_compliance_multiplier().set(src._left_compliance_multiplier)
+        if src.has_right_compliance_multiplier() is not None: self.get_right_compliance_multiplier().set(src._right_compliance_multiplier)
+        if src.has_left_expiratory_resistance_multiplier() is not None: self.get_left_expiratory_resistance_multiplier.set(src._left_expiratory_resistance_multiplier)
+        if src.has_left_inspiratory_resistance_multiplier() is not None: self.get_left_inspiratory_resistance_multiplier.set(src._left_inspiratory_resistance_multiplier)
+        if src.has_right_expiratory_resistance_multiplier() is not None: self.get_right_expiratory_resistance_multiplier.set(src._right_expiratory_resistance_multiplier)
+        if src.has_right_inspiratory_resistance_multiplier() is not None: self.get_right_inspiratory_resistance_multiplier.set(src._right_inspiratory_resistance_multiplier)
+        if src.has_upper_expiratory_resistance_multiplier() is not None: self.get_upper_expiratory_resistance_multiplier.set(src._upper_expiratory_resistance_multiplier)
+        if src.has_upper_inspiratory_resistance_multiplier() is not None: self.get_upper_inspiratory_resistance_multiplier.set(src._upper_inspiratory_resistance_multiplier)
+        if src.has_respiration_rate_multiplier() is not None: self.get_respiration_rate_multiplier.set(src._respiration_rate_multiplier)
+        if src.has_tidal_volume_multiplier() is not None: self.get_tidal_volume_multiplier.set(src._tidal_volume_multiplier)
+        for c, s in src.get_volume_increments().items():
+            self.get_volume_increment(c).set(s)
+
+    def has_left_compliance_multiplier(self):
+        return False if self._left_compliance_multiplier is None else self._left_compliance_multiplier.is_valid()
+    def get_left_compliance_multiplier(self):
+        if self._left_compliance_multiplier is None:
+            self._left_compliance_multiplier = SEScalarUnsigned()
+        return self._left_compliance_multiplier
+
+    def has_right_compliance_multiplier(self):
+        return False if self._right_compliance_multiplier is None else self._right_compliance_multiplier.is_valid()
+    def get_right_compliance_multiplier(self):
+        if self._right_compliance_multiplier is None:
+            self._right_compliance_multiplier = SEScalarUnsigned()
+        return self._right_compliance_multiplier
+
+    def has_left_expiratory_resistance_multiplier(self):
+        return False if self._left_expiratory_resistance_multiplier is None else self._left_expiratory_resistance_multiplier.is_valid()
+    def get_left_expiratory_resistance_multiplier(self):
+        if self._left_expiratory_resistance_multiplier is None:
+            self._left_expiratory_resistance_multiplier = SEScalarUnsigned()
+        return self._left_expiratory_resistance_multiplier
+
+    def has_left_inspiratory_resistance_multiplier(self):
+        return False if self._left_inspiratory_resistance_multiplier is None else self._left_inspiratory_resistance_multiplier.is_valid()
+    def get_left_inspiratory_resistance_multiplier(self):
+        if self._left_inspiratory_resistance_multiplier is None:
+            self._left_inspiratory_resistance_multiplier = SEScalarUnsigned()
+        return self._left_inspiratory_resistance_multiplier
+
+    def has_right_expiratory_resistance_multiplier(self):
+        return False if self._right_expiratory_resistance_multiplier is None else self._right_expiratory_resistance_multiplier.is_valid()
+    def get_right_expiratory_resistance_multiplier(self):
+        if self._right_expiratory_resistance_multiplier is None:
+            self._right_expiratory_resistance_multiplier = SEScalarUnsigned()
+        return self._right_expiratory_resistance_multiplier
+
+    def has_right_inspiratory_resistance_multiplier(self):
+        return False if self._right_inspiratory_resistance_multiplier is None else self._right_inspiratory_resistance_multiplier.is_valid()
+    def get_right_inspiratory_resistance_multiplier(self):
+        if self._right_inspiratory_resistance_multiplier is None:
+            self._right_inspiratory_resistance_multiplier = SEScalarUnsigned()
+        return self._right_inspiratory_resistance_multiplier
+
+    def has_upper_expiratory_resistance_multiplier(self):
+        return False if self._upper_expiratory_resistance_multiplier is None else self._upper_expiratory_resistance_multiplier.is_valid()
+    def get_upper_expiratory_resistance_multiplier(self):
+        if self._upper_expiratory_resistance_multiplier is None:
+            self._upper_expiratory_resistance_multiplier = SEScalarUnsigned()
+        return self._upper_expiratory_resistance_multiplier
+
+    def has_upper_inspiratory_resistance_multiplier(self):
+        return False if self._upper_inspiratory_resistance_multiplier is None else self._upper_inspiratory_resistance_multiplier.is_valid()
+    def get_upper_inspiratory_resistance_multiplier(self):
+        if self._upper_inspiratory_resistance_multiplier is None:
+            self._upper_inspiratory_resistance_multiplier = SEScalarUnsigned()
+        return self._upper_inspiratory_resistance_multiplier
+
+    def has_respiration_rate_multiplier(self):
+        return False if self._respiration_rate_multiplier is None else self._respiration_rate_multiplier.is_valid()
+    def get_respiration_rate_multiplier(self):
+        if self._respiration_rate_multiplier is None:
+            self._respiration_rate_multiplier = SEScalarUnsigned()
+        return self._respiration_rate_multiplier
+
+    def has_tidal_volume_multiplier(self):
+        return False if self._tidal_volume_multiplier is None else self._tidal_volume_multiplier.is_valid()
+    def get_tidal_volume_multiplier(self):
+        if self._tidal_volume_multiplier is None:
+            self._tidal_volume_multiplier = SEScalarUnsigned()
+        return self._tidal_volume_multiplier
+
+    def has_volume_increment(self, cmpt: eLungCompartment=None):
+        if cmpt is None:
+            for s in self._volume_increments.values():
+                if s is not None and s.is_valid():
+                    return True
+            return False
+        if cmpt not in self._volume_increments:
+            return False
+        return self._volume_increments.get(cmpt).is_valid()
+    def get_volume_increment(self, cmpt: eLungCompartment):
+        s = self._volume_increments.get(cmpt)
+        if s is None:
+            s = SEScalarUnsigned()
+            self._volume_increments[cmpt] = s
+        return s

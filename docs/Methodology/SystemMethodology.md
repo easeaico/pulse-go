@@ -473,7 +473,7 @@ A team of soldiers is conducting a patrol when an explosive device detonates, in
 |	Non-tourniquet bleeding control (Manual pressure reduces hemorrhage to 50 mL/min)	|	A pressure dressing  is applied.	|	120	|	180	|<span class="success">	~25% Increase; @cite gutierrez2004clinical Tachycardia @cite leigh2005tension	</span>|<span class="success">	NC or decrease @cite leigh2005tension	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	Increase @cite echt1974effective	</span>|<span class="success">	40; @cite chrisp2000action 14-20; @cite gutierrez2004clinical Tachypnea @cite waisman2013transient @cite army200968w @cite leigh2005tension	</span>|<span class="success">	Decrease; @cite chrisp2000action @cite khorasani2008assessment Plateaus @cite waisman2013transient	</span>|<span class="success">	~25% Decrease @cite waisman2013transient	</span>|
 |	Needle Decompression	|	A needle decompression procedure is applied on the affected side.	|	180	|	420	|<span class="danger">	90 - 110 @cite metoyer2016SME	</span>|<span class="success">	Decreases @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	NC or Slight Decrease @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|<span class="success">	Increase > 0.95 @cite rim2011life	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
 |	Tourniquet (Hemorrhage completely controlled, rate 0 mL/min)	|	A "tourniquet" is applied to the hemorrhaging leg. 	|	420	|	450	|<span class="success">	117.9; @cite khorasani2008assessment Possibly no significant change @cite price2006novel	</span>|<span class="success">	NC @cite guyton2006medical	</span>|<span class="success">	NC @cite guyton2006medical	</span>|<span class="success">	NC or Slight Decrease @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
-|	Intravenous Fluid Resuscitation (Saline, 500 mL at rate of 100 mL/min)	|	Saline is administered over 5 minutes at a rate of 100 mL/min.	|	450	|	570	|<span class="success">	Slight decrease because of partial correction of the hypovolemia; @cite metoyer2016SME Stress-Induced Moderate Tachycardia @cite bergeronSME	</span>|<span class="success">	Increase @cite grmec2009relationship	</span>|<span class="success">	Increase @cite guyton2006medical  	|<span class="danger">	Move toward Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
+|	Intravenous Fluid Resuscitation (Saline, 500 mL at rate of 100 mL/min)	|	Saline is administered over 5 minutes at a rate of 100 mL/min.	|	450	|	570	|<span class="success">	Slight decrease because of partial correction of the hypovolemia; @cite metoyer2016SME Stress-Induced Moderate Tachycardia @cite bergeronSME	</span>|<span class="success">	Increase @cite grmec2009relationship	</span>|<span class="success">	Increase @cite guyton2006medical  	</span>|<span class="danger">	Move toward Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
 |	Narcotics (Morphine) Administration (5 mL of morphine IV at concentration of 1 mg/mL)	|	A bolus of 5 mg of morphine is administered intravenously. Saline administration continues	|	570	|	730	|<span class="success">	Decrease @cite Morgan2006Clinical	</span>|<span class="success">	Mild Decrease; @cite Morgan2006Clinical  Increase @cite guyton2006medical  	</span>|<span class="success">	Increase @cite guyton2006medical  	</span>|<span class="success">	Mild Decrease @cite bergeronSME	</span>|<span class="success">	15-20% Decrease @cite Morgan2006Clinical	</span>|<span class="success">	Decrease @cite drummond2010oxygen	</span>|<span class="success">	Moderate Decrease @cite bergeronSME	</span>|
 
 
@@ -605,28 +605,6 @@ everything within the engine is modular and extensible. Fidelity can be
 changed at any level within the system. The engine is a fully standalone
 simulator, but can also implement or interface with external software.
 
-# Future Work
-
-We will continue to improve system modularity.  See the system specific methodology documents for more information:
-
-@secreflist
-  @refitem anesthesia-improvements "Anesthesia Machine Future Work"
-  @refitem bvm-improvements "Bag Valve Mask Future Work"
-  @refitem bloodchemistry-future "BloodChemistry Future Work"
-  @refitem cardiovascular-future "Cardiovascular Future Work"
-  @refitem drugs-future "Drugs Future Work"
-  @refitem endrocrine-comingsoon "Endocrine Future Work"
-  @refitem energy-future "Energy Future Work"
-  @refitem environment-future "Environment Future Work"
-  @refitem GI-futurework "Gastrointestinal Future Work"
-  @refitem inhaler-future "Inhaler Future Work"
-  @refitem ventilator-improvements "Mechanical Ventilator Future Work"
-  @refitem nervous-future "Nervous Future Work"  
-  @refitem renal-futurework "Renal Future Work"
-  @refitem respiratory-future "Respiratory Future Work"
-  @refitem tissue-future "Tissue Future Work"
-@endsecreflist
-
 ## Recommended Improvements
 
 An area of potential future advancements for the engine includes the integration of differing time step and un-fixed time
@@ -638,7 +616,7 @@ Investigations into the effects of biological variability and parameter (inputs 
 
 # Appendices
 
-## Acronyms
+## Glossary
 
 CDM - Common Data Model
 

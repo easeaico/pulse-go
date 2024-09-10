@@ -22,7 +22,8 @@ def HowTo_Dyspnea():
     # Perform an action
     dsypnea = SEDyspnea()
     dsypnea.set_comment("Patient's dsypnea occurs")
-    dsypnea.get_severity().set_value(0.5)
+    dsypnea.get_respiration_rate_severity().set_value(0.5)
+    dsypnea.get_tidal_volume_severity().set_value(0.5)
     pulse.process_action(dsypnea)
 
     # Advance some time and print out the vitals

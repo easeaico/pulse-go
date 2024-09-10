@@ -5,8 +5,8 @@
 #include "cdm/engine/SEAction.h"
 
 // Keep enums in sync with appropriate schema/cdm/ActionEnums.proto file !!
-enum class eSerialization_Type { Save = 0, Load };
-extern CDM_DECL const std::string& eSerialization_Type_Name(eSerialization_Type m);
+enum class eSerialization_Mode { Save = 0, Load };
+extern CDM_DECL const std::string& eSerialization_Mode_Name(eSerialization_Mode m);
 
 class CDM_DECL SESerializeState : public SEAction
 {
@@ -23,8 +23,8 @@ public:
 
   bool IsValid() const override;
 
-  virtual eSerialization_Type GetType() const;
-  virtual void SetType(eSerialization_Type t);
+  virtual eSerialization_Mode GetMode() const;
+  virtual void SetMode(eSerialization_Mode m);
 
   virtual bool HasFilename() const;
   virtual std::string GetFilename() const;
@@ -35,6 +35,6 @@ public:
 
 protected:
 
-  std::string         m_Filename;
-  eSerialization_Type m_Type;
+  std::string               m_Filename;
+  eSerialization_Mode       m_Mode;
 };

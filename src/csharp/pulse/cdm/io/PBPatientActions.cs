@@ -53,6 +53,12 @@ namespace Pulse.CDM
         Serialize(any.Bronchoconstriction, b);
         return b;
       }
+      if (any.CardiovascularMechanicsModification != null)
+      {
+        SECardiovascularMechanicsModification cmm = new SECardiovascularMechanicsModification();
+        Serialize(any.CardiovascularMechanicsModification, cmm);
+        return cmm;
+      }
       if (any.ChestCompression != null)
       {
         SEChestCompression cpr = new SEChestCompression();
@@ -173,6 +179,12 @@ namespace Pulse.CDM
         Serialize(any.RespiratoryMechanicsConfiguration, rmc);
         return rmc;
       }
+      if (any.RespiratoryMechanicsModification != null)
+      {
+        SERespiratoryMechanicsModification rmm = new SERespiratoryMechanicsModification();
+        Serialize(any.RespiratoryMechanicsModification, rmm);
+        return rmm;
+      }
       if (any.SubstanceBolus != null)
       {
         SESubstanceBolus sb = new SESubstanceBolus();
@@ -255,6 +267,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SEBronchoconstriction)))
       {
         any.Bronchoconstriction = Unload((SEBronchoconstriction)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SECardiovascularMechanicsModification)))
+      {
+        any.CardiovascularMechanicsModification = Unload((SECardiovascularMechanicsModification)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SEChestCompression)))
@@ -355,6 +372,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SERespiratoryMechanicsConfiguration)))
       {
         any.RespiratoryMechanicsConfiguration = Unload((SERespiratoryMechanicsConfiguration)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SERespiratoryMechanicsModification)))
+      {
+        any.RespiratoryMechanicsModification = Unload((SERespiratoryMechanicsModification)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SESubstanceBolus)))
@@ -601,6 +623,39 @@ namespace Pulse.CDM
       Serialize(src, dst.PatientAction);
       if (src.HasSeverity())
         dst.Severity = PBProperty.Unload(src.GetSeverity());
+    }
+    #endregion
+
+    #region SECardiovascularMechanicsModification
+    public static void Load(pulse.cdm.bind.CardiovascularMechanicsModificationData src, SECardiovascularMechanicsModification dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.CardiovascularMechanicsModificationData src, SECardiovascularMechanicsModification dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      if (src.ModifiersFile != null)
+        dst.SetModificationFile(src.ModifiersFile);
+      else if (src.Modifiers != null)
+        PBPhysiology.Load(src.Modifiers, dst.GetModifiers());
+      dst.SetIncremental(src.Incremental);
+    }
+    public static pulse.cdm.bind.CardiovascularMechanicsModificationData Unload(SECardiovascularMechanicsModification src)
+    {
+      pulse.cdm.bind.CardiovascularMechanicsModificationData dst = new pulse.cdm.bind.CardiovascularMechanicsModificationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SECardiovascularMechanicsModification src, pulse.cdm.bind.CardiovascularMechanicsModificationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasModifiersFile())
+        dst.ModifiersFile = src.GetModifiersFile();
+      else if (src.HasModifiers())
+        dst.Modifiers = PBPhysiology.Unload(src.GetModifiers());
+      dst.Incremental = src.GetIncremental();
     }
     #endregion
 
@@ -997,8 +1052,10 @@ namespace Pulse.CDM
     {
       if (src.PatientAction != null)
         Serialize(src.PatientAction, dst);
-      if (src.Severity != null)
-        PBProperty.Load(src.Severity, dst.GetSeverity());
+      if (src.RespirationRateSeverity != null)
+        PBProperty.Load(src.RespirationRateSeverity, dst.GetRespirationRateSeverity());
+      if (src.TidalVolumeSeverity != null)
+        PBProperty.Load(src.TidalVolumeSeverity, dst.GetTidalVolumeSeverity());
     }
     public static pulse.cdm.bind.DyspneaData Unload(SEDyspnea src)
     {
@@ -1010,8 +1067,10 @@ namespace Pulse.CDM
     {
       dst.PatientAction = new pulse.cdm.bind.PatientActionData();
       Serialize(src, dst.PatientAction);
-      if (src.HasSeverity())
-        dst.Severity = PBProperty.Unload(src.GetSeverity());
+      if (src.HasRespirationRateSeverity())
+        dst.RespirationRateSeverity = PBProperty.Unload(src.GetRespirationRateSeverity());
+      if (src.HasTidalVolumeSeverity())
+        dst.TidalVolumeSeverity = PBProperty.Unload(src.GetTidalVolumeSeverity());
     }
     #endregion
 
@@ -1396,6 +1455,39 @@ namespace Pulse.CDM
       else if (src.HasSettings())
         dst.Settings = PBPhysiology.Unload(src.GetSettings());
       dst.MergeType = (pulse.cdm.bind.eMergeType)(int)src.GetMergeType();
+    }
+    #endregion
+
+    #region SERespiratoryMechanicsModification
+    public static void Load(pulse.cdm.bind.RespiratoryMechanicsModificationData src, SERespiratoryMechanicsModification dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.RespiratoryMechanicsModificationData src, SERespiratoryMechanicsModification dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      if (src.ModifiersFile != null)
+        dst.SetModificationFile(src.ModifiersFile);
+      else if (src.Modifiers != null)
+        PBPhysiology.Load(src.Modifiers, dst.GetModifiers());
+      dst.SetIncremental(src.Incremental);
+    }
+    public static pulse.cdm.bind.RespiratoryMechanicsModificationData Unload(SERespiratoryMechanicsModification src)
+    {
+      pulse.cdm.bind.RespiratoryMechanicsModificationData dst = new pulse.cdm.bind.RespiratoryMechanicsModificationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SERespiratoryMechanicsModification src, pulse.cdm.bind.RespiratoryMechanicsModificationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasModifiersFile())
+        dst.ModifiersFile = src.GetModifiersFile();
+      else if (src.HasModifiers())
+        dst.Modifiers = PBPhysiology.Unload(src.GetModifiers());
+      dst.Incremental = src.GetIncremental();
     }
     #endregion
 

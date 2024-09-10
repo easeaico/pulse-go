@@ -1258,6 +1258,7 @@ namespace pulse
     gCardiovascular.AddCompartment(vSplanchnic);
     gCardiovascular.AddCompartment(vSpleen);
     gCardiovascular.AddCompartment(vVenaCava);
+    gCardiovascular.AddCompartment(vAbdominalCavity);
     gCardiovascular.AddLink(vVenaCavaToRightHeart);
     gCardiovascular.AddLink(vRightHeartToLeftPulmonaryArteries);
     gCardiovascular.AddLink(vLeftPulmonaryArteriesToCapillaries);
@@ -1323,8 +1324,9 @@ namespace pulse
 
     //assuming there is a left and right kidney node in cardiovascular AND that a baseline volume is set (as a function of patient mass):
     double leftKidneyFluidVolume_mL = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1)->GetVolumeBaseline(VolumeUnit::mL);
-    double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.5;// / 2;    //Total large vasculature fluid volume
-    double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.5;// / 2;    //Total small vasculature fluid volume 
+    //These are calibrated to meet validation because cardiovascular has a modifier on the baseline volume
+    double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.55;// / 2;    //Total large vasculature fluid volume
+    double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 1.55;// / 2;    //Total small vasculature fluid volume 
 
     //////////////////////////
     ///// Circuit Parameters//////
@@ -2954,8 +2956,8 @@ namespace pulse
     cRespiratory.AddNode(Ambient);
 
     //Input parameters
-    const double RespiratorySystemCompliance_L_Per_cmH20 = 0.1; /// \cite Levitzky2013pulmonary
-    const double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH20 / 2.0; //compliances in parallel sum, so divide by 2 for each lung
+    const double RespiratorySystemCompliance_L_Per_cmH2O = 0.1; /// \cite Levitzky2013pulmonary
+    const double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH2O / 2.0; //compliances in parallel sum, so divide by 2 for each lung
     const double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O; //compliances in series, so multiply by 2 for equal split
     const double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O; // =0.1 L/cmH2O each /// \cite kacmarek2016egan p233
     const double IntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
@@ -2974,7 +2976,7 @@ namespace pulse
     double AlveoliDuctResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - BronchiResistance;
 
     double functionalResidualCapacity_L = m_InitialPatient->GetFunctionalResidualCapacity(VolumeUnit::L);
-    double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetWeight(MassUnit::kg); //Should not change with diseases /// \cite Levitzky2013pulmonary
+    double anatomicDeadSpaceVolume_L = 0.002 * m_InitialPatient->GetIdealBodyWeight(MassUnit::kg); /// \cite Levitzky2013pulmonary
     double alveolarDeadSpaceVolume_L = 0.001;  //Should change with certain diseases /// \cite Levitzky2013pulmonary
     double physiologicDeadSpaceVolume_L = anatomicDeadSpaceVolume_L + alveolarDeadSpaceVolume_L;
     //double pleuralVolume_L = 20.0 / 1000.0; //this is a liquid volume  /// \cite Levitzky2013pulmonary
@@ -3098,12 +3100,12 @@ namespace pulse
     LeftAlveoliLeakToLeftPleural.GetResistanceBaseline().SetValue(openResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     // Path for needle decompression - right side
     SEFluidCircuitPath& EnvironmentToRightNeedle = cRespiratory.CreatePath(Ambient, RightNeedle, pulse::RespiratoryPath::EnvironmentToRightNeedle);
-    EnvironmentToRightNeedle.GetPressureSourceBaseline().SetValue(IntrapleuralPressure_cmH2O * 0.6, PressureUnit::cmH2O);
+    EnvironmentToRightNeedle.GetPressureSourceBaseline().SetValue(IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
     SEFluidCircuitPath& RightNeedleToRightPleural = cRespiratory.CreatePath(RightNeedle, RightPleural, pulse::RespiratoryPath::RightNeedleToRightPleural);
     RightNeedleToRightPleural.GetResistanceBaseline().SetValue(openResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     // Path for needle decompression - left side
     SEFluidCircuitPath& EnvironmentToLeftNeedle = cRespiratory.CreatePath(Ambient, LeftNeedle, pulse::RespiratoryPath::EnvironmentToLeftNeedle);
-    EnvironmentToLeftNeedle.GetPressureSourceBaseline().SetValue(IntrapleuralPressure_cmH2O * 0.6, PressureUnit::cmH2O);
+    EnvironmentToLeftNeedle.GetPressureSourceBaseline().SetValue(IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
     SEFluidCircuitPath& LeftNeedleToLeftPleural = cRespiratory.CreatePath(LeftNeedle, LeftPleural, pulse::RespiratoryPath::LeftNeedleToLeftPleural);
     LeftNeedleToLeftPleural.GetResistanceBaseline().SetValue(openResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     // Path for open (chest wound) pneumothorax circuit  - right side
@@ -3962,9 +3964,8 @@ namespace pulse
     SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
     ///////////////////////
 
-    double tubeVolume_L = 0.3; //4 total tubes - this is per tube
-                               //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark
-    double yPieceVolume_L = 0.01;
+    double tubeVolume_L = 0.001; //Negligible - The tubes on the Y circuit do not cause dead space because of the check valves on the absorber
+    double yPieceVolume_L = 0.05;
     double connectionVolume_L = 0.05;
     double totalResistance_cmH2O_s_Per_L = 0.1;
     double tubeResistance_cmH2O_s_Per_L = totalResistance_cmH2O_s_Per_L / 2.0; //2 tubes in series for inhale and 2 tubes in series for exhale
@@ -4564,10 +4565,10 @@ namespace pulse
     Ground.GetNextTemperature().SetValue(0.0, TemperatureUnit::K);
     Ground.SetAsReferenceNode();
 
-    /*Metabolic heat generation, leading to a heat source into the core*/
+    //Metabolic heat generation, leading to a heat source into the core
     SEThermalCircuitPath& TemperatureGroundToCore = cIntemperature.CreatePath(Ground, Core, pulse::InternalTemperaturePath::GroundToInternalCore);
     TemperatureGroundToCore.GetHeatSourceBaseline().SetValue(0.0, PowerUnit::W);
-    /*Conduction and convection leading a resistance of heat flow from the core to the skin*/
+    //Conduction and convection leading a resistance of heat flow from the core to the skin
     SEThermalCircuitPath& CoreToSkin = cIntemperature.CreatePath(Core, Skin, pulse::InternalTemperaturePath::InternalCoreToInternalSkin);
     CoreToSkin.GetResistanceBaseline().SetValue(0.056, HeatResistanceUnit::K_Per_W);
 

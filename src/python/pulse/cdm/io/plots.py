@@ -97,12 +97,20 @@ def serialize_plot_config_to_bind(src: SEPlotConfig, dst: PlotConfigData):
         dst.LegendMode = src.get_legend_mode().value
     if src.has_log_axis_setting():
         dst.LogAxis = src.get_log_axis()
+    if src.has_allow_actions_with():
+        for a in src.get_allow_actions_with():
+            allowData = dst.AllowActionsWith.add()
+            allowData = a
+    if src.has_allow_events_with():
+        for a in src.get_allow_events_with():
+            allowData = dst.AllowEventsWith.add()
+            allowData = a
     if src.has_omit_actions_with():
-        for o in src.get_omit_actions_with()():
+        for o in src.get_omit_actions_with():
             omitData = dst.OmitActionsWith.add()
             omitData = o
     if src.has_omit_events_with():
-        for o in src.get_omit_events_with()():
+        for o in src.get_omit_events_with():
             omitData = dst.OmitEventsWith.add()
             omitData = o
     if src.has_output_path_override():
@@ -119,8 +127,8 @@ def serialize_plot_config_to_bind(src: SEPlotConfig, dst: PlotConfigData):
         dst.SciLimits.N = limits[1]
     if src.has_tick_style():
         dst.TickStyle = src.get_tick_style().value
-    if src.has_zero_axis_setting():
-        dst.ZeroAxis = src.get_zero_axis()
+    if src.has_y_bounds_mode():
+        dst.YBoundsMode = src.get_y_bounds_mode().value
 def serialize_plot_config_from_bind(
     src: PlotConfigData,
     dst: SEPlotConfig,
@@ -147,6 +155,10 @@ def serialize_plot_config_from_bind(
         dst.set_legend_mode(eLegendMode(src.LegendMode))
     if src.HasField("LogAxis"):
         dst.set_log_axis(src.LogAxis)
+    for allowData in src.AllowActionsWith:
+        dst.add_allow_actions_with(allowData)
+    for allowData in src.AllowEventsWith:
+        dst.add_allow_events_with(allowData)
     for omitData in src.OmitActionsWith:
         dst.add_omit_actions_with(omitData)
     for omitData in src.OmitEventsWith:
@@ -163,8 +175,8 @@ def serialize_plot_config_from_bind(
         dst.set_sci_limits((src.SciLimits.M, src.SciLimits.N))
     if src.HasField("TickStyle"):
         dst.set_tick_style(eTickStyle(src.TickStyle))
-    if src.HasField("ZeroAxis"):
-        dst.set_zero_axis(src.ZeroAxis)
+    if src.HasField("YBoundsMode"):
+        dst.set_y_bounds_mode(eYBoundsMode(src.YBoundsMode))
 
 
 def serialize_plot_source_to_bind(src: SEPlotSource, dst: PlotSourceData):

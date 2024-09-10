@@ -15,6 +15,7 @@
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEngineConfiguration.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceManager.h"

@@ -224,8 +224,8 @@ public class SEMechanicalVentilatorSettings
     if(from.hasDriverDampingParameter())
       this.getDriverDampingParameter().set(from.getDriverDampingParameter());
     
-    if(from.hasPositiveEndExpiredPressure())
-      this.getPositiveEndExpiredPressure().set(from.getPositiveEndExpiredPressure());
+    if(from.hasPositiveEndExpiratoryPressure())
+      this.getPositiveEndExpiratoryPressure().set(from.getPositiveEndExpiratoryPressure());
     if(from.hasFunctionalResidualCapacity())
       this.getFunctionalResidualCapacity().set(from.getFunctionalResidualCapacity());
     
@@ -330,8 +330,8 @@ public class SEMechanicalVentilatorSettings
     if (src.hasDriverDampingParameter())
       SEScalarFrequency.load(src.getDriverDampingParameter(), dst.getDriverDampingParameter());
     
-    if (src.hasPositiveEndExpiredPressure())
-      SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
+    if (src.hasPositiveEndExpiratoryPressure())
+      SEScalarPressure.load(src.getPositiveEndExpiratoryPressure(), dst.getPositiveEndExpiratoryPressure());
     else if (src.hasFunctionalResidualCapacity())
       SEScalarPressure.load(src.getFunctionalResidualCapacity(), dst.getFunctionalResidualCapacity());
     
@@ -435,8 +435,8 @@ public class SEMechanicalVentilatorSettings
     if(src.hasDriverDampingParameter())
       dst.setDriverDampingParameter(SEScalarFrequency.unload(src.getDriverDampingParameter()));
     
-    if(src.hasPositiveEndExpiredPressure())
-      dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.getPositiveEndExpiredPressure()));
+    if(src.hasPositiveEndExpiratoryPressure())
+      dst.setPositiveEndExpiratoryPressure(SEScalarPressure.unload(src.getPositiveEndExpiratoryPressure()));
     else if (src.hasFunctionalResidualCapacity())
       dst.setFunctionalResidualCapacity(SEScalarPressure.unload(src.getFunctionalResidualCapacity()));
     
@@ -560,13 +560,13 @@ public class SEMechanicalVentilatorSettings
     return driverDampingParameter == null ? false : driverDampingParameter.isValid();
   }
   
-  public SEScalarPressure getPositiveEndExpiredPressure()
+  public SEScalarPressure getPositiveEndExpiratoryPressure()
   {
     if (positiveEndExpiredPressure == null)
       positiveEndExpiredPressure = new SEScalarPressure();
     return positiveEndExpiredPressure;
   }
-  public boolean hasPositiveEndExpiredPressure()
+  public boolean hasPositiveEndExpiratoryPressure()
   {
     return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.isValid();
   }
@@ -1027,7 +1027,7 @@ public class SEMechanicalVentilatorSettings
     String str = "Mechanical Ventilator"
         + "\n\tConnection: " + (hasConnection()?getConnection():"NotProvided")
         
-        + "\n\tPositiveEndExpiredPressure: " + (hasPositiveEndExpiredPressure()?getPositiveEndExpiredPressure():"NotProvided")
+        + "\n\tPositiveEndExpiratoryPressure: " + (hasPositiveEndExpiratoryPressure()?getPositiveEndExpiratoryPressure():"NotProvided")
         + "\n\tFunctionalResidualCapacity: " + (hasFunctionalResidualCapacity()?getFunctionalResidualCapacity():"NotProvided")
         
         + "\n\tExpirationCycleFlow: " + (hasExpirationCycleFlow()?getExpirationCycleFlow():"NotProvided")

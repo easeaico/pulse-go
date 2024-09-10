@@ -3,6 +3,7 @@
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEChronicObstructivePulmonaryDiseaseExacerbation
+from pulse.cdm.physiology import eLungCompartment
 from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_COPD():
@@ -14,7 +15,8 @@ def HowTo_COPD():
     pc.set_patient_file("./patients/StandardMale.json")
     copd = pc.get_conditions().get_chronic_obstructive_pulmonary_disease()
     copd.get_bronchitis_severity().set_value(0.2)
-    copd.get_emphysema_severity().set_value(0.3)
+    copd.get_emphysema_severity(eLungCompartment.LeftLung).set_value(0.3)
+    copd.get_emphysema_severity(eLungCompartment.RightLung).set_value(0.3)
 
     # Initialize the engine with our configuration
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

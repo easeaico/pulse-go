@@ -57,6 +57,9 @@ void CommonDataModelTest::ScalarTest(const std::string& /*sOutputDirectory*/)
   std::cout << d << std::endl;
   std::cout << d.GetValue(LengthUnit::m) << std::endl;
   std::cout << d.GetValue(LengthUnit::cm) << std::endl;
+  d.Multiply(2.0);
+  std::cout << d.GetValue(LengthUnit::m) << std::endl;
+  std::cout << d.GetValue(LengthUnit::cm) << std::endl;
 
   SEScalarTemperature t;
   t.SetValue(5,TemperatureUnit::C);
@@ -71,7 +74,7 @@ void CommonDataModelTest::ScalarTest(const std::string& /*sOutputDirectory*/)
   SEScalarVolume v;
   v.SetValue(1,VolumeUnit::L);
   v.GetValue(VolumeUnit::m3);//0.0010000000000000000
-  v.IncrementValue(-2*6.,VolumeUnit::m3);
+  v.Increment(-2*6.,VolumeUnit::m3);
   v.GetValue(VolumeUnit::m3);//m3 = -1.9990000000000001
 
   SEScalarPressure p;

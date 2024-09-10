@@ -1,0 +1,58 @@
+syntax = "proto3";
+package pulse.study.bind.in_the_moment;
+option java_package = "com.kitware.pulse.study.bind.in_the_moment";
+option csharp_namespace = "pulse.study.bind.in_the_moment";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Properties.proto";
+
+// These messages encapsulate a database of unstructured text
+// corresponding to the respective property/ies and values
+
+message UnstructuredTextPhraseData
+{
+  repeated string                     Phrase       = 1;
+}
+
+message ExpandedRangeData
+{
+  pulse.cdm.bind.RangeData            Range         = 1;
+  bool                                MinInclusive  = 2;
+  bool                                MaxInclusive  = 3;
+}
+
+message UnstructuredTextPropertyData
+{
+  /** @brief Enumeration for property type */
+  enum ePropertyType
+  {
+    DataRequest=0;
+    Event=1;
+  }
+
+  string                               Property     = 1;
+  ePropertyType                        PropertyType = 2;
+
+  oneof Values
+  {
+    bool                               AnyValue     = 3;
+    double                             GT           = 4;
+    double                             GE           = 5;
+    double                             LT           = 6;
+    double                             LE           = 7;
+    double                             EQ           = 8;
+    ExpandedRangeData                  Range        = 9;
+    bool                               Active       = 10;
+  }
+}
+
+message UnstructuredTextGroupData
+{
+  repeated UnstructuredTextPropertyData Properties   = 1;
+  repeated UnstructuredTextPhraseData   Phrases      = 2;
+}
+
+message UnstructuredTextCorpusData
+{
+  repeated UnstructuredTextGroupData   Group       = 1;
+}

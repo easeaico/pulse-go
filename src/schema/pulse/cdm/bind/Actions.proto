@@ -46,15 +46,14 @@ message AdvanceUntilStableData
 
 message SerializeStateData
 {
-  enum eType
+  enum eMode
   {
     Save = 0;
     Load = 1;
   }
-  
-  ActionData             Action   = 1;
-  eType                  Type     = 2;
-  string                 Filename = 3;
+  ActionData             Action     = 1;
+  eMode                  Mode       = 2;
+  string                 Filename   = 3;
 }
 
 message SerializeRequestedData

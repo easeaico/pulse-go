@@ -64,7 +64,7 @@
             }
           },
           "OxygenSource": "BottleOne",
-          "PositiveEndExpiredPressure": {
+          "PositiveEndExpiratoryPressure": {
             "ScalarPressure": {
               "Value": 8.0,
               "Unit": "cmH2O"

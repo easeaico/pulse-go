@@ -27,7 +27,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -54,7 +54,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -81,7 +81,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -108,7 +108,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -135,7 +135,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -162,7 +162,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -189,7 +189,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -216,7 +216,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},
@@ -243,7 +243,7 @@
 
   { "EquipmentAction": { "BagValveMaskConfiguration": { "Configuration": {
       "Connection": "On",
-      "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
+      "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" }}}}}},
 
   { "EquipmentAction": { "BagValveMaskSqueeze": {
      "ExpiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" }},

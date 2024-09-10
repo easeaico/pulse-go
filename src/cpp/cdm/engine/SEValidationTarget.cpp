@@ -4,7 +4,7 @@
 #include <numeric>
 
 #include "SEValidationTarget.h"
-#include "cdm/io/protobuf/PBEngine.h"
+#include "cdm/io/protobuf/PBValidation.h"
 #include "cdm/utils/GeneralMath.h"
 
 void SEValidationTarget::Clear()
@@ -36,19 +36,19 @@ void SESegmentValidationTarget::Clear()
 }
 bool SESegmentValidationTarget::SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
-  return PBEngine::SerializeToString(src, output, m, logger);
+  return PBValidation::SerializeToString(src, output, m, logger);
 }
 bool SESegmentValidationTarget::SerializeToFile(const std::vector<const SESegmentValidationTarget*>& src, const std::string& filename, Logger* logger)
 {
-  return PBEngine::SerializeToFile(src, filename, logger);
+  return PBValidation::SerializeToFile(src, filename, logger);
 }
 bool SESegmentValidationTarget::SerializeFromString(const std::string& src, std::vector<SESegmentValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
 {
-  return PBEngine::SerializeFromString(src, dst, m, logger);
+  return PBValidation::SerializeFromString(src, dst, m, logger);
 }
 bool SESegmentValidationTarget::SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger)
 {
-  return PBEngine::SerializeFromFile(filename, dst, logger);
+  return PBValidation::SerializeFromFile(filename, dst, logger);
 }
 void SESegmentValidationTarget::SetEqualToSegment(int s)
 {
@@ -144,47 +144,23 @@ void SETimeSeriesValidationTarget::Clear()
 }
 bool SETimeSeriesValidationTarget::SerializeToString(const std::vector<const SETimeSeriesValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
-  return PBEngine::SerializeToString(src, output, m, logger);
+  return PBValidation::SerializeToString(src, output, m, logger);
 }
 bool SETimeSeriesValidationTarget::SerializeToFile(const std::vector<const SETimeSeriesValidationTarget*>& src, const std::string& filename, Logger* logger)
 {
-  return PBEngine::SerializeToFile(src, filename, logger);
+  return PBValidation::SerializeToFile(src, filename, logger);
 }
 bool SETimeSeriesValidationTarget::SerializeFromString(const std::string& src, std::vector<SETimeSeriesValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
 {
-  return PBEngine::SerializeFromString(src, dst, m, logger);
+  return PBValidation::SerializeFromString(src, dst, m, logger);
 }
 bool SETimeSeriesValidationTarget::SerializeFromFile(const std::string& filename, std::vector<SETimeSeriesValidationTarget*>& dst, Logger* logger)
 {
-  return PBEngine::SerializeFromFile(filename, dst, logger);
+  return PBValidation::SerializeFromFile(filename, dst, logger);
 }
 void SETimeSeriesValidationTarget::SetEqualTo(double d, eTargetType t)
 {
   m_ComparisonType = eComparisonType::EqualToValue;
-  m_TargetType = t;
-  m_Target = d;
-  m_TargetMaximum = d;
-  m_TargetMinimum = d;
-}
-void SETimeSeriesValidationTarget::SetGreaterThan(double d, eTargetType t)
-{
-  m_ComparisonType = eComparisonType::GreaterThanValue;
-  m_TargetType = t;
-  m_Target = d;
-  m_TargetMaximum = d;
-  m_TargetMinimum = d;
-}
-void SETimeSeriesValidationTarget::SetLessThan(double d, eTargetType t)
-{
-  m_ComparisonType = eComparisonType::LessThanValue;
-  m_TargetType = t;
-  m_Target = d;
-  m_TargetMaximum = d;
-  m_TargetMinimum = d;
-}
-void SETimeSeriesValidationTarget::SetTrendsTo(double d, eTargetType t)
-{
-  m_ComparisonType = eComparisonType::TrendsToValue;
   m_TargetType = t;
   m_Target = d;
   m_TargetMaximum = d;

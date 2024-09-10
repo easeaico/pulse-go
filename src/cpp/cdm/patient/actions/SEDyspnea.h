@@ -24,10 +24,15 @@ public:
   bool IsActive() const override;
   void Deactivate() override;
 
-  virtual bool HasSeverity() const;
-  virtual SEScalar0To1& GetSeverity();
-  virtual double GetSeverity() const;
+  virtual bool HasRespirationRateSeverity() const;
+  virtual SEScalar0To1& GetRespirationRateSeverity();
+  virtual double GetRespirationRateSeverity() const;
+
+  virtual bool HasTidalVolumeSeverity() const;
+  virtual SEScalar0To1& GetTidalVolumeSeverity();
+  virtual double GetTidalVolumeSeverity() const;
 
 protected:
-  SEScalar0To1*           m_Severity;
+  SEScalar0To1* m_RespirationRateSeverity;
+  SEScalar0To1* m_TidalVolumeSeverity;
 };

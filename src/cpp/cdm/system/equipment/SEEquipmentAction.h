@@ -11,7 +11,10 @@ public:
   SEEquipmentAction(Logger* logger);
   virtual ~SEEquipmentAction();
 
-  void Clear() override;
+  void Clear() override { SEAction::Clear(); }
+  bool IsValid() const override { return SEAction::IsValid(); }
 
-  bool IsValid() const override;
+  void Activate() override { SEAction::Activate(); }
+  bool IsActive() const override { return SEAction::IsActive(); }
+  void Deactivate() override { SEAction::Deactivate(); }
 };  

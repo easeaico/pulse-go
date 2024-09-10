@@ -251,7 +251,7 @@ void PBAction::Load(const CDM_BIND::SerializeStateData& src, SESerializeState& d
 void PBAction::Serialize(const CDM_BIND::SerializeStateData& src, SESerializeState& dst)
 {
   PBAction::Serialize(src.action(), dst);
-  dst.SetType((eSerialization_Type)src.type());
+  dst.SetMode((eSerialization_Mode)src.mode());
   dst.SetFilename(src.filename());
 }
 CDM_BIND::SerializeStateData* PBAction::Unload(const SESerializeState& src)
@@ -264,7 +264,7 @@ void PBAction::Serialize(const SESerializeState& src, CDM_BIND::SerializeStateDa
 {
   PBAction::Serialize(src, *dst.mutable_action());
 
-  dst.set_type((CDM_BIND::SerializeStateData::eType)src.m_Type);
+  dst.set_mode((CDM_BIND::SerializeStateData::eMode)src.m_Mode);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);
 }

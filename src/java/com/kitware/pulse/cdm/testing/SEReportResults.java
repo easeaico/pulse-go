@@ -25,9 +25,7 @@ public class SEReportResults
       files.add("EngineUnitTests.html");
       files.add("ScenarioVerification.html");
       files.add("DrugPKVerification.html");
-      files.add("SystemVerification.html");
       files.add("PatientVerification.html");
-      files.add("SystemValidation.html");
       files.add("PatientValidation.html");
       
       String line;

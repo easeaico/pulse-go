@@ -4,6 +4,7 @@
 #pragma once
    // Forward Declaire SE and Protobuf Physiology Types
 CDM_BIND_DECL2(BloodChemistrySystem)
+CDM_BIND_DECL2(CardiovascularMechanicsModifiers)
 CDM_BIND_DECL2(CardiovascularSystem)
 CDM_BIND_DECL2(EndocrineSystem)
 CDM_BIND_DECL2(DrugSystem)
@@ -14,6 +15,7 @@ CDM_BIND_DECL2(NervousSystem)
 CDM_BIND_DECL2(PupillaryResponse)
 CDM_BIND_DECL2(RenalSystem)
 CDM_BIND_DECL2(RespiratoryMechanics)
+CDM_BIND_DECL2(RespiratoryMechanicsModifiers)
 CDM_BIND_DECL2(RespiratorySystem)
 CDM_BIND_DECL2(TissueSystem)
 
@@ -29,6 +31,15 @@ public:
   static void Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodChemistrySystemData& dst);
 
   // Cardiovascular
+  static void Load(const CDM_BIND::CardiovascularMechanicsModifiersData& src, SECardiovascularMechanicsModifiers& dst);
+  static CDM_BIND::CardiovascularMechanicsModifiersData* Unload(const SECardiovascularMechanicsModifiers& src);
+  static void Serialize(const CDM_BIND::CardiovascularMechanicsModifiersData& src, SECardiovascularMechanicsModifiers& dst);
+  static void Serialize(const SECardiovascularMechanicsModifiers& src, CDM_BIND::CardiovascularMechanicsModifiersData& dst);
+  static bool SerializeToString(const SECardiovascularMechanicsModifiers& src, std::string& output, eSerializationFormat m);
+  static bool SerializeToFile(const SECardiovascularMechanicsModifiers& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, SECardiovascularMechanicsModifiers& dst, eSerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SECardiovascularMechanicsModifiers& dst);
+
   static void Load(const CDM_BIND::CardiovascularSystemData& src, SECardiovascularSystem& dst);
   static CDM_BIND::CardiovascularSystemData* Unload(const SECardiovascularSystem& src);
   static void Serialize(const CDM_BIND::CardiovascularSystemData& src, SECardiovascularSystem& dst);
@@ -92,6 +103,14 @@ public:
   static bool SerializeFromString(const std::string& src, SERespiratoryMechanics& dst, eSerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SERespiratoryMechanics& dst);
 
+  static void Load(const CDM_BIND::RespiratoryMechanicsModifiersData& src, SERespiratoryMechanicsModifiers& dst);
+  static CDM_BIND::RespiratoryMechanicsModifiersData* Unload(const SERespiratoryMechanicsModifiers& src);
+  static void Serialize(const CDM_BIND::RespiratoryMechanicsModifiersData& src, SERespiratoryMechanicsModifiers& dst);
+  static void Serialize(const SERespiratoryMechanicsModifiers& src, CDM_BIND::RespiratoryMechanicsModifiersData& dst);
+  static bool SerializeToString(const SERespiratoryMechanicsModifiers& src, std::string& output, eSerializationFormat m);
+  static bool SerializeToFile(const SERespiratoryMechanicsModifiers& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, SERespiratoryMechanicsModifiers& dst, eSerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SERespiratoryMechanicsModifiers& dst);
 
   static void Load(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst);
   static CDM_BIND::RespiratorySystemData* Unload(const SERespiratorySystem& src);

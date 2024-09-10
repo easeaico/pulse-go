@@ -23,7 +23,7 @@ import com.kitware.pulse.utilities.Log;
  *
  */
 public class SETestReport
-{  
+{
   protected String            name;
   protected String            fileName;
   protected String            reportDir;
@@ -35,8 +35,10 @@ public class SETestReport
     public String          name;
     public int             runs;
     public int             errors;
+    public int             warns;
     public double          duration_s;
     public List<String>    failures = new ArrayList<>();
+    public List<String>    warnings = new ArrayList<>();
     public List<String>    requirements = new ArrayList<>();
     public StringBuilder   html=new StringBuilder();
   }
@@ -44,7 +46,7 @@ public class SETestReport
   private class DataComparator implements Comparator<Data>
   {
     @Override
-    public int compare(Data o1, Data o2) 
+    public int compare(Data o1, Data o2)
     {
       return o1.name.compareTo(o2.name);
     }
@@ -57,7 +59,7 @@ public class SETestReport
     testSuites = new ArrayList<>();
     knownFailingSuites = new ArrayList<>();
   }
-  
+
   public void clear()
   {
   	name="";
@@ -203,7 +205,7 @@ public class SETestReport
     buffer.append("<head><title>"+title+"</title></head>");
     buffer.append("<body>");
     buffer.append("<h1>"+title+"</h1><br>");
-    
+
     // Any Test Suites Not Run?
     buffer.append("<table border=\"1\">");
     buffer.append("<tr><th>Missing Reports</th></tr>");
@@ -215,7 +217,7 @@ public class SETestReport
     buffer.append("</table>");
     // Make a little room
     buffer.append("<br>");
-    
+
     // Any suites known to fail?
     buffer.append("<table border=\"1\">");
     buffer.append("<tr><th>Known Failing Reports</th></tr>");
@@ -233,7 +235,7 @@ public class SETestReport
         all.add(ts.getName());
       groups.put(this.name, all);
     }
-    
+
     for(String group : groups.keySet())
     {
       List<String> groupTests = groups.get(group);
@@ -258,14 +260,15 @@ public class SETestReport
       int totalErrors=0;
       double totalDuration_s=0;
       List<SETestReport.Data> errorData = new ArrayList<>();
+      List<SETestReport.Data> warnData = new ArrayList<>();
       List<SETestReport.Data> passedData = new ArrayList<>();
 
       SETestReport.Data data;
       for(SETestSuite ts : this.testSuites)
-      { 
+      {
         if(!groupTests.contains(ts.getName()))
             continue;
-        
+
         totalRuns+=ts.getTestCases().size();
         totalErrors+=ts.getNumErrors();
         totalDuration_s+=ts.getDuration(TimeUnit.s);
@@ -278,23 +281,31 @@ public class SETestReport
           data.name=ts.getName();
           data.runs=ts.getTestCases().size();
           data.errors=ts.getNumErrors();
+          data.warns=ts.getNumWarnings();
           data.duration_s=ts.getDuration(TimeUnit.s);
           for(SETestCase tc : ts.testCases)
           	data.failures.addAll(tc.failures);
+          for(SETestCase tc : ts.testCases)
+            data.warnings.addAll(tc.warnings);
           data.requirements.addAll(ts.getRequirements());
           if(ts.getNumErrors()>0)
           {
             errorData.add(data);
             data.html.append("<tr bgcolor=\"#FF0000\">");
           }
+          else if(ts.getNumWarnings()>0)
+          {
+            warnData.add(data);
+            data.html.append("<tr bgcolor=\"#FFFF00\">");
+          }
           else
           {
             passedData.add(data);
             data.html.append("<tr bgcolor=\"#00FF00\">");
           }
-          data.html.append("<td align=\"left\">"+data.name+"</td>");   
+          data.html.append("<td align=\"left\">"+data.name+"</td>");
           //data.html.append("<td>"+data.errors+"</td>");
-          //data.html.append("<td>"+data.runs+"</td>");  
+          //data.html.append("<td>"+data.runs+"</td>");
           //data.html.append("<td>"+data.duration_s+"</td>");
           data.html.append("<td>");
           if(data.failures.size() > 0)
@@ -310,6 +321,20 @@ public class SETestReport
                 break;
             }
             data.html.append(data.failures.get(i));
+          }
+          if(data.warnings.size()>0)
+          {
+            int i=0;
+            while (i < data.warnings.size()-1)
+            {
+              String f = data.warnings.get(i);
+              f = f.replaceAll("\n", "<br>");
+              data.html.append(f + "<br>");
+              i++;
+              if(i>5)//Only write out the first few errors, could be a LOT of errors
+                break;
+            }
+            data.html.append(data.warnings.get(i));
           }
           data.html.append("</td>");
           //data.html.append("<td>");
@@ -332,16 +357,19 @@ public class SETestReport
       buffer.append("<td align=\"left\">"+"Totals for "+runs+" test suites"+"</td>");
       buffer.append("<td>"+totalErrors+"</td>");
       //buffer.append("<td>"+totalRuns+"</td>");
-      //buffer.append("<td>"+totalDuration_s+"</td>"); 
+      //buffer.append("<td>"+totalDuration_s+"</td>");
       buffer.append("</tr>");
 
       if(sortResults)
       {
         DataComparator comparator=new DataComparator();
         Collections.sort(errorData,comparator);
+        Collections.sort(warnData,comparator);
         Collections.sort(passedData,comparator);
       }
       for(Data d : errorData)
+        buffer.append(d.html);
+      for(Data d : warnData)
         buffer.append(d.html);
       for(Data d : passedData)
         buffer.append(d.html);

@@ -118,7 +118,13 @@ void SESubstanceTransporter<GraphType, FluxUnit, QuantityUnit, ExtensiveUnit, In
           if (flux < 0.0)
           {
             //Flow in
-            AMatrix(i, graph.GetVertexIndex(srcEdge->GetTargetVertex())) -= std::abs(flux) * timeStep_s;
+            int vi = graph.GetVertexIndex(srcEdge->GetTargetVertex());
+            if (vi < 0)
+            {
+              Fatal("No target vertex index for " + srcEdge->GetName());
+              return;
+            }
+            AMatrix(i, vi) -= std::abs(flux) * timeStep_s;
           }
           else
           {
@@ -151,8 +157,14 @@ void SESubstanceTransporter<GraphType, FluxUnit, QuantityUnit, ExtensiveUnit, In
           }
           else
           {
-            //Flow in          
-            AMatrix(i, graph.GetVertexIndex(tgtEdge->GetSourceVertex())) -= std::abs(flux) * timeStep_s;
+            //Flow in
+            int vi = graph.GetVertexIndex(tgtEdge->GetSourceVertex());
+            if (vi < 0)
+            {
+              Fatal("No source vertex index for " + tgtEdge->GetName());
+              return;
+            }
+            AMatrix(i, vi) -= std::abs(flux) * timeStep_s;
           }
         }
       }

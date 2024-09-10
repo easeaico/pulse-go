@@ -27,30 +27,37 @@ namespace HowTo_VentilationMechanics
         SEDataRequest.CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreatePhysiologyDataRequest("IntrapulmonaryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreatePhysiologyDataRequest("InspiratoryFlow", VolumePerTimeUnit.L_Per_min),
-        SEDataRequest.CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
-        SEDataRequest.CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
-        SEDataRequest.CreatePhysiologyDataRequest("PulmonaryCompliance",VolumePerPressureUnit.mL_Per_cmH2O),
+        SEDataRequest.CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
+        SEDataRequest.CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
+        SEDataRequest.CreatePhysiologyDataRequest("RespiratoryCompliance",VolumePerPressureUnit.mL_Per_cmH2O),
         SEDataRequest.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.mL_Per_min),
         // Ventilator Monitor Data
         SEDataRequest.CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("BreathState"),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("DynamicRespiratoryCompliance", VolumePerPressureUnit.mL_Per_cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction"),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction"),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("ExpiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit.L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("ExtrinsicPositiveEndExpiratoryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio"),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit.L),
-        SEDataRequest.CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiratoryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("LeakFraction"),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("PeakInspiratoryFlow", VolumePerTimeUnit.L_Per_s),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit.cmH2O),
-        SEDataRequest.CreateMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("StaticRespiratoryCompliance", VolumePerPressureUnit.mL_Per_cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit.L),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit.L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("TotalPositiveEndExpiratoryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_s),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
@@ -146,7 +153,7 @@ namespace HowTo_VentilationMechanics
       pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
       pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit.s);
       pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit.cmH2O);
-      pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit.cmH2O);
+      pc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit.cmH2O);
       pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit.Per_min);
       pc_ac.GetSlope().SetValue(0.2, TimeUnit.s);
       pulse.ProcessAction(pc_ac);

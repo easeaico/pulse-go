@@ -135,7 +135,6 @@ The following conditions are specified via the SEPatientConfiguration object.
   @refitem ChronicObstructivePulmonaryDiseaseTable "COPD"
   @refitem ChronicPericardialEffusionTable "Chronic Pericardial Effusion"
   @refitem ChronicRenalStenosisTable "Chronic Renal Stenosis"
-  @refitem ChronicVentricularSystolicDysfunctionTable "Chronic Ventricular Systolic Dysfunction"
   @refitem ConsumeMealTable "Consume Meal"
   @refitem ImpairedAlveolarExchangeTable "Impaired Alveolar Exchange"
   @refitem PneumoniaTable "Pneumonia"
@@ -144,7 +143,7 @@ The following conditions are specified via the SEPatientConfiguration object.
   @refitem SepsisTable "Sepsis"
 @endsecreflist
 
-#### %Environment Conditions
+#### Environment Conditions
 @secreflist
   @refitem InitialEnvironmentConditionsTable "Initial Environment"
 @endsecreflist
@@ -349,7 +348,7 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem UrinateTable "Urinate"
 @endsecreflist
 
-#### %Environment Actions
+#### Environment Actions
 @secreflist
   @refitem ChangeEnvironmentConditionsTable "Environment Change"
   @refitem ThermalApplicationTable "Thermal Application"
@@ -380,7 +379,7 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem BagValveMaskSqueezeTable "Bag Valve Mask Squeeze"
 @endsecreflist
 
-#### %Inhaler Actions
+#### Inhaler Actions
 @secreflist
   @refitem InhalerConfigurationTable "Inhaler Configuration"
 @endsecreflist

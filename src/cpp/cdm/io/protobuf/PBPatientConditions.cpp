@@ -18,6 +18,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/conditions/SEChronicRenalStenosis.h"
 #include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "cdm/patient/conditions/SEConsumeMeal.h"
+#include "cdm/patient/conditions/SEDehydration.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
 #include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
@@ -272,6 +273,37 @@ void PBPatientCondition::Copy(const SEConsumeMeal& src, SEConsumeMeal& dst)
   PBPatientCondition::Serialize(data, dst);
 }
 
+void PBPatientCondition::Load(const CDM_BIND::DehydrationData& src, SEDehydration& dst)
+{
+  dst.Clear();
+  PBPatientCondition::Serialize(src, dst);
+}
+void PBPatientCondition::Serialize(const CDM_BIND::DehydrationData& src, SEDehydration& dst)
+{
+  PBPatientCondition::Serialize(src.patientcondition(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+CDM_BIND::DehydrationData* PBPatientCondition::Unload(const SEDehydration& src)
+{
+  CDM_BIND::DehydrationData* dst = new CDM_BIND::DehydrationData();
+  PBPatientCondition::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientCondition::Serialize(const SEDehydration& src, CDM_BIND::DehydrationData& dst)
+{
+  PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBPatientCondition::Copy(const SEDehydration& src, SEDehydration& dst)
+{
+  dst.Clear();
+  CDM_BIND::DehydrationData data;
+  PBPatientCondition::Serialize(src, data);
+  PBPatientCondition::Serialize(data, dst);
+}
+
 void PBPatientCondition::Load(const CDM_BIND::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst)
 {
   dst.Clear();
@@ -488,6 +520,12 @@ SEPatientCondition* PBPatientCondition::Load(const CDM_BIND::AnyPatientCondition
     PBPatientCondition::Load(any.consumemeal(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientConditionData::ConditionCase::kDehydration:
+  {
+    SEDehydration* a = new SEDehydration();
+    PBPatientCondition::Load(any.dehydration(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientConditionData::ConditionCase::kImpairedAlveolarExchange:
   {
     SEImpairedAlveolarExchange* a = new SEImpairedAlveolarExchange();
@@ -570,6 +608,12 @@ CDM_BIND::AnyPatientConditionData* PBPatientCondition::Unload(const SEPatientCon
   if (cm != nullptr)
   {
     any->set_allocated_consumemeal(PBPatientCondition::Unload(*cm));
+    return any;
+  }
+  const SEDehydration* d = dynamic_cast<const SEDehydration*>(&condition);
+  if (d != nullptr)
+  {
+    any->set_allocated_dehydration(PBPatientCondition::Unload(*d));
     return any;
   }
   const SEImpairedAlveolarExchange* iae = dynamic_cast<const SEImpairedAlveolarExchange*>(&condition);

@@ -11,6 +11,7 @@
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
+#include "cdm/patient/actions/SECardiovascularMechanicsModification.h"
 #include "cdm/patient/actions/SEChestCompression.h"
 #include "cdm/patient/actions/SEChestCompressionAutomated.h"
 #include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
@@ -31,6 +32,7 @@
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsModification.h"
 #include "cdm/patient/actions/SESubstanceBolus.h"
 #include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
 #include "cdm/patient/actions/SESubstanceInfusion.h"
@@ -56,6 +58,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_AsthmaAttack = nullptr;
   m_BrainInjury = nullptr;
   m_Bronchoconstriction = nullptr;
+  m_CardiovascularMechanicsModification = nullptr;
   m_ChestCompression = nullptr;
   m_ChestCompressionAutomated = nullptr;
   m_ChestCompressionInstantaneous = nullptr;
@@ -75,6 +78,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_RightNeedleDecompression = nullptr;
   m_RespiratoryFatigue = nullptr;
   m_RespiratoryMechanicsConfiguration = nullptr;
+  m_RespiratoryMechanicsModification = nullptr;
   m_PericardialEffusion = nullptr;
   m_PneumoniaExacerbation = nullptr;
   m_PulmonaryShuntExacerbation = nullptr;
@@ -97,6 +101,7 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_AsthmaAttack);
   SAFE_DELETE(m_BrainInjury);
   SAFE_DELETE(m_Bronchoconstriction);
+  SAFE_DELETE(m_CardiovascularMechanicsModification);
   SAFE_DELETE(m_ChestCompression);
   SAFE_DELETE(m_ChestCompressionAutomated);
   SAFE_DELETE(m_ChestCompressionInstantaneous);
@@ -119,6 +124,7 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_PulmonaryShuntExacerbation);
   SAFE_DELETE(m_RespiratoryFatigue);
   SAFE_DELETE(m_RespiratoryMechanicsConfiguration);
+  SAFE_DELETE(m_RespiratoryMechanicsModification);
   SAFE_DELETE(m_SupplementalOxygen);
   SAFE_DELETE(m_LeftClosedTensionPneumothorax);
   SAFE_DELETE(m_LeftOpenTensionPneumothorax);
@@ -143,6 +149,7 @@ void SEPatientActionCollection::Clear()
   RemoveAsthmaAttack();
   RemoveBrainInjury();
   RemoveBronchoconstriction();
+  RemoveCardiovascularMechanicsModification();
   RemoveChestCompressionAutomated();
   RemoveChestCompressionInstantaneous();
   RemoveChronicObstructivePulmonaryDiseaseExacerbation();
@@ -164,6 +171,7 @@ void SEPatientActionCollection::Clear()
   RemovePulmonaryShuntExacerbation();
   RemoveRespiratoryFatigue();
   RemoveRespiratoryMechanicsConfiguration();
+  RemoveRespiratoryMechanicsModification();
   RemoveLeftOpenTensionPneumothorax();
   RemoveLeftClosedTensionPneumothorax();
   RemoveRightOpenTensionPneumothorax();
@@ -273,6 +281,16 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_Bronchoconstriction->Activate();
     if (!m_Bronchoconstriction->IsActive())
       RemoveBronchoconstriction();
+    return true;
+  }
+
+  const SECardiovascularMechanicsModification* cmm = dynamic_cast<const SECardiovascularMechanicsModification*>(&action);
+  if (cmm != nullptr)
+  {
+    GetCardiovascularMechanicsModification().Copy(*cmm, true);
+    m_CardiovascularMechanicsModification->Activate();
+    if (!m_CardiovascularMechanicsModification->IsActive())
+      RemoveCardiovascularMechanicsModification();
     return true;
   }
 
@@ -550,6 +568,16 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_RespiratoryMechanicsConfiguration->Activate();
     if (!m_RespiratoryMechanicsConfiguration->IsActive())
       RemoveRespiratoryMechanicsConfiguration();
+    return true;
+  }
+
+  const SERespiratoryMechanicsModification* rmm = dynamic_cast<const SERespiratoryMechanicsModification*>(&action);
+  if (rmm != nullptr)
+  {
+    GetRespiratoryMechanicsModification().Copy(*rmm, true);
+    m_RespiratoryMechanicsModification->Activate();
+    if (!m_RespiratoryMechanicsModification->IsActive())
+      RemoveRespiratoryMechanicsModification();
     return true;
   }
 
@@ -840,6 +868,26 @@ void SEPatientActionCollection::RemoveBronchoconstriction()
 {
   if (m_Bronchoconstriction)
     m_Bronchoconstriction->Deactivate();
+}
+
+bool SEPatientActionCollection::HasCardiovascularMechanicsModification() const
+{
+  return m_CardiovascularMechanicsModification == nullptr ? false : m_CardiovascularMechanicsModification->IsActive();
+}
+SECardiovascularMechanicsModification& SEPatientActionCollection::GetCardiovascularMechanicsModification()
+{
+  if (m_CardiovascularMechanicsModification == nullptr)
+    m_CardiovascularMechanicsModification = new SECardiovascularMechanicsModification(GetLogger());
+  return *m_CardiovascularMechanicsModification;
+}
+const SECardiovascularMechanicsModification* SEPatientActionCollection::GetCardiovascularMechanicsModification() const
+{
+  return m_CardiovascularMechanicsModification;
+}
+void SEPatientActionCollection::RemoveCardiovascularMechanicsModification()
+{
+  if (m_CardiovascularMechanicsModification)
+    m_CardiovascularMechanicsModification->Deactivate();
 }
 
 bool SEPatientActionCollection::HasActiveCPRAction() const
@@ -1345,6 +1393,26 @@ void SEPatientActionCollection::RemoveRespiratoryMechanicsConfiguration()
     m_RespiratoryMechanicsConfiguration->Deactivate();
 }
 
+bool SEPatientActionCollection::HasRespiratoryMechanicsModification() const
+{
+  return m_RespiratoryMechanicsModification == nullptr ? false : m_RespiratoryMechanicsModification->IsActive();
+}
+SERespiratoryMechanicsModification& SEPatientActionCollection::GetRespiratoryMechanicsModification()
+{
+  if (m_RespiratoryMechanicsModification == nullptr)
+    m_RespiratoryMechanicsModification = new SERespiratoryMechanicsModification(GetLogger());
+  return *m_RespiratoryMechanicsModification;
+}
+const SERespiratoryMechanicsModification* SEPatientActionCollection::GetRespiratoryMechanicsModification() const
+{
+  return m_RespiratoryMechanicsModification;
+}
+void SEPatientActionCollection::RemoveRespiratoryMechanicsModification()
+{
+  if (m_RespiratoryMechanicsModification)
+    m_RespiratoryMechanicsModification->Deactivate();
+}
+
 bool SEPatientActionCollection::HasSupplementalOxygen() const
 {
   return m_SupplementalOxygen == nullptr ? false : m_SupplementalOxygen->IsActive();
@@ -1670,6 +1738,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetBrainInjury());
   if (HasBronchoconstriction())
     actions.push_back(GetBronchoconstriction());
+  if (HasCardiovascularMechanicsModification())
+    actions.push_back(GetCardiovascularMechanicsModification());
   if (HasChestCompressionAutomated())
     actions.push_back(GetChestCompressionAutomated());
   if (HasChestCompressionInstantaneous())
@@ -1717,6 +1787,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetRespiratoryFatigue());
   if (HasRespiratoryMechanicsConfiguration())
     actions.push_back(GetRespiratoryMechanicsConfiguration());
+  if (HasRespiratoryMechanicsModification())
+    actions.push_back(GetRespiratoryMechanicsModification());
   if (HasSupplementalOxygen())
     actions.push_back(GetSupplementalOxygen());
   if (HasLeftClosedTensionPneumothorax())
@@ -1766,6 +1838,8 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetBrainInjury().GetScalar(property);
   if (actionName == "Bronchoconstriction")
     return GetBronchoconstriction().GetScalar(property);
+  if (actionName == "CardiovascularMechanicsModification")
+    return GetCardiovascularMechanicsModification().GetScalar(property);
   if (actionName == "ChestCompressionAutomated")
     return GetChestCompressionAutomated().GetScalar(property);
   if (actionName == "ChestCompressionInstantaneous")
@@ -1816,6 +1890,8 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetRespiratoryFatigue().GetScalar(property);
   if (actionName == "RespiratoryMechanicsConfiguration")
     return GetRespiratoryMechanicsConfiguration().GetScalar(property);
+  if (actionName == "RespiratoryMechanicsModification")
+    return GetRespiratoryMechanicsModification().GetScalar(property);
   if (actionName == "SupplementalOxygen")
     return GetSupplementalOxygen().GetScalar(property);
   if (actionName == "LeftClosedTensionPneumothorax")

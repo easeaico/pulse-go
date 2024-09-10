@@ -262,13 +262,12 @@ double GeneralMath::PercentTolerance(double expected, double calculated, double 
 
 void GeneralMath::Combinations(std::vector<size_t> maxValues, std::vector<std::vector<size_t>>& permutations)
 {
-  int Oidx = 0;
   size_t numVals = 1;
   size_t Olength = maxValues.size();
   std::vector<size_t> *current, *next;
 
   for (size_t i = 0; i < Olength; i++)
-    numVals *= maxValues[Oidx] + 1;
+    numVals *= maxValues[i] + 1;
   permutations.clear();
   permutations.resize(numVals);
   // First is all zeros

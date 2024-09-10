@@ -5,85 +5,65 @@ option csharp_namespace = "pulse.study.bind.patient_variability";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Patient.proto";
-import "pulse/cdm/bind/PatientActions.proto";
-import "pulse/cdm/bind/TestReport.proto";
 
-
-
-message PatientStateData
+enum eGenStyle
 {
+  Combinatorial = 0; /**<<@brief Classic combinatorial of all factors. */
+  Slice         = 1; /**<<@brief Iterate 1 property at a time, hold other properties to their slice index value. */
+}
 
-  /** @brief Enumeration for engine failure types */
-  enum eFailure
-  {
-    None=0;               /**<< @brief No stabilization failures. */
-    FailedSetup=1;        /**<< @brief SetupPatient could not create a valid Pulse patient with provided patient values. */
-    FailedStabilization=2;/**<< @brief Pulse was unable to stabilize to provided/computed patient values. */
-    RuntimeError=3;       /**<< @brief Error running the engine with (optional) actions. */
-    FatalRuntimeError=4;  /**<< @brief Fatal error running the engine with (optional) actions. */
-  }
+message ParameterIterationData
+{
+  uint32          SliceIndex = 1;
+  repeated double Values     = 2;
+}
 
-  uint32                                                  ID                                = 1;
-  string                                                  OutputBaseFilename                = 2;
-  double                                                  MaxSimulationTime_s               = 3;
-  double                                                  FinalSimulationTime_s             = 4;/**<< @brief We could stop the sim early (ex. due to hemorrhage) */
-  // Requested Patient
-  pulse.cdm.bind.PatientData                              Patient                           = 5;
-  pulse.cdm.bind.PatientData                              SetupPatient                      = 6;
-  // Stabilization Info
-  eFailure                                                Failure                           = 7;
-  double                                                  StabilizationTime_s               = 8;
+
+message ScenarioIterationData
+{
+  string                                           Name                        = 1;
+  eGenStyle                                        GenStyle                    = 2;
+  string                                           IterationName               = 3;
+  string                                           ResultsDirectory            = 4;
+  string                                           ScenarioDirectory           = 5;/**<< @brief Directory to generate scenarios in. */
+  string                                           StateDirectory              = 6;/**<< @brief Directory to generate states in. */
+}
+
+message PatientIterationData
+{
+  ScenarioIterationData                            Scenario                    = 1;
+
+  pulse.cdm.bind.PatientData.eSex                  Sex                         = 2;
+  ParameterIterationData                           Age_yr                      = 3;
+  ParameterIterationData                           Height_cm                   = 4;
+  ParameterIterationData                           BodyMassIndex               = 5;
+  ParameterIterationData                           BodyFatFraction             = 6;
+  ParameterIterationData                           HeartRate_bpm               = 7;
+  ParameterIterationData                           MeanArtierialPressure_mmHg  = 8;
+  ParameterIterationData                           PulsePressure_mmHg          = 9;
+  ParameterIterationData                           RespirationRate_bpm         = 10;
+
+}
+
+message ActionIterationData
+{
+  ScenarioIterationData                            Scenario                    = 1;
   
-  // Run Modes
-  oneof RunMode
-  {
-    HemorrhageData                                        Hemorrhage                        = 9;
-    ValidationData                                        Validation                        = 10;
-  }
-
-  message ValidationData
-  {
-    map<string,pulse.cdm.bind.PropertyValidationListData> ValidationMap                     = 1;
-  }
-  
-  message HemorrhageData
-  {
-    // Initial Conditions
-    pulse.cdm.bind.HemorrhageData                         Action                            = 1;/**<< @brief Hemorrhage Action. */
-    double                                                StartTime_s                       = 3;/**<< @brief How far into the simulation does the hemorrhage occur. */
-    double                                                TriageTime_s                      = 4;/**<< @brief How far into the simulation does the triage occur. */
-
-    // Results
-    // Values at the time of hemorrhage
-    double                                                InitialBloodVolume_mL             = 5;
-    double                                                InitialCardiacOutput_L_Per_min    = 6;
-    double                                                InitialHeartRate_bpm              = 7;
-    double                                                InitialMeanArterialPressure_mmHg  = 8;
-    double                                                InitialHemorrhageFlow_mL_Per_s    = 9;/**<< @brief Not constant throughout the simulation. */
-    // Values at triage time
-    double                                                TriageBloodLoss_mL                = 10;
-    double                                                TriageCardiacOutput_L_Per_min     = 11;
-    double                                                TriageHeartRate_bpm               = 12;
-    double                                                TriageHemorrhageFlow_mL_Per_s     = 13;/**<< @brief Not constant throughout the simulation. */
-    double                                                TriageMeanArterialPressure_mmHg   = 14;
-    // Values at patient death, or at final sim time, as defined by MaxSimulationTime
-    double                                                FinalBloodLoss_mL                 = 15;
-    double                                                FinalCardiacOutput_L_Per_min      = 16;
-    double                                                FinalHeartRate_bpm                = 17;
-    double                                                FinalHemorrhageFlow_mL_Per_s      = 18;/**<< @brief Not constant throughout the simulation. */
-    double                                                FinalMeanArterialPressure_mmHg    = 19;
-  }
+  bool                                             CreateStates                = 2;
+  double                                           BaselineDuration_s          = 3;/**<< @brief How much time to advance before we add actions. */
+  double                                           MaxSimTime_min              = 4;/**<< @brief Maximum amount of time to run this scenario. */
 }
 
-message PatientStateListData
+message TCCCIterationData
 {
-  repeated PatientStateData      PatientState               = 1;
+  ActionIterationData                              ActionIteration             = 1;
+  bool                                             PerformInterventions        = 2;// Set to false to study injury effects only
+  ParameterIterationData                           AirwayObstructionSeverity   = 3;
+  ParameterIterationData                           HemorrhageSeverity          = 4;
+  ParameterIterationData                           TensionPneumothoraxSeverity = 5;
+  ParameterIterationData                           InsultDuration_s            = 6;
+  ParameterIterationData                           SalineAvailable             = 7;// Should only contain 0 and/or 1
+  ParameterIterationData                           NeedleAvaiable              = 8;// Should only contain 0 and/or 1
+  ParameterIterationData                           ChestWrapAvailable          = 9;// Should only contain 0 and/or 1
 }
 
-message LogData
-{
-  repeated string                Info                       = 1;
-  repeated string                Warning                    = 2;
-  repeated string                Error                      = 3;
-  repeated string                Fatal                      = 4;
-}

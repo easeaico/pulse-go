@@ -47,8 +47,8 @@ def serialize_chronic_obstructive_pulmonary_disease_to_bind(src: SEChronicObstru
     serialize_patient_condition_to_bind(src, dst.PatientCondition)
     if src.has_bronchitis_severity():
         serialize_scalar_0to1_to_bind(src.get_bronchitis_severity(), dst.BronchitisSeverity)
-    for c,s in src._emphysema_severities.items():
-        i = dst.Severity.add()
+    for c, s in src._emphysema_severities.items():
+        i = dst.EmphysemaSeverity.add()
         i.Compartment = c.value
         serialize_scalar_0to1_to_bind(s, i.Severity)
 
@@ -94,6 +94,17 @@ def serialize_chronic_ventricular_systolic_dysfunction_to_bind(src: SEChronicVen
 def serialize_chronic_ventricular_systolic_dysfunction_from_bind(src: ChronicVentricularSystolicDysfunctionData, dst: SEChronicVentricularSystolicDysfunction):
     serialize_patient_condition_from_bind(src.PatientCondition, dst)
     raise Exception("serialize_chronic_ventricular_systolic_dysfunction_from_bind not implemented")
+
+#################################################################
+
+def serialize_dehydration_to_bind(src: SEDehydration , dst: DehydrationData):
+    serialize_patient_condition_to_bind(src, dst.PatientCondition)
+    if src.has_severity():
+        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+
+def serialize_dehydration_from_bind(src: DehydrationData, dst: SEDehydration):
+    serialize_patient_condition_from_bind(src.PatientCondition, dst)
+    raise Exception("serialize_dehydration_from_bind not implemented")
 
 #################################################################
 

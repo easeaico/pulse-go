@@ -9,12 +9,14 @@ add_executable_ex(HowToDriver
   HowTo-BagValveMask.cpp
   HowTo-BolusDrug.cpp
   HowTo-BrainInjury.cpp
+  HowTo-CardiovascularModification.cpp
   HowTo-CombatMultitrauma.cpp
   HowTo-ConsumeNutrients.cpp
   HowTo-COPD.cpp
   HowTo-COVID19Ventilated.cpp
   HowTo-CPR.cpp
   HowTo-CreateAPatient.cpp
+  HowTo-Dehydration.cpp
   HowTo-ECMO.cpp
   HowTo-EngineUse.cpp
   HowTo-EnvironmentChange.cpp
@@ -22,13 +24,16 @@ add_executable_ex(HowToDriver
   HowTo-ExpandedVasculature.cpp
   HowTo-Hemorrhage.cpp
   HowTo-Hemothorax.cpp
-  HowTo-Pneumonia.cpp
+  HowTo-IsoShuntAnalysis.cpp
   HowTo-MechanicalVentilation.cpp
   HowTo-MechanicalVentilator.cpp
+  HowTo-Pneumonia.cpp
   HowTo-PulmonaryFibrosis.cpp
   HowTo-PulseEnginePool.cpp
   HowTo-RespiratoryMechanics.cpp
+  HowTo-RespiratoryModification.cpp
   HowTo-RunScenario.cpp
+  HowTo-RunToStable.cpp
   HowTo-RunThreaded.cpp
   HowTo-RunThreaded.h
   HowTo-Sandbox.cpp
@@ -39,5 +44,6 @@ add_executable_ex(HowToDriver
   HowTo-TensionPneumothorax.cpp
   HowTo-TestSystemCapability.cpp
   HowTo-VentilationMechanics.cpp
+  HowTo-VentilatorFeedbackLoop.cpp
 )
 target_link_libraries(HowToDriver Pulse)

@@ -76,6 +76,8 @@ public:
 
   void LogToConsole(bool b);
   bool IsLoggingToConsole();
+  // Put some identifier at the beginning of each message going to std::cout
+  void AddConsolePrefix(const std::string& p);
 
   void SetLogFile(std::string const&  logFilename = "");
 
@@ -89,6 +91,7 @@ public:
   };
   void SetLogLevel(Level  level);
   Level GetLogLevel() const;
+
 
   virtual void SetLogTime(const SEScalarTime* time);
 

@@ -31,6 +31,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/conditions/SEChronicRenalStenosis.h"
 #include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "cdm/patient/conditions/SEConsumeMeal.h"
+#include "cdm/patient/conditions/SEDehydration.h"
 #include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
 #include "cdm/patient/conditions/SEPneumonia.h"
 #include "cdm/patient/conditions/SEPulmonaryShunt.h"
@@ -64,6 +65,11 @@ POP_PROTO_WARNINGS
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
 #include "cdm/patient/actions/SEPatientAssessmentRequest.h"
 #include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "cdm/patient/actions/SEAcuteStress.h"
@@ -197,6 +203,8 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_ImpairedAlveolarExchange));
   if (src.HasChronicPericardialEffusion())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_PericardialEffusion));
+  if (src.HasDehydration())
+    dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Dehydration));
   if (src.HasPneumonia())
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_Pneumonia));
   if (src.HasPulmonaryFibrosis())
@@ -281,6 +289,16 @@ void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::Actio
 
   if (src.HasMechanicalVentilatorConfiguration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorConfiguration));
+  if (src.HasMechanicalVentilatorContinuousPositiveAirwayPressure())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorContinuousPositiveAirwayPressure));
+  if (src.HasMechanicalVentilatorPressureControl())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorPressureControl));
+  if (src.HasMechanicalVentilatorVolumeControl())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorVolumeControl));
+  if (src.HasMechanicalVentilatorHold())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorHold));
+  if (src.HasMechanicalVentilatorLeak())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorLeak));
 }
 void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {
@@ -553,284 +571,6 @@ bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SEData
   return true;
 }
 
-void PBEngine::Serialize(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst)
-{
-  dst.m_Header = src.header();
-  dst.m_Reference = src.reference();
-  dst.m_Notes = src.notes();
-}
-void PBEngine::Serialize(const SEValidationTarget& src, CDM_BIND::ValidationTargetData& dst)
-{
-  dst.set_header(src.m_Header);
-  dst.set_reference(src.m_Reference);
-  dst.set_notes(src.m_Notes);
-}
-void PBEngine::Load(const CDM_BIND::SegmentValidationTargetData& src, SESegmentValidationTarget& dst)
-{
-  dst.Clear();
-  PBEngine::Serialize(src, dst);
-}
-void PBEngine::Serialize(const CDM_BIND::SegmentValidationTargetData& src, SESegmentValidationTarget& dst)
-{
-  PBEngine::Serialize(src.validationtarget(), dst);
-  switch (src.Expected_case())
-  {
-  case CDM_BIND::SegmentValidationTargetData::kEqualToSegment:
-    dst.SetEqualToValue(src.equaltosegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kEqualToValue:
-    dst.SetEqualToValue(src.equaltovalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kGreaterThanSegment:
-    dst.SetGreaterThanSegment(src.greaterthansegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kGreaterThanValue:
-    dst.SetGreaterThanValue(src.greaterthanvalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kLessThanSegment:
-    dst.SetLessThanSegment(src.lessthansegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kLessThanValue:
-    dst.SetLessThanValue(src.lessthanvalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kTrendsToSegment:
-    dst.SetTrendsToSegment(src.trendstosegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kTrendsToValue:
-    dst.SetTrendsToValue(src.trendstovalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kRange:
-    dst.SetRange(src.range().minimum(), src.range().maximum());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::EXPECTED_NOT_SET:
-    dst.Warning("ValidationTarget expected not set");
-    break;
-  }
-}
-CDM_BIND::SegmentValidationTargetData* PBEngine::Unload(const SESegmentValidationTarget& src)
-{
-  CDM_BIND::SegmentValidationTargetData* dst = new CDM_BIND::SegmentValidationTargetData();
-  PBEngine::Serialize(src, *dst);
-  return dst;
-}
-void PBEngine::Serialize(const SESegmentValidationTarget& src, CDM_BIND::SegmentValidationTargetData& dst)
-{
-  PBEngine::Serialize(src, *dst.mutable_validationtarget());
-
-  switch (src.m_ComparisonType)
-  {
-  case SESegmentValidationTarget::eComparisonType::EqualToSegment:
-    dst.set_equaltosegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::EqualToValue:
-    dst.set_equaltovalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::GreaterThanSegment:
-    dst.set_greaterthansegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::GreaterThanValue:
-    dst.set_greaterthanvalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::LessThanSegment:
-    dst.set_lessthansegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::LessThanValue:
-    dst.set_lessthanvalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::TrendsToSegment:
-    dst.set_trendstosegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::TrendsToValue:
-    dst.set_trendstovalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::Range:
-    dst.mutable_range()->set_minimum(src.m_TargetMinimum);
-    dst.mutable_range()->set_maximum(src.m_TargetMaximum);
-    break;
-  default: break;
-  }
-}
-void PBEngine::Load(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
-{
-  PBEngine::Serialize(src, dst);
-}
-void PBEngine::Serialize(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
-{
-  for (int i = 0; i < src.segmentvalidationtarget_size(); i++)
-  {
-    auto& data = src.segmentvalidationtarget()[i];
-    SESegmentValidationTarget* tgt = new SESegmentValidationTarget();
-    Load(data, *tgt);
-    dst.push_back(tgt);
-  }
-}
-bool PBEngine::SerializeFromString(const std::string& src, std::vector<SESegmentValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
-{
-  CDM_BIND::SegmentValidationSegmentData data;
-  if (!PBUtils::SerializeFromString(src, data, m, logger))
-    return false;
-  PBEngine::Serialize(data, dst);
-  return true;
-}
-bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger)
-{
-  CDM_BIND::SegmentValidationSegmentData data;
-  if (!PBUtils::SerializeFromFile(filename, data, logger))
-    return false;
-  PBEngine::Load(data, dst);
-  return true;
-}
-CDM_BIND::SegmentValidationSegmentData* PBEngine::Unload(const std::vector<const SESegmentValidationTarget*>& src)
-{
-  CDM_BIND::SegmentValidationSegmentData* dst = new CDM_BIND::SegmentValidationSegmentData();
-  PBEngine::Serialize(src, *dst);
-  return dst;
-}
-void PBEngine::Serialize(const std::vector<const SESegmentValidationTarget*>& src, CDM_BIND::SegmentValidationSegmentData& dst)
-{
-  for (const SESegmentValidationTarget* vt : src)
-  {
-    PBEngine::Serialize(*vt, *dst.add_segmentvalidationtarget());
-  }
-}
-bool PBEngine::SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
-{
-  CDM_BIND::SegmentValidationSegmentData data;
-  PBEngine::Serialize(src, data);
-  if (!PBUtils::SerializeToString(data, output, m, logger))
-    return false;
-  return true;
-}
-bool PBEngine::SerializeToFile(const std::vector<const SESegmentValidationTarget*>& src, const std::string& filename, Logger* logger)
-{
-  CDM_BIND::SegmentValidationSegmentData data;
-  PBEngine::Serialize(src, data);
-  if (!PBUtils::SerializeToFile(data, filename, logger))
-    return false;
-  return true;
-}
-
-void PBEngine::Load(const CDM_BIND::TimeSeriesValidationTargetData& src, SETimeSeriesValidationTarget& dst)
-{
-  dst.Clear();
-  PBEngine::Serialize(src, dst);
-}
-void PBEngine::Serialize(const CDM_BIND::TimeSeriesValidationTargetData& src, SETimeSeriesValidationTarget& dst)
-{
-  PBEngine::Serialize(src.validationtarget(), dst);
-  switch (src.Expected_case())
-  {
-  case CDM_BIND::TimeSeriesValidationTargetData::kEqualToValue:
-    dst.SetEqualTo(src.equaltovalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
-    break;
-  case CDM_BIND::TimeSeriesValidationTargetData::kGreaterThanValue:
-    dst.SetGreaterThan(src.greaterthanvalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
-    break;
-  case CDM_BIND::TimeSeriesValidationTargetData::kLessThanValue:
-    dst.SetLessThan(src.lessthanvalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
-    break;
-  case CDM_BIND::TimeSeriesValidationTargetData::kRange:
-    dst.SetRange(src.range().minimum(), src.range().maximum(), (SETimeSeriesValidationTarget::eTargetType)src.type());
-    break;
-  case CDM_BIND::TimeSeriesValidationTargetData::kTrendsToValue:
-    dst.SetGreaterThan(src.trendstovalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
-    break;
-  default: break;
-  }
-}
-CDM_BIND::TimeSeriesValidationTargetData* PBEngine::Unload(const SETimeSeriesValidationTarget& src)
-{
-  CDM_BIND::TimeSeriesValidationTargetData* dst = new CDM_BIND::TimeSeriesValidationTargetData();
-  PBEngine::Serialize(src, *dst);
-  return dst;
-}
-void PBEngine::Serialize(const SETimeSeriesValidationTarget& src, CDM_BIND::TimeSeriesValidationTargetData& dst)
-{
-  PBEngine::Serialize(src, *dst.mutable_validationtarget());
-  dst.set_type((CDM_BIND::TimeSeriesValidationTargetData_eType)src.m_TargetType);
-  switch (src.m_ComparisonType)
-  {
-  case SETimeSeriesValidationTarget::eComparisonType::EqualToValue:
-    dst.set_equaltovalue(src.m_Target);
-    break;
-  case SETimeSeriesValidationTarget::eComparisonType::GreaterThanValue:
-    dst.set_greaterthanvalue(src.m_Target);
-    break;
-  case SETimeSeriesValidationTarget::eComparisonType::LessThanValue:
-    dst.set_lessthanvalue(src.m_Target);
-    break;
-  case SETimeSeriesValidationTarget::eComparisonType::TrendsToValue:
-    dst.set_trendstovalue(src.m_Target);
-    break;
-  case SETimeSeriesValidationTarget::eComparisonType::Range:
-    dst.mutable_range()->set_minimum(src.m_TargetMinimum);
-    dst.mutable_range()->set_maximum(src.m_TargetMaximum);
-    break;
-  case SETimeSeriesValidationTarget::eComparisonType::None:
-    src.Warning("TimeSeriesValidationTarget "+src.GetHeader()+" does not have a comparision type");
-    break;
-  }
-}
-void PBEngine::Load(const CDM_BIND::TimeSeriesValidationTargetListData& src, std::vector<SETimeSeriesValidationTarget*>& dst)
-{
-  PBEngine::Serialize(src, dst);
-}
-void PBEngine::Serialize(const CDM_BIND::TimeSeriesValidationTargetListData& src, std::vector<SETimeSeriesValidationTarget*>& dst)
-{
-  for (int i = 0; i < src.timeseriesvalidationtarget_size(); i++)
-  {
-    auto& data = src.timeseriesvalidationtarget()[i];
-    SETimeSeriesValidationTarget* tgt = new SETimeSeriesValidationTarget();
-    Load(data, *tgt);
-    dst.push_back(tgt);
-  }
-}
-bool PBEngine::SerializeFromString(const std::string& src, std::vector<SETimeSeriesValidationTarget*>& dst, eSerializationFormat m, Logger* logger)
-{
-  CDM_BIND::TimeSeriesValidationTargetListData data;
-  if (!PBUtils::SerializeFromString(src, data, m, logger))
-    return false;
-  PBEngine::Serialize(data, dst);
-  return true;
-}
-bool PBEngine::SerializeFromFile(const std::string& filename, std::vector<SETimeSeriesValidationTarget*>& dst, Logger* logger)
-{
-  CDM_BIND::TimeSeriesValidationTargetListData data;
-  if (!PBUtils::SerializeFromFile(filename, data, logger))
-    return false;
-  PBEngine::Load(data, dst);
-  return true;
-}
-CDM_BIND::TimeSeriesValidationTargetListData* PBEngine::Unload(const std::vector<const SETimeSeriesValidationTarget*>& src)
-{
-  CDM_BIND::TimeSeriesValidationTargetListData* dst = new CDM_BIND::TimeSeriesValidationTargetListData();
-  PBEngine::Serialize(src, *dst);
-  return dst;
-}
-void PBEngine::Serialize(const std::vector<const SETimeSeriesValidationTarget*>& src, CDM_BIND::TimeSeriesValidationTargetListData& dst)
-{
-  for (const SETimeSeriesValidationTarget* vt : src)
-  {
-    PBEngine::Serialize(*vt, *dst.add_timeseriesvalidationtarget());
-  }
-}
-bool PBEngine::SerializeToString(const std::vector<const SETimeSeriesValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
-{
-  CDM_BIND::TimeSeriesValidationTargetListData data;
-  PBEngine::Serialize(src, data);
-  if (!PBUtils::SerializeToString(data, output, m, logger))
-    return false;
-  return true;
-}
-bool PBEngine::SerializeToFile(const std::vector<const SETimeSeriesValidationTarget*>& src, const std::string& filename, Logger* logger)
-{
-  CDM_BIND::TimeSeriesValidationTargetListData data;
-  PBEngine::Serialize(src, data);
-  if (!PBUtils::SerializeToFile(data, filename, logger))
-    return false;
-  return true;
-}
-
 CDM_BIND::DataRequestedData* PBEngine::Unload(const SEDataRequested& src)
 {
   CDM_BIND::DataRequestedData* dst = new CDM_BIND::DataRequestedData();
@@ -1095,16 +835,12 @@ void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationData& src, SEDynami
 {
   if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
-  if (src.has_restingconvergence())
-    PBEngine::Load(src.restingconvergence(), dst.GetRestingConvergence());
-  if (src.has_feedbackconvergence())
-    PBEngine::Load(src.feedbackconvergence(), dst.GetFeedbackConvergence());
 
-  for (auto itr : src.conditionconvergence())
+  for (auto itr : src.convergencecriteria())
   {
     SEDynamicStabilizationEngineConvergence* c = new SEDynamicStabilizationEngineConvergence(dst.GetLogger());
     PBEngine::Load(itr.second, *c);
-    dst.m_ConditionConvergence[itr.first] = c;
+    dst.m_ConvergenceCriteria[itr.first] = c;
   }
 }
 CDM_BIND::DynamicStabilizationData* PBEngine::Unload(const SEDynamicStabilization& src)
@@ -1116,13 +852,10 @@ CDM_BIND::DynamicStabilizationData* PBEngine::Unload(const SEDynamicStabilizatio
 void PBEngine::Serialize(const SEDynamicStabilization& src, CDM_BIND::DynamicStabilizationData& dst)
 {
   dst.set_trackingstabilization((CDM_BIND::eSwitch)src.m_TrackingStabilization);
-  dst.set_allocated_restingconvergence(PBEngine::Unload(*src.m_RestingConvergence));
-  if (src.HasFeedbackConvergence())
-    dst.set_allocated_feedbackconvergence(PBEngine::Unload(*src.m_FeedbackConvergence));
-  for (auto &c : src.m_ConditionConvergence)
+  for (auto &c : src.m_ConvergenceCriteria)
   {
     CDM_BIND::DynamicStabilizationEngineConvergenceData* cData = PBEngine::Unload(*c.second);
-    (*dst.mutable_conditionconvergence())[c.first] = *cData;
+    (*dst.mutable_convergencecriteria())[c.first] = *cData;
     delete cData;
   }
 }
@@ -1185,15 +918,11 @@ void PBEngine::Serialize(const CDM_BIND::TimedStabilizationData& src, SETimedSta
 {
   if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
     dst.TrackStabilization((eSwitch)src.trackingstabilization());
-  if (src.has_restingstabilizationtime())
-    PBProperty::Load(src.restingstabilizationtime(), dst.GetRestingStabilizationTime());
-  if (src.has_feedbackstabilizationtime())
-    PBProperty::Load(src.feedbackstabilizationtime(), dst.GetFeedbackStabilizationTime());
-  for (auto itr : src.conditionstabilization())
+  for (auto itr : src.convergencecriteria())
   {
     SEScalarTime* time = new SEScalarTime();
     PBProperty::Load(itr.second, *time);
-    dst.m_ConditionTimes[itr.first] = time;
+    dst.m_ConvergenceCriteria[itr.first] = time;
   }
 }
 CDM_BIND::TimedStabilizationData* PBEngine::Unload(const SETimedStabilization& src)
@@ -1205,15 +934,12 @@ CDM_BIND::TimedStabilizationData* PBEngine::Unload(const SETimedStabilization& s
 void PBEngine::Serialize(const SETimedStabilization& src, CDM_BIND::TimedStabilizationData& dst)
 {
   dst.set_trackingstabilization((CDM_BIND::eSwitch)src.m_TrackingStabilization);
-  dst.set_allocated_restingstabilizationtime(PBProperty::Unload(*src.m_RestingStabilizationTime));
-  if (src.HasFeedbackStabilizationTime())
-    dst.set_allocated_feedbackstabilizationtime(PBProperty::Unload(*src.m_FeedbackStabilizationTime));
-  for (auto cc : src.m_ConditionTimes)
+  for (auto cc : src.m_ConvergenceCriteria)
   {
     if (cc.second == nullptr)
       continue;
     CDM_BIND::ScalarTimeData* time = PBProperty::Unload(*cc.second);
-    (*dst.mutable_conditionstabilization())[cc.first] = *time;
+    (*dst.mutable_convergencecriteria())[cc.first] = *time;
     delete time;
   }
 }
@@ -1335,6 +1061,15 @@ bool PBEngine::SerializeToString(const SEEngineInitialization& src, std::string&
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
+bool PBEngine::SerializeToString(const std::vector<SEEngineInitialization*>& src, std::string& output, eSerializationFormat m)
+{
+  CDM_BIND::EngineInitializationListData data;
+  for (SEEngineInitialization* ei : src)
+  {
+    PBEngine::Serialize(*ei, *data.add_engineinitialization());
+  }
+  return PBUtils::SerializeToString(data, output, m, src[0]->GetLogger());
+}
 bool PBEngine::SerializeFromString(const std::string& src, SEEngineInitialization& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::EngineInitializationData data;
@@ -1363,4 +1098,80 @@ void PBEngine::Copy(const SEEngineInitialization& src, SEEngineInitialization& d
   CDM_BIND::EngineInitializationData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst, subMgr);
+}
+
+
+void PBEngine::Load(const CDM_BIND::EngineInitializationStatusData& src, SEEngineInitializationStatus& dst)
+{
+  dst.Clear();
+  PBEngine::Serialize(src, dst);
+}
+void PBEngine::Serialize(const CDM_BIND::EngineInitializationStatusData& src, SEEngineInitializationStatus& dst)
+{
+  dst.SetEngineInitializationState((eEngineInitializationState)src.initializationstate());
+  if (!src.csvfilename().empty())
+    dst.SetCSVFilename(src.csvfilename());
+  if (!src.logfilename().empty())
+    dst.SetLogFilename(src.logfilename());
+  dst.SetStabilizationTime_s(src.stabilizationtime_s());
+}
+CDM_BIND::EngineInitializationStatusData* PBEngine::Unload(const SEEngineInitializationStatus& src)
+{
+  CDM_BIND::EngineInitializationStatusData* dst = new CDM_BIND::EngineInitializationStatusData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
+void PBEngine::Serialize(const SEEngineInitializationStatus& src, CDM_BIND::EngineInitializationStatusData& dst)
+{
+  dst.set_initializationstate((CDM_BIND::eEngineInitializationState)src.m_EngineInitializationState);
+  if (src.HasCSVFilename())
+    dst.set_csvfilename(src.m_CSVFilename);
+  if (src.HasLogFilename())
+    dst.set_logfilename(src.m_LogFilename);
+  dst.set_stabilizationtime_s(src.m_StabilizationTime_s);
+}
+
+bool PBEngine::SerializeToString(const SEEngineInitializationStatus& src, std::string& output, eSerializationFormat m, Logger* logger)
+{
+  CDM_BIND::EngineInitializationStatusData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, logger);
+}
+bool PBEngine::SerializeToString(const std::vector<SEEngineInitializationStatus*>& src, std::string& output, eSerializationFormat m, Logger* logger)
+{
+  CDM_BIND::EngineInitializationStatusListData data;
+  for (SEEngineInitializationStatus* ei : src)
+  {
+    PBEngine::Serialize(*ei, *data.add_engineinitializationstatus());
+  }
+  return PBUtils::SerializeToString(data, output, m, logger);
+}
+bool PBEngine::SerializeFromString(const std::string& src, SEEngineInitializationStatus& dst, eSerializationFormat m, Logger* logger)
+{
+  CDM_BIND::EngineInitializationStatusData data;
+  if (!PBUtils::SerializeFromString(src, data, m, logger))
+    return false;
+  PBEngine::Load(data, dst);
+  return true;
+}
+bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEEngineInitializationStatus*>& dst, eSerializationFormat m, Logger* logger)
+{
+  CDM_BIND::EngineInitializationStatusListData data;
+  if (!PBUtils::SerializeFromString(src, data, m, logger))
+    return false;
+  for (int i = 0; i < data.engineinitializationstatus_size(); i++)
+  {
+    SEEngineInitializationStatus* ei = new SEEngineInitializationStatus();
+    PBEngine::Load(data.engineinitializationstatus()[i], *ei);
+    dst.push_back(ei);
+  }
+  return true;
+}
+
+void PBEngine::Copy(const SEEngineInitializationStatus& src, SEEngineInitializationStatus& dst)
+{
+  dst.Clear();
+  CDM_BIND::EngineInitializationStatusData data;
+  PBEngine::Serialize(src, data);
+  PBEngine::Serialize(data, dst);
 }

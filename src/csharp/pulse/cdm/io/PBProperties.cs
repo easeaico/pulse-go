@@ -689,6 +689,30 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEScalarUnsigned
+    public static void Load(pulse.cdm.bind.ScalarUnsignedData src, SEScalarUnsigned dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScalarUnsignedData src, SEScalarUnsigned dst)
+    {
+      dst.Invalidate();
+      dst.SetValue(src.ScalarUnsigned.Value);
+    }
+    public static pulse.cdm.bind.ScalarUnsignedData Unload(SEScalarUnsigned src)
+    {
+      pulse.cdm.bind.ScalarUnsignedData dst = new pulse.cdm.bind.ScalarUnsignedData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEScalarUnsigned src, pulse.cdm.bind.ScalarUnsignedData dst)
+    {
+      dst.ScalarUnsigned = new pulse.cdm.bind.ScalarData();
+      dst.ScalarUnsigned.Value = src.GetValue();
+      dst.ScalarUnsigned.Unit = "";
+    }
+    #endregion
+
     #region SEScalarVolume
     public static void Load(pulse.cdm.bind.ScalarVolumeData src, SEScalarVolume dst)
     {

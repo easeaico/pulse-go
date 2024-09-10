@@ -51,7 +51,7 @@ namespace pulse
   protected:
     void ComputeExposedModelParameters() override;
 
-    void CheckBloodGasLevels();
+    void CheckBloodSubstanceLevels();
     // Serializable member variables (Set in Initialize and in schema)
     SERunningAverage*          m_ArterialOxygen_mmHg;
     SERunningAverage*          m_ArterialCarbonDioxide_mmHg;

@@ -59,9 +59,9 @@ bool AddAction(const ScenarioAction& sa, SEScenario& sce)
     if (sa.Name == SEBagValveMaskConfiguration::Name)
     {
       SEBagValveMaskConfiguration a;
-      s = GetProperty("ValvePositiveEndExpiredPressure", sa.Properties);
+      s = GetProperty("ValvePositiveEndExpiratoryPressure", sa.Properties);
       if (s.first)
-        a.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(s.second.value, PressureUnit::GetCompoundUnit(s.second.unit));
+        a.GetConfiguration().GetValvePositiveEndExpiratoryPressure().SetValue(s.second.value, PressureUnit::GetCompoundUnit(s.second.unit));
 
       e = GetEnum("Connection", sa.Enums);
       if (e.first)

@@ -36,6 +36,7 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   protected SEScalarPressure                  meanArterialCarbonDioxidePartialPressureDelta;
   protected SEScalarPressure                  meanCentralVenousPressure;
   protected SEScalarVolumePerTime             meanSkinFlow;
+  protected SEScalar0To1                      peripheralPerfusionIndex;
   protected SEScalarPressure                  pulmonaryArterialPressure;
   protected SEScalarPressure                  pulmonaryCapillariesWedgePressure;
   protected SEScalarPressure                  pulmonaryDiastolicArterialPressure;
@@ -72,6 +73,7 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     heartRhythm = null;
     heartStrokeVolume = null;
     intracranialPressure = null;
+    peripheralPerfusionIndex = null;
     pulmonaryArterialPressure = null;
     pulmonaryCapillariesWedgePressure = null;
     pulmonaryDiastolicArterialPressure = null;
@@ -130,6 +132,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       meanArterialCarbonDioxidePartialPressureDelta.invalidate();
     if (meanSkinFlow != null)
       meanSkinFlow.invalidate();
+    if (peripheralPerfusionIndex != null)
+      peripheralPerfusionIndex.invalidate();
     if (pulmonaryArterialPressure != null)
       pulmonaryArterialPressure.invalidate();
     if (pulmonaryCapillariesWedgePressure != null)
@@ -206,6 +210,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       SEScalarPressure.load(src.getMeanArterialCarbonDioxidePartialPressureDelta(),dst.getMeanArterialCarbonDioxidePartialPressureDelta());
     if (src.hasMeanSkinFlow())
       SEScalarVolumePerTime.load(src.getMeanSkinFlow(),dst.getMeanSkinFlow());
+    if (src.hasPeripheralPerfusionIndex())
+      SEScalar0To1.load(src.getPeripheralPerfusionIndex(),dst.getPeripheralPerfusionIndex());
     if (src.hasPulmonaryArterialPressure())
       SEScalarPressure.load(src.getPulmonaryArterialPressure(),dst.getPulmonaryArterialPressure());
     if (src.hasPulmonaryCapillariesWedgePressure())
@@ -290,6 +296,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       dst.setMeanArterialCarbonDioxidePartialPressureDelta(SEScalarPressure.unload(src.getMeanArterialCarbonDioxidePartialPressureDelta()));
     if (src.hasMeanSkinFlow())
       dst.setMeanSkinFlow(SEScalarVolumePerTime.unload(src.getMeanSkinFlow()));
+    if (src.hasPeripheralPerfusionIndex())
+      dst.setPeripheralPerfusionIndex(SEScalar0To1.unload(src.getPeripheralPerfusionIndex()));
     if (src.hasPulmonaryArterialPressure())
       dst.setPulmonaryArterialPressure(SEScalarPressure.unload(src.getPulmonaryArterialPressure()));
     if (src.hasPulmonaryCapillariesWedgePressure())
@@ -538,6 +546,17 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (meanSkinFlow == null)
       meanSkinFlow = new SEScalarVolumePerTime();
     return meanSkinFlow;
+  }
+  
+  public boolean hasPeripheralPerfusionIndex()
+  {
+    return peripheralPerfusionIndex == null ? false : peripheralPerfusionIndex.isValid();
+  }
+  public SEScalar0To1 getPeripheralPerfusionIndex()
+  {
+    if (peripheralPerfusionIndex == null)
+      peripheralPerfusionIndex = new SEScalar0To1();
+    return peripheralPerfusionIndex;
   }
 
   public boolean hasPulmonaryArterialPressure()

@@ -1,4 +1,4 @@
-Version 4.2.0 {#version}
+Version 4.3.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -9,6 +9,11 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - PATCH changes when we make backwards-compatible bug fixes.
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
+---
+
+## Pulse Integration (Current new feature set)
+
+-TBD
 
 ## Pulse Integration (Current new feature set)
 
@@ -20,9 +25,108 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
-## Pulse v4.2.0 (September 2023)
+## Pulse v4.3.0 (September 2024)
+
+- CDM API Changes
+  - Blood Chemistry System Data
+    - Added PlasmaOsmolality and PlasmaOsmolarity
+  - Respiratory System Data
+    - Added ExtrinsicPositiveEndExpiratoryPressure
+    - Changed InspiratoryPulmonaryResistance to InspiratoryRespiratoryResistance
+    - Changed IntrinsicPositiveEndExpiredPressure to IntrinsicPositiveEndExpiratoryPressure
+    - Changed ExpiratoryPulmonaryResistance to ExpiratoryRespiratoryResistance
+    - Changed PulmonaryCompliance to RespiratoryCompliance
+    - Changed PulmonaryElastance to RespiratoryElastance
+    - Changed PositiveEndExpiratoryPressure to TotalPositiveEndExpiratoryPressure
+  - Environmental Conditions Data
+    - Added MechanicalDeadSpace
+  - Anesthesia Machine Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  - Bag Valve Mask Data
+    - Changed ValvePositiveEndExpiredPressure to ValvePositiveEndExpiratoryPressure
+  - Mechanical Ventilator Data
+    - Added PeakInspiratoryFlow
+    - Added ExtrinsicPositiveEndExpiratoryPressure
+    - Changed PositiveEndExpiratoryPressure to TotalPositiveEndExpiratoryPressure
+    - Changed DynamicPulmonaryCompliance to DynamicRespiratoryCompliance
+    - Changed IntrinsicPositiveEndExpiredPressure to IntrinsicPositiveEndExpiratoryPressure
+    - Changed StaticPulmonaryCompliance to StaticRespiratoryCompliance
+  - Mechanical Ventilator Settings Data
+    - Added ExpiratoryResistance and InspiratoryResistance
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  - Mechanical Ventilator Continuous Positive Airway Pressure Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  -  Mechanical Ventilator Pressure Control Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
+  - Mechanical Ventilator Volume Control Data
+    - Changed PositiveEndExpiredPressure to PositiveEndExpiratoryPressure
 
 - Software Architecture Improvements
+  - Data Set Generation Tools
+    - Initial patient set generator
+      - Can create large patient sets using permutations of starting HR, RR, MAP, Age, Height, BMI, BFF and other patient properties
+    - Injury set generator
+      - For each patient in a patient set, will apply and run a permutation of inujuries such as (but not limited to) Hemorrhage, AirwayObstruction, Tension Pneumothorax
+      - Convience modes provided to generate a set of preprogrammed TCCC injuries 
+  - Combined DataModelBindings, CommonDataModel and PulseEngine into a single Pulse library
+    - This single library can be built as a shared/dynamic library or a static (default) library
+  - Implement system/patient validation framework in Python
+    - Provides access to more discrete modules in our validation pipeline for more versatile use
+  - Initial architecture for automated validation
+    - Currently only AirwayObstruction has been migrated
+    - Created a xlsx template for automating the our validation of our models (is currently being done by hand)
+    - The validation pipeline can also create a single doxygen report with a plot file and md files associated with an xlsx
+    - Added the ability to create vitals monitor and ventilator monitor plots from CSV files
+  - Created an Advance To Stable Action, this will run the engine until stable criteria is met
+  - Threaded execution of a group of scenarios now can be provided a single json file containing all scenario to run
+    - Information for every executed scenario is then updated in the provided file:
+      - The locations of the: scenario file and its generated log file, and csv file
+      - Various error states if encountered: Unable to initialize and why, if there were any other errors encountered
+  - Post processing pipeline
+    - Written in python, allows us to process a log and csv file generated from a scenario and pull out (and even generate new) data into a more machine learning friendly format
+      - Unstructure Text Module looks at map of vitals to a string vector and randomly takes strings based on the vitals values to create an unstructured description of the simulation at that time. The strings and bounds are read in from a spreadsheet
+  - Testing Utils
+    - Add a run.cmake option to generate a config of all the failures for a quick and easy rebase (once they have been reviewed and approved of course)
+    - Remove action vertical lines in our verification plots of actions that occur many many times. These actions are usually testing sensor driven inputs and make data interpretation difficult.
+  - Fixed improperly mapped events
+
+- Physiology Model Improvements
+  - Updated dyspnea implementation
+    - Split single severity into a Respiration Rate severity and Tidal Volume severity
+    - This allows users to define breathing impairments with more precision
+    - **Note** any previous scenarios using Dyspnea severity should apply that value to the Tidal Volume severity
+  - Mechanical Ventilator Model
+    - Ventilation will immediately stop at limits for more precise targets
+    - Apneic patients will no long trigger the ventilator when the model trigger is selected
+    - Update naming conventions and parameter calculations to be match more widely accepted definitions
+  - Respiratory Model
+    - Improved handling of lung recruitment based on acinar ventilation for showing the pulmonary shunt changes due to increased ventilator PEEP
+    - Calibrated respiratory diseases for mechanically ventilated patients, including ARDS and COPD
+    - Added mechanoreceptor feedback that inhibits the inspiratory drive and reduces the respiratory muscle pressure during an assisted breath
+  - Modifier Actions (SECardiovascularMechanicsModification, SERespiratoryMechanicsModification)
+    - We now provide 2 new actions to modify the respiratory and cardiovascular model parameters
+    - For example, you can provide a multipliers to modify the heart rate, respiration rate, systemic vascular and pulmonary resistances
+    - This provides the end user more low level control to fine tune the physiology to their specific needs
+  - The application of drug pharmacodynamics changes to the cardiovascular system now include pulse pressure as well as mean arterial pressure
+    - Acute stress is more inline with validation data
+  - Updated body fluid and perspiration methodology
+    - Added sweat substance loss using a substance compound definition
+    - Updated the sweat rate methodology to better meet validation
+    - Calibrated the convective/evaporative heat loss due to sweating
+    - Fixed a bug for substance tissue diffusion between the vascular and extracellular spaces
+    - Added new system data outputs for total body fluid volume, plasma osmolality, and plasma osmolarity
+  - Added a dehydration condition model that directly affects the Tissue, Cardiovascular and Energy systems
+    - Associated new events: Hypernatremia Hyponatremia, MildDehydration, ModerateDehydration, SevereDehydration
+  - Added a mechanical dead space parameter to the Environment
+  - Updated the urinalysis assessment with more appropriate substance thresholds
+  - Added logic for several missing events: hyperglycemia, hypoglycemia, ketoacidosis, and lactic acidosis
+
+---
+
+## Pulse v4.2.0 (October 2023)
+
+- Software Architecture Improvements
+  - Addressed many compiler warnings
   - iOS build support
   - New utility to translate a log file into a scenario
     - Logs now contain json for patient, actions and conditions
@@ -32,7 +136,9 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Added support for expanding an engine's systems and/or circuits
     - Provides the ability to define and run a more complex circuit within a common system model
   - Improved BlackBox support for external model coupling
-  - Added Python plotting tools for improved verification, validation, and documentation
+  - We are slowly migrating our Java based documentation and test suite to Python
+    - Python and Java are **Now Required** to run the Pulse test suite
+    - Added Python plotting tools for improved verification, validation, and documentation
   
 - Physiology Model Improvements
   - Patient variability
@@ -44,11 +150,13 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Additional waveform types
     - Expose more control parameters
     - More validation
+  - Blood Chemistry
+    - Added Base Excess
   - Respiratory
     - Corrected respiratory inhale/exhale transition timing
     - Added hemothorax model 
       - Includes cardiovascular effects
-      - Inclues tube thoracostomy model for relief  
+      - Includes tube thoracostomy model for relief  
     - Added shunting and labored breathing effects to collapsing lung functionality
     - Improved lung collapse (e.g., tension pneumothorax and hemothorax) responses
     - Updated restrictive and obstructive conditions/actions with severity mapping to compartments
@@ -70,14 +178,14 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Improved recovery transition model
   - Hemorrhage
     - Improved Baroreceptor response
-    - Severity now calculates resitance using compartment inflow average
+    - Severity now calculates resistance using compartment inflow average
   - CPR
     - Automation Support - Set a frequency and severity or depth to repeat
     - Single Squeeze - Set a severity or depth for a single squeeze
     - Instantaneous - Set a severity or depth to apply (Intended for hardware integration)
   - ECMO support
     - End user can adjust substance values and flow rates back into Pulse
-    - *NOT A MODEL* Intended for external users to perscribe flow rates and substance concentrations
+    - *NOT A MODEL* Intended for external users to prescribe flow rates and substance concentrations
   - Removed Pulmonary Function Test Assessment
 
 

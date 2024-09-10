@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "PulseEngineThunk.h"
-#include "PulseScenarioExec.h"
+#include "engine/PulseEngineThunk.h"
+#include "engine/PulseScenarioExec.h"
 #include "engine/human_adult/whole_body/Engine.h"
 #include "engine/human_adult/hemodynamics/Engine.h"
 #include "engine/human_adult/ventilation_mechanics/Engine.h"
@@ -13,10 +13,24 @@ PulseEngineThunk::PulseEngineThunk(eModelType t, const std::string& dataDir) : P
   AllocateEngine();
   m_engine->GetLogger()->LogToConsole(false);
   m_engine->GetLogger()->AddForward(this);
+  m_cfg = new PulseConfiguration(m_engine->GetLogger());
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
+  delete m_cfg;
+}
 
+bool PulseEngineThunk::SetConfigurationOverride(std::string const& cfg, eSerializationFormat format)
+{
+  if (cfg.empty())
+    return m_engine->SetConfigurationOverride(nullptr);
+
+  if (!m_cfg->SerializeFromString(cfg, format, *m_subMgr))
+  {
+    m_engine->GetLogger()->Error("Unable to load engine configuration string");
+    return false;
+  }
+  return m_engine->SetConfigurationOverride(m_cfg);
 }
 
 bool PulseEngineThunk::ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format, Logger* logger)

@@ -64,7 +64,7 @@ void HowToBagValveMask()
   // You can apply the BVM at any point, the patient may or may not be sedated
   // For this example, the patient is not breathing
   SEDyspnea dyspnea;
-  dyspnea.GetSeverity().SetValue(1.0);
+  dyspnea.GetTidalVolumeSeverity().SetValue(1.0);
   pe->ProcessAction(dyspnea);
 
   // Using the BVM requires 2 actions
@@ -74,7 +74,7 @@ void HowToBagValveMask()
   cfg.GetConfiguration().SetConnection(eSwitch::On);
   // There are several parameters that have defaults if not set
   // We will set the PEEP and FiO2
-  cfg.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(5, PressureUnit::cmH2O);
+  cfg.GetConfiguration().GetValvePositiveEndExpiratoryPressure().SetValue(5, PressureUnit::cmH2O);
   const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
   cfg.GetConfiguration().GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(0.3);
   pe->ProcessAction(cfg);

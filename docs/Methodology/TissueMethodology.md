@@ -220,7 +220,41 @@ The diffusional exchange of water between the capillaries and extravascular spac
 
 Conditions
 ----------
-There are no conditions associated with the %Tissue system.
+
+### Dehydration
+
+In the dehydration condition model, a severity value is utilized to initialize patients with various homeostatic levels/severities of dehydration. This model simulates nearly isotonic dehydration, typically resulting from excessive sweating. The process is carried out by iterating through tissue vasculature, intracellular, and extracellular spaces, removing a consistent fraction of fluid from each. Additionally, the removal of substances mimics those lost through perspiration. While the mineral content in sweat varies, the model applies generally accepted concentrations:
+
+Electrolytes:
+ - Sodium: 1.0 g/L (0.46-1.84 g/L - most abundant, higher levels with more intense exercise)
+ - Chloride: 1.5 g/L (0.71-2.84 g/L - balances sodium concentration)
+ - Potassium: 0.2 g/L (0.16-0.39 g/L - concentrations decreasing during prolonged exercise)
+ - Calcium: 0.02 g/L (0-0.12 g/L - dropping significantly with increased sweat rate)
+Other solutes:
+ - Lactate: 0.01 g/L (0-0.02 g/L - increases with exercise intensity and reflects muscle energy metabolism)
+ - Urea: 0.003 g/L (0.002-0.01 g/L - waste product of protein breakdown, generally higher than in blood plasma)
+
+For severity mapping, dehydration categories are defined based on the fraction of body weight lost @cite gellert2015signs:
+ - Imminent: 0.22-1% of body weight
+ - Mild: 1-2% of body weight
+ - Moderate: 2-5% of body weight
+ - Severe: 5-10% of body weight
+ - Extreme: > 10% of body weight
+ - Fatal: > 15% of body weight
+
+These values were mapped to corresponding severities to derive a best-fit equation for total fluid loss, given a specific severity input. Figure 7 illustrates the applied equation in the model.
+
+<a href="./Images/Tissue/DehydrationSeverityMapping.png"><img src="./Images/Tissue/DehydrationSeverityMapping.png" width="500"></a>
+<center>
+<i>Figure 7. The dehydration severity mapping.</i>
+</center><br>
+
+Special attention is given to fluid removal from the cardiovascular and tissue circuits, ensuring accurate handling of compliances due to their temporal nature. Pressure values from the previous timestep are adjusted to align with the volume change, maintaining the same pressure-volume relationship as if the fluid loss occurred over an extended period.
+
+Metabolic consumption and production vary during dehydration due to reduced tissue perfusion from decreased blood volumes. In the model, this is represented by adjusting the local ATP use rate for each tissue compartment, based on the blood volume reduction relative to a healthy patient. This leads to increased CO2 production, ultimately causing vital sign changes through chemoreceptor feedback.
+
+For more information on the application of the dehydration model, see the @ref EnergySystem and @ref NervousSystem documentation.
+
 
 Actions
 -------
@@ -228,7 +262,12 @@ At this time, there are no insults or interventions associated with the %Tissue 
 
 Events
 ------
-- Dehydration: Set when fluid loss exceeds 3% of body mass @cite who2005dehydration
+
+- Mild Dehydration: A loss of more fluid than is taken in (More than 3% loss of healthy/initial fluid mass)
+- Moderate Dehydration: A loss of more fluid than is taken in (More than 5% loss of healthy/initial fluid mass)
+- Severe Dehydration: A loss of more fluid than is taken in (More than 10% loss of healthy/initial fluid mass)
+- Hyponatremia: Serum sodium concentration (i.e., blood plasma) < 135 mEq/L
+- Hypernatremia: Serum sodium concentration (i.e, blood plasma) > 145 mEq/L
 - Fasciculation: Event currently inactive while substance handling is improved
 
 Results and Conclusions
@@ -236,7 +275,7 @@ Results and Conclusions
 
 Verification
 -------------
-%Verification of the diffusion methods is achieved through several units tests. One of the simple diffusion unit tests was used to generate data for Figure 7. The figure shows the time-evolution of the concentrations of four different compartments. Table 3 shows the initial conditions. Note that the units are arbitrary, thus not shown. The red, blue, and green compartment all share a boundary with the yellow compartment, but not with each other.
+%Verification of the diffusion methods is achieved through several units tests. One of the simple diffusion unit tests was used to generate data for Figure 8. The figure shows the time-evolution of the concentrations of four different compartments. Table 3 shows the initial conditions. Note that the units are arbitrary, thus not shown. The red, blue, and green compartment all share a boundary with the yellow compartment, but not with each other.
 <br><center>
 *Table 3. Initial conditions for a four compartment simple diffusion unit test.*
 </center>
@@ -249,7 +288,7 @@ Verification
 
 <a href="./plots/Tissue/ConcentrationEquilibration.jpg"><img src="./plots/Tissue/ConcentrationEquilibration.jpg" width="900"></a>
 <center>
-<i>Figure 7. Four compartments start with different concentrations which equilibrate after some time. Initial conditions are shown in Table 3 above.</i>
+<i>Figure 8. Four compartments start with different concentrations which equilibrate after some time. Initial conditions are shown in Table 3 above.</i>
 </center><br>
 
 Validation - Resting Physiologic State
@@ -284,7 +323,29 @@ More validation of this system can be found in the system outputs of all other s
 
 Validation - Actions and Conditions
 -----------------------
-There are currently no validated actions or conditions associated with the tissue system. However, there will be condition validation after [improvements](@ref energy-future) are made to the dehydration and starvation condition models.
+
+The dehydration model was validated using three distinct scenarios representing mild, moderate, and severe dehydration. The simulation outputs for each scenario were rigorously validated. Quantitative validation was applied wherever possible, with qualitative validation employed in other areas by comparing the engine output against expected trends and values. Table 6 presents the results for a standard healthy patient alongside those for mild, moderate, and severe dehydration. The validation is specified with a color-coded comparison, with green indicating good agreement with trends/values, yellow indicating moderate agreement with trends/values, and red indicating poor agreement with trends/values. The dehydration model outputs shows good overall agreement with the predicted trends.
+
+<br><center>
+*Table 6. Results for the dehydration validation scenarios.*
+</center>
+
+| Parameter                         | Healthy Value | Mild Value | Mild Expected                                                      | Moderate Value | Moderate Expected                                                 | Severe Value | Severe Expected                                                   |
+|-----------------------------------|---------------|------------|--------------------------------------------------------------------|----------------|------------------------------------------------------------------|--------------|-------------------------------------------------------------------|
+| Total Fluid Volume (L)            | 39.6          | 36.8       | <span class="success">>3% loss (by weight) @cite gellert2015signs</span> | 34.3           | <span class="success">>5% loss (by weight) @cite gellert2015signs</span> | 31.0         | <span class="success">>10% loss (by weight) @cite gellert2015signs</span> |
+| Blood Volume (L)                  | 5.5           | 5.12       | <span class="success">Decrease @cite murray1996dehydration</span>       | 4.76           | <span class="success">Decrease @cite murray1996dehydration</span>      | 4.29         | <span class="success">Decrease @cite murray1996dehydration</span>      |
+| Heart Rate (1/min)                | 71.9          | 78.5       | <span class="success">< 100 bpm @cite gellert2015signs; Increase @cite murray1996dehydration</span> | 87.3           | <span class="success">< 100 bpm @cite gellert2015signs; Increase @cite murray1996dehydration</span> | 104          | <span class="success">Tachycardia @cite gellert2015signs; Fast @cite levine2015empirically; Increase @cite murray1996dehydration</span> |
+| Respiration Rate (1/min)          | 12.1          | 12.8       | Not provided                                                       | 13.5           | <span class="success">Rapid breathing @cite dellamano2016dehydration</span> | 14.7         | <span class="success">Increase @cite gellert2015signs @cite dellamano2016dehydration</span> |
+| Tidal Volume (mL)                 | 528           | 566        | Not provided                                                       | 603            | <span class="success">Deep breathing @cite dellamano2016dehydration</span> | 686          | <span class="success">Deep breathing @cite levine2015empirically</span> |
+| Pulse Pressure (mmHg)             | 40.7          | 34.1       | <span class="danger">No change @cite gellert2015signs</span>           | 28.4           | <span class="danger">No change @cite gellert2015signs</span>          | 22.1         | <span class="success">Narrow @cite gellert2015signs</span>             |
+| Systolic Arterial Pressure (mmHg) | 114           | 111        | Not provided                                                       | 108            | Not provided                                                      | 104          | <span class="success">Decreased or low @cite dellamano2016dehydration</span> |
+| Cardiac Output (L/min)            | 5.78          | 5.16       | <span class="success">No change @cite gellert2015signs; Decrease @cite murray1996dehydration</span> | 4.66           | <span class="success">No change @cite gellert2015signs; Decrease @cite murray1996dehydration</span> | 4.23         | <span class="success">Decreased @cite gellert2015signs; Decrease @cite murray1996dehydration</span> |
+| Central Venous Pressure (mmHg)    | 4.67          | 4.06       | <span class="success">Decrease @cite murray1996dehydration</span>       | 3.74           | <span class="success">Decrease @cite murray1996dehydration</span>      | 3.2          | <span class="success">Decrease @cite murray1996dehydration</span>      |
+| Heart Stroke Volume (mL)          | 80.4          | 65.7       | <span class="success">Decrease @cite murray1996dehydration</span>       | 53.4           | <span class="success">Decrease @cite murray1996dehydration</span>      | 40.7         | <span class="success">Decrease @cite murray1996dehydration</span>      |
+| Core Temperature (°C)             | 37.1          | 38.6       | <span class="success">Increase @cite murray1996dehydration</span>       | 39.2           | <span class="success">Increase @cite murray1996dehydration</span>      | 39.7         | <span class="success">Increase @cite murray1996dehydration</span>      |
+| Sweat Rate (mg/min)               | 335           | 4,500      | <span class="danger">Decrease @cite murray1996dehydration</span>        | 3,430          | <span class="warning">Decrease @cite murray1996dehydration</span>      | 1,990        | <span class="warning">Decreased @cite gellert2015signs; Decrease @cite murray1996dehydration</span> |
+| Plasma Osmolality (mOsm/kg)       | 246           | 258        | <span class="success">Increase @cite murray1996dehydration</span>       | 268            | <span class="success">Increase @cite murray1996dehydration</span>      | 283          | <span class="success">Increase @cite murray1996dehydration</span>      |
+| Urine Color                       | Yellow        | Yellow     | <span class="success">Light yellow @cite dellamano2016dehydration</span> | Dark Yellow    | <span class="success">Dark yellow to brown @cite gellert2015signs @cite dellamano2016dehydration</span> | Dark Yellow  | <span class="success">Dark yellow to brown @cite gellert2015signs @cite dellamano2016dehydration</span> |
 
 
 @anchor tissue-future

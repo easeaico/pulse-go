@@ -26,7 +26,7 @@ SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
   m_OxygenFraction = nullptr;
   m_OxygenSource = eAnesthesiaMachine_OxygenSource::NoSource;
   m_PeakInspiratoryPressure = nullptr;
-  m_PositiveEndExpiredPressure = nullptr;
+  m_PositiveEndExpiratoryPressure = nullptr;
   m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NoGas;
   m_RespiratoryRate = nullptr;
   m_ReliefValvePressure = nullptr;
@@ -43,7 +43,7 @@ SEAnesthesiaMachine::~SEAnesthesiaMachine()
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_OxygenFraction);
   m_OxygenSource = eAnesthesiaMachine_OxygenSource::NoSource;
-  SAFE_DELETE(m_PositiveEndExpiredPressure);
+  SAFE_DELETE(m_PositiveEndExpiratoryPressure);
   m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NoGas;
   SAFE_DELETE(m_RespiratoryRate);
   SAFE_DELETE(m_ReliefValvePressure);
@@ -63,7 +63,7 @@ void SEAnesthesiaMachine::Clear()
   INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
   INVALIDATE_PROPERTY(m_OxygenFraction);
   m_OxygenSource = eAnesthesiaMachine_OxygenSource::NoSource;
-  INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
+  INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
   m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NoGas;
   INVALIDATE_PROPERTY(m_RespiratoryRate);
   INVALIDATE_PROPERTY(m_ReliefValvePressure);
@@ -103,7 +103,7 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from, SESubstanceMana
   if (from.m_OxygenSource != eAnesthesiaMachine_OxygenSource::NullSource)
     SetOxygenSource(from.m_OxygenSource);
   COPY_PROPERTY(PeakInspiratoryPressure);
-  COPY_PROPERTY(PositiveEndExpiredPressure);
+  COPY_PROPERTY(PositiveEndExpiratoryPressure);
   if (from.m_PrimaryGas != eAnesthesiaMachine_PrimaryGas::NullGas)
     SetPrimaryGas(from.m_PrimaryGas);
   COPY_PROPERTY(RespiratoryRate);
@@ -144,8 +144,8 @@ const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)
     return &GetOxygenFraction();
   if (name == "PeakInspiratoryPressure")
     return &GetPeakInspiratoryPressure();
-  if (name == "PositiveEndExpiredPressure")
-    return &GetPositiveEndExpiredPressure();
+  if (name == "PositiveEndExpiratoryPressure")
+    return &GetPositiveEndExpiratoryPressure();
   if (name == "ReliefValvePressure")
     return &GetReliefValvePressure();
   if (name == "RespiratoryRate")
@@ -255,21 +255,21 @@ double SEAnesthesiaMachine::GetPeakInspiratoryPressure(const PressureUnit& unit)
   return m_PeakInspiratoryPressure->GetValue(unit);
 }
 
-bool SEAnesthesiaMachine::HasPositiveEndExpiredPressure() const
+bool SEAnesthesiaMachine::HasPositiveEndExpiratoryPressure() const
 {
-  return m_PositiveEndExpiredPressure == nullptr ? false : m_PositiveEndExpiredPressure->IsValid();
+  return m_PositiveEndExpiratoryPressure == nullptr ? false : m_PositiveEndExpiratoryPressure->IsValid();
 }
-SEScalarPressure& SEAnesthesiaMachine::GetPositiveEndExpiredPressure()
+SEScalarPressure& SEAnesthesiaMachine::GetPositiveEndExpiratoryPressure()
 {
-  if (m_PositiveEndExpiredPressure == nullptr)
-    m_PositiveEndExpiredPressure = new SEScalarPressure();
-  return *m_PositiveEndExpiredPressure;
+  if (m_PositiveEndExpiratoryPressure == nullptr)
+    m_PositiveEndExpiratoryPressure = new SEScalarPressure();
+  return *m_PositiveEndExpiratoryPressure;
 }
-double SEAnesthesiaMachine::GetPositiveEndExpiredPressure(const PressureUnit& unit) const
+double SEAnesthesiaMachine::GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const
 {
-  if (m_PositiveEndExpiredPressure == nullptr)
+  if (m_PositiveEndExpiratoryPressure == nullptr)
     return SEScalar::dNaN();
-  return m_PositiveEndExpiredPressure->GetValue(unit);
+  return m_PositiveEndExpiratoryPressure->GetValue(unit);
 }
 
 eAnesthesiaMachine_PrimaryGas SEAnesthesiaMachine::GetPrimaryGas() const

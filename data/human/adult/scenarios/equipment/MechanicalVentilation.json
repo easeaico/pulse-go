@@ -54,7 +54,7 @@
   }, {
     "PatientAction": {
       "Dyspnea": {
-        "Severity": {
+        "TidalVolumeSeverity": {
           "Scalar0To1": {
             "Value": 1.0
           }

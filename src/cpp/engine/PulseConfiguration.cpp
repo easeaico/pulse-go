@@ -51,7 +51,6 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_AllowDynamicTimeStep = eSwitch::Off;
   m_TimedStabilization = nullptr;
   m_DynamicStabilization = nullptr;
-  m_WritePatientBaselineFile = eSwitch::Off;
 
   // Blood Chemistry
   m_MeanCorpuscularHemoglobin = nullptr;
@@ -308,7 +307,6 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_TimeStep);
   m_AllowDynamicTimeStep = eSwitch::Off;
   RemoveStabilization();
-  m_WritePatientBaselineFile = eSwitch::Off;
   m_Overrides.clear();
   m_Modifiers.clear();
   
@@ -471,7 +469,6 @@ bool PulseConfiguration::SerializeFromFile(const std::string& filename, SESubsta
 void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManager* subMgr)
 {
   Clear();
-  m_WritePatientBaselineFile = eSwitch::Off;
 
   // Reset to default values
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);

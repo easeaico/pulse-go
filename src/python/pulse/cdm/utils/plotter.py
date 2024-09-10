@@ -233,8 +233,11 @@ def csv_plotter(csv: Path, benchmark: bool = False):
             ae = ps.get_actions_events(
                 plot_actions=config.get_plot_actions(),
                 plot_events=config.get_plot_events(),
+                allow_actions_with=config.get_allow_actions_with(),
+                allow_events_with=config.get_allow_events_with(),
                 omit_actions_with=config.get_omit_actions_with(),
-                omit_events_with=config.get_omit_events_with()
+                omit_events_with=config.get_omit_events_with(),
+                count_limit=20
             )
             if ae:
                 config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
@@ -287,17 +290,6 @@ def csv_plotter(csv: Path, benchmark: bool = False):
         # Axis bounds
         if "PlasmaConcentration" in y_header:
             config.set_log_axis(True)
-        else:
-            min_y = min([s.get_data_frame()[y_header].min() for s in sources])
-            max_y = max([s.get_data_frame()[y_header].max() for s in sources])
-            if np.isclose(min_y, 0):
-                min_y = -0.001
-            if np.isclose(max_y, 0):
-                max_y = 0.001
-            if min_y >= 0:
-                min_y = -0.01
-            if not np.isnan(min_y):
-                config.set_y_bounds(SEBounds(min_y-0.05*abs(min_y), max_y+0.15*abs(max_y)))
 
         if create_plot(
             sources,
@@ -377,8 +369,11 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
             ae = computed_source.get_actions_events(
                 plot_actions=config.get_plot_actions(),
                 plot_events=config.get_plot_events(),
+                allow_actions_with=config.get_allow_actions_with(),
+                allow_events_with=config.get_allow_events_with(),
                 omit_actions_with=config.get_omit_actions_with(),
-                omit_events_with=config.get_omit_events_with()
+                omit_events_with=config.get_omit_events_with(),
+                count_limit=20
             )
             if ae:
                 expected_source.set_actions_events(ae)
@@ -436,17 +431,6 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         # Axis bounds
         if "PlasmaConcentration" in y_header:
             config.set_log_axis(True)
-        else:
-            min_y = min([s.get_data_frame()[y_header].min() for s in sources])
-            max_y = max([s.get_data_frame()[y_header].max() for s in sources])
-            if np.isclose(min_y, 0):
-                min_y = -0.001
-            if np.isclose(max_y, 0):
-                max_y = 0.001
-            if min_y >= 0:
-                min_y = -0.01
-            if not np.isnan(min_y):
-                config.set_y_bounds(SEBounds(min_y-0.05*abs(min_y), max_y+0.15*abs(max_y)))
 
         # Update background color based on fail/pass
         dark_bg_params = {
@@ -632,13 +616,22 @@ def create_plot(plot_sources: [SEPlotSource],
         ax1.set_xlim(left=x_bounds.get_lower_bound())
     if x_bounds is not None and x_bounds.has_upper_bound():
         ax1.set_xlim(right=x_bounds.get_upper_bound())
+    determine_y_bounds = False
     y_bounds = plot_config.get_y_bounds() if plot_config.has_y_bounds() else None
     if y_bounds is not None and (y_bounds.has_lower_bound() or y_bounds.has_upper_bound()):
         ax1.set_ylim(bottom=y_bounds.get_lower_bound(), top=y_bounds.get_upper_bound())
+    elif plot_config.get_y_bounds_mode() == eYBoundsMode.ZeroMax:
+        determine_y_bounds = not plot_config.get_log_axis()
+    min_y = None
+    max_y = None
 
     # Secondary y axis
     ax2 = None
     y2_label = ""
+    min_y2 = None
+    max_y2 = None
+    determine_y2_bounds = False
+    y2_bounds = plot_config.get_y2_bounds() if plot_config.has_y2_bounds() else None
     if y2_headers:
         ax2 = ax1.twinx()
         if plot_config.has_y2_label():
@@ -651,9 +644,10 @@ def create_plot(plot_sources: [SEPlotSource],
             ax2.set_yscale("log")
             if y2_label:
                 ax2.set_ylabel(f'Log({y2_label})', fontsize=plot_config.get_font_size())
-        y2_bounds = plot_config.get_y2_bounds()
         if y2_bounds is not None and y2_bounds.has_lower_bound() or y2_bounds.has_upper_bound():
             ax2.set_ylim(bottom=y2_bounds.get_lower_bound(), top=y2_bounds.get_upper_bound())
+        elif plot_config.get_y_bounds_mode() == eYBoundsMode.ZeroMax:
+            determine_y2_bounds = not plot_config.get_log_axis()
 
     # Action/Events axis
     ax3 = None
@@ -666,7 +660,7 @@ def create_plot(plot_sources: [SEPlotSource],
         color = ""
         for y_header in y_headers:
             if y_header not in df.columns:
-                _pulse_logger.error(f"{y_header} not found in data")
+                _pulse_logger.error(f"{y_header} not found in {ps.get_csv_data()}")
                 return None
             line_lbl = ""
             if ps.has_label():
@@ -722,6 +716,27 @@ def create_plot(plot_sources: [SEPlotSource],
         if color is None:
             return False
 
+        # Identify min/max y values across all headers and sources
+        if determine_y_bounds:
+            min_ys = [
+                m
+                for m in (df[y_header].min() for y_header in y_headers if y_header in df.columns)
+                if not np.isnan(m)
+            ]
+            max_ys = [
+                m
+                for m in (df[y_header].max() for y_header in y_headers if y_header in df.columns)
+                if not np.isnan(m)
+            ]
+            if min_ys:
+                min_y_candidate = min(min_ys)
+                if min_y is None or min_y_candidate < min_y:
+                    min_y = min_y_candidate
+            if max_ys:
+                max_y_candidate = max(max_ys)
+                if max_y is None or max_y_candidate > max_y:
+                    max_y = max_y_candidate
+
         if y2_headers or validation_source:
             ax1.yaxis.label.set_color(color)
             ax1.tick_params(axis='y', colors=color)
@@ -729,6 +744,27 @@ def create_plot(plot_sources: [SEPlotSource],
         # Secondary axis, not from validation data
         if not validation_source and y2_headers:
             color = _plot_headers(ax2, ps, df, x2_header, y2_headers, y2_label)
+
+            # Identify min/max y values across all headers and sources
+            if determine_y2_bounds:
+                min_y2s = [
+                    m
+                    for m in (df[y_header].min() for y_header in y2_headers if y_header in df.columns)
+                    if not np.isnan(m)
+                ]
+                max_y2s = [
+                    m
+                    for m in (df[y_header].max() for y_header in y2_headers if y_header in df.columns)
+                    if not np.isnan(m)
+                ]
+                if min_y2s:
+                    min_y2_candidate = min(min_y2s)
+                    if min_y2 is None or min_y2_candidate < min_y2:
+                        min_y2 = min_y2_candidate
+                if max_y2s:
+                    max_y2_candidate = max(max_y2s)
+                    if max_y2 is None or max_y2_candidate > max_y2:
+                        max_y2 = max_y2_candidate
 
             ax2.yaxis.label.set_color(color)
             ax2.tick_params(axis='y', colors=color)
@@ -745,8 +781,11 @@ def create_plot(plot_sources: [SEPlotSource],
         for ae in ps.get_actions_events(
             plot_actions=plot_config.get_plot_actions(),
             plot_events=plot_config.get_plot_events(),
+            allow_actions_with=plot_config.get_allow_actions_with(),
+            allow_events_with=plot_config.get_allow_events_with(),
             omit_actions_with=plot_config.get_omit_actions_with(),
-            omit_events_with=plot_config.get_omit_events_with()
+            omit_events_with=plot_config.get_omit_events_with(),
+            count_limit=20
         ):
             color = next(action_event_fmt_cycler)['color']
             ax3.axvline(x=ae.time, color = color, label = f"{ae.category.name}:{ae.text}\nt={ae.time}")
@@ -762,17 +801,21 @@ def create_plot(plot_sources: [SEPlotSource],
             ax2.yaxis.label.set_color(color)
             ax2.tick_params(axis='y', colors=color)
             ax2.set_ylim(ax1.get_ylim())
+            min_y2 = min_y
+            max_y2 = max_y
 
-    # Zero axis
-    if plot_config.get_zero_axis():
-        for ax in [ax1, ax2]:
-            if ax:
-                l, u = ax.get_ylim()
-                if l > 0:
-                    l = 0
-                elif u < 0:
-                    u = 0
-                ax.set_ylim(l, u)
+    # Scale y axes
+    if not plot_config.get_log_axis():
+        for det, ax, min_y, max_y in zip([determine_y_bounds, determine_y2_bounds], [ax1, ax2], [min_y, min_y2], [max_y, max_y2]):
+            if det:
+                if min_y is not None and np.isclose(min_y, 0):
+                    min_y = -0.001
+                if max_y is not None and np.isclose(max_y, 0):
+                    max_y = 0.001
+                if min_y is not None and min_y >= 0:
+                    min_y = -0.01
+                if min_y is not None and not np.isnan(min_y):
+                    ax.set_ylim(min_y-0.05*abs(min_y), max_y+0.15*abs(max_y))
 
     # Ensure negative times aren't shown
     if x_header.lower().startswith("time"):

@@ -49,6 +49,7 @@ namespace pulse
 
     void UpdateAirwayMode();
 
+    void CheckInspirationTriggers();
     void CalculateInspiration();
     void CalculatePause();
     void CalculateExpiration();
@@ -76,13 +77,15 @@ namespace pulse
     double                m_CurrentRespiratoryVolume_L;
     double                m_InspirationTime_s;
     double                m_InspiratoryFlow_L_Per_s;
-    bool                  m_LimitReached;
     double                m_PreviousYPieceToConnectionFlow_L_Per_s;
     double                m_PreviousConnectionPressure_cmH2O;
+    bool                  m_PauseOccurred;
     eBreathState          m_CurrentBreathState;
     bool                  m_Initializing;
 
     double                m_PositiveEndExpiratoryPressure_cmH2O;
+    double                m_PeakExpiratoryFlow_L_Per_s;
+    double                m_PeakInspiratoryFlow_L_Per_s;
     double                m_EndTidalCarbonDioxideFraction;
     double                m_EndTidalCarbonDioxidePressure_cmH2O;
     double                m_EndTidalOxygenFraction;

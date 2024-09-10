@@ -355,7 +355,7 @@ SEScalarVolume& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetVolume()
   if (m_Nodes.HasMapping())
     return m_Nodes.GetQuantity();
   if (m_Volume == nullptr)
-    m_Volume = new SEScalarVolume();  
+    m_Volume = new SEScalarVolume();
   if (!m_FluidChildren.empty())
   {
     m_Volume->SetReadOnly(false);

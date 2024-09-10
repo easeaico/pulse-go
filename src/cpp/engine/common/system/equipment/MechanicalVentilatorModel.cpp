@@ -107,9 +107,11 @@ namespace pulse
     m_InspiratoryFlow_L_Per_s = 0.0;
     m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
     m_PreviousConnectionPressure_cmH2O = 0.0;
-    m_LimitReached = false;
+    m_PauseOccurred = false;
     m_Initializing = false;
     m_PositiveEndExpiratoryPressure_cmH2O = 0.0;
+    m_PeakExpiratoryFlow_L_Per_s = 0.0;
+    m_PeakInspiratoryFlow_L_Per_s = 0.0;
     m_EndTidalCarbonDioxideFraction = 0.0;
     m_EndTidalCarbonDioxidePressure_cmH2O = 0.0;
     m_EndTidalOxygenFraction = 0.0;
@@ -117,27 +119,31 @@ namespace pulse
 
     //System data
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
-    GetDynamicPulmonaryCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
+    GetDynamicRespiratoryCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
     GetEndTidalCarbonDioxideFraction().SetValue(0.0);
     GetEndTidalCarbonDioxidePressure().SetValue(0.0, PressureUnit::cmH2O);
     GetEndTidalOxygenFraction().SetValue(0.0);
     GetEndTidalOxygenPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetExpiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+    GetExpiratoryResistance().SetValue(0.0, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     GetExpiratoryTidalVolume().SetValue(0.0, VolumeUnit::L);
+    GetExtrinsicPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetInspiratoryExpiratoryRatio().SetValue(0.0);
     GetInspiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+    GetInspiratoryResistance().SetValue(0.0, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     GetInspiratoryTidalVolume().SetValue(0.0, VolumeUnit::L);
-    GetIntrinsicPositiveEndExpiredPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetIntrinsicPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetLeakFraction().SetValue(0.0);
     GetMeanAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetPeakExpiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+    GetPeakInspiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     GetPeakInspiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetPlateauPressure().SetValue(0.0, PressureUnit::cmH2O);
-    GetPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
-    GetPulmonaryResistance().SetValue(0.0, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
-    GetStaticPulmonaryCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
+    GetStaticRespiratoryCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
     GetTidalVolume().SetValue(0.0, VolumeUnit::L);
     GetTotalLungVolume().SetValue(0.0, VolumeUnit::L);
+    GetTotalPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
 
     GetSettings().SetConnection(eSwitch::Off);
@@ -215,7 +221,7 @@ namespace pulse
     m_CurrentRespiratoryVolume_L = 0.0;
     m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
     m_PreviousConnectionPressure_cmH2O = 0.0;
-    m_LimitReached = false;
+    m_PauseOccurred = false;
     m_Initializing = true;
 
     // Default the relief valve threshold if not there
@@ -352,7 +358,7 @@ namespace pulse
       m_CurrentRespiratoryVolume_L = 0.0;
       m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
       m_PreviousConnectionPressure_cmH2O = 0.0;
-      m_LimitReached = false;
+      m_PauseOccurred = false;
       m_Initializing = false;
       return;
     }
@@ -456,7 +462,11 @@ namespace pulse
         previousDriverPressure_cmH2O = m_PreviousDriverPressure_cmH2O;
       }
 
-      driverPressure_cmH2O = GeneralMath::Damper(driverPressure_cmH2O, previousDriverPressure_cmH2O, driverDampingParameter_Per_s, m_data.GetTimeStep_s());
+      if (driverPressure_cmH2O != 0.0) //Don't dampen if it's 0 because that's probably from a limit
+      {
+        driverPressure_cmH2O = GeneralMath::Damper(driverPressure_cmH2O, previousDriverPressure_cmH2O, driverDampingParameter_Per_s, m_data.GetTimeStep_s());
+      }
+
       if (m_DriverPressure_cmH2O > previousDriverPressure_cmH2O)
       {
         driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, previousDriverPressure_cmH2O, m_DriverPressure_cmH2O);
@@ -482,7 +492,11 @@ namespace pulse
         previousDriverFlow_L_Per_s = m_PreviousDriverFlow_L_Per_s;
       }
 
-      driverFlow_L_Per_s = GeneralMath::Damper(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, driverDampingParameter_Per_s, m_data.GetTimeStep_s());
+      if (driverFlow_L_Per_s != 0.0) //Don't dampen if it's 0 because that's probably from a limit
+      {
+        driverFlow_L_Per_s = GeneralMath::Damper(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, driverDampingParameter_Per_s, m_data.GetTimeStep_s());
+      }
+
       if (m_DriverFlow_L_Per_s > previousDriverFlow_L_Per_s)
       {
         driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, m_DriverFlow_L_Per_s);
@@ -533,15 +547,8 @@ namespace pulse
   /// \brief
   /// Determine the instantaneous driver pressure during inspiration.
   //--------------------------------------------------------------------------------------------------
-  void MechanicalVentilatorModel::CalculateInspiration()
+  void MechanicalVentilatorModel::CheckInspirationTriggers()
   {
-    if (m_BreathState != eBreathState::EquipmentInhale &&
-      m_BreathState != eBreathState::PatientInhale)
-    {
-      m_LimitReached = false;
-      return;
-    }
-
     // Check trigger
     // Any combination of triggers can be used, but there must be at least one
     bool triggerDefined = false;
@@ -592,49 +599,64 @@ namespace pulse
     if (GetSettings().HasExpirationCycleTime())
     {
       triggerDefined = true;
-      if (m_CurrentPeriodTime_s >= GetSettings().GetExpirationCycleTime(TimeUnit::s))
+      if (m_CurrentPeriodTime_s >= GetSettings().GetExpirationCycleTime(TimeUnit::s) - m_InspirationTime_s)
       {
         CycleMode(false);
         return;
       }
     }
 
-    if(!triggerDefined)
+    if (!triggerDefined)
     {
       Fatal("No expiration cycle defined.");
     }
+  }
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Determine the instantaneous driver pressure during inspiration.
+  //--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::CalculateInspiration()
+  {
+    if (m_BreathState != eBreathState::EquipmentInhale &&
+      m_BreathState != eBreathState::PatientInhale)
+    {
+      return;
+    }
+
+    CheckInspirationTriggers();
 
     // Check limit
 
     if (GetSettings().HasInspirationLimitVolume())
     {
-      if (m_LimitReached || m_CurrentRespiratoryVolume_L >= GetSettings().GetInspirationLimitVolume(VolumeUnit::L))
+      if (m_CurrentRespiratoryVolume_L >= GetSettings().GetInspirationLimitVolume(VolumeUnit::L))
       {
         m_DriverFlow_L_Per_s = 0.0;
         m_DriverPressure_cmH2O = SEScalar::dNaN();
-        m_LimitReached = true;
+        CycleMode(false);
         return;
       }
     }
 
     if (GetSettings().HasInspirationLimitFlow())
     {
-      if (m_LimitReached || m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetSettings().GetInspirationLimitFlow(VolumePerTimeUnit::L_Per_s))
+      if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetSettings().GetInspirationLimitFlow(VolumePerTimeUnit::L_Per_s))
       {
         m_DriverFlow_L_Per_s = GetSettings().GetInspirationLimitFlow(VolumePerTimeUnit::L_Per_s);
         m_DriverPressure_cmH2O = SEScalar::dNaN();
-        m_LimitReached = true;
+        CycleMode(false);
         return;
       }
     }
 
     if (GetSettings().HasInspirationLimitPressure())
     {
-      if (m_LimitReached || m_ConnectionNode->GetPressure(PressureUnit::cmH2O) >= GetSettings().GetInspirationLimitPressure(PressureUnit::cmH2O))
+      if (m_ConnectionNode->GetPressure(PressureUnit::cmH2O) >= GetSettings().GetInspirationLimitPressure(PressureUnit::cmH2O))
       {
         m_DriverFlow_L_Per_s = SEScalar::dNaN();
         m_DriverPressure_cmH2O = GetSettings().GetInspirationLimitPressure(PressureUnit::cmH2O);
-        m_LimitReached = true;
+        CycleMode(false);
         return;
       }
     }
@@ -670,9 +692,9 @@ namespace pulse
       {
         double finalPressure_cmH2O = GetSettings().GetPeakInspiratoryPressure(PressureUnit::cmH2O);
         double initialPressure_cmH2O = 0.0;
-        if (GetSettings().HasPositiveEndExpiredPressure())
+        if (GetSettings().HasPositiveEndExpiratoryPressure())
         {
-          initialPressure_cmH2O = GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+          initialPressure_cmH2O = GetSettings().GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
         }
 
         m_DriverPressure_cmH2O = initialPressure_cmH2O + (finalPressure_cmH2O - initialPressure_cmH2O) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
@@ -698,9 +720,9 @@ namespace pulse
       {
         double initialPressure_cmH2O = GetSettings().GetPeakInspiratoryPressure(PressureUnit::cmH2O);
         double finalPressure_cmH2O = 0.0;
-        if (GetSettings().HasPositiveEndExpiredPressure())
+        if (GetSettings().HasPositiveEndExpiratoryPressure())
         {
-          finalPressure_cmH2O = GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+          finalPressure_cmH2O = GetSettings().GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
         }
 
         m_DriverPressure_cmH2O = initialPressure_cmH2O + (finalPressure_cmH2O - initialPressure_cmH2O) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
@@ -753,7 +775,8 @@ namespace pulse
     }
     else
     {
-      CycleMode(false);
+      // If the limit was reached, we'll hold here until the trigger
+      CheckInspirationTriggers();
     }
   }
 
@@ -786,13 +809,12 @@ namespace pulse
     if (GetSettings().HasInspirationPatientTriggerPressure())
     {
       triggerDefined = true;
+
       double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
       double previousRelativePressure_cmH2O = m_PreviousConnectionPressure_cmH2O - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-      if (GetSettings().HasPositiveEndExpiredPressure())
-      {
-        relativePressure_cmH2O -= GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
-      }
-      if (relativePressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
+      double triggerPressure_cmH2O = relativePressure_cmH2O - GetExtrinsicPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
+
+      if (triggerPressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
       {
@@ -838,9 +860,9 @@ namespace pulse
     // Apply waveform
     if (GetSettings().GetExpirationWaveform() == eDriverWaveform::Square)
     {
-      if (GetSettings().HasPositiveEndExpiredPressure())
+      if (GetSettings().HasPositiveEndExpiratoryPressure())
       {
-        m_DriverPressure_cmH2O = GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+        m_DriverPressure_cmH2O = GetSettings().GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
         m_DriverFlow_L_Per_s = SEScalar::dNaN();
       }
       else if (GetSettings().HasFunctionalResidualCapacity())
@@ -936,9 +958,9 @@ namespace pulse
   }
 
   //--------------------------------------------------------------------------------------------------
-/// \brief
-/// Close the inspiratory valve during exhale when using a pressure trigger.
-//--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Close the inspiratory valve during exhale when using a pressure trigger.
+  //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::SetValves()
   {
     if (GetSettings().HasInspirationPatientTriggerPressure() &&
@@ -951,9 +973,9 @@ namespace pulse
   }
 
   //--------------------------------------------------------------------------------------------------
-/// \brief
-/// Set the resistance to ground that causes air to leak out of the ventilator-respiratory system.
-//--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Set the flow to zero to hold.
+  //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::SetHold()
   {
     if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
@@ -1116,12 +1138,14 @@ namespace pulse
     m_MeanAirwayPressure_cmH2O->Sample(airwayPressure_cmH2O - ambientPressure_cmH2O);
 
     double inspiratoryFlow_L_Per_s = 0.0;
+    double expiratoryFlow_L_Per_s = 0.0;
     if (m_YPieceToConnection->HasNextFlow())
     {
       inspiratoryFlow_L_Per_s = m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+      expiratoryFlow_L_Per_s = -inspiratoryFlow_L_Per_s;
     }
     GetInspiratoryFlow().SetValue(inspiratoryFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
-    GetExpiratoryFlow().SetValue(-inspiratoryFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+    GetExpiratoryFlow().SetValue(expiratoryFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
     m_CurrentVentilatorVolume_L += inspiratoryFlow_L_Per_s * m_data.GetTimeStep_s();
 
     inspiratoryFlow_L_Per_s = 0.0;
@@ -1149,6 +1173,9 @@ namespace pulse
       m_EndTidalOxygenFraction = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
       m_EndTidalOxygenPressure_cmH2O = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure(PressureUnit::cmH2O);
     }
+
+    m_PeakExpiratoryFlow_L_Per_s = MAX(m_PeakExpiratoryFlow_L_Per_s, expiratoryFlow_L_Per_s);
+    m_PeakInspiratoryFlow_L_Per_s = MAX(m_PeakInspiratoryFlow_L_Per_s, inspiratoryFlow_L_Per_s);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1157,7 +1184,7 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CalculateInspiratoryRespiratoryParameters()
   {
-    //Transition from inspuration to pause
+    //Transition from inspiration to pause
 
     double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
     double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
@@ -1177,9 +1204,18 @@ namespace pulse
     GetInspiratoryTidalVolume().SetValue(m_CurrentVentilatorVolume_L, VolumeUnit::L);
     GetTidalVolume().SetValue(m_CurrentRespiratoryVolume_L, VolumeUnit::L);
 
-    double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-    double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
-    GetPlateauPressure().SetValue(airwayPressure_cmH2O - ambientPressure_cmH2O, PressureUnit::cmH2O);
+    double flow_L_Per_s = m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+    double plateauPressure_cmH2O = 0.0;
+    m_PauseOccurred = abs(flow_L_Per_s) < ZERO_APPROX;
+    if (m_PauseOccurred)
+    {
+      //There is a plateau, so set it directly
+      //if the plateau pressure is determined here, it is calculated later at the end of the breath
+      double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+      double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
+      plateauPressure_cmH2O = airwayPressure_cmH2O - ambientPressure_cmH2O;
+      GetPlateauPressure().SetValue(plateauPressure_cmH2O, PressureUnit::cmH2O);
+    }
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1190,17 +1226,28 @@ namespace pulse
   {
     //End of breath
 
-    double expirationTime_s = m_CurrentPeriodTime_s;
-    double totalTime_s = m_InspirationTime_s + expirationTime_s;
-    double respirationRate_Per_min = 0.0;
-    if (totalTime_s > ZERO_APPROX)
-      respirationRate_Per_min = 60.0 / totalTime_s;
-    GetRespirationRate().SetValue(respirationRate_Per_min, FrequencyUnit::Per_min);
-    double inspiratioryExpiratioryRatio = 0.0;
-    if (expirationTime_s > ZERO_APPROX)
-      inspiratioryExpiratioryRatio = m_InspirationTime_s / expirationTime_s;
-    GetInspiratoryExpiratoryRatio().SetValue(inspiratioryExpiratioryRatio);
-    GetTotalPulmonaryVentilation().SetValue(GetRespirationRate(FrequencyUnit::Per_min) * GetTidalVolume(VolumeUnit::L), VolumePerTimeUnit::L_Per_min);
+    double tidalVolume_L = GetTidalVolume(VolumeUnit::L);
+
+    if (m_InspirationTime_s > 0.0) // Make sure we've actually done a breath
+    {
+      double expirationTime_s = m_CurrentPeriodTime_s;
+      double totalTime_s = m_InspirationTime_s + expirationTime_s;
+      double respirationRate_Per_min = 0.0;
+      if (totalTime_s > ZERO_APPROX)
+        respirationRate_Per_min = 60.0 / totalTime_s;
+      GetRespirationRate().SetValue(respirationRate_Per_min, FrequencyUnit::Per_min);
+      double inspiratioryExpiratioryRatio = 0.0;
+      if (expirationTime_s > ZERO_APPROX)
+        inspiratioryExpiratioryRatio = m_InspirationTime_s / expirationTime_s;
+      GetInspiratoryExpiratoryRatio().SetValue(inspiratioryExpiratioryRatio);
+      GetTotalPulmonaryVentilation().SetValue(respirationRate_Per_min * tidalVolume_L, VolumePerTimeUnit::L_Per_min);
+    }
+    else
+    {
+      GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
+      GetInspiratoryExpiratoryRatio().SetValue(0.0);
+      GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
+    }
 
     double inspiratoryTidalVolume_L = GetInspiratoryTidalVolume(VolumeUnit::L);
     double expiratoryTidalVolume_L = inspiratoryTidalVolume_L - m_CurrentVentilatorVolume_L;
@@ -1214,28 +1261,91 @@ namespace pulse
     BLIM(leakFraction, 0.0, 1.0);
     GetLeakFraction().SetValue(leakFraction);
 
-    GetPositiveEndExpiratoryPressure().SetValue(m_PositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
-    GetIntrinsicPositiveEndExpiredPressure().SetValue(m_PositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
-
     GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
     m_MeanAirwayPressure_cmH2O->Invalidate();
 
+    GetPeakExpiratoryFlow().SetValue(m_PeakExpiratoryFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+    GetPeakInspiratoryFlow().SetValue(m_PeakInspiratoryFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+
+    double pressureDifference_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O) - m_PositiveEndExpiratoryPressure_cmH2O;
     double compliance_L_Per_cmH2O = 0.0;
-    double pressureDifference_cmH2O = GetPlateauPressure(PressureUnit::cmH2O) - GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
-    if(pressureDifference_cmH2O > ZERO_APPROX)
-      compliance_L_Per_cmH2O = GetTidalVolume(VolumeUnit::L) / pressureDifference_cmH2O;
-    GetStaticPulmonaryCompliance().SetValue(compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+    if (pressureDifference_cmH2O > ZERO_APPROX && tidalVolume_L > 0.0)
+      compliance_L_Per_cmH2O = tidalVolume_L / pressureDifference_cmH2O;
+    GetDynamicRespiratoryCompliance().SetValue(compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 
-    compliance_L_Per_cmH2O = 0.0;
-    pressureDifference_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O) - GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
-    if (pressureDifference_cmH2O > ZERO_APPROX)
-      compliance_L_Per_cmH2O = GetTidalVolume(VolumeUnit::L) / pressureDifference_cmH2O;
-    GetDynamicPulmonaryCompliance().SetValue(compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+    double extrinsicPositiveEndExpiratoryPressureSetting_cmH2O = 0.0;
+    if (GetSettings().HasPositiveEndExpiratoryPressure())
+    {
+      extrinsicPositiveEndExpiratoryPressureSetting_cmH2O = GetSettings().GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
+    }
+    double intrinsicPositiveEndExpiratoryPressure_cmH2O = 0.0;
+    double flow_L_Per_s = m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+    if (abs(flow_L_Per_s) < ZERO_APPROX)
+    {
+      //There is a plateau, so set it directly
 
-    double resistance_cmH2O_s_Per_L = 0.0;
-    if(m_InspiratoryFlow_L_Per_s > ZERO_APPROX)
-      resistance_cmH2O_s_Per_L = (GetPeakInspiratoryPressure(PressureUnit::cmH2O) - GetPlateauPressure(PressureUnit::cmH2O)) / m_InspiratoryFlow_L_Per_s;
-    GetPulmonaryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      intrinsicPositiveEndExpiratoryPressure_cmH2O = m_PositiveEndExpiratoryPressure_cmH2O - extrinsicPositiveEndExpiratoryPressureSetting_cmH2O;
+    }
+    else if (HasStaticRespiratoryCompliance() && HasExpiratoryResistance() &&
+      GetStaticRespiratoryCompliance(VolumePerPressureUnit::L_Per_cmH2O) != 0.0 &&
+      GetExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L) != 0.0)
+    {
+      //There is not a plateau, so we will cheat and calculate it directly
+      //Some real ventilators will use a an equation of motion least squares fitting
+
+      double expirationTime_s = m_CurrentPeriodTime_s;
+      double staticCompliance_L_Per_cmH2O = GetStaticRespiratoryCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      double expiratoryResistance_cmH2O_s_Per_L = GetExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      intrinsicPositiveEndExpiratoryPressure_cmH2O = (tidalVolume_L / staticCompliance_L_Per_cmH2O) * std::exp(-expirationTime_s / (expiratoryResistance_cmH2O_s_Per_L * staticCompliance_L_Per_cmH2O));
+    }
+
+    double totalPositiveEndExpiratoryPressure_cmH2O = extrinsicPositiveEndExpiratoryPressureSetting_cmH2O + intrinsicPositiveEndExpiratoryPressure_cmH2O;
+    GetExtrinsicPositiveEndExpiratoryPressure().SetValue(extrinsicPositiveEndExpiratoryPressureSetting_cmH2O, PressureUnit::cmH2O);
+    GetIntrinsicPositiveEndExpiratoryPressure().SetValue(intrinsicPositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
+    GetTotalPositiveEndExpiratoryPressure().SetValue(totalPositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
+
+    if (m_PauseOccurred)
+    {
+      //There is a plateau, so we will calculate static values based on that pressure
+
+      pressureDifference_cmH2O = GetPlateauPressure(PressureUnit::cmH2O) - m_PositiveEndExpiratoryPressure_cmH2O;
+      compliance_L_Per_cmH2O = 0.0;
+      if (pressureDifference_cmH2O > ZERO_APPROX && tidalVolume_L > 0.0)
+        compliance_L_Per_cmH2O = tidalVolume_L / pressureDifference_cmH2O;
+      GetStaticRespiratoryCompliance().SetValue(compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+
+      pressureDifference_cmH2O = GetPlateauPressure(PressureUnit::cmH2O) - m_PositiveEndExpiratoryPressure_cmH2O;
+      double resistance_cmH2O_s_Per_L = 0.0;
+      if (m_PeakExpiratoryFlow_L_Per_s > ZERO_APPROX && pressureDifference_cmH2O > 0.0)
+        resistance_cmH2O_s_Per_L = pressureDifference_cmH2O / m_PeakExpiratoryFlow_L_Per_s;
+      GetExpiratoryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+      pressureDifference_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O) - GetPlateauPressure(PressureUnit::cmH2O);
+      resistance_cmH2O_s_Per_L = 0.0;
+      if (m_PeakInspiratoryFlow_L_Per_s > ZERO_APPROX && pressureDifference_cmH2O > 0.0)
+        resistance_cmH2O_s_Per_L = pressureDifference_cmH2O / m_PeakInspiratoryFlow_L_Per_s;
+      GetInspiratoryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+    else
+    {
+      //There is not a plateau, so we will cheat and get it from the respiratory system
+      //Some real ventilators will use an equation of motion best fit... 
+      // but I do not know how they estimate the effort/muscle pressure for assisted breathing
+
+      GetStaticRespiratoryCompliance().Set(m_data.GetRespiratory().GetRespiratoryCompliance());
+      GetExpiratoryResistance().Set(m_data.GetRespiratory().GetExpiratoryRespiratoryResistance());
+      GetInspiratoryResistance().Set(m_data.GetRespiratory().GetInspiratoryRespiratoryResistance());
+
+      double plateauPressure_cmH2O = 0.0;
+      compliance_L_Per_cmH2O = GetStaticRespiratoryCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      if (compliance_L_Per_cmH2O > ZERO_APPROX)
+      {
+        //There is no plateau, so back it out of the equation of motion
+        double Vt_L = GetTidalVolume(VolumeUnit::L);
+        plateauPressure_cmH2O = Vt_L / compliance_L_Per_cmH2O + totalPositiveEndExpiratoryPressure_cmH2O;
+        GetPlateauPressure().SetValue(plateauPressure_cmH2O, PressureUnit::cmH2O);
+      }
+    }
 
     GetEndTidalCarbonDioxideFraction().SetValue(m_EndTidalCarbonDioxideFraction);
     GetEndTidalCarbonDioxidePressure().SetValue(m_EndTidalCarbonDioxidePressure_cmH2O, PressureUnit::cmH2O);
@@ -1244,6 +1354,8 @@ namespace pulse
 
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
+    m_PeakExpiratoryFlow_L_Per_s = 0.0;
+    m_PeakInspiratoryFlow_L_Per_s = 0.0;
   }
 
   //--------------------------------------------------------------------------------------------------

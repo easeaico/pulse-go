@@ -31,8 +31,9 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.Properties.ScalarData;
-import com.kitware.pulse.cdm.bind.TestReport.PropertyValidationData;
-import com.kitware.pulse.cdm.bind.TestReport.PropertyValidationListData;
+import com.kitware.pulse.cdm.bind.Validation.ValidationTargetData;
+import com.kitware.pulse.cdm.bind.Validation.TimeSeriesValidationTargetData;
+import com.kitware.pulse.cdm.bind.Validation.TimeSeriesValidationTargetListData;
 import com.kitware.pulse.cdm.patient.SEPatient;
 import com.kitware.pulse.cdm.patient.assessments.SEPatientAssessment;
 import com.kitware.pulse.cdm.properties.SEScalar;
@@ -126,7 +127,7 @@ public abstract class ValidationTool
     public String   table    = "";
 
     // Results Data
-    public String       resultFile = "";
+    public String       assessmentFile = "";
     public List<Double> results;
     public List<Double> weight;
     public List<Double> idealWeight;
@@ -545,16 +546,17 @@ public abstract class ValidationTool
                   vRow.table = cellValue;
                   if(patientValidation)
                     vRow.table = patient.getName()+cellValue;
-                  break;
-                case 13://N ResultFile (Internal only)
-                  if(cellValue!=null)
-                    vRow.resultFile = cellValue;
-                  break;
-                case 14://O Mantissa Digits
+                  break;             
+                case 13://N Table Mantissa Digits
                   if(cellValue!=null)
                     vRow.doubleFormat = cellValue;
                   if(patientValidation && vRow.dType != DataType.Patient2SystemMean)
                     vRow.refValues = String.format("%."+vRow.doubleFormat, vRow.refValue);
+                  break;
+                case 14://O Request Type (Internal only)
+                  // We only handle if the request type is part of an assessment
+                  if(cellValue!=null && cellValue.contains("@"))// @ denotes this property is part of an assessment
+                    vRow.assessmentFile = cellValue;
                   break;
                 }
               }
@@ -1203,12 +1205,12 @@ public abstract class ValidationTool
       } 
     }
 
-    if(vRow.resultFile.indexOf('@')>-1)
+    if(vRow.assessmentFile.indexOf('@')>-1)
     {
       // It's an assessment row
       for(String s : assessments.keySet())
       {
-        if(s.indexOf(vRow.resultFile)>-1)
+        if(s.indexOf(vRow.assessmentFile)>-1)
         {
           try
           {
@@ -1595,18 +1597,19 @@ public abstract class ValidationTool
   }
   protected void WriteValidationJson(List<ValidationRow> vData, String filepath) throws InvalidProtocolBufferException
   {
-    PropertyValidationListData.Builder pvList = PropertyValidationListData.newBuilder();
+    TimeSeriesValidationTargetListData.Builder vtList = TimeSeriesValidationTargetListData.newBuilder();
     for(ValidationRow vRow : vData)
     {
-      PropertyValidationData.Builder pvd = pvList.addPropertyBuilder();
-      pvd.setName(vRow.header+"-"+vRow.dType.toString());
-      pvd.setExpectedValue(vRow.refValue);
+      TimeSeriesValidationTargetData.Builder pvd = vtList.addTimeSeriesValidationTargetBuilder();
+      ValidationTargetData.Builder vtd = pvd.getValidationTargetBuilder();
+      vtd.setHeader(vRow.header+"-"+vRow.dType.toString());
+      pvd.setEqualToValue(vRow.refValue);
       pvd.setComputedValue(vRow.result);
       pvd.setError(vRow.resultError);
       pvd.setPatientSpecific(vRow.patientSpecific);
       
     }
-    pvList.build();
-    FileUtils.writeFile(filepath, JsonFormat.printer().print(pvList));
+    vtList.build();
+    FileUtils.writeFile(filepath, JsonFormat.printer().print(vtList));
   }
 }

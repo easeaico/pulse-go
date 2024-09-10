@@ -2,9 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-class SEPatientConfiguration;
+#include "PhysiologyEngine.h"
 class SEDataRequestManager;
-class SESubstanceManager;
 
 class CDM_DECL SEEngineInitialization : public Loggable
 {
@@ -65,4 +64,38 @@ protected:
   std::string                     m_LogFilename;
   bool                            m_KeepLogMessages;
   bool                            m_KeepEventChanges;
+};
+
+class CDM_DECL SEEngineInitializationStatus : public LoggerForward
+{
+  friend class PBEngine;//friend the serialization class
+public:
+  SEEngineInitializationStatus();
+  virtual ~SEEngineInitializationStatus();
+
+  virtual void Clear();
+  void Copy(const SEEngineInitializationStatus& src);
+
+  virtual bool SerializeToString(std::string& output, eSerializationFormat m, Logger*) const;
+  virtual bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger*);
+
+  eEngineInitializationState GetEngineInitializationState() const { return m_EngineInitializationState; }
+  void SetEngineInitializationState(eEngineInitializationState s) { m_EngineInitializationState = s; }
+
+  bool HasCSVFilename() const { return !m_CSVFilename.empty(); }
+  std::string GetCSVFilename() const { return m_CSVFilename; }
+  void SetCSVFilename(const std::string& fn) { m_CSVFilename = fn; }
+
+  bool HasLogFilename() const { return !m_LogFilename.empty(); }
+  std::string GetLogFilename() const { return m_LogFilename; }
+  void SetLogFilename(const std::string& fn) { m_LogFilename = fn; }
+
+  double GetStabilizationTime_s() const { return m_StabilizationTime_s; }
+  void SetStabilizationTime_s(double t) { m_StabilizationTime_s = t; }
+
+protected:
+  eEngineInitializationState   m_EngineInitializationState;
+  std::string                  m_CSVFilename;
+  std::string                  m_LogFilename;
+  double                       m_StabilizationTime_s;
 };

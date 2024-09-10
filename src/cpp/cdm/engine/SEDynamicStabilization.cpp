@@ -18,16 +18,12 @@
 SEDynamicStabilization::SEDynamicStabilization(Logger *logger) : SEEngineStabilization(logger)
 {
   m_MergedConditions = new SEDynamicStabilizationEngineConvergence(logger);
-  m_RestingConvergence = new SEDynamicStabilizationEngineConvergence(logger);
-  m_FeedbackConvergence= new SEDynamicStabilizationEngineConvergence(logger);
 }
 
 SEDynamicStabilization::~SEDynamicStabilization()
 {
   Clear();
   SAFE_DELETE(m_MergedConditions)
-  SAFE_DELETE(m_RestingConvergence)
-  SAFE_DELETE(m_FeedbackConvergence)
 }
 
 void SEDynamicStabilization::Clear()
@@ -36,9 +32,7 @@ void SEDynamicStabilization::Clear()
   m_MergedConditions->m_PropertyConvergence.clear();// \todo Make copies of stabilization Convergence
   m_MergedConditions->Clear();
   m_ActiveConditions.clear();
-  m_RestingConvergence->Clear();
-  m_FeedbackConvergence->Clear();
-  DELETE_MAP_SECOND(m_ConditionConvergence);
+  DELETE_MAP_SECOND(m_ConvergenceCriteria);
 }
 
 bool SEDynamicStabilization::SerializeToString(std::string& output, eSerializationFormat m) const
@@ -58,58 +52,36 @@ bool SEDynamicStabilization::SerializeFromFile(const std::string& filename)
   return PBEngine::SerializeFromFile(filename, *this);
 }
 
-SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetRestingConvergence()
+bool SEDynamicStabilization::HasConvergenceCriteria(const std::string& name) const
 {
-  return *m_RestingConvergence;
+  return m_ConvergenceCriteria.find(name) != m_ConvergenceCriteria.end();
 }
-const SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetRestingConvergence() const
+void SEDynamicStabilization::RemoveConvergenceCriteria(const std::string& name)
 {
-  return *m_RestingConvergence;
-}
-
-bool SEDynamicStabilization::HasFeedbackConvergence() const
-{
-  return !m_FeedbackConvergence->m_PropertyConvergence.empty();
-}
-SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetFeedbackConvergence()
-{
-  return *m_FeedbackConvergence;
-}
-const SEDynamicStabilizationEngineConvergence* SEDynamicStabilization::GetFeedbackConvergence() const
-{
-  return m_FeedbackConvergence;
-}
-
-
-bool SEDynamicStabilization::HasConditionConvergence(const std::string& name) const
-{
-  return m_ConditionConvergence.find(name) != m_ConditionConvergence.end();
-}
-void SEDynamicStabilization::RemoveConditionConvergence(const std::string& name)
-{
-  for (auto itr : m_ConditionConvergence)
+  for (auto itr : m_ConvergenceCriteria)
   {
     if (itr.first == name)
     {
       SAFE_DELETE(itr.second);
-      m_ConditionConvergence.erase(name);
+      m_ConvergenceCriteria.erase(name);
       return;
     }
   }
 }
-SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetConditionConvergence(const std::string& name)
+
+SEDynamicStabilizationEngineConvergence& SEDynamicStabilization::GetConvergenceCriteria(const std::string& name)
 {
-  SEDynamicStabilizationEngineConvergence* c = m_ConditionConvergence[name];
+  SEDynamicStabilizationEngineConvergence* c = m_ConvergenceCriteria[name];
   if (c == nullptr)
   {
     c = new SEDynamicStabilizationEngineConvergence(GetLogger());
-    m_ConditionConvergence[name] = c;
+    m_ConvergenceCriteria[name] = c;
   }
   return *c;
 }
-const SEDynamicStabilizationEngineConvergence* SEDynamicStabilization::GetConditionConvergence(const std::string& name) const
+const SEDynamicStabilizationEngineConvergence* SEDynamicStabilization::GetConvergenceCriteria(const std::string& name) const
 {
-  for (auto itr : m_ConditionConvergence)
+  for (auto itr : m_ConvergenceCriteria)
   {
     if (itr.first == name)
       return itr.second;
@@ -117,22 +89,16 @@ const SEDynamicStabilizationEngineConvergence* SEDynamicStabilization::GetCondit
   return nullptr;
 }
 
-const std::map<std::string, SEDynamicStabilizationEngineConvergence*>& SEDynamicStabilization::GetConditionConvergence() const
+const std::map<std::string, SEDynamicStabilizationEngineConvergence*>& SEDynamicStabilization::GetConvergenceCriteria() const
 {
-  return m_ConditionConvergence;
+  return m_ConvergenceCriteria;
 }
 
-bool SEDynamicStabilization::StabilizeRestingState(Controller& engine)
+bool SEDynamicStabilization::Stabilize(Controller& engine, const std::string& criteria)
 {
-  Info("Converging to a steady state");
-  return Stabilize(engine, *m_RestingConvergence);
-}
-bool SEDynamicStabilization::StabilizeFeedbackState(Controller& engine)
-{
-  if (!HasFeedbackConvergence())
-    return true;
-  Info("Converging feedback to a steady state");
-  return Stabilize(engine, *m_FeedbackConvergence);
+  if (!HasConvergenceCriteria(criteria))
+    return false;//No stabilization time for requested
+  return Stabilize(engine, GetConvergenceCriteria(criteria));
 }
 bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SEConditionManager& conditions)
 {
@@ -143,7 +109,7 @@ bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SECon
   m_ActiveConditions.clear();
   for (auto c : m_Conditions)
   {
-    if (!HasConditionConvergence(c->GetName()))
+    if (!HasConvergenceCriteria(c->GetName()))
     {
       Error("Engine does not have convergence criteria for condition "+c->GetName());
       return false;
@@ -151,7 +117,7 @@ bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SECon
     else
     {
       Info("[Condition]\n" + c->ToJSON());
-      m_ActiveConditions[c->GetName()] = &GetConditionConvergence(c->GetName());
+      m_ActiveConditions[c->GetName()] = &GetConvergenceCriteria(c->GetName());
     }
   }
   if (m_ActiveConditions.size() == 1)

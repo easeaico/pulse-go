@@ -1337,21 +1337,8 @@ public class DataSetReader
           continue;
         if(!fields.contains(property))
         {
-          if(property.equals("Resting"))
-          {
-            criteria=dynamic.getRestingConvergence();
-            time=timed.getRestingStabilizationTime();
-          }
-          else if(property.equals("Feedback"))
-          {
-            criteria=dynamic.getFeedbackConvergence();
-            time=timed.getFeedbackStabilizationTime();
-          }
-          else
-          {
-            criteria=dynamic.createConditionConvergence(property);
-            time=timed.createConditionStabilizationTime(property);
-          }
+          criteria=dynamic.createConvergenceCriteria(property);
+          time=timed.createConvergenceCriteria(property);
           continue;
         }         
         else if(property.equals("Criteria"))

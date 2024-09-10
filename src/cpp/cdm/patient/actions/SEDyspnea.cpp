@@ -8,18 +8,21 @@
 
 SEDyspnea::SEDyspnea(Logger* logger) : SEPatientAction(logger)
 {
-  m_Severity=nullptr;
+  m_RespirationRateSeverity = nullptr;
+  m_TidalVolumeSeverity = nullptr;
 }
 
 SEDyspnea::~SEDyspnea()
 {
-  SAFE_DELETE(m_Severity);
+  SAFE_DELETE(m_RespirationRateSeverity);
+  SAFE_DELETE(m_TidalVolumeSeverity);
 }
 
 void SEDyspnea::Clear()
 {
   SEPatientAction::Clear();
-  INVALIDATE_PROPERTY(m_Severity);
+  INVALIDATE_PROPERTY(m_RespirationRateSeverity);
+  INVALIDATE_PROPERTY(m_TidalVolumeSeverity);
 }
 
 void SEDyspnea::Copy(const SEDyspnea& src, bool /*preserveState*/)
@@ -31,14 +34,19 @@ void SEDyspnea::Copy(const SEDyspnea& src, bool /*preserveState*/)
 
 bool SEDyspnea::IsValid() const
 {
-  return SEPatientAction::IsValid() && HasSeverity();
+  return SEPatientAction::IsValid() &&
+    (HasRespirationRateSeverity() || HasTidalVolumeSeverity());
 }
 
 bool SEDyspnea::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
-  return !m_Severity->IsZero();
+  if (HasRespirationRateSeverity() && GetRespirationRateSeverity() > 0)
+    return true;
+  if (HasTidalVolumeSeverity() && GetTidalVolumeSeverity() > 0)
+    return true;
+  return false;
 }
 void SEDyspnea::Deactivate()
 {
@@ -48,24 +56,43 @@ void SEDyspnea::Deactivate()
 
 const SEScalar* SEDyspnea::GetScalar(const std::string& name)
 {
-  if (name.compare("Severity") == 0)
-    return &GetSeverity();
+  if (name.compare("RespirationRateSeverity") == 0)
+    return &GetRespirationRateSeverity();
+  if (name.compare("TidalVolumeSeverity") == 0)
+    return &GetTidalVolumeSeverity();
   return nullptr;
 }
 
-bool SEDyspnea::HasSeverity() const
+bool SEDyspnea::HasRespirationRateSeverity() const
 {
-  return m_Severity==nullptr?false:m_Severity->IsValid();
+  return m_RespirationRateSeverity ==nullptr?false:m_RespirationRateSeverity->IsValid();
 }
-SEScalar0To1& SEDyspnea::GetSeverity()
+SEScalar0To1& SEDyspnea::GetRespirationRateSeverity()
 {
-  if(m_Severity==nullptr)
-    m_Severity=new SEScalar0To1();
-  return *m_Severity;
+  if(m_RespirationRateSeverity ==nullptr)
+    m_RespirationRateSeverity =new SEScalar0To1();
+  return *m_RespirationRateSeverity;
 }
-double SEDyspnea::GetSeverity() const
+double SEDyspnea::GetRespirationRateSeverity() const
 {
-  if (m_Severity == nullptr)
+  if (m_RespirationRateSeverity == nullptr)
     return SEScalar::dNaN();
-  return m_Severity->GetValue();
+  return m_RespirationRateSeverity->GetValue();
+}
+
+bool SEDyspnea::HasTidalVolumeSeverity() const
+{
+  return m_TidalVolumeSeverity == nullptr ? false : m_TidalVolumeSeverity->IsValid();
+}
+SEScalar0To1& SEDyspnea::GetTidalVolumeSeverity()
+{
+  if (m_TidalVolumeSeverity == nullptr)
+    m_TidalVolumeSeverity = new SEScalar0To1();
+  return *m_TidalVolumeSeverity;
+}
+double SEDyspnea::GetTidalVolumeSeverity() const
+{
+  if (m_TidalVolumeSeverity == nullptr)
+    return SEScalar::dNaN();
+  return m_TidalVolumeSeverity->GetValue();
 }

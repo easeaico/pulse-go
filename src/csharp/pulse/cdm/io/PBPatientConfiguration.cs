@@ -93,6 +93,8 @@ namespace Pulse.CDM
         dst.AnyCondition.Add(PBCondition.Unload(src.GetChronicRenalStenosis()));
       if (src.HasChronicVentricularSystolicDysfunction())
         dst.AnyCondition.Add(PBCondition.Unload(src.GetChronicVentricularSystolicDysfunction()));
+      if (src.HasDehydration())
+        dst.AnyCondition.Add(PBCondition.Unload(src.GetDehydration()));
       if (src.HasImpairedAlveolarExchange())
         dst.AnyCondition.Add(PBCondition.Unload(src.GetImpairedAlveolarExchange()));
       if (src.HasPneumonia())

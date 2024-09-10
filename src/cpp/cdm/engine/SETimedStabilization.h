@@ -13,36 +13,23 @@ public:
 
   void Clear() override;
 
-public:
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const override;
-  bool SerializeToFile(const std::string& filename) const override;
-  bool SerializeFromString(const std::string& src, eSerializationFormat m) override;
-  bool SerializeFromFile(const std::string& filename) override;
-
-  bool StabilizeRestingState(Controller& engine) override;
-  bool StabilizeFeedbackState(Controller& engine) override;
+  bool Stabilize(Controller& engine, const std::string& criteria) override;
   bool StabilizeConditions(Controller& engine, const SEConditionManager& conditions) override;
 
-  virtual bool HasRestingStabilizationTime() const;
-  virtual SEScalarTime& GetRestingStabilizationTime();
-  virtual double GetRestingStabilizationTime(const TimeUnit& unit) const;
-
-  virtual bool HasFeedbackStabilizationTime() const;
-  virtual SEScalarTime& GetFeedbackStabilizationTime();
-  virtual double GetFeedbackStabilizationTime(const TimeUnit& unit) const;
-
-  virtual bool HasConditionTime(const std::string& name) const;
-  virtual void RemoveConditionTime(const std::string& name);
-  virtual const std::map<std::string,SEScalarTime*>& GetConditionTimes() const;
-  virtual SEScalarTime& GetConditionTime(const std::string& name);
-  virtual const SEScalarTime* GetConditionTime(const std::string& name) const;
+  bool HasConvergenceCriteria(const std::string& name) const override;
+  void RemoveConvergenceCriteria(const std::string& name) override;
+  virtual const std::map<std::string,SEScalarTime*>& GetConvergenceCriterias() const;
+  virtual SEScalarTime& GetConvergenceCriteria(const std::string& name);
+  virtual const SEScalarTime* GetConvergenceCriteria(const std::string& name) const;
 
 protected:
 
   virtual bool Stabilize(Controller& engine, const SEScalarTime& time);
 
-  SEScalarTime* m_RestingStabilizationTime;
-  SEScalarTime* m_FeedbackStabilizationTime;
-  std::map<std::string,SEScalarTime*> m_ConditionTimes;
+  std::map<std::string,SEScalarTime*> m_ConvergenceCriteria;
 };

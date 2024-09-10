@@ -44,15 +44,18 @@ public:
   virtual SEScalar& GetRespiratoryExchangeRatio();
   virtual double GetRespiratoryExchangeRatio() const;
 
+  virtual bool HasTotalFluidVolume() const;
+  virtual SEScalarVolume& GetTotalFluidVolume();
+  virtual double GetTotalFluidVolume(const VolumeUnit& unit) const;
+
 
 protected:
   SEScalarVolumePerTime*  m_CarbonDioxideProductionRate;
-  SEScalarVolume*         m_ExtracellularFluidVolume;//planned
-  SEScalarVolume*         m_ExtravascularFluidVolume;//planned
-  SEScalarVolume*         m_IntracellularFluidVolume;//planned
+  SEScalarVolume*         m_ExtracellularFluidVolume;
+  SEScalarVolume*         m_ExtravascularFluidVolume;
+  SEScalarVolume*         m_IntracellularFluidVolume;
   SEScalar*               m_IntracellularFluidPH;
   SEScalarVolumePerTime*  m_OxygenConsumptionRate;
   SEScalar*               m_RespiratoryExchangeRatio;
-
-
+  SEScalarVolume*         m_TotalFluidVolume;
 };

@@ -1,24 +1,36 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.bind.Patient_pb2 import PatientData
-from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Conditional, Field, PropertyError
-
-import plotly.graph_objects as go
-import plotly.offline as pyo
+import logging
+import argparse
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
+from pathlib import Path
+import matplotlib.pyplot as plt
+import plotly.offline as pyo
+import plotly.graph_objects as go
+from typing import Dict, List, Tuple
+
+from pulse.cdm.patient import eSex
+from pulse.cdm.scenario import SEScenarioExecStatus
+from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Conditional, Field, PropertyError
+from pulse.cdm.io.scenario import serialize_scenario_exec_status_list_from_file
 
 
-fields = [Field.Age_yr,
-Field.Height_cm,
-Field.BodyMassIndex,
-Field.BodyFatFraction,
-Field.HeartRateBaseline_bpm,
-Field.MeanArterialPressureBaseline_mmHg,
-Field.PulsePressureBaseline_mmHg,
-Field.RespirationRateBaseline_bpm]
+_pulse_logger = logging.getLogger('pulse')
+
+
+fields = [
+    Field.Age_yr,
+    Field.Height_cm,
+    Field.BodyMassIndex,
+    Field.BodyFatFraction,
+    Field.HeartRateBaseline_bpm,
+    Field.MeanArterialPressureBaseline_mmHg,
+    Field.PulsePressureBaseline_mmHg,
+    Field.RespirationRateBaseline_bpm
+]
+
 
 minAge_yr = 18
 stdAge_yr = 44
@@ -52,6 +64,7 @@ minRR_bpm = 8
 stdRR_bpm = 12
 maxRR_bpm = 20
 
+
 mapAllowableErrorFraction = 0.1
 stdMapMin_mmHg = stdMAP_mmHg - stdMAP_mmHg * mapAllowableErrorFraction
 stdMapMax_mmHg = stdMAP_mmHg + stdMAP_mmHg * mapAllowableErrorFraction
@@ -59,344 +72,343 @@ pulsePressureAllowableErrorFraction = 0.1
 stdPulsePressureMin_mmHg = stdPulsePressure_mmHg - stdPulsePressure_mmHg * pulsePressureAllowableErrorFraction
 stdPulsePressureMax_mmHg = stdPulsePressure_mmHg + stdPulsePressure_mmHg * pulsePressureAllowableErrorFraction
 
-standardValues = {
-    (PatientData.eSex.Male, Field.Age_yr): stdAge_yr,
-    (PatientData.eSex.Female, Field.Age_yr): stdAge_yr,
-    (PatientData.eSex.Male, Field.Height_cm): stdMaleHeight_cm,
-    (PatientData.eSex.Female, Field.Height_cm): stdFemaleHeight_cm,
-    (PatientData.eSex.Male, Field.BodyMassIndex): stdMaleBMI,
-    (PatientData.eSex.Female, Field.BodyMassIndex): stdFemaleBMI,
-    (PatientData.eSex.Male, Field.BodyFatFraction): stdMaleBFF,
-    (PatientData.eSex.Female, Field.BodyFatFraction): stdFemaleBFF,
-    (PatientData.eSex.Male, Field.HeartRateBaseline_bpm): stdHR_bpm,
-    (PatientData.eSex.Female, Field.HeartRateBaseline_bpm): stdHR_bpm,
-    (PatientData.eSex.Male, Field.MeanArterialPressureBaseline_mmHg): stdMAP_mmHg,
-    (PatientData.eSex.Female, Field.MeanArterialPressureBaseline_mmHg): stdMAP_mmHg,
-    (PatientData.eSex.Male, Field.PulsePressureBaseline_mmHg): stdPulsePressure_mmHg,
-    (PatientData.eSex.Female, Field.PulsePressureBaseline_mmHg): stdPulsePressure_mmHg,
-    (PatientData.eSex.Male, Field.RespirationRateBaseline_bpm): stdRR_bpm,
-    (PatientData.eSex.Female, Field.RespirationRateBaseline_bpm): stdRR_bpm
-    }
 
-lineSep = "-------------------------------------------------------------------"
+standard_values = {
+    (eSex.Male, Field.Age_yr): stdAge_yr,
+    (eSex.Female, Field.Age_yr): stdAge_yr,
+    (eSex.Male, Field.Height_cm): stdMaleHeight_cm,
+    (eSex.Female, Field.Height_cm): stdFemaleHeight_cm,
+    (eSex.Male, Field.BodyMassIndex): stdMaleBMI,
+    (eSex.Female, Field.BodyMassIndex): stdFemaleBMI,
+    (eSex.Male, Field.BodyFatFraction): stdMaleBFF,
+    (eSex.Female, Field.BodyFatFraction): stdFemaleBFF,
+    (eSex.Male, Field.HeartRateBaseline_bpm): stdHR_bpm,
+    (eSex.Female, Field.HeartRateBaseline_bpm): stdHR_bpm,
+    (eSex.Male, Field.MeanArterialPressureBaseline_mmHg): stdMAP_mmHg,
+    (eSex.Female, Field.MeanArterialPressureBaseline_mmHg): stdMAP_mmHg,
+    (eSex.Male, Field.PulsePressureBaseline_mmHg): stdPulsePressure_mmHg,
+    (eSex.Female, Field.PulsePressureBaseline_mmHg): stdPulsePressure_mmHg,
+    (eSex.Male, Field.RespirationRateBaseline_bpm): stdRR_bpm,
+    (eSex.Female, Field.RespirationRateBaseline_bpm): stdRR_bpm
+}
+
 
 class PatientVariabilityAnalysis(PatientVariabilityResults):
-    systems = []
-    passErrors = [10.0, 30.0]  # Errors are in %, not fraction!!!
+    __slots__ = ["_systems", "_output_dir"]
+    pass_errors = [10.0, 30.0]  # Errors are in %, not fraction!!!
 
-    def __init__(self, dir: str):
-        super().__init__(dir)
+    def __init__(self):
+        super().__init__()
+        self._systems = list()
+        self._output_dir = None
 
-    def process(self):
-        # Count everything
-        no_errors = 0
-        failed_setup = 0
-        failed_stabilization = 0
-        runtime_error = 0
-        fatal_runtime_error = 0
-        for state in self._results.PatientState:
-            if state.Failure == 0:
-                no_errors = no_errors + 1
-            elif state.Failure == 1:
-                failed_setup = failed_setup + 1
-            elif state.Failure == 2:
-                failed_stabilization = failed_stabilization + 1
-            elif state.Failure == 3:
-                runtime_error = runtime_error + 1
-            elif state.Failure == 4:
-                fatal_runtime_error = fatal_runtime_error + 1
+    def process(self, scenario_exec_status_file: Path, validation_results_file: Path, output_directory: Path) -> None:
+        _exec_status = list()
+        if not scenario_exec_status_file.is_file():
+            _pulse_logger.warning(f"Could not locate scenario exec status file: {scenario_exec_status_file}")
+        else:
+            serialize_scenario_exec_status_list_from_file(scenario_exec_status_file, _exec_status)
+        # Output scenario exec summary
+        if _exec_status:
+            for category, value in SEScenarioExecStatus.summarize_exec_status_list(_exec_status).items():
+                _pulse_logger.info(f"{category} Runs: {value}")
 
-        print("Total Runs " + str(len(self._results.PatientState)))
-        print("Valid Runs " + str(no_errors))
-        print("FailedSetup Runs " + str(failed_setup))
-        print("FailedStabilization Runs " + str(failed_stabilization))
-        print("RuntimeError Runs " + str(runtime_error))
-        print("FatalRuntimeError Runs " + str(fatal_runtime_error))
+        _pulse_logger.info(f"Loading {validation_results_file}...")
+        self.open_validation_results(validation_results_file)
+        _pulse_logger.info(f"Done!")
+        self._output_dir = output_directory
+        self._output_dir.mkdir(exist_ok=True, parents=True)
 
-        results = analysis.everythingQuery()
-        numAllPatients = analysis.numPatients(results)
-        print("All patients: " + str(numAllPatients))
-        del results["ids"]
-        analysis.systems = analysis.combineCategories(results)
+        # Identify number of patients and systems in this dataset
+        matches, results = analysis.everything_query()
+        _pulse_logger.info(f"All patients: {len(matches)}")
+        self._systems = self.combine_categories(results)
 
-        analysis.createRadarCharts()
-        analysis.createBoxPlots()
+        self.create_radar_charts()
+        self.create_box_plots()
 
-    def createBoxPlots(self):
-        print(" --------------------- Create box plots ---------------------")
-        for passError in analysis.passErrors:
+    def create_box_plots(self) -> None:
+        _pulse_logger.info(" --------------------- Create box plots ---------------------")
+        for pass_error in self.pass_errors:
             # Standard male
-            results = analysis.standardQuery(PatientData.eSex.Male)
-            numStandardMalePatients = analysis.numPatients(results)
-            print("Standard male patients: " + str(numStandardMalePatients))
-            del results["ids"]
-            standardMaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
+            std_male_matches, results = self.standard_query(eSex.Male)
+            _pulse_logger.info(f"Standard male patients: {len(std_male_matches)}")
+            standard_male_values = self.calculate_system_pass_rate(results, pass_error, self._systems)
 
             # Standard female
-            results = analysis.standardQuery(PatientData.eSex.Female)
-            numStandardFemalePatients = analysis.numPatients(results)
-            print("Standard female patients: " + str(numStandardFemalePatients))
-            del results["ids"]
-            standardFemaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
+            std_female_matches, results = self.standard_query(eSex.Female)
+            _pulse_logger.info(f"Standard female patients: {len(std_female_matches)}")
+            standard_female_values = self.calculate_system_pass_rate(results, pass_error, self._systems)
 
-            for idx, system in enumerate(analysis.systems):
-                plotData = {}
+            for idx, system in enumerate(self._systems):
+                plot_data = {}
                 for field in fields:
-                    print("Evaluating " + system + " system with " + str(field))
-                    results = analysis.singleParameterQuery(PatientData.eSex.Male, field)
-                    del results["ids"]
-                    maleValues = analysis.calculateParameterPassRate(results, passError, system)
-                    results = analysis.singleParameterQuery(PatientData.eSex.Female, field)
-                    del results["ids"]
-                    femaleValues = analysis.calculateParameterPassRate(results, passError, system)
+                    _pulse_logger.info(f"Evaluating {system} system with {field}")
+                    _, results = self.single_parameter_query(eSex.Male, field)
+                    male_values = self.calculate_parameter_pass_rate(results, pass_error, system)
+                    _, results = self.single_parameter_query(eSex.Female, field)
+                    female_values = self.calculate_parameter_pass_rate(results, pass_error, system)
                     # Clean up the category names for the plot
-                    strField = str(field).replace("Field.", "")
-                    strField = strField.split("_", 1)[0]
-                    strField = strField.replace("BodyMassIndex", "BMI")
-                    strField = strField.replace("BodyFatFraction", "FF")
-                    strField = strField.replace("HeartRateBaseline", "HR")
-                    strField = strField.replace("MeanArterialPressureBaseline", "MAP")
-                    strField = strField.replace("PulsePressureBaseline", "PP")
-                    strField = strField.replace("RespirationRateBaseline", "RR")
+                    str_field = str(field).replace("Field.", "")
+                    str_field = str_field.split("_", 1)[0]
+                    str_field = str_field.replace("BodyMassIndex", "BMI")
+                    str_field = str_field.replace("BodyFatFraction", "FF")
+                    str_field = str_field.replace("HeartRateBaseline", "HR")
+                    str_field = str_field.replace("MeanArterialPressureBaseline", "MAP")
+                    str_field = str_field.replace("PulsePressureBaseline", "PP")
+                    str_field = str_field.replace("RespirationRateBaseline", "RR")
                     # Blood pressures are special
-                    if strField != "MAP" and strField != "PP":
-                        strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
-                        plotData.update({strField: maleValues + femaleValues})
-                        print("Patients evaluated: " + str(len(maleValues + femaleValues)))
+                    if str_field != "MAP" and str_field != "PP":
+                        combined_values = male_values + female_values
+                        str_field += f" ({len(combined_values)})"
+                        plot_data.update({str_field: combined_values})
+                        _pulse_logger.info(f"Patients evaluated: {len(combined_values)}")
 
                 # Blood pressures are special
-                results = analysis.bloodPressureQuery(PatientData.eSex.Male)
-                del results["ids"]
-                maleValues = analysis.calculateParameterPassRate(results, passError, system)
-                results = analysis.bloodPressureQuery(PatientData.eSex.Female)
-                del results["ids"]
-                femaleValues = analysis.calculateParameterPassRate(results, passError, system)
-                strField = "BP"
-                strField = strField + " (" + str(len(maleValues + femaleValues)) + ")"
-                plotData.update({strField: maleValues + femaleValues})
-                print("Patients evaluated: " + str(len(maleValues + femaleValues)))
+                _, results = self.blood_pressure_query(eSex.Male)
+                male_values = self.calculate_parameter_pass_rate(results, pass_error, system)
+                _, results = self.blood_pressure_query(eSex.Female)
+                female_values = self.calculate_parameter_pass_rate(results, pass_error, system)
+                combined_values = male_values + female_values
+                str_field = "BP"
+                str_field += f" ({len(combined_values)})"
+                plot_data.update({str_field: combined_values})
+                _pulse_logger.info(f"Patients evaluated: {len(combined_values)}")
 
                 # Add NaNs to make data size the same, so pandas doesn't complain
-                dataLength = 0
-                for key, value in plotData.items():
+                data_length = 0
+                for key, value in plot_data.items():
                     length = len(value)
-                    if length > dataLength:
-                        dataLength = length
-                for key, value in plotData.items():
-                    lengthDiff = dataLength - len(value)
-                    if lengthDiff > 0:
-                        value = np.append(value, np.repeat(np.nan, lengthDiff))
-                        plotData.update({key: value})
+                    if length > data_length:
+                        data_length = length
+                for key, value in plot_data.items():
+                    length_diff = data_length - len(value)
+                    if length_diff > 0:
+                        value = np.append(value, np.repeat(np.nan, length_diff))
+                        plot_data.update({key: value})
 
-                df = pd.DataFrame(plotData)
+                df = pd.DataFrame(plot_data)
                 df.boxplot(grid=True, rot=0)
                 left, right = plt.xlim()
-                plt.hlines(standardMaleValues[idx], xmin=left, xmax=right, color='blue', linestyles='--')
-                plt.hlines(standardFemaleValues[idx], xmin=left, xmax=right, color='r', linestyles='--')
+                plt.hlines(standard_male_values[idx], xmin=left, xmax=right, color='blue', linestyles='--')
+                plt.hlines(standard_female_values[idx], xmin=left, xmax=right, color='r', linestyles='--')
                 plt.ylim([0.0, 1.01])
-                plt.title(system + " Pass Rate Per Parameter within " + str(passError) + "%")
+                plt.title(f"{system} Pass Rate Per Parameter within {pass_error}%")
                 plt.tight_layout()
                 #plt.show()
-                plt.savefig("test_results/patient_variability/Box_Plot_" + str(passError) + "%_" + system + ".png")
+                plot_file = str(self._output_dir / f"Box_Plot_{pass_error}%_{system}.png")
+                _pulse_logger.info("Creating box plot: " + plot_file)
+                plt.savefig(plot_file)
                 plt.clf()
 
-    def createRadarCharts(self):
-        print(" --------------------- Create radar chart ---------------------")
-        for passError in analysis.passErrors:
+    def create_radar_charts(self) -> None:
+        _pulse_logger.info(" --------------------- Create radar chart ---------------------")
+        for pass_error in self.pass_errors:
             # Standard male
-            results = analysis.standardQuery(PatientData.eSex.Male)
-            numStandardMalePatients = analysis.numPatients(results)
-            print("Standard male patients: " + str(numStandardMalePatients))
-            del results["ids"]
-            radarStandardMaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
+            std_male_matches, results = self.standard_query(eSex.Male)
+            _pulse_logger.info(f"Standard male patients: {len(std_male_matches)}")
+            radar_standard_male_values = self.calculate_system_pass_rate(results, pass_error, self._systems)
 
             #Standard female
-            results = analysis.standardQuery(PatientData.eSex.Female)
-            numStandardFemalePatients = analysis.numPatients(results)
-            print("Standard female patients: " + str(numStandardFemalePatients))
-            del results["ids"]
-            radarStandardFemaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
+            std_female_matches, results = self.standard_query(eSex.Female)
+            _pulse_logger.info(f"Standard female patients: {len(std_female_matches)}")
+            radar_standard_female_values = self.calculate_system_pass_rate(results, pass_error, self._systems)
 
             # Nonstandard male query
-            results = analysis.nonStandardQuery(PatientData.eSex.Male)
-            numNonstandardMalePatients = analysis.numPatients(results)
-            print("Nonstandard male patients: " + str(numNonstandardMalePatients))
-            del results["ids"]
-            radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
+            nonstd_male_matches, results = self.non_standard_query(eSex.Male)
+            _pulse_logger.info(f"Nonstandard male patients: {len(nonstd_male_matches)}")
+            radar_nonstandard_male_values = self.calculate_system_pass_rate(results, pass_error, self._systems)
 
             # Nonstandard female query
-            results = analysis.nonStandardQuery(PatientData.eSex.Female)
-            numNonstandardFemalePatients = analysis.numPatients(results)
-            print("Nonstandard female patients: " + str(numNonstandardFemalePatients))
-            del results["ids"]
-            radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, passError, analysis.systems)
+            nonstd_female_matches, results = self.non_standard_query(eSex.Female)
+            _pulse_logger.info(f"Nonstandard female patients: {len(nonstd_female_matches)}")
+            radar_nonstandard_female_values = self.calculate_system_pass_rate(results, pass_error, self._systems)
 
             # Generate radar chart
-            radarCategories = [*analysis.systems, analysis.systems[0]]
+            radar_categories = [*self._systems, self._systems[0]]
 
-            radarStandardMaleValues = [*radarStandardMaleValues, radarStandardMaleValues[0]]
-            radarStandardFemaleValues = [*radarStandardFemaleValues, radarStandardFemaleValues[0]]
-            radarNonstandardMaleValues = [*radarNonstandardMaleValues, radarNonstandardMaleValues[0]]
-            radarNonstandardFemaleValues = [*radarNonstandardFemaleValues, radarNonstandardFemaleValues[0]]
+            radar_standard_male_values = [*radar_standard_male_values, radar_standard_male_values[0]]
+            radar_standard_female_values = [*radar_standard_female_values, radar_standard_female_values[0]]
+            radar_nonstandard_male_values = [*radar_nonstandard_male_values, radar_nonstandard_male_values[0]]
+            radar_nonstandard_female_values = [*radar_nonstandard_female_values, radar_nonstandard_female_values[0]]
 
             fig = go.Figure(
                 data=[
-                    go.Scatterpolar(r=radarStandardMaleValues, theta=radarCategories, name='Standard Male ('+str(numStandardMalePatients)+' total)'),
-                    go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female ('+str(numStandardFemalePatients)+' total)'),
-                    go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Cumulative Nonstandard Male ('+str(numNonstandardMalePatients)+' total)'),
-                    go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Cumulative Nonstandard Female ('+str(numNonstandardFemalePatients)+' total)')
+                    go.Scatterpolar(r=radar_standard_male_values, theta=radar_categories, name=f'Standard Male ({len(std_male_matches)} total)'),
+                    go.Scatterpolar(r=radar_standard_female_values, theta=radar_categories, name=f'Standard Female ({len(std_female_matches)} total)'),
+                    go.Scatterpolar(r=radar_nonstandard_male_values, theta=radar_categories, name=f'Cumulative Nonstandard Male ({len(nonstd_male_matches)} total)'),
+                    go.Scatterpolar(r=radar_nonstandard_female_values, theta=radar_categories, name=f'Cumulative Nonstandard Female ({len(nonstd_female_matches)} total)')
                 ],
                 layout=go.Layout(
-                    title=go.layout.Title(text="Physiology System Pass Rate within " + str(passError) + "%"),
+                    title=go.layout.Title(text=f"Physiology System Pass Rate within {pass_error}%"),
                     polar={'radialaxis': {'visible': True}},
                     showlegend=True
                 )
             )
-            pyo.offline.plot(fig, filename="test_results/patient_variability/RadarChart_" + str(passError) + "%_" + ".html")
+            plot_file = str(self._output_dir / f"RadarChart_{pass_error}%_.html")
+            _pulse_logger.info("Creating radar chart: " + plot_file)
+            pyo.offline.plot(fig, filename=plot_file)
 
-    def numPatients(self, results):
-        return len(results["ids"])
-
-    def analyzePropertyError(self, property_error: PropertyError):
+    def analyze_property_error(self, property_error: PropertyError) -> None:
         # We can dynamically add members to our property_error object
         property_error.average_error = 0
         for error in property_error.errors:
             property_error.average_error = property_error.average_error + error
         property_error.average_error = property_error.average_error / len(property_error.errors)
 
-    def standardQuery(self, sex:PatientData.eSex):
-        #print("Standard " + PatientData.eSex(sex).name + " query")
+    def standard_query(self, sex: eSex) -> Tuple[List[str], Dict[str, PropertyError]]:
+        _pulse_logger.debug(f"Standard {sex.name} query")
         query = Conditional()
         query.sex(sex)
         for field in fields:
-            query.addCondition(field, '==', standardValues[sex, field])
-        results = self.conditionalFilter([query])
-        return results
+            query.add_condition(field, '==', standard_values[sex, field])
+        return self.conditional_filter([query])
 
-    def nonStandardQuery(self, sex:PatientData.eSex):
-        #print("Nonstandard " + sex.name + " query")
+    def non_standard_query(self, sex: eSex) -> Tuple[List[str], Dict[str, PropertyError]]:
+        _pulse_logger.debug(f"Nonstandard {sex.name} query")
         query = Conditional()
         query.sex(sex)
         queryOr = Conditional('OR')
         for field in fields:
-            queryOr.addCondition(field, '!=', standardValues[sex, field])
-        query.addConditional(queryOr)
-        results = self.conditionalFilter([query])
-        return results
+            queryOr.add_condition(field, '!=', standard_values[sex, field])
+        query.add_conditional(queryOr)
+        return self.conditional_filter([query])
 
-    def everythingQuery(self):
-        print("Everything query")
+    def everything_query(self) -> Tuple[List[str], Dict[str, PropertyError]]:
+        _pulse_logger.info("Everything query")
         query = Conditional()
-        results = self.conditionalFilter([query])
-        return results
+        return self.conditional_filter([query])
 
-    def singleParameterQuery(self, sex:PatientData.eSex, field:Field):
-        #print(sex.name + " " + field.name + " query")
+    def single_parameter_query(self, sex: eSex, field:Field) -> Tuple[List[str], Dict[str, PropertyError]]:
+        _pulse_logger.debug(f"{sex.name} {field.name} query")
         query = Conditional()
         query.sex(sex)
-        for currentField in fields:
-            if field != currentField:
-                query.addCondition(currentField, '==', standardValues[sex, currentField])
-        results = self.conditionalFilter([query])
-        return results
+        for current_field in fields:
+            if field != current_field:
+                query.add_condition(current_field, '==', standard_values[sex, current_field])
+        return self.conditional_filter([query])
 
-    def bloodPressureQuery(self, sex:PatientData.eSex):
-        #print(sex.name + " " + field.name + " query")
+    def blood_pressure_query(self, sex: eSex) -> Tuple[List[str], Dict[str, PropertyError]]:
+        _pulse_logger.debug(f"{sex.name} Blood Pressure query")
         query = Conditional()
         query.sex(sex)
-        for currentField in fields:
-            if Field.MeanArterialPressureBaseline_mmHg != currentField and Field.PulsePressureBaseline_mmHg != currentField:
-                query.addCondition(currentField, '==', standardValues[sex, currentField])
-        results = self.conditionalFilter([query])
-        return results
+        for current_field in fields:
+            if Field.MeanArterialPressureBaseline_mmHg != current_field and Field.PulsePressureBaseline_mmHg != current_field:
+                query.add_condition(current_field, '==', standard_values[sex, current_field])
+        return self.conditional_filter([query])
 
-    def calculateSystemPassRate(self, results, passError, categories):
-        passRates = [0] * len(categories)
-        totalNumPass = [0] * len(categories)
-        totalNumFail = [0] * len(categories)
-        for system,properties in results.items():
-            print("Examining system "+system)
-            numPass = 0
-            numFail = 0
-            for property,property_error in properties.items():
+    def calculate_system_pass_rate(self, results: Dict[str, PropertyError], pass_error: float, categories: List[str]) -> List[float]:
+        pass_rates = [0] * len(categories)
+        total_num_pass = [0] * len(categories)
+        total_num_fail = [0] * len(categories)
+        for system, properties in results.items():
+            _pulse_logger.info(f"Examining {system} system")
+            num_pass = 0
+            num_fail = 0
+            for property, property_error in properties.items():
                 for error in property_error.errors:
-                    if abs(error) > passError:
-                        numFail = numFail + 1
+                    if abs(error) > pass_error:
+                        num_fail = num_fail + 1
                     else:
-                        numPass = numPass + 1
+                        num_pass = num_pass + 1
             for idx, category in enumerate(categories):
                 if category in system:
-                    totalNumPass[idx] = totalNumPass[idx] + numPass
-                    totalNumFail[idx] = totalNumFail[idx] + numFail
+                    total_num_pass[idx] = total_num_pass[idx] + num_pass
+                    total_num_fail[idx] = total_num_fail[idx] + num_fail
 
         for idx, category in enumerate(categories):
-            passRate = 0
-            numPass = totalNumPass[idx]
-            numFail = totalNumFail[idx]
-            if numPass + numFail != 0:
-                passRate = numPass / (numPass + numFail)
-            passRates[idx] = passRate
-        return passRates
+            pass_rate = 0
+            num_pass = total_num_pass[idx]
+            num_fail = total_num_fail[idx]
+            if num_pass + num_fail != 0:
+                pass_rate = num_pass / (num_pass + num_fail)
+            pass_rates[idx] = pass_rate
+        return pass_rates
 
-    def calculateParameterPassRate(self, results, passError, category):
-        perPatientNumPass = []
-        perPatientNumFail = []
-        for system,properties in results.items():
+    def calculate_parameter_pass_rate(self, results: Dict[str, PropertyError], pass_error: float, category: str) -> List[float]:
+        per_patient_num_pass = list()
+        per_patient_num_fail = list()
+        for system, properties in results.items():
             if not category in system:
                 continue
-            print("Examining system "+system)
-            for property,property_error in properties.items():
+            _pulse_logger.info(f"Examining {system} system ")
+            for property, property_error in properties.items():
                 for idx, error in enumerate(property_error.errors):
-                    numPass = 0
-                    numFail = 0
-                    if abs(error) > passError:
-                        numFail = 1
+                    num_pass = 0
+                    num_fail = 0
+                    if abs(error) > pass_error:
+                        num_fail = 1
                     else:
-                        numPass = 1
-                    if len(perPatientNumPass) < idx + 1:
-                        perPatientNumPass.append(numPass)
-                        perPatientNumFail.append(numFail)
+                        num_pass = 1
+                    if len(per_patient_num_pass) < idx + 1:
+                        per_patient_num_pass.append(num_pass)
+                        per_patient_num_fail.append(num_fail)
                     else:
-                        perPatientNumPass[idx] = perPatientNumPass[idx] + numPass
-                        perPatientNumFail[idx] = perPatientNumFail[idx] + numFail
-        perPatientPassRates = []
-        for idx, patient in enumerate(perPatientNumPass):
-            passRate = perPatientNumPass[idx] / (perPatientNumPass[idx] + perPatientNumFail[idx])
-            perPatientPassRates.append(passRate)
-        return perPatientPassRates
+                        per_patient_num_pass[idx] = per_patient_num_pass[idx] + num_pass
+                        per_patient_num_fail[idx] = per_patient_num_fail[idx] + num_fail
+        per_patient_pass_rates = list()
+        for idx, patient in enumerate(per_patient_num_pass):
+            pass_rate = per_patient_num_pass[idx] / (per_patient_num_pass[idx] + per_patient_num_fail[idx])
+            per_patient_pass_rates.append(pass_rate)
+        return per_patient_pass_rates
 
-    def combineCategories(self, results):
-        startCategories = []
-        endCategories = []
-        for system, properties in results.items():
-            startCategories.append(system)
-        for startCategory in startCategories:
-            newCategory = True
-            for idx, endCategory in enumerate(endCategories):
-                if startCategory in endCategory:
-                    # Replace endCategory with startCategory
-                    endCategories[idx] = startCategory
-                    newCategory = False
-                if endCategory in startCategory:
+    def combine_categories(self, results: Dict[str, PropertyError]) -> List[str]:
+        start_categories = list(results.keys())
+        end_categories = list()
+        for start_category in start_categories:
+            new_category = True
+            for idx, end_category in enumerate(end_categories):
+                if start_category in end_category:
+                    # Replace end_category with start_category
+                    end_categories[idx] = start_category
+                    new_category = False
+                if end_category in start_category:
                     # Don't do anything
-                    newCategory = False
+                    new_category = False
                     break
-            if newCategory:
+            if new_category:
                 # New, so add
-                endCategories.append(startCategory)
-        finalCategories = []
-        for endCategory in endCategories:
+                end_categories.append(start_category)
+        final_categories = list()
+        for end_category in end_categories:
             duplicate = False
-            for finalCategory in finalCategories:
-                if endCategory == finalCategory:
+            for finalCategory in final_categories:
+                if end_category == finalCategory:
                     duplicate = True
                     break
             if not duplicate:
-                finalCategories.append(endCategory)
+                final_categories.append(end_category)
 
-        return finalCategories
+        return final_categories
 
 
 if __name__ == '__main__':
-    analysis = PatientVariabilityAnalysis("./test_results/patient_variability/validation/full/")
-    analysis.process()
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+    mode = "validation"
+    # Option to validate/generate tables for either the baseline/verification csv or the test_results
+    parser = argparse.ArgumentParser(description="Process a validation targets file to generate plots")
+    parser.add_argument(
+        "-s", "--scenario_exec",
+        type=Path,
+        default=f"./test_results/patient_variability/{mode}/scenarios/Validation.json",
+        help="A scenario exec status list json file to analyze and create plots for."
+    )
+    parser.add_argument(
+        "-v", "--validation_results",
+        type=Path,
+        default=f"./test_results/patient_variability/{mode}/scenarios/ValidationTargets.json",
+        help="A validation targets list json file to analyze and create plots for."
+    )
+    parser.add_argument(
+        "-o", "--output-directory",
+        type=Path,
+        default=f"./test_results/patient_variability/{mode}/analysis",
+        help="Where to store validation analysis artifacts."
+    )
+    opts = parser.parse_args()
+
+    analysis = PatientVariabilityAnalysis()
+    analysis.process(scenario_exec_status_file=opts.scenario_exec,
+                     validation_results_file=opts.validation_results,
+                     output_directory=opts.output_directory)

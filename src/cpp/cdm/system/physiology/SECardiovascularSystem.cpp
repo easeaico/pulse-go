@@ -37,6 +37,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_MeanArterialCarbonDioxidePartialPressureDelta = nullptr;
   m_MeanCentralVenousPressure = nullptr;
   m_MeanSkinFlow = nullptr;
+  m_PeripheralPerfusionIndex = nullptr;
   m_PulmonaryArterialPressure = nullptr;
   m_PulmonaryCapillariesCoverageFraction = nullptr;
   m_PulmonaryCapillariesWedgePressure = nullptr;
@@ -82,6 +83,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_MeanArterialCarbonDioxidePartialPressureDelta);
   SAFE_DELETE(m_MeanCentralVenousPressure);
   SAFE_DELETE(m_MeanSkinFlow);
+  SAFE_DELETE(m_PeripheralPerfusionIndex);
   SAFE_DELETE(m_PulmonaryArterialPressure);
   SAFE_DELETE(m_PulmonaryCapillariesCoverageFraction);
   SAFE_DELETE(m_PulmonaryCapillariesWedgePressure);
@@ -100,6 +102,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_TotalHemorrhageRate);
   SAFE_DELETE(m_TotalHemorrhagedVolume);
   SAFE_DELETE(m_TotalPulmonaryPerfusion);
+
 }
 
 void SECardiovascularSystem::Clear()
@@ -125,6 +128,7 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_MeanArterialCarbonDioxidePartialPressureDelta);
   INVALIDATE_PROPERTY(m_MeanCentralVenousPressure);
   INVALIDATE_PROPERTY(m_MeanSkinFlow);
+  INVALIDATE_PROPERTY(m_PeripheralPerfusionIndex);
   INVALIDATE_PROPERTY(m_PulmonaryArterialPressure);
   INVALIDATE_PROPERTY(m_PulmonaryCapillariesCoverageFraction);
   INVALIDATE_PROPERTY(m_PulmonaryCapillariesWedgePressure);
@@ -187,6 +191,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetMeanCentralVenousPressure();
   if (name.compare("MeanSkinFlow") == 0)
     return &GetMeanSkinFlow();
+  if (name.compare("PeripheralPerfusionIndex") == 0)
+    return &GetPeripheralPerfusionIndex();
   if (name.compare("PulmonaryArterialPressure") == 0)
     return &GetPulmonaryArterialPressure();
   if (name.compare("PulmonaryCapillariesCoverageFraction") == 0)
@@ -223,6 +229,7 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetTotalHemorrhagedVolume();
   if (name.compare("TotalPulmonaryPerfusion") == 0)
     return &GetTotalPulmonaryPerfusion();
+
   return nullptr;
 }
 
@@ -573,6 +580,23 @@ double SECardiovascularSystem::GetMeanSkinFlow(const VolumePerTimeUnit& unit) co
   if (m_MeanSkinFlow == nullptr)
     return SEScalar::dNaN();
   return m_MeanSkinFlow->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasPeripheralPerfusionIndex() const
+{
+  return m_PeripheralPerfusionIndex == nullptr ? false : m_PeripheralPerfusionIndex->IsValid();
+}
+SEScalar0To1& SECardiovascularSystem::GetPeripheralPerfusionIndex()
+{
+  if (m_PeripheralPerfusionIndex == nullptr)
+    m_PeripheralPerfusionIndex = new SEScalar0To1();
+  return *m_PeripheralPerfusionIndex;
+}
+double SECardiovascularSystem::GetPeripheralPerfusionIndex() const
+{
+  if (m_PeripheralPerfusionIndex == nullptr)
+    return SEScalar::dNaN();
+  return m_PeripheralPerfusionIndex->GetValue();
 }
 
 bool SECardiovascularSystem::HasPulmonaryArterialPressure() const

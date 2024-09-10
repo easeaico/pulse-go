@@ -115,6 +115,10 @@ public:
   virtual SEScalarVolumePerTime& GetMeanSkinFlow();
   virtual double GetMeanSkinFlow(const VolumePerTimeUnit& unit) const;
 
+  virtual bool HasPeripheralPerfusionIndex() const;
+  virtual SEScalar0To1& GetPeripheralPerfusionIndex();
+  virtual double GetPeripheralPerfusionIndex() const;
+
   virtual bool HasPulmonaryArterialPressure() const;
   virtual SEScalarPressure& GetPulmonaryArterialPressure();
   virtual double GetPulmonaryArterialPressure(const PressureUnit& unit) const;
@@ -210,6 +214,7 @@ protected:
   SEScalarPressure*                      m_MeanArterialCarbonDioxidePartialPressureDelta;
   SEScalarPressure*                      m_MeanCentralVenousPressure;
   SEScalarVolumePerTime*                 m_MeanSkinFlow;
+  SEScalar0To1*                          m_PeripheralPerfusionIndex;
   SEScalarPressure*                      m_PulmonaryArterialPressure;
   SEScalar0To1*                          m_PulmonaryCapillariesCoverageFraction;
   SEScalarPressure*                      m_PulmonaryCapillariesWedgePressure;

@@ -9,8 +9,10 @@ import "pulse/cdm/bind/Enums.proto";
 
 enum eSerializationFormat
 {
-  JSON     = 0;
-  BINARY   = 1;
+  JSON         = 0;
+  BINARY       = 1;
+  VERBOSE_JSON = 2;
+  TEXT         = 3;
 }
 
 message ScenarioData
@@ -30,34 +32,67 @@ message ScenarioData
 
 message ScenarioExecData
 {
+  enum eRelativeSerialization
+  {
+    ToWorkingDirectory    = 0;
+    ToOutputRootDirectory = 1;
+    ToScenarioDirectory   = 2;
+  }
+  
   eSwitch                          LogToConsole                  = 1;
-  string                           DataRootDirectory             = 2;/**<< @brief Root directory of all input files for stabilization, generally install/bin of the build*/
-  string                           OutputRootDirectory           = 3;/**<< Root directory where all output files will be written */
-  eSwitch                          OrganizeOutputDirectory       = 4;/**<< Put outputs in new folder named by the scenario, if processing a ScenarioDirectory, the source folder hierarchy will also be reflected in the output directory */
+  eRelativeSerialization           RelativeSerialization         = 2;/**<< @brief When processing SerializeState actions with a relative directory, specify what the path is relative to*/
+  string                           DataRootDirectory             = 3;/**<< @brief Root directory of all input files for stabilization, generally install/bin of the build*/
+  string                           OutputRootDirectory           = 4;/**<< Root directory where all output files will be written */
+  eSwitch                          OrganizeOutputDirectory       = 5;/**<< Put outputs in new folder named by the scenario, if processing a ScenarioDirectory, the source folder hierarchy will also be reflected in the output directory */
 
   /** Used for testing that states are consistent around actions */
-  eSwitch                          AutoSerializeAfterActions     = 5;/**<< @brief Save state after an action is added to the action manager, then again after it is processed. (These states are always time stamped.) */
-  double                           AutoSerializePeriod_s         = 6;/**<< @brief The frequency at which to write a file, 1s would write a file every second. 0 will not save out at all (if you wanted after actions only.) */
-  eSwitch                          TimeStampSerializedStates     = 7;/**<< @brief Put a time stamp at the end of the period state filename, Off will overwrite the same individual file, On will create new files every period, named with the simulation time. */
+  eSwitch                          AutoSerializeAfterActions     = 6;/**<< @brief Save state after an action is added to the action manager, then again after it is processed. (These states are always time stamped.) */
+  double                           AutoSerializePeriod_s         = 7;/**<< @brief The frequency at which to write a file, 1s would write a file every second. 0 will not save out at all (if you wanted after actions only.) */
+  eSwitch                          TimeStampSerializedStates     = 8;/**<< @brief Put a time stamp at the end of the period state filename, Off will overwrite the same individual file, On will create new files every period, named with the simulation time. */
 
   oneof EngineConfiguration
   {
-    string                         EngineConfigurationContent    = 8;
-    string                         EngineConfigurationFilename   = 9;
+    string                         EngineConfigurationContent    = 9;
+    string                         EngineConfigurationFilename   = 10;
   }
 
   oneof Scenario
   {
-    string                         ScenarioContent               = 10;/**<< @brief Scenario json/binary inline*/
-    string                         ScenarioFilename              = 11;/**<< @brief Single Scenario filename*/
-    string                         ScenarioDirectory             = 12;/**<< @brief A directory, where each file is assumed to be a scenario.*/
-    string                         ScenarioLogFilename           = 13;/**<< @brief A directory, where each file is assumed to be a scenario.*/
-    string                         ScenarioLogDirectory          = 14;/**<< @brief A directory, where each file is assumed to be a scenario.*/
+    string                         ScenarioContent               = 11;/**<< @brief Scenario json/binary inline*/
+    string                         ScenarioFilename              = 12;/**<< @brief Single Scenario filename*/
+    string                         ScenarioDirectory             = 13;/**<< @brief A directory, where each file is assumed to be a scenario.*/
+    string                         ScenarioExecListFilename      = 14;/**<< @brief A Scenario exec list filename*/
+    string                         ScenarioLogFilename           = 15;/**<< @brief A scenario log file to convert to a scenario and run.*/
+    string                         ScenarioLogDirectory          = 16;/**<< @brief A directory of log files to convert to scenarios and run.*/
   }
-  
-  eSerializationFormat             ContentFormat                 = 15;/**<< @brief Set what Content is*/
-  int32                            ThreadCount                   = 16;/**<< @brief Number of threads to use when processing a Directory: >0 NumThreads to use; 0 NumThreads=NumCores; <0 NumThreads=NumCores-ThreadCount */
-  
-  repeated string                  DataRequestFilesSearch        = 17;/**<< @brief A list of directories to find any data request files referenced in the scenario. */
+
+  eSerializationFormat             ContentFormat                 = 17;/**<< @brief Set what Content is*/
+  int32                            ThreadCount                   = 18;/**<< @brief Number of threads to use when processing a Directory: >0 NumThreads to use; 0 NumThreads=NumCores; <0 NumThreads=NumCores-ThreadCount */
+
+  repeated string                  DataRequestFilesSearch        = 19;/**<< @brief A list of directories to find any data request files referenced in the scenario. */
 
 }
+
+enum eScenarioExecutionState
+{
+  Waiting  = 0;
+  Running  = 1;
+  Complete = 2;
+}
+message ScenarioExecStatusData
+{
+  
+  
+  EngineInitializationStatusData   InitializationStatus              = 1;
+  string                           ScenarioFilename                  = 2;
+  eScenarioExecutionState          ScenarioExecutionState            = 3;/**<< Rather than require the user to test a variety of properties to check if a scenario was executed. */
+  bool                             RuntimeError                      = 4;/**<< @brief Was there an Error running the engine. */
+  bool                             FatalRuntimeError                 = 5;/**<< @brief Was there a FatalError running the engine. */
+  double                           FinalSimulationTime_s             = 6;
+}
+
+message ScenarioExecStatusListData
+{
+  repeated ScenarioExecStatusData  ScenarioExecStatus                = 1;
+}
+

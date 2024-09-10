@@ -12,13 +12,3 @@ SEEnvironmentAction::~SEEnvironmentAction()
 {
 
 }
-
-void SEEnvironmentAction::Clear()
-{
-  SEAction::Clear();
-}
-
-bool SEEnvironmentAction::IsValid() const
-{
-  return SEAction::IsValid();
-}

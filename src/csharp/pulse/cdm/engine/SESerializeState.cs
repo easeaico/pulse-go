@@ -3,7 +3,7 @@
 
 namespace Pulse.CDM
 {
-  public enum eSerialization_Type : int
+  public enum eSerialization_Mode : int
   {
     Save = 0,
     Load
@@ -11,7 +11,7 @@ namespace Pulse.CDM
   public class SESerializeState : SEAction
   {
     protected string filename;
-    protected eSerialization_Type type;
+    protected eSerialization_Mode mode;
 
     public SESerializeState()
     {
@@ -22,7 +22,7 @@ namespace Pulse.CDM
     {
       base.Clear();
       filename = null;
-      type = eSerialization_Type.Save;
+      mode = eSerialization_Mode.Save;
     }
 
     public override bool IsValid()
@@ -30,8 +30,8 @@ namespace Pulse.CDM
       return HasFilename();
     }
 
-    public eSerialization_Type GetType() { return type; }
-    public void SetType(eSerialization_Type t) { type = t; }
+    public eSerialization_Mode GetMode() { return mode; }
+    public void SetMode(eSerialization_Mode t) { mode = t; }
 
     public bool HasFilename()
     {

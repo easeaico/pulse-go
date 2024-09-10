@@ -26,6 +26,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBCompartment.h"
 #include "cdm/io/protobuf/PBProperties.h"
 #include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/patient/SEPatient.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceCompound.h"
 #include "cdm/engine/SEEngineTracker.h"
@@ -131,6 +132,10 @@ namespace pulse
     {
       PBPatient::Load(src.currentpatient(), *dst.m_CurrentPatient);
       PBPatient::Load(src.initialpatient(), *dst.m_InitialPatient);
+
+      std::string str;
+      dst.m_CurrentPatient->SerializeToString(str, eSerializationFormat::JSON);
+      dst.Info("[Patient]\n" + str);
     }
     // Conditions //
     dst.m_Conditions->Clear();

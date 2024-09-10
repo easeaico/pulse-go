@@ -1,16 +1,21 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
 from google.protobuf import json_format
+from typing import List
 
-from pulse.cdm.scenario import SEScenario, SEScenarioExec
-from pulse.cdm.bind.Scenario_pb2 import ScenarioData, ScenarioExecData
+from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.scenario import SEScenario, SEScenarioExec, SEScenarioExecStatus, eScenarioExecutionState
+from pulse.cdm.bind.Scenario_pb2 import ScenarioData, ScenarioExecData, ScenarioExecStatusData, \
+                                        ScenarioExecStatusListData
+from pulse.cdm.bind.Engine_pb2 import ActionListData
 
 from pulse.cdm.io.engine import (
     serialize_actions_to_bind,
     serialize_data_request_manager_to_bind,
-    serialize_patient_configuration_to_bind
+    serialize_patient_configuration_to_bind,
+    serialize_engine_initialization_status_from_bind,
+    serialize_engine_initialization_status_to_bind
 )
 
 
@@ -102,6 +107,8 @@ def serialize_scenario_exec_to_bind(src: SEScenarioExec, dst: ScenarioExecData) 
         dst.ScenarioFilename = src.get_scenario_filename()
     elif src.get_scenario_directory():
         dst.ScenarioDirectory = src.get_scenario_directory()
+    elif src.get_scenario_exec_list_filename():
+        dst.ScenarioExecListFilename = src.get_scenario_exec_list_filename()
     elif src.get_scenario_log_filename():
         dst.ScenarioLogFilename = src.get_scenario_log_filename()
     elif src.get_scenario_log_directory():
@@ -114,3 +121,87 @@ def serialize_scenario_exec_to_bind(src: SEScenarioExec, dst: ScenarioExecData) 
 
 def serialize_scenario_exec_from_bind(src: ScenarioExecData, dst: SEScenarioExec):
     raise Exception("serialize_scenario_exec_from_bind not implemented")
+
+
+def serialize_scenario_exec_status_to_bind(src: SEScenarioExecStatus, dst: ScenarioExecStatusData) -> None:
+    serialize_engine_initialization_status_to_bind(src, dst.InitializationStatus)
+    if src.has_scenario_filename():
+        dst.ScenarioFilename = src.get_scenario_filename()
+    dst.RuntimeError = src.has_runtime_error()
+    dst.FatalRuntimeError = src.has_fatal_runtime_error()
+    dst.FinalSimulationTime_s = src.get_final_simulation_time_s()
+
+def serialize_scenario_exec_status_to_string(src: SEScenarioExecStatus, fmt: eSerializationFormat) -> str:
+    dst = ScenarioExecStatusData()
+    serialize_scenario_exec_status_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+
+def serialize_scenario_exec_status_to_file(src: SEScenarioExecStatus, filename: str) -> None:
+    string = serialize_scenario_exec_status_to_string(src, eSerializationFormat.JSON)
+    with open(filename, "w") as file:
+        file.write(string)
+
+def serialize_scenario_exec_status_from_bind(src: ScenarioExecStatusData, dst: SEScenarioExecStatus) -> None:
+    serialize_engine_initialization_status_from_bind(src.InitializationStatus, dst)
+    dst.set_scenario_filename(src.ScenarioFilename)
+    dst.set_scenario_execution_state(eScenarioExecutionState(src.ScenarioExecutionState))
+    dst.set_runtime_error(src.RuntimeError)
+    dst.set_fatal_runtime_error(src.FatalRuntimeError)
+    dst.set_final_simulation_time_s(src.FinalSimulationTime_s)
+
+def serialize_scenario_exec_status_from_string(
+    string: str,
+    dst: SEScenarioExecStatus,
+    fmt: eSerializationFormat
+) -> None:
+    src = ScenarioExecStatusData()
+    json_format.parse(string, src)
+    serialize_scenario_exec_status_from_bind(src, dst)
+
+def serialize_scenario_exec_status_from_file(filename: str, dst: SEScenarioExecStatus) -> None:
+    with open(filename) as f:
+        string = f.read()
+    serialize_scenario_exec_status_from_string(string, dst, eSerializationFormat.JSON)
+
+
+def serialize_scenario_exec_status_list_to_bind(
+    src: List[SEScenarioExecStatus],
+    dst: ScenarioExecStatusListData
+) -> None:
+    for status in src:
+        serialize_scenario_exec_status_to_bind(status, dst.ScenarioExecStatus.add())
+
+def serialize_scenario_exec_status_list_to_string(
+    src: List[SEScenarioExecStatus],
+    fmt: eSerializationFormat
+) -> str:
+    dst = ScenarioExecStatusListData()
+    serialize_scenario_exec_status_list_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+
+def serialize_scenario_exec_status_list_to_file(src: List[SEScenarioExecStatus], filename: str):
+    string = serialize_scenario_exec_status_list_to_string(src, eSerializationFormat.JSON)
+    with open(filename, "w") as file:
+        file.write(string)
+
+def serialize_scenario_exec_status_list_from_bind(
+    src: ScenarioExecStatusListData,
+    dst: List[SEScenarioExecStatus]
+) -> None:
+    for statusData in src.ScenarioExecStatus:
+        dst.append(SEScenarioExecStatus())
+        serialize_scenario_exec_status_from_bind(statusData, dst[-1])
+
+def serialize_scenario_exec_status_list_from_string(
+    string: str,
+    dst: List[SEScenarioExecStatus],
+    fmt: eSerializationFormat
+) -> None:
+    src = ScenarioExecStatusListData()
+    json_format.Parse(string, src)
+    serialize_scenario_exec_status_list_from_bind(src, dst)
+
+def serialize_scenario_exec_status_list_from_file(filename: str, dst: List[SEScenarioExecStatus]):
+    with open(filename) as f:
+        string = f.read()
+    serialize_scenario_exec_status_list_from_string(string, dst, eSerializationFormat.JSON)

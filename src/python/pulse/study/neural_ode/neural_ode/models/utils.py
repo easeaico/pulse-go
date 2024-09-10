@@ -143,7 +143,7 @@ class PFMixin(pl.LightningModule):
     # TODO check this when implementing categorical target in from_dataset
     # https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Predicting-multiple-targets-at-the-same-time
     @classmethod
-    def from_datamodule(cls, dm, **kwargs):
+    def from_datamodule(cls, dm, ckpt_path=None, **kwargs):
         dm.prepare_data()
         dm.setup(stage='train')
         # TODO keep track of deduce_default_output_parameters output_size
@@ -153,27 +153,39 @@ class PFMixin(pl.LightningModule):
         # for TFT:
         # output_size=[7, 7, 7, 7], # 4 target variables
         dataset = dm._dset('df_tr', **dm.kwargs)
-        loss_weights = cls.target_weights(dataset)
-        x_dims = len(dataset.reals) + len(dataset.flat_categoricals)
-        y_dims = len(dataset.target)
-        loss = cls._coerce_loss(kwargs['loss'], y_dims, loss_weights)
-        # These are PER-TARGET, no need to dup+weight them
-        logging_metrics = nn.ModuleList(
-            [cls._coerce_loss(l) for l in kwargs['logging_metrics']])
-        kwargs.update(
-            x_dims=x_dims,
-            y_dims=y_dims,
-            loss=loss,
-            logging_metrics=logging_metrics,
-        )
-        self = cls.from_dataset(
-            dataset,
-            **ub.dict_diff(
-                kwargs,
-                list(asdict(BaseModelWithCovariatesKwargs())) +
-                ['output_transformer', 'target', 'output_size']),
-            STUB=False,
-        )  #, output_transformer=dataset.target_normalizer)
+
+        # first-time initialization
+        if ckpt_path is None:
+            loss_weights = cls.target_weights(dataset)
+            x_dims = len(dataset.reals) + len(dataset.flat_categoricals)
+            y_dims = len(dataset.target)
+            loss = cls._coerce_loss(kwargs['loss'], y_dims, loss_weights)
+            # These are PER-TARGET, no need to dup+weight them
+            logging_metrics = nn.ModuleList(
+                [cls._coerce_loss(l) for l in kwargs['logging_metrics']])
+            kwargs.update(
+                x_dims=x_dims,
+                y_dims=y_dims,
+                loss=loss,
+                logging_metrics=logging_metrics,
+            )
+            self = cls.from_dataset(
+                dataset,
+                **ub.dict_diff(
+                    kwargs,
+                    list(asdict(BaseModelWithCovariatesKwargs())) +
+                    ['output_transformer', 'target', 'output_size']),
+                STUB=False,
+            )  #, output_transformer=dataset.target_normalizer)
+
+            # HACK ODE
+            # ckpt_path = 'lightning_logs/RecurrentODE_orig_b8p217s100sta/version_9/checkpoints/epoch=112-step=3051.ckpt'
+            # self.load_state_dict(torch.load(ckpt_path)['state_dict'])
+        else:
+            self = cls.load_from_checkpoint(ckpt_path)
+
+        # postprocessing
+
         batch = next(iter(dm.train_dataloader()))
         x, y = batch
         # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
@@ -181,6 +193,7 @@ class PFMixin(pl.LightningModule):
         # self.batch_size = len(x['encoder_lengths'])
         self.batch_size = dm.batch_size
         self.t_idx = dataset.reals.index(dm.t_param)
+        self.target = dataset.target
         # self.x_dims = x_dims  # TODO make properties based on pf?
         # self.y_dims = y_dims
         return self
@@ -401,7 +414,7 @@ class HemorrhageVitals(BaseData):
     missing_rate: Optional[float] = None  # 0.7
 
     # common
-    root_path: str = '/data/pulse/hemorrhage/hemorrhage'
+    root_path: str = '/data/pulse/hemorrhage/hemorrhage'  # severe dataset
     x_time_minutes: float = 20
     x_start_minutes: float = 0
     total_time_minutes_max: int = 120
@@ -428,11 +441,12 @@ class HemorrhageVitals(BaseData):
     # of x reverse solving until t0
     # if arch in { 'Seq2Seq', 'VAE' }
     start_reverse: bool = False
-    shuffle: bool = True
 
     static_behavior: Literal['ignore', 'propagate', 'augment'] = 'augment'
     time_augmentation: bool = False
     num_workers: int = 4
+
+    shuffle: bool = True  # turned off for overfit_batches
 
     def __post_init__(self):
         super().__init__()
@@ -443,8 +457,10 @@ class HemorrhageVitals(BaseData):
     def _cache_dir(self):
         if not self.hparams:
             self.save_hyperparameters(ignore=['read_cache'])
-        hparam_str = ub.hash_data(dict(self.hparams))
-        return (ub.Path(self.root_path) / 'cache' / hparam_str)
+        # hparam_str = ub.hash_data(dict(self.hparams))
+        h = str({k:v for k, v in sorted(self.hparams.items())})
+        hparam_str = ub.hash_data(h, base='abc')
+        return (ub.Path(self.root_path) / 'cache' / str(hparam_str))
 
     def _prepare_data(self):
         cache_dir = self._cache_dir
@@ -708,33 +724,41 @@ class HemorrhageVitals(BaseData):
     # could use shelve module to avoid dealing w serialization
     def _dset(self, df_name, xt_mins: Optional[Tuple[int, int]]=None, **kwargs):
 
-        # import xdev
-        # with xdev.embed_on_exception_context():
-            # # TODO file issue
-            # # for sklearn.preprocessing.StandardScaler
-            # import sklearn
-            # from sklearn.preprocessing import StandardScaler
-            # ub.util_hash._HASHABLE_EXTENSIONS.register(StandardScaler)(hash)
-            # cache_fpath = (self._cache_dir /
-                           # f'{df_name}_{xt_mins}_{ub.hash_data(kwargs)}.pt')
-        # if not cache_fpath.exists():
-        if 1:
+        # # TODO file issue
+        # # for sklearn.preprocessing.StandardScaler
+        # import sklearn
+        # from sklearn.preprocessing import StandardScaler
+        # ub.util_hash._HASHABLE_EXTENSIONS.register(StandardScaler)(hash)
+        # cache_fpath = (self._cache_dir /
+                       # f'{df_name}_{xt_mins}_{ub.hash_data(kwargs)}.pt')
+        # HACK, beware, clear cache when testing scaling
+        kwargs_save = kwargs.copy()
+        kwargs_save.pop('scalers')  # default StandardSCaler() added
+        dct = str({k:v for k, v in sorted(kwargs_save.items())})
+        dct_hash = ub.hash_data(dct, base='abc')
+        cache_fpath = (self._cache_dir /
+                       f'{df_name}_{xt_mins}_{dct_hash}.pt')
+        if not cache_fpath.exists():
 
             df = getattr(self, df_name)
             if xt_mins is not None:
                 xt_start_ix, xt_end_ix = map(self.mins_to_ix, xt_mins)
+                xt_end_ix -= xt_start_ix
                 kwargs['max_encoder_length'] = xt_end_ix
                 min_pred_idx_diff = (xt_start_ix + xt_end_ix - kwargs['min_prediction_idx'])
                 kwargs['min_prediction_idx'] += min_pred_idx_diff
                 kwargs['max_prediction_length'] -= min_pred_idx_diff
             dset = pf.TimeSeriesDataSet(df, **kwargs)
             print('loaded ', len(dset.decoded_index.id.unique()), ' pts')
-            # dset.save(cache_fpath)
+            dset.save(cache_fpath)
 
-        # dset = pf.TimeSeriesDataSet.load(cache_fpath)
+        dset = pf.TimeSeriesDataSet.load(cache_fpath)
         return dset
 
-    def train_dataloader(self, xt_mins: Optional[Tuple[float, float]]=None, xt_restrict=True):
+    def _dataloader(self, dset_nm: str,
+                    xt_mins: Optional[Tuple[float, float]]=None,
+                    xt_restrict=True,
+                    train=False):
         # can remove batch_sampler='synchronized' with irregular/masking support
         # (and should write a custom sampler - "TimeBounded"? - to ensure there
         # is some temporal overlap between batch entries)
@@ -747,36 +771,34 @@ class HemorrhageVitals(BaseData):
         if self.time_augmentation:
             kwargs['predict_mode'] = False
             kwargs['randomize_length'] = True  # TODO test this
-        dset = self._dset('df_tr', xt_mins, **kwargs)
+        dset = self._dset(dset_nm, xt_mins, **kwargs)
         if xt_restrict and xt_mins:
-            pts_in_orig = self._dset('df_tr', **kwargs).decoded_index.id.unique()
+            pts_in_orig = self._dset(dset_nm, **kwargs).decoded_index.id.unique()
             print('filtering', len(set(dset.decoded_index.id.unique()) - set(pts_in_orig)), 'pts')
             dset.filter(lambda df: df.id.isin(pts_in_orig), copy=False)
-        dl = dset.to_dataloader(train=True,
-                                batch_size=self.batch_size,
+        if train:
+            batch_size = self.batch_size
+            shuffle = self.shuffle
+        else:
+            batch_size = self.batch_size
+            # batch_size = self.batch_size * 10
+            shuffle = False
+        dl = dset.to_dataloader(train=train,
+                                batch_size=batch_size,
                                 batch_sampler='synchronized',
                                 num_workers=self.num_workers,
-                                shuffle=self.shuffle,
+                                shuffle=shuffle,
                                 pin_memory=True)
         return dl
 
+    def train_dataloader(self):
+        return self._dataloader('df_tr', train=True)
+
     def val_dataloader(self):
-        dl = self.dset_va.to_dataloader(train=False,
-                                        batch_size=self.batch_size * 10,
-                                        batch_sampler='synchronized',
-                                        num_workers=self.num_workers,
-                                        shuffle=self.shuffle,
-                                        pin_memory=True)
-        return dl
+        return self._dataloader('df_va', train=False)
 
     def test_dataloader(self):
-        dl = self.dset_te.to_dataloader(train=False,
-                                        batch_size=self.batch_size * 10,
-                                        batch_sampler='synchronized',
-                                        num_workers=self.num_workers,
-                                        shuffle=self.shuffle,
-                                        pin_memory=True)
-        return dl
+        return self._dataloader('df_te', train=False)
 
     def predict_dataloader(self):
 

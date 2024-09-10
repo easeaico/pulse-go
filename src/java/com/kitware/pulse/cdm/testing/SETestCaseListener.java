@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 /**
- * 
+ *
  */
 package com.kitware.pulse.cdm.testing;
 
@@ -16,17 +16,17 @@ import com.kitware.pulse.utilities.LogListener;
 public class SETestCaseListener extends LogListener
 {
   private SETestCase testCase=null;
-  
+
   public SETestCaseListener()
   {
 
   }
-  
+
   public void clear()
   {
     this.testCase=null;
   }
-  
+
   public void setTestCase(SETestCase tc)
   {
     this.testCase=tc;
@@ -40,7 +40,7 @@ public class SETestCaseListener extends LogListener
     	testCase.AddFailure(msg);
     }
   }
-  
+
   @Override
   public void handleFatal(String msg)
   {
@@ -57,5 +57,10 @@ public class SETestCaseListener extends LogListener
   protected void handleInfo(String msg) {}
 
   @Override
-  protected void handleWarn(String msg) {}
+  protected void handleWarn(String msg) {
+    if (testCase != null)
+    {
+      testCase.AddWarning(msg);
+    }
+  }
 }

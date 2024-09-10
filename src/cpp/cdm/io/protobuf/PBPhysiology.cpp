@@ -10,6 +10,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBProperties.h"
 #include "cdm/io/protobuf/PBUtils.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularMechanicsModifiers.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SEDrugSystem.h"
 #include "cdm/system/physiology/SEEndocrineSystem.h"
@@ -20,6 +21,7 @@ POP_PROTO_WARNINGS
 #include "cdm/system/physiology/SEPupillaryResponse.h"
 #include "cdm/system/physiology/SERenalSystem.h"
 #include "cdm/system/physiology/SERespiratoryMechanics.h"
+#include "cdm/system/physiology/SERespiratoryMechanicsModifiers.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/system/physiology/SETissueSystem.h"
 
@@ -156,6 +158,95 @@ void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodC
     dst.set_allocated_venousoxygenpressure(PBProperty::Unload(*src.m_VenousOxygenPressure));
 }
 
+void PBPhysiology::Load(const CDM_BIND::CardiovascularMechanicsModifiersData& src, SECardiovascularMechanicsModifiers& dst)
+{
+  dst.Clear();
+  PBPhysiology::Serialize(src, dst);
+}
+void PBPhysiology::Serialize(const CDM_BIND::CardiovascularMechanicsModifiersData& src, SECardiovascularMechanicsModifiers& dst)
+{
+  if (src.has_arterialcompliancemultiplier())
+    PBProperty::Load(src.arterialcompliancemultiplier(), dst.GetArterialComplianceMultiplier());
+  if (src.has_arterialresistancemultiplier())
+    PBProperty::Load(src.arterialresistancemultiplier(), dst.GetArterialResistanceMultiplier());
+  if (src.has_pulmonarycompliancemultiplier())
+    PBProperty::Load(src.pulmonarycompliancemultiplier(), dst.GetPulmonaryComplianceMultiplier());
+  if (src.has_pulmonaryresistancemultiplier())
+    PBProperty::Load(src.pulmonaryresistancemultiplier(), dst.GetPulmonaryResistanceMultiplier());
+  if (src.has_systemicresistancemultiplier())
+    PBProperty::Load(src.systemicresistancemultiplier(), dst.GetSystemicResistanceMultiplier());
+  if (src.has_systemiccompliancemultiplier())
+    PBProperty::Load(src.systemiccompliancemultiplier(), dst.GetSystemicComplianceMultiplier());
+  if (src.has_venouscompliancemultiplier())
+    PBProperty::Load(src.venouscompliancemultiplier(), dst.GetVenousComplianceMultiplier());
+  if (src.has_venousresistancemultiplier())
+    PBProperty::Load(src.venousresistancemultiplier(), dst.GetVenousResistanceMultiplier());
+  if (src.has_heartratemultiplier())
+    PBProperty::Load(src.heartratemultiplier(), dst.GetHeartRateMultiplier());
+  if (src.has_strokevolumemultiplier())
+    PBProperty::Load(src.strokevolumemultiplier(), dst.GetStrokeVolumeMultiplier());
+}
+
+CDM_BIND::CardiovascularMechanicsModifiersData* PBPhysiology::Unload(const SECardiovascularMechanicsModifiers& src)
+{
+  CDM_BIND::CardiovascularMechanicsModifiersData* dst = new CDM_BIND::CardiovascularMechanicsModifiersData();
+  PBPhysiology::Serialize(src, *dst);
+  return dst;
+}
+void PBPhysiology::Serialize(const SECardiovascularMechanicsModifiers& src, CDM_BIND::CardiovascularMechanicsModifiersData& dst)
+{
+  if (src.HasArterialComplianceMultiplier())
+    dst.set_allocated_arterialcompliancemultiplier(PBProperty::Unload(*src.m_ArterialComplianceMultiplier));
+  if (src.HasArterialResistanceMultiplier())
+    dst.set_allocated_arterialresistancemultiplier(PBProperty::Unload(*src.m_ArterialResistanceMultiplier));
+  if (src.HasPulmonaryComplianceMultiplier())
+    dst.set_allocated_pulmonarycompliancemultiplier(PBProperty::Unload(*src.m_PulmonaryComplianceMultiplier));
+  if (src.HasPulmonaryResistanceMultiplier())
+    dst.set_allocated_pulmonaryresistancemultiplier(PBProperty::Unload(*src.m_PulmonaryResistanceMultiplier));
+  if (src.HasSystemicResistanceMultiplier())
+    dst.set_allocated_systemicresistancemultiplier(PBProperty::Unload(*src.m_SystemicResistanceMultiplier));
+  if (src.HasSystemicComplianceMultiplier())
+    dst.set_allocated_systemiccompliancemultiplier(PBProperty::Unload(*src.m_SystemicComplianceMultiplier));
+  if (src.HasVenousComplianceMultiplier())
+    dst.set_allocated_venouscompliancemultiplier(PBProperty::Unload(*src.m_VenousComplianceMultiplier));
+  if (src.HasVenousResistanceMultiplier())
+    dst.set_allocated_venousresistancemultiplier(PBProperty::Unload(*src.m_VenousResistanceMultiplier));
+  if (src.HasHeartRateMultiplier())
+    dst.set_allocated_heartratemultiplier(PBProperty::Unload(*src.m_HeartRateMultiplier));
+  if (src.HasStrokeVolumeMultiplier())
+    dst.set_allocated_strokevolumemultiplier(PBProperty::Unload(*src.m_StrokeVolumeMultiplier));
+}
+
+bool PBPhysiology::SerializeToString(const SECardiovascularMechanicsModifiers& src, std::string& output, eSerializationFormat m)
+{
+  CDM_BIND::CardiovascularMechanicsModifiersData data;
+  PBPhysiology::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBPhysiology::SerializeToFile(const SECardiovascularMechanicsModifiers& src, const std::string& filename)
+{
+  CDM_BIND::CardiovascularMechanicsModifiersData data;
+  PBPhysiology::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
+}
+
+bool PBPhysiology::SerializeFromString(const std::string& src, SECardiovascularMechanicsModifiers& dst, eSerializationFormat m)
+{
+  CDM_BIND::CardiovascularMechanicsModifiersData data;
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
+    return false;
+  PBPhysiology::Load(data, dst);
+  return true;
+}
+bool PBPhysiology::SerializeFromFile(const std::string& filename, SECardiovascularMechanicsModifiers& dst)
+{
+  CDM_BIND::CardiovascularMechanicsModifiersData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
+    return false;
+  PBPhysiology::Load(data, dst);
+  return true;
+}
+
 void PBPhysiology::Load(const CDM_BIND::CardiovascularSystemData& src, SECardiovascularSystem& dst)
 {
   dst.Clear();
@@ -204,6 +295,8 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.meancentralvenouspressure(), dst.GetMeanCentralVenousPressure());
   if (src.has_meanskinflow())
     PBProperty::Load(src.meanskinflow(), dst.GetMeanSkinFlow());
+  if (src.has_peripheralperfusionindex())
+    PBProperty::Load(src.peripheralperfusionindex(), dst.GetPeripheralPerfusionIndex());
   if (src.has_pulmonaryarterialpressure())
     PBProperty::Load(src.pulmonaryarterialpressure(), dst.GetPulmonaryArterialPressure());
   if (src.has_pulmonarycapillariescoveragefraction())
@@ -291,6 +384,8 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_meancentralvenouspressure(PBProperty::Unload(*src.m_MeanCentralVenousPressure));
   if (src.HasMeanSkinFlow())
     dst.set_allocated_meanskinflow(PBProperty::Unload(*src.m_MeanSkinFlow));
+  if (src.HasPeripheralPerfusionIndex())
+    dst.set_allocated_peripheralperfusionindex(PBProperty::Unload(*src.m_PeripheralPerfusionIndex));
   if (src.HasPulmonaryArterialPressure())
     dst.set_allocated_pulmonaryarterialpressure(PBProperty::Unload(*src.m_PulmonaryArterialPressure));
   if (src.HasPulmonaryCapillariesCoverageFraction())
@@ -978,6 +1073,108 @@ bool PBPhysiology::SerializeFromFile(const std::string& filename, SERespiratoryM
   return true;
 }
 
+void PBPhysiology::Load(const CDM_BIND::RespiratoryMechanicsModifiersData& src, SERespiratoryMechanicsModifiers& dst)
+{
+  dst.Clear();
+  PBPhysiology::Serialize(src, dst);
+}
+void PBPhysiology::Serialize(const CDM_BIND::RespiratoryMechanicsModifiersData& src, SERespiratoryMechanicsModifiers& dst)
+{
+  if (src.has_leftcompliancemultiplier())
+    PBProperty::Load(src.leftcompliancemultiplier(), dst.GetLeftComplianceMultiplier());
+  if (src.has_rightcompliancemultiplier())
+    PBProperty::Load(src.rightcompliancemultiplier(), dst.GetRightComplianceMultiplier());
+  if (src.has_leftexpiratoryresistancemultiplier())
+    PBProperty::Load(src.leftexpiratoryresistancemultiplier(), dst.GetLeftExpiratoryResistanceMultiplier());
+  if (src.has_leftinspiratoryresistancemultiplier())
+    PBProperty::Load(src.leftinspiratoryresistancemultiplier(), dst.GetLeftInspiratoryResistanceMultiplier());
+  if (src.has_rightexpiratoryresistancemultiplier())
+    PBProperty::Load(src.rightexpiratoryresistancemultiplier(), dst.GetRightExpiratoryResistanceMultiplier());
+  if (src.has_rightinspiratoryresistancemultiplier())
+    PBProperty::Load(src.rightinspiratoryresistancemultiplier(), dst.GetRightInspiratoryResistanceMultiplier());
+  if (src.has_upperexpiratoryresistancemultiplier())
+    PBProperty::Load(src.upperexpiratoryresistancemultiplier(), dst.GetUpperExpiratoryResistanceMultiplier());
+  if (src.has_upperinspiratoryresistancemultiplier())
+    PBProperty::Load(src.upperinspiratoryresistancemultiplier(), dst.GetUpperInspiratoryResistanceMultiplier());
+  if (src.has_respirationratemultiplier())
+    PBProperty::Load(src.respirationratemultiplier(), dst.GetRespirationRateMultiplier());
+  if (src.has_tidalvolumemultiplier())
+    PBProperty::Load(src.tidalvolumemultiplier(), dst.GetTidalVolumeMultiplier());
+
+  for (auto i = 0; i < src.volumeincrement_size(); i++)
+  {
+    auto& vi = src.volumeincrement()[i];
+    PBProperty::Load(vi.increment(), dst.GetLungVolumeIncrement((eLungCompartment)vi.compartment()));
+  }
+}
+
+CDM_BIND::RespiratoryMechanicsModifiersData* PBPhysiology::Unload(const SERespiratoryMechanicsModifiers& src)
+{
+  CDM_BIND::RespiratoryMechanicsModifiersData* dst = new CDM_BIND::RespiratoryMechanicsModifiersData();
+  PBPhysiology::Serialize(src, *dst);
+  return dst;
+}
+void PBPhysiology::Serialize(const SERespiratoryMechanicsModifiers& src, CDM_BIND::RespiratoryMechanicsModifiersData& dst)
+{
+  if (src.HasLeftComplianceMultiplier())
+    dst.set_allocated_leftcompliancemultiplier(PBProperty::Unload(*src.m_LeftComplianceMultiplier));
+  if (src.HasRightComplianceMultiplier())
+    dst.set_allocated_rightcompliancemultiplier(PBProperty::Unload(*src.m_RightComplianceMultiplier));
+  if (src.HasLeftExpiratoryResistanceMultiplier())
+    dst.set_allocated_leftexpiratoryresistancemultiplier(PBProperty::Unload(*src.m_LeftExpiratoryResistanceMultiplier));
+  if (src.HasLeftInspiratoryResistanceMultiplier())
+    dst.set_allocated_leftinspiratoryresistancemultiplier(PBProperty::Unload(*src.m_LeftInspiratoryResistanceMultiplier));
+  if (src.HasRightExpiratoryResistanceMultiplier())
+    dst.set_allocated_rightexpiratoryresistancemultiplier(PBProperty::Unload(*src.m_RightExpiratoryResistanceMultiplier));
+  if (src.HasRightInspiratoryResistanceMultiplier())
+    dst.set_allocated_rightinspiratoryresistancemultiplier(PBProperty::Unload(*src.m_RightInspiratoryResistanceMultiplier));
+  if (src.HasUpperExpiratoryResistanceMultiplier())
+    dst.set_allocated_upperexpiratoryresistancemultiplier(PBProperty::Unload(*src.m_UpperExpiratoryResistanceMultiplier));
+  if (src.HasUpperInspiratoryResistanceMultiplier())
+    dst.set_allocated_upperinspiratoryresistancemultiplier(PBProperty::Unload(*src.m_UpperInspiratoryResistanceMultiplier));
+  if (src.HasRespirationRateMultiplier())
+    dst.set_allocated_respirationratemultiplier(PBProperty::Unload(*src.m_RespirationRateMultiplier));
+  if (src.HasTidalVolumeMultiplier())
+    dst.set_allocated_tidalvolumemultiplier(PBProperty::Unload(*src.m_TidalVolumeMultiplier));
+
+  for (auto itr : src.m_VolumeIncrements)
+  {
+    auto vi = dst.add_volumeincrement();
+    vi->set_compartment((CDM_BIND::eLungCompartment)itr.first);
+    vi->set_allocated_increment(PBProperty::Unload(*itr.second));
+  }
+}
+
+bool PBPhysiology::SerializeToString(const SERespiratoryMechanicsModifiers& src, std::string& output, eSerializationFormat m)
+{
+  CDM_BIND::RespiratoryMechanicsModifiersData data;
+  PBPhysiology::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBPhysiology::SerializeToFile(const SERespiratoryMechanicsModifiers& src, const std::string& filename)
+{
+  CDM_BIND::RespiratoryMechanicsModifiersData data;
+  PBPhysiology::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
+}
+
+bool PBPhysiology::SerializeFromString(const std::string& src, SERespiratoryMechanicsModifiers& dst, eSerializationFormat m)
+{
+  CDM_BIND::RespiratoryMechanicsModifiersData data;
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
+    return false;
+  PBPhysiology::Load(data, dst);
+  return true;
+}
+bool PBPhysiology::SerializeFromFile(const std::string& filename, SERespiratoryMechanicsModifiers& dst)
+{
+  CDM_BIND::RespiratoryMechanicsModifiersData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
+    return false;
+  PBPhysiology::Load(data, dst);
+  return true;
+}
+
 void PBPhysiology::Load(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst)
 {
   dst.Clear();
@@ -1009,10 +1206,12 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.endtidaloxygenpressure(), dst.GetEndTidalOxygenPressure());
   if (src.has_expiratoryflow())
     PBProperty::Load(src.expiratoryflow(), dst.GetExpiratoryFlow());
-  if (src.has_expiratorypulmonaryresistance())
-    PBProperty::Load(src.expiratorypulmonaryresistance(), dst.GetExpiratoryPulmonaryResistance());
+  if (src.has_expiratoryrespiratoryresistance())
+    PBProperty::Load(src.expiratoryrespiratoryresistance(), dst.GetExpiratoryRespiratoryResistance());
   if (src.has_expiratorytidalvolume())
     PBProperty::Load(src.expiratorytidalvolume(), dst.GetExpiratoryTidalVolume());
+  if (src.has_extrinsicpositiveendexpiratorypressure())
+    PBProperty::Load(src.extrinsicpositiveendexpiratorypressure(), dst.GetExtrinsicPositiveEndExpiratoryPressure());
   if (src.has_fractionofinspiredoxygen())
     PBProperty::Load(src.fractionofinspiredoxygen(), dst.GetFractionOfInspiredOxygen());
   if (src.has_imposedpowerofbreathing())
@@ -1023,16 +1222,16 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
   if (src.has_inspiratoryflow())
     PBProperty::Load(src.inspiratoryflow(), dst.GetInspiratoryFlow());
-  if (src.has_inspiratorypulmonaryresistance())
-    PBProperty::Load(src.inspiratorypulmonaryresistance(), dst.GetInspiratoryPulmonaryResistance());
+  if (src.has_inspiratoryrespiratoryresistance())
+    PBProperty::Load(src.inspiratoryrespiratoryresistance(), dst.GetInspiratoryRespiratoryResistance());
   if (src.has_inspiratorytidalvolume())
     PBProperty::Load(src.inspiratorytidalvolume(), dst.GetInspiratoryTidalVolume());
   if (src.has_intrapleuralpressure())
     PBProperty::Load(src.intrapleuralpressure(), dst.GetIntrapleuralPressure());
   if (src.has_intrapulmonarypressure())
     PBProperty::Load(src.intrapulmonarypressure(), dst.GetIntrapulmonaryPressure());
-  if (src.has_intrinsicpositiveendexpiredpressure())
-    PBProperty::Load(src.intrinsicpositiveendexpiredpressure(), dst.GetIntrinsicPositiveEndExpiredPressure());
+  if (src.has_intrinsicpositiveendexpiratorypressure())
+    PBProperty::Load(src.intrinsicpositiveendexpiratorypressure(), dst.GetIntrinsicPositiveEndExpiratoryPressure());
   if (src.has_lungcompliance())
     PBProperty::Load(src.lungcompliance(), dst.GetLungCompliance());
   if (src.has_maximalinspiratorypressure())
@@ -1053,12 +1252,10 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.physiologicdeadspace(), dst.GetPhysiologicDeadSpace());
   if (src.has_physiologicdeadspacetidalvolumeratio())
     PBProperty::Load(src.physiologicdeadspacetidalvolumeratio(), dst.GetPhysiologicDeadSpaceTidalVolumeRatio());
-  if (src.has_positiveendexpiratorypressure())
-    PBProperty::Load(src.positiveendexpiratorypressure(), dst.GetPositiveEndExpiratoryPressure());
-  if (src.has_pulmonarycompliance())
-    PBProperty::Load(src.pulmonarycompliance(), dst.GetPulmonaryCompliance());
-  if (src.has_pulmonaryelastance())
-    PBProperty::Load(src.pulmonaryelastance(), dst.GetPulmonaryElastance());
+  if (src.has_respiratorycompliance())
+    PBProperty::Load(src.respiratorycompliance(), dst.GetRespiratoryCompliance());
+  if (src.has_respiratoryelastance())
+    PBProperty::Load(src.respiratoryelastance(), dst.GetRespiratoryElastance());
   if (src.has_relativetotallungvolume())
     PBProperty::Load(src.relativetotallungvolume(), dst.GetRelativeTotalLungVolume());
   if (src.has_resistiveexpiratoryworkofbreathing())
@@ -1083,6 +1280,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.totaldeadspaceventilation(), dst.GetTotalDeadSpaceVentilation());
   if (src.has_totallungvolume())
     PBProperty::Load(src.totallungvolume(), dst.GetTotalLungVolume());
+  if (src.has_totalpositiveendexpiratorypressure())
+    PBProperty::Load(src.totalpositiveendexpiratorypressure(), dst.GetTotalPositiveEndExpiratoryPressure());
   if (src.has_totalpowerofbreathing())
     PBProperty::Load(src.totalpowerofbreathing(), dst.GetTotalPowerOfBreathing());
   if (src.has_totalpulmonaryventilation())
@@ -1106,8 +1305,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
   if (src.has_ventilationperfusionratio())
     PBProperty::Load(src.ventilationperfusionratio(), dst.GetVentilationPerfusionRatio());
 
-  if (src.has_respiratorymechanics())
-    PBPhysiology::Load(src.respiratorymechanics(), dst.GetRespiratoryMechanics());
+  if (src.has_mechanics())
+    PBPhysiology::Load(src.mechanics(), dst.GetMechanics());
 }
 
 CDM_BIND::RespiratorySystemData* PBPhysiology::Unload(const SERespiratorySystem& src)
@@ -1142,10 +1341,12 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_endtidaloxygenpressure(PBProperty::Unload(*src.m_EndTidalOxygenPressure));
   if (src.HasExpiratoryFlow())
     dst.set_allocated_expiratoryflow(PBProperty::Unload(*src.m_ExpiratoryFlow));
-  if (src.HasExpiratoryPulmonaryResistance())
-    dst.set_allocated_expiratorypulmonaryresistance(PBProperty::Unload(*src.m_ExpiratoryPulmonaryResistance));
+  if (src.HasExpiratoryRespiratoryResistance())
+    dst.set_allocated_expiratoryrespiratoryresistance(PBProperty::Unload(*src.m_ExpiratoryRespiratoryResistance));
   if (src.HasExpiratoryTidalVolume())
     dst.set_allocated_expiratorytidalvolume(PBProperty::Unload(*src.m_ExpiratoryTidalVolume));
+  if (src.HasExtrinsicPositiveEndExpiratoryPressure())
+    dst.set_allocated_extrinsicpositiveendexpiratorypressure(PBProperty::Unload(*src.m_ExtrinsicPositiveEndExpiratoryPressure));
   if (src.HasFractionOfInspiredOxygen())
     dst.set_allocated_fractionofinspiredoxygen(PBProperty::Unload(*src.m_FractionOfInspiredOxygen));
   if (src.HasImposedPowerOfBreathing())
@@ -1156,16 +1357,16 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_inspiratoryexpiratoryratio(PBProperty::Unload(*src.m_InspiratoryExpiratoryRatio));
   if (src.HasInspiratoryFlow())
     dst.set_allocated_inspiratoryflow(PBProperty::Unload(*src.m_InspiratoryFlow));
-  if (src.HasInspiratoryPulmonaryResistance())
-    dst.set_allocated_inspiratorypulmonaryresistance(PBProperty::Unload(*src.m_InspiratoryPulmonaryResistance));
+  if (src.HasInspiratoryRespiratoryResistance())
+    dst.set_allocated_inspiratoryrespiratoryresistance(PBProperty::Unload(*src.m_InspiratoryRespiratoryResistance));
   if (src.HasInspiratoryTidalVolume())
     dst.set_allocated_inspiratorytidalvolume(PBProperty::Unload(*src.m_InspiratoryTidalVolume));
   if (src.HasIntrapleuralPressure())
     dst.set_allocated_intrapleuralpressure(PBProperty::Unload(*src.m_IntrapleuralPressure));
   if (src.HasIntrapulmonaryPressure())
     dst.set_allocated_intrapulmonarypressure(PBProperty::Unload(*src.m_IntrapulmonaryPressure));
-  if (src.HasIntrinsicPositiveEndExpiredPressure())
-    dst.set_allocated_intrinsicpositiveendexpiredpressure(PBProperty::Unload(*src.m_IntrinsicPositiveEndExpiredPressure));
+  if (src.HasIntrinsicPositiveEndExpiratoryPressure())
+    dst.set_allocated_intrinsicpositiveendexpiratorypressure(PBProperty::Unload(*src.m_IntrinsicPositiveEndExpiratoryPressure));
   if (src.HasLungCompliance())
     dst.set_allocated_lungcompliance(PBProperty::Unload(*src.m_LungCompliance));
   if (src.HasMaximalInspiratoryPressure())
@@ -1186,12 +1387,10 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_physiologicdeadspace(PBProperty::Unload(*src.m_PhysiologicDeadSpace));
   if (src.HasPhysiologicDeadSpaceTidalVolumeRatio())
     dst.set_allocated_physiologicdeadspacetidalvolumeratio(PBProperty::Unload(*src.m_PhysiologicDeadSpaceTidalVolumeRatio));
-  if (src.HasPositiveEndExpiratoryPressure())
-    dst.set_allocated_positiveendexpiratorypressure(PBProperty::Unload(*src.m_PositiveEndExpiratoryPressure));
-  if (src.HasPulmonaryCompliance())
-    dst.set_allocated_pulmonarycompliance(PBProperty::Unload(*src.m_PulmonaryCompliance));
-  if (src.HasPulmonaryElastance())
-    dst.set_allocated_pulmonaryelastance(PBProperty::Unload(*src.m_PulmonaryElastance));
+  if (src.HasRespiratoryCompliance())
+    dst.set_allocated_respiratorycompliance(PBProperty::Unload(*src.m_RespiratoryCompliance));
+  if (src.HasRespiratoryElastance())
+    dst.set_allocated_respiratoryelastance(PBProperty::Unload(*src.m_RespiratoryElastance));
   if (src.HasRelativeTotalLungVolume())
     dst.set_allocated_relativetotallungvolume(PBProperty::Unload(*src.m_RelativeTotalLungVolume));
   if (src.HasResistiveExpiratoryWorkOfBreathing())
@@ -1216,6 +1415,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_totaldeadspaceventilation(PBProperty::Unload(*src.m_TotalDeadSpaceVentilation));
   if (src.HasTotalLungVolume())
     dst.set_allocated_totallungvolume(PBProperty::Unload(*src.m_TotalLungVolume));
+  if (src.HasTotalPositiveEndExpiratoryPressure())
+    dst.set_allocated_totalpositiveendexpiratorypressure(PBProperty::Unload(*src.m_TotalPositiveEndExpiratoryPressure));
   if (src.HasTotalPowerOfBreathing())
     dst.set_allocated_totalpowerofbreathing(PBProperty::Unload(*src.m_TotalPowerOfBreathing));
   if (src.HasTotalPulmonaryVentilation())
@@ -1239,8 +1440,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
   if (src.HasVentilationPerfusionRatio())
     dst.set_allocated_ventilationperfusionratio(PBProperty::Unload(*src.m_VentilationPerfusionRatio));
 
-  if (src.HasRespiratoryMechanics())
-    dst.set_allocated_respiratorymechanics(PBPhysiology::Unload(*src.m_RespiratoryMechanics));
+  if (src.HasMechanics())
+    dst.set_allocated_mechanics(PBPhysiology::Unload(*src.m_Mechanics));
 }
 
 
@@ -1265,6 +1466,8 @@ void PBPhysiology::Serialize(const CDM_BIND::TissueSystemData& src, SETissueSyst
     PBProperty::Load(src.oxygenconsumptionrate(), dst.GetOxygenConsumptionRate());
   if (src.has_respiratoryexchangeratio())
     PBProperty::Load(src.respiratoryexchangeratio(), dst.GetRespiratoryExchangeRatio());
+  if (src.has_totalfluidvolume())
+    PBProperty::Load(src.totalfluidvolume(), dst.GetTotalFluidVolume());
 }
 
 CDM_BIND::TissueSystemData* PBPhysiology::Unload(const SETissueSystem& src)
@@ -1289,4 +1492,6 @@ void PBPhysiology::Serialize(const SETissueSystem& src, CDM_BIND::TissueSystemDa
     dst.set_allocated_oxygenconsumptionrate(PBProperty::Unload(*src.m_OxygenConsumptionRate));
   if (src.HasRespiratoryExchangeRatio())
     dst.set_allocated_respiratoryexchangeratio(PBProperty::Unload(*src.m_RespiratoryExchangeRatio));
+  if (src.HasTotalFluidVolume())
+    dst.set_allocated_totalfluidvolume(PBProperty::Unload(*src.m_TotalFluidVolume));
 }

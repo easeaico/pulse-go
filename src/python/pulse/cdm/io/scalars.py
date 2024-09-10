@@ -6,6 +6,9 @@ from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarNegative1To1, \
                               SEScalarEquivalentWeightPerVolume, EquivalentWeightPerVolumeUnit, \
                               SEScalarForce, ForceUnit, \
                               SEScalarFrequency, FrequencyUnit, \
+                              SEScalarHeatCapacitancePerMass, HeatCapacitancePerMassUnit, \
+                              SEScalarHeatConductance, HeatConductanceUnit, \
+                              SEScalarHeatConductancePerArea, HeatConductancePerAreaUnit, \
                               SEScalarHeatResistanceArea, HeatResistanceAreaUnit, \
                               SEScalarInversePressure, InversePressureUnit, \
                               SEScalarLength, LengthUnit, \
@@ -20,6 +23,7 @@ from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarNegative1To1, \
                               SEScalarPressurePerVolume, PressurePerVolumeUnit, \
                               SEScalarPressureTimePerVolume, PressureTimePerVolumeUnit, \
                               SEScalarTemperature, TemperatureUnit, \
+                              SEScalarUnsigned, \
                               SEScalarTime, TimeUnit, \
                               SEScalarVolume, VolumeUnit, \
                               SEScalarVolumePerPressure, VolumePerPressureUnit, \
@@ -28,13 +32,15 @@ from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarNegative1To1, \
                               SEScalarVolumePerTimePressure, VolumePerTimePressureUnit
 from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNegative1To1Data, ScalarAreaData, \
                                           ScalarEquivalentWeightPerVolumeData, \
-                                          ScalarForceData, ScalarFrequencyData,ScalarHeatResistanceAreaData, \
+                                          ScalarForceData, ScalarFrequencyData,\
+                                          ScalarHeatCapacitancePerMassData, ScalarHeatConductanceData, \
+                                          ScalarHeatConductancePerAreaData, ScalarHeatResistanceAreaData, \
                                           ScalarInversePressureData, ScalarLengthData, ScalarLengthPerTimeData, \
                                           ScalarMassData, ScalarMassPerAmountData, ScalarMassPerAreaTimeData, \
                                           ScalarMassPerTimeData, ScalarMassPerVolumeData, ScalarPowerData, \
                                           ScalarPressureTimePerVolumeData, ScalarPressureData,\
-                                          ScalarPressurePerVolumeData, ScalarTemperatureData, \
-                                          ScalarTimeData, ScalarVolumeData, ScalarVolumePerPressureData, \
+                                          ScalarPressurePerVolumeData, ScalarTemperatureData, ScalarTimeData, \
+                                          ScalarUnsignedData, ScalarVolumeData, ScalarVolumePerPressureData, \
                                           ScalarVolumePerTimeData, ScalarVolumePerTimeMassData, \
                                           ScalarVolumePerTimePressureData
 
@@ -76,6 +82,24 @@ def serialize_scalar_frequency_to_bind(src: SEScalarFrequency, dst: ScalarFreque
     dst.ScalarFrequency.Unit = src.get_unit().get_string()
 def serialize_scalar_frequency_from_bind(src: ScalarFrequencyData, dst: SEScalarFrequency):
     dst.set_value(src.ScalarFrequency.Value, FrequencyUnit.from_string(src.ScalarFrequency.Unit))
+
+def serialize_scalar_heat_capacitance_per_mass_to_bind(src: SEScalarHeatCapacitancePerMass, dst: ScalarHeatCapacitancePerMassData):
+    dst.ScalarHeatCapacitancePerMass.Value = src.get_value()
+    dst.ScalarHeatCapacitancePerMass.Unit = src.get_unit().get_string()
+def serialize_scalar_heat_capacitance_per_mass_from_bind(src: ScalarHeatCapacitancePerMassData, dst: SEScalarHeatCapacitancePerMass):
+    dst.set_value(src.ScalarHeatCapacitancePerMass.Value, HeatCapacitancePerMassUnit.from_string(src.ScalarHeatCapacitancePerMass.Unit))
+
+def serialize_scalar_heat_conductance_to_bind(src: SEScalarHeatConductance, dst: ScalarHeatConductanceData):
+    dst.ScalarHeatConductance.Value = src.get_value()
+    dst.ScalarHeatConductance.Unit = src.get_unit().get_string()
+def serialize_scalar_heat_conductance_from_bind(src: ScalarHeatConductanceData, dst: SEScalarHeatConductance):
+    dst.set_value(src.ScalarHeatConductance.Value, HeatConductanceUnit.from_string(src.ScalarHeatConductance.Unit))
+
+def serialize_scalar_heat_conductance_per_area_to_bind(src: SEScalarHeatConductancePerArea, dst: ScalarHeatConductancePerAreaData):
+    dst.ScalarHeatConductancePerArea.Value = src.get_value()
+    dst.ScalarHeatConductancePerArea.Unit = src.get_unit().get_string()
+def serialize_scalar_heat_conductance_per_area__from_bind(src: ScalarHeatConductancePerAreaData, dst: SEScalarHeatConductancePerArea):
+    dst.set_value(src.ScalarHeatConductancePerArea.Value, HeatConductancePerAreaUnit.from_string(src.ScalarHeatConductancePerArea.Unit))
 
 def serialize_scalar_heat_resistance_area_to_bind(src: SEScalarHeatResistanceArea, dst: ScalarHeatResistanceAreaData):
     dst.ScalarHeatResistanceArea.Value = src.get_value()
@@ -160,6 +184,11 @@ def serialize_scalar_temperature_to_bind(src: SEScalarTemperature, dst: ScalarTe
     dst.ScalarTemperature.Unit = src.get_unit().get_string()
 def serialize_scalar_temperature_from_bind(src: ScalarTemperatureData, dst: SEScalarTemperature):
     dst.set_value(src.ScalarTemperature.Value, TemperatureUnit.from_string(src.ScalarTemperature.Unit))
+
+def serialize_scalar_unsigned_to_bind(src: SEScalarUnsigned, dst: ScalarUnsignedData):
+    dst.ScalarUnsigned.Value = src.get_value()
+def serialize_scalar_unsigned_from_bind(src: ScalarUnsignedData, dst: SEScalarUnsigned):
+    dst.set_value(src.ScalarUnsigned.Value)
 
 def serialize_scalar_time_to_bind(src: SEScalarTime, dst: ScalarTimeData):
     dst.ScalarTime.Value = src.get_value()
