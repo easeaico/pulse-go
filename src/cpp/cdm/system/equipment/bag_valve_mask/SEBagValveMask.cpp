@@ -29,7 +29,7 @@ SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
   m_FilterVolume = nullptr;
   m_ConnectionVolume = nullptr;
   m_ValveVolume = nullptr;
-  m_ValvePositiveEndExpiredPressure = nullptr;
+  m_ValvePositiveEndExpiratoryPressure = nullptr;
   m_ValveResistance = nullptr;
 }
 
@@ -44,7 +44,7 @@ SEBagValveMask::~SEBagValveMask()
   SAFE_DELETE(m_FilterVolume);
   SAFE_DELETE(m_ConnectionVolume);
   SAFE_DELETE(m_ValveVolume);
-  SAFE_DELETE(m_ValvePositiveEndExpiredPressure);
+  SAFE_DELETE(m_ValvePositiveEndExpiratoryPressure);
   SAFE_DELETE(m_ValveResistance);
 
   DELETE_VECTOR(m_FractionInspiredGases);
@@ -63,7 +63,7 @@ void SEBagValveMask::Clear()
   m_BreathState = eBreathState::NoBreath;
   m_Connection = eSwitch::Off;
 
-  INVALIDATE_PROPERTY(m_ValvePositiveEndExpiredPressure);
+  INVALIDATE_PROPERTY(m_ValvePositiveEndExpiratoryPressure);
 
   INVALIDATE_PROPERTY(m_BagResistance);
   INVALIDATE_PROPERTY(m_FilterResistance);
@@ -106,7 +106,7 @@ void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMg
   COPY_PROPERTY(ValveVolume);
   COPY_PROPERTY(ValveResistance);
 
-  COPY_PROPERTY(ValvePositiveEndExpiredPressure);
+  COPY_PROPERTY(ValvePositiveEndExpiratoryPressure);
 
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
   if (from.HasFractionInspiredGas())
@@ -150,7 +150,7 @@ void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMg
           err = true;
       }
       if(err)
-        Error("Mechanical Ventilator substance fractions do not sum to 1");
+        Error("Bag valve mask substance fractions do not sum to 1");
     }
   }
 
@@ -200,8 +200,8 @@ const SEScalar* SEBagValveMask::GetScalar(const std::string& name)
     return &GetConnectionVolume();
   if (name == "ValveVolume")
     return &GetValveVolume();
-  if (name == "ValvePositiveEndExpiredPressure")
-    return &GetValvePositiveEndExpiredPressure();
+  if (name == "ValvePositiveEndExpiratoryPressure")
+    return &GetValvePositiveEndExpiratoryPressure();
   if (name == "ValveResistance")
     return &GetValveResistance();
 
@@ -227,21 +227,21 @@ eSwitch SEBagValveMask::GetConnection() const
   return m_Connection.GetEnum();
 }
 
-bool SEBagValveMask::HasValvePositiveEndExpiredPressure() const
+bool SEBagValveMask::HasValvePositiveEndExpiratoryPressure() const
 {
-  return m_ValvePositiveEndExpiredPressure == nullptr ? false : m_ValvePositiveEndExpiredPressure->IsValid();
+  return m_ValvePositiveEndExpiratoryPressure == nullptr ? false : m_ValvePositiveEndExpiratoryPressure->IsValid();
 }
-SEScalarPressure& SEBagValveMask::GetValvePositiveEndExpiredPressure()
+SEScalarPressure& SEBagValveMask::GetValvePositiveEndExpiratoryPressure()
 {
-  if (m_ValvePositiveEndExpiredPressure == nullptr)
-    m_ValvePositiveEndExpiredPressure = new SEScalarPressure();
-  return *m_ValvePositiveEndExpiredPressure;
+  if (m_ValvePositiveEndExpiratoryPressure == nullptr)
+    m_ValvePositiveEndExpiratoryPressure = new SEScalarPressure();
+  return *m_ValvePositiveEndExpiratoryPressure;
 }
-double SEBagValveMask::GetValvePositiveEndExpiredPressure(const PressureUnit& unit) const
+double SEBagValveMask::GetValvePositiveEndExpiratoryPressure(const PressureUnit& unit) const
 {
-  if (m_ValvePositiveEndExpiredPressure == nullptr)
+  if (m_ValvePositiveEndExpiratoryPressure == nullptr)
     return SEScalar::dNaN();
-  return m_ValvePositiveEndExpiredPressure->GetValue(unit);
+  return m_ValvePositiveEndExpiratoryPressure->GetValue(unit);
 }
 
 bool SEBagValveMask::HasBagResistance() const

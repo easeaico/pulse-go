@@ -24,8 +24,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.FilterVolume, dst.GetFilterVolume());
       if (src.SealResistance != null)
         PBProperty.Load(src.SealResistance, dst.GetSealResistance());
-      if (src.ValvePositiveEndExpiredPressure != null)
-        PBProperty.Load(src.ValvePositiveEndExpiredPressure, dst.GetValvePositiveEndExpiredPressure());
+      if (src.ValvePositiveEndExpiratoryPressure != null)
+        PBProperty.Load(src.ValvePositiveEndExpiratoryPressure, dst.GetValvePositiveEndExpiratoryPressure());
       if (src.ValveResistance != null)
         PBProperty.Load(src.ValveResistance, dst.GetValveResistance());
       if (src.ValveVolume != null)
@@ -61,8 +61,8 @@ namespace Pulse.CDM
         dst.FilterVolume = PBProperty.Unload(src.GetFilterVolume());
       if (src.HasSealResistance())
         dst.SealResistance = PBProperty.Unload(src.GetSealResistance());
-      if (src.HasValvePositiveEndExpiredPressure())
-        dst.ValvePositiveEndExpiredPressure = PBProperty.Unload(src.GetValvePositiveEndExpiredPressure());
+      if (src.HasValvePositiveEndExpiratoryPressure())
+        dst.ValvePositiveEndExpiratoryPressure = PBProperty.Unload(src.GetValvePositiveEndExpiratoryPressure());
       if (src.HasValveResistance())
         dst.ValveResistance = PBProperty.Unload(src.GetValveResistance());
       if (src.HasValveVolume())

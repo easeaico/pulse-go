@@ -322,7 +322,7 @@ namespace HowTo_UseEngine
       am.GetConfiguration().GetOxygenFraction().SetValue(0.23);
       am.GetConfiguration().SetOxygenSource(eAnesthesiaMachine_OxygenSource.Wall);
       am.GetConfiguration().GetPeakInspiratoryPressure().SetValue(10.5, PressureUnit.cmH2O);
-      am.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(1, PressureUnit.cmH2O);
+      am.GetConfiguration().GetPositiveEndExpiratoryPressure().SetValue(1, PressureUnit.cmH2O);
       am.GetConfiguration().SetPrimaryGas(eAnesthesiaMachine_PrimaryGas.Nitrogen);
       am.GetConfiguration().GetRespiratoryRate().SetValue(16, FrequencyUnit.Per_min);
       if (!pulse.ProcessAction(am))

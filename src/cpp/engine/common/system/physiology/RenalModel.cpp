@@ -697,8 +697,8 @@ namespace pulse
       lactateExcreted_mg = massToMove_mg - (lactateExcreted_mg + glucoseReabsorptionMass_mg);
 
       //Increment & decrement
-      ureterLactate->GetMass().IncrementValue(-lactateConverted_mg, MassUnit::mg);
-      peritubularGlucose->GetMass().IncrementValue(lactateConverted_mg, MassUnit::mg);
+      ureterLactate->GetMass().Increment(-lactateConverted_mg, MassUnit::mg);
+      peritubularGlucose->GetMass().Increment(lactateConverted_mg, MassUnit::mg);
 
       //Sometimes we pull everything out of the ureterNode, but get a super small negative mass
       //Just make that super small negative mass zero
@@ -719,14 +719,14 @@ namespace pulse
     m_lactate->GetClearance().GetRenalExcretionRate().SetValue(totalLactateExcretionRate_mg_Per_s, MassPerTimeUnit::mg_Per_s);
 
     double plasmaConcentration_mg_Per_mL = m_aortaLactate->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_mL);
-    double patientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
+    double patientWeight_kg = SEScalar::Truncate(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 4);
     m_lactate->GetClearance().GetRenalClearance().SetValue(totalLactateExcretionRate_mg_Per_s / plasmaConcentration_mg_Per_mL / patientWeight_kg, VolumePerTimeMassUnit::mL_Per_s_kg);
 
     double singleExcreted_mg = totalLactateExcretionRate_mg_Per_s * m_data.GetTimeStep_s() * 0.5;// We are assuming the kindney's are doing the same amount of work
-    m_leftKidneyIntracellularLactate->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
-    m_leftKidneyIntracellularLactate->GetMassCleared().IncrementValue(singleExcreted_mg, MassUnit::mg);
-    m_rightKidneyIntracellularLactate->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
-    m_rightKidneyIntracellularLactate->GetMassCleared().IncrementValue(singleExcreted_mg, MassUnit::mg);
+    m_leftKidneyIntracellularLactate->GetMassExcreted().Increment(singleExcreted_mg, MassUnit::mg);
+    m_leftKidneyIntracellularLactate->GetMassCleared().Increment(singleExcreted_mg, MassUnit::mg);
+    m_rightKidneyIntracellularLactate->GetMassExcreted().Increment(singleExcreted_mg, MassUnit::mg);
+    m_rightKidneyIntracellularLactate->GetMassCleared().Increment(singleExcreted_mg, MassUnit::mg);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -854,8 +854,8 @@ namespace pulse
       massToMove_mg = MIN(massToMove_mg, glomerularSubQ->GetMass().GetValue(MassUnit::mg));
 
       //Increment & decrement
-      glomerularSubQ->GetMass().IncrementValue(-massToMove_mg, MassUnit::mg);
-      bowmansSubQ->GetMass().IncrementValue(massToMove_mg, MassUnit::mg);
+      glomerularSubQ->GetMass().Increment(-massToMove_mg, MassUnit::mg);
+      bowmansSubQ->GetMass().Increment(massToMove_mg, MassUnit::mg);
 
       //Sometimes we pull everything out of the Glomerular, but get a super small negative mass
       //Just make that super small negative mass zero
@@ -924,8 +924,8 @@ namespace pulse
       massPotassiumToMove_mg = (potassiumConcentration_g_Per_dL - m_baselinePotassiumConcentration_g_Per_dL) * peritubularVolume_L;
 
       //Increment & decrement
-      peritubularPotassium->GetMass().IncrementValue(-massPotassiumToMove_mg, MassUnit::mg);
-      ureterPotassium->GetMass().IncrementValue(massPotassiumToMove_mg, MassUnit::mg);
+      peritubularPotassium->GetMass().Increment(-massPotassiumToMove_mg, MassUnit::mg);
+      ureterPotassium->GetMass().Increment(massPotassiumToMove_mg, MassUnit::mg);
 
       // if its super small negative mass set to zero:
       if (peritubularPotassium->GetMass().IsNegative())
@@ -1101,8 +1101,8 @@ namespace pulse
       }
 
       //Increment & decrement
-      tubulesSubQ->GetMass().IncrementValue(-massToMove_mg, MassUnit::mg);
-      peritubularSubQ->GetMass().IncrementValue(massToMove_mg, MassUnit::mg);
+      tubulesSubQ->GetMass().Increment(-massToMove_mg, MassUnit::mg);
+      peritubularSubQ->GetMass().Increment(massToMove_mg, MassUnit::mg);
 
       //Sometimes we pull everything out of the Tubules, but get a super small negative mass
       //Just make that super small negative mass zero
@@ -1180,7 +1180,7 @@ namespace pulse
     sub.GetClearance().GetRenalExcretionRate().SetValue(totalExcretionRate_mg_Per_s, MassPerTimeUnit::mg_Per_s);
 
     double plasmaConcentration_mg_Per_mL = m_aorta->GetSubstanceQuantity(sub)->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_mL);
-    double patientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
+    double patientWeight_kg = SEScalar::Truncate(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 4);
 
     if (totalExcretionRate_mg_Per_s <= 0.0 || patientWeight_kg <= 0.0)
     {
@@ -1197,10 +1197,10 @@ namespace pulse
       SELiquidSubstanceQuantity* rightKidneySubQ = m_rightKidneyTissue->GetIntracellular().GetSubstanceQuantity(sub);
 
       double singleExcreted_mg = totalExcretionRate_mg_Per_s * m_data.GetTimeStep_s() * 0.5;// We are assuming the kindneys are doing the same amount of work
-      leftKidneySubQ->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
-      leftKidneySubQ->GetMassCleared().IncrementValue(singleExcreted_mg, MassUnit::mg);
-      rightKidneySubQ->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
-      rightKidneySubQ->GetMassCleared().IncrementValue(singleExcreted_mg, MassUnit::mg);
+      leftKidneySubQ->GetMassExcreted().Increment(singleExcreted_mg, MassUnit::mg);
+      leftKidneySubQ->GetMassCleared().Increment(singleExcreted_mg, MassUnit::mg);
+      rightKidneySubQ->GetMassExcreted().Increment(singleExcreted_mg, MassUnit::mg);
+      rightKidneySubQ->GetMassCleared().Increment(singleExcreted_mg, MassUnit::mg);
     }
 
   }
@@ -1218,7 +1218,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RenalModel::CalculateAutomaticClearance(SESubstance& sub)
   {
-    double patientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
+    double patientWeight_kg = SEScalar::Truncate(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 4);
     double renalVolumeCleared_mL = 0.0;
 
     SESubstanceClearance& clearance = sub.GetClearance();
@@ -1243,7 +1243,7 @@ namespace pulse
     //We don't have to determine RenalClearance, because we just implement the already determined value
     //We won't set the excretion, since we don't know filtration or reabsorption
     SELiquidSubstanceQuantity* subQ = m_bladder->GetSubstanceQuantity(sub);
-    subQ->GetMass().IncrementValue(massCleared_ug, MassUnit::ug);
+    subQ->GetMass().Increment(massCleared_ug, MassUnit::ug);
     subQ->Balance(BalanceLiquidBy::Mass);
   }
 
@@ -1683,14 +1683,21 @@ namespace pulse
     //u.SetBilirubin();
 
     u.GetSpecificGravity().SetValue(GetUrineSpecificGravity());
-    if (bladder_glucose_mg_Per_dL > 0.15) /// \cite roxe1990urinalysis
+
+    SESubstance* HbO2 = &m_data.GetSubstances().GetHbO2();
+    double bladder_red_blood_cell_mg_Per_dL = m_bladder->GetSubstanceQuantity(*HbO2)->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_dL);
+
+    if (bladder_red_blood_cell_mg_Per_dL > 0.001)
       u.SetBlood(eUrinalysis_PresenceIndicator::Positive);
     else
       u.SetBlood(eUrinalysis_PresenceIndicator::Negative);
 
     //u.GetPH().Set();
 
-    if (bladder_glucose_mg_Per_dL > 30.0)/// \cite roxe1990urinalysis
+    SESubstance* albumin = &m_data.GetSubstances().GetAlbumin();
+    double bladder_protein_mg_Per_mL = m_bladder->GetSubstanceQuantity(*albumin)->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_mL);
+
+    if (bladder_protein_mg_Per_mL > 0.2)
       u.SetProtein(eUrinalysis_PresenceIndicator::Positive);
     else
       u.SetProtein(eUrinalysis_PresenceIndicator::Negative);
@@ -1726,7 +1733,7 @@ namespace pulse
         continue;
 
       double clearance_mL_Per_s_Per_kg = sub->GetClearance().GetRenalClearance(VolumePerTimeMassUnit::mL_Per_s_kg);
-      double PatientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
+      double PatientWeight_kg = SEScalar::Truncate(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 4);
       double volumeCleared_mL = clearance_mL_Per_s_Per_kg * PatientWeight_kg * elapsedTime_s;
       double aortaConcentration_mg_Per_mL = m_aorta->GetSubstanceQuantity(*sub)->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_mL);
 

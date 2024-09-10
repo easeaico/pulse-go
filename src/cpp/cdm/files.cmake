@@ -182,6 +182,7 @@ set(CDM_H_FILES
   cdm/patient/conditions/SEChronicRenalStenosis.h
   cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h
   cdm/patient/conditions/SEConsumeMeal.h
+  cdm/patient/conditions/SEDehydration.h
   cdm/patient/conditions/SEImpairedAlveolarExchange.h
   cdm/patient/conditions/SEPatientCondition.h
   cdm/patient/conditions/SEPneumonia.h
@@ -558,6 +559,7 @@ set(CDM_CPP_FILES
   cdm/patient/conditions/SEChronicRenalStenosis.cpp
   cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.cpp
   cdm/patient/conditions/SEConsumeMeal.cpp
+  cdm/patient/conditions/SEDehydration.cpp
   cdm/patient/conditions/SEImpairedAlveolarExchange.cpp
   cdm/patient/conditions/SEPatientCondition.cpp
   cdm/patient/conditions/SEPneumonia.cpp

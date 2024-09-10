@@ -16,9 +16,9 @@ def HowTo_RespiratoryMechanics():
         SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
         SEDataRequest.create_physiology_request("TidalVolume", unit=VolumeUnit.mL),
         SEDataRequest.create_physiology_request("TotalLungVolume", unit=VolumeUnit.mL),
-        SEDataRequest.create_physiology_request("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
-        SEDataRequest.create_physiology_request("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
-        SEDataRequest.create_physiology_request("PulmonaryCompliance", VolumePerPressureUnit.L_Per_cmH2O),
+        SEDataRequest.create_physiology_request("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
+        SEDataRequest.create_physiology_request("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
+        SEDataRequest.create_physiology_request("RespiratoryCompliance", VolumePerPressureUnit.L_Per_cmH2O),
         SEDataRequest.create_physiology_request("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_min)]
 
     data_mgr = SEDataRequestManager(data_requests)

@@ -199,8 +199,8 @@ namespace Pulse.CDM
       if (from.HasDriverDampingParameter())
         this.GetDriverDampingParameter().Set(from.GetDriverDampingParameter());
 
-      if (from.HasPositiveEndExpiredPressure())
-        this.GetPositiveEndExpiredPressure().Set(from.GetPositiveEndExpiredPressure());
+      if (from.HasPositiveEndExpiratoryPressure())
+        this.GetPositiveEndExpiratoryPressure().Set(from.GetPositiveEndExpiratoryPressure());
       if (from.HasFunctionalResidualCapacity())
         this.GetFunctionalResidualCapacity().Set(from.GetFunctionalResidualCapacity());
       if (from.HasExpirationCycleFlow())
@@ -333,13 +333,13 @@ namespace Pulse.CDM
       return driver_damping_parameter == null ? false : driver_damping_parameter.IsValid();
     }
 
-    public SEScalarPressure GetPositiveEndExpiredPressure()
+    public SEScalarPressure GetPositiveEndExpiratoryPressure()
     {
       if (positive_end_expired_pressure == null)
         positive_end_expired_pressure = new SEScalarPressure();
       return positive_end_expired_pressure;
     }
-    public bool HasPositiveEndExpiredPressure()
+    public bool HasPositiveEndExpiratoryPressure()
     {
       return positive_end_expired_pressure == null ? false : positive_end_expired_pressure.IsValid();
     }
@@ -790,7 +790,7 @@ namespace Pulse.CDM
     {
       string str = "Mechanical Ventilator Settings"
       + "\n\tConnection: " + (HasConnection() ? eEnum.Name(GetConnection()) : "NotProvided")
-      + "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided")
+      + "\n\tPositiveEndExpiratoryPressure: " + (HasPositiveEndExpiratoryPressure() ? GetPositiveEndExpiratoryPressure().ToString() : "Not Provided")
       + "\n\tFunctionalResidualCapacity: " + (HasFunctionalResidualCapacity() ? GetFunctionalResidualCapacity().ToString() : "Not Provided")
       + "\n\tExpirationCycleFlow: " + (HasExpirationCycleFlow() ? GetExpirationCycleFlow().ToString() : "Not Provided")
       + "\n\tExpirationCyclePressure: " + (HasExpirationCyclePressure() ? GetExpirationCyclePressure().ToString() : "Not Provided")

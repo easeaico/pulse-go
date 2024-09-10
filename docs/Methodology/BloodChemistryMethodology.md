@@ -358,21 +358,21 @@ Because the Four Compartment test is initialized to good values, and because of 
 *Table 6. Stable results of the Four Compartment test.*
 Variable			|	Four Compartment Test Ending Value	|	Valid Value	|
 ------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|
-Arteries HCO3			|	0.0158445	|<span class="success">	[0.134, 0.159] g/dL @cite valtin1995renal	</span>|
-Arteries CO2			|	41.9369	|<span class="success">	40 mmHg @cite guyton2006medical	</span>|
-Arteries O2			|	108.012	|<span class="success">	95 mmHg @cite guyton2006medical	</span>|
-Arteries pH			|	7.39498	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
-Capillaries HCO3			|	0.0159359	|<span class="success">	[0.134, 0.159] @cite valtin1995renal	</span>|
-Capillaries pH			|	7.36949	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
-Pulmonary HCO3			|	0.0158445	|<span class="success">	[0.134, 0.159] @cite valtin1995renal	</span>|
-Pulmonary CO2			|	41.9369	|<span class="success">	40 mmHg @cite guyton2006medical	</span>|
-Pulmonary O2			|	108.012	|<span class="success">	104 mmHg @cite guyton2006medical	</span>|
-Pulmonary pH			|	7.39498	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
-Veins HCO3			|	0.0159359	|<span class="success">	[0.134, 0.159] @cite valtin1995renal	</span>|
-Veins CO2			|	44.7292	|<span class="success">	45 mmHg @cite guyton2006medical	</span>|
-Veins O2			|	39.2399	|<span class="success">	40 mmHg @cite guyton2006medical	</span>|
-Veins pH			|	7.36949	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
-Total Hemoglobin			|	765.0004356	|<span class="success">	[661.5, 835.2] g @cite guyton2006medical @cite onofrio1995sim	</span>|
+Arteries HCO3			|	0.158	|<span class="success">	[0.134, 0.159] g/dL @cite valtin1995renal	</span>|
+Arteries CO2			|	41.9	|<span class="success">	40 mmHg @cite guyton2006medical	</span>|
+Arteries O2			|	108.0	|<span class="success">	95 mmHg @cite guyton2006medical	</span>|
+Arteries pH			|	7.39	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
+Capillaries HCO3			|	0.159	|<span class="success">	[0.134, 0.159] @cite valtin1995renal	</span>|
+Capillaries pH			|	7.37	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
+Pulmonary HCO3			|	0.158	|<span class="success">	[0.134, 0.159] @cite valtin1995renal	</span>|
+Pulmonary CO2			|	41.9	|<span class="success">	40 mmHg @cite guyton2006medical	</span>|
+Pulmonary O2			|	108.0	|<span class="success">	104 mmHg @cite guyton2006medical	</span>|
+Pulmonary pH			|	7.39	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
+Veins HCO3			|	0.159	|<span class="success">	[0.134, 0.159] @cite valtin1995renal	</span>|
+Veins CO2			|	44.7	|<span class="success">	45 mmHg @cite guyton2006medical	</span>|
+Veins O2			|	39.2	|<span class="success">	40 mmHg @cite guyton2006medical	</span>|
+Veins pH			|	7.36	|<span class="success">	7.2 @cite valentin2002icrp [7.35, 7.4] @cite guyton2006medical	</span>|
+Total Hemoglobin			|	765.00	|<span class="success">	[661.5, 835.2] g @cite guyton2006medical @cite onofrio1995sim	</span>|
 </center>
 
 @anchor bloodchemistry-conclusions
@@ -392,16 +392,15 @@ Recommended Improvements
 ------------------------
 The exclusion of blood cellular elements prohibits the implementation of a variety of mechanistic models of physiologic processes, including coagulation, infectious disease, and hematopoiesis to name a few. 
 - Inclusion of RBC, platelets, lymphocytes, monocytes, neutrophils, eosinophils, and basophils as blood constituents.
-- Adaptive total hemoglobin (for example, increasing hemoglobin with exposure to low-oxygen pressure environments)
-- Myoglobin substance models
-	- Including interactions with oxygen and carbon monoxide
+- Adaptive total hemoglobin (for example, increasing hemoglobin with exposure to low-oxygen pressure environments).
+- Myoglobin substance models, including interactions with oxygen and carbon monoxide.
 
 @anchor bloodchemistry-appendices
 Appendices
 ==========
 
-@anchor bloodchemistry-symbols
-Acronyms and Symbols
+@anchor bloodchemistry-glossary
+Glossary
 --------
 <center>
 *Table 7. List of acronyms and symbols.*

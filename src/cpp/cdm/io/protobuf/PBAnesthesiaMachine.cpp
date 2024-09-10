@@ -37,8 +37,8 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
   dst.SetOxygenSource((eAnesthesiaMachine_OxygenSource)src.oxygensource());
   if (src.has_peakinspiratorypressure())
     PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
-  if (src.has_positiveendexpiredpressure())
-    PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
+  if (src.has_positiveendexpiratorypressure())
+    PBProperty::Load(src.positiveendexpiratorypressure(), dst.GetPositiveEndExpiratoryPressure());
   dst.SetPrimaryGas((eAnesthesiaMachine_PrimaryGas)src.primarygas());
 
   if (src.has_respiratoryrate())
@@ -74,8 +74,8 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::An
   dst.set_oxygensource((CDM_BIND::AnesthesiaMachineData::eOxygenSource)src.m_OxygenSource);
   if (src.HasPeakInspiratoryPressure())
     dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
-  if (src.HasPositiveEndExpiredPressure())
-    dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
+  if (src.HasPositiveEndExpiratoryPressure())
+    dst.set_allocated_positiveendexpiratorypressure(PBProperty::Unload(*src.m_PositiveEndExpiratoryPressure));
   dst.set_primarygas((CDM_BIND::AnesthesiaMachineData::ePrimaryGas)src.m_PrimaryGas);
 
   if (src.HasRespiratoryRate())

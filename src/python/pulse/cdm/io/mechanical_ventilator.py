@@ -17,7 +17,7 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
         serialize_scalar_frequency_to_bind(src.get_driver_damping_parameter(), dst.DriverDampingParameter)
 
     if src.has_positive_end_expired_pressure():
-        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
+        serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiratoryPressure)
     elif src.has_functional_residual_capacity():
         serialize_scalar_pressure_to_bind(src.get_functional_residual_capacity(), dst.FunctionalResidualCapacity)
 

@@ -17,7 +17,7 @@ message MechanicalVentilatorSettingsData
   
   oneof ExpiratoryBaseline
   {
-    ScalarPressureData                PositiveEndExpiredPressure                = 5; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
+    ScalarPressureData                PositiveEndExpiratoryPressure             = 5; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
     ScalarPressureData                FunctionalResidualCapacity                = 6; /**<< @brief Total lung volume at the end of exhalation. */
   }
   oneof ExpirationCycle
@@ -81,7 +81,7 @@ message MechanicalVentilatorData
 {
   ScalarPressureData                  AirwayPressure                            = 1; /**<< @brief The instantaneous pressure applied during positive-pressure mechanical ventilation. */
   eBreathState                        BreathState                               = 2; /**<< @brief @ref eBreathStateTable */
-  ScalarVolumePerPressureData         DynamicPulmonaryCompliance                = 3; /**<< @brief The pulmonary compliance during periods of gas flow.*/
+  ScalarVolumePerPressureData         DynamicRespiratoryCompliance              = 3; /**<< @brief The respiratory compliance during periods of gas flow.*/
   Scalar0To1Data                      EndTidalCarbonDioxideFraction             = 4; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
   ScalarPressureData                  EndTidalCarbonDioxidePressure             = 5; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
   Scalar0To1Data                      EndTidalOxygenFraction                    = 6; /**<< @brief The fraction of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
@@ -89,22 +89,24 @@ message MechanicalVentilatorData
   ScalarVolumePerTimeData             ExpiratoryFlow                            = 8; /**<< @brief Instantaneous airflow out of the lungs (negative value when inhaling).*/
   ScalarPressureTimePerVolumeData     ExpiratoryResistance                      = 9; /**<< @brief The total resistance to airflow through the lungs during expiration.*/
   ScalarVolumeData                    ExpiratoryTidalVolume                     = 10;/**<< @brief The volume of air moved into or out of the lungs during normal expiration.*/
-  ScalarData                          InspiratoryExpiratoryRatio                = 11;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
-  ScalarVolumePerTimeData             InspiratoryFlow                           = 12;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
-  ScalarPressureTimePerVolumeData     InspiratoryResistance                     = 13;/**<< @brief The total resistance to airflow through the lungs during inspiration.*/
-  ScalarVolumeData                    InspiratoryTidalVolume                    = 14;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
-  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure       = 15;/**<< @brief The alveolar pressure at the end of expiration - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
-  Scalar0To1Data                      LeakFraction                              = 16;/**<< @brief The fraction of gas volume lost during the ventilation cycle determined from the air volume in and out difference.*/
-  ScalarPressureData                  MeanAirwayPressure                        = 17;/**<< @brief The mean pressure applied during positive-pressure mechanical ventilation. */
-  ScalarVolumePerTimeData             PeakExpiratoryFlow                        = 18;/**<< @brief The highest airflow during exhalation.*/
-  ScalarPressureData                  PeakInspiratoryPressure                   = 19;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
-  ScalarPressureData                  PlateauPressure                           = 20;/**<< @brief The pressure applied by the ventilator measured at end-inspiration with an inspiratory hold maneuver.*/
-  ScalarPressureData                  PositiveEndExpiratoryPressure             = 21;/**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
-  ScalarFrequencyData                 RespirationRate                           = 22;/**<< @brief The frequency of the respiratory cycle.*/
-  ScalarVolumePerPressureData         StaticPulmonaryCompliance                 = 23;/**<< @brief The pulmonary compliance during periods without gas flow.*/
-  ScalarVolumeData                    TidalVolume                               = 24;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
-  ScalarVolumeData                    TotalLungVolume                           = 25;/**<< @brief The total volume of air within the lungs at any given time.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                 = 26;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
+  ScalarPressureData                  ExtrinsicPositiveEndExpiratoryPressure    = 11;/**<< @brief The positive pressure intentionally applied to the airways at the end of expiration (i.e., the PEEP setting). */
+  ScalarData                          InspiratoryExpiratoryRatio                = 12;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
+  ScalarVolumePerTimeData             InspiratoryFlow                           = 13;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
+  ScalarPressureTimePerVolumeData     InspiratoryResistance                     = 14;/**<< @brief The total resistance to airflow through the lungs during inspiration.*/
+  ScalarVolumeData                    InspiratoryTidalVolume                    = 15;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
+  ScalarPressureData                  IntrinsicPositiveEndExpiratoryPressure    = 16;/**<< @brief The alveolar pressure at the end of expiration above extrinsic - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
+  Scalar0To1Data                      LeakFraction                              = 17;/**<< @brief The fraction of gas volume lost during the ventilation cycle determined from the air volume in and out difference.*/
+  ScalarPressureData                  MeanAirwayPressure                        = 18;/**<< @brief The mean pressure applied during positive-pressure mechanical ventilation. */
+  ScalarVolumePerTimeData             PeakExpiratoryFlow                        = 19;/**<< @brief The highest airflow during exhalation.*/
+  ScalarVolumePerTimeData             PeakInspiratoryFlow                       = 20;/**<< @brief The highest airflow during inhalation.*/
+  ScalarPressureData                  PeakInspiratoryPressure                   = 21;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
+  ScalarPressureData                  PlateauPressure                           = 22;/**<< @brief The pressure applied by the ventilator measured at end-inspiration with an inspiratory hold maneuver.*/
+  ScalarFrequencyData                 RespirationRate                           = 23;/**<< @brief The frequency of the respiratory cycle.*/
+  ScalarVolumePerPressureData         StaticRespiratoryCompliance               = 24;/**<< @brief The respiratory compliance during periods without gas flow.*/
+  ScalarVolumeData                    TidalVolume                               = 25;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
+  ScalarVolumeData                    TotalLungVolume                           = 26;/**<< @brief The total volume of air within the lungs at any given time.*/
+  ScalarPressureData                  TotalPositiveEndExpiratoryPressure        = 27;/**<< @brief The overall pressure in the alveoli at the end of expiration above atmospheric pressure.*/
+  ScalarVolumePerTimeData             TotalPulmonaryVentilation                 = 28;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
 
-  MechanicalVentilatorSettingsData    Settings                                  = 27;
+  MechanicalVentilatorSettingsData    Settings                                  = 29;
 }

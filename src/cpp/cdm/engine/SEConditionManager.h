@@ -12,6 +12,7 @@ class SEChronicPericardialEffusion;
 class SEChronicRenalStenosis;
 class SEChronicVentricularSystolicDysfunction;
 class SEConsumeMeal;
+class SEDehydration;
 class SEImpairedAlveolarExchange;
 class SEPneumonia;
 class SEPulmonaryFibrosis;
@@ -74,6 +75,10 @@ public:
   SEConsumeMeal& GetConsumeMeal();
   const SEConsumeMeal* GetConsumeMeal() const;
 
+  bool HasDehydration() const;
+  SEDehydration& GetDehydration();
+  const SEDehydration* GetDehydration() const;
+
   bool HasImpairedAlveolarExchange() const;
   SEImpairedAlveolarExchange& GetImpairedAlveolarExchange();
   const SEImpairedAlveolarExchange* GetImpairedAlveolarExchange() const;
@@ -107,9 +112,10 @@ protected:
 
   SEAcuteRespiratoryDistressSyndrome*      m_ARDS;
   SEChronicAnemia*                         m_Anemia;
-  SEConsumeMeal*                           m_ConsumeMeal;
   SEChronicObstructivePulmonaryDisease*    m_COPD;
   SEChronicVentricularSystolicDysfunction* m_ChronicVentricularSystolicDysfunction;
+  SEConsumeMeal*                           m_ConsumeMeal;
+  SEDehydration*                           m_Dehydration;
   SEImpairedAlveolarExchange*              m_ImpairedAlveolarExchange;
   SEPneumonia*                             m_Pneumonia;
   SEChronicPericardialEffusion*            m_PericardialEffusion;

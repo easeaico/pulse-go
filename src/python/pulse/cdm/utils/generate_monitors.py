@@ -12,9 +12,9 @@ from typing import Sequence
 from datetime import timedelta
 from timeit import default_timer as timer
 
+from pulse.cdm.utils.file_utils import adjust_filepath
 from pulse.cdm.plots import SEPlotConfig, SEPlotSource, SEMonitorPlotter
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
-
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -38,11 +38,11 @@ def generate_monitors(monitor_plotter: SEMonitorPlotter, benchmark: bool=False):
     if monitor_plotter.has_times_s():
         times_s = monitor_plotter.get_times_s()
     elif monitor_plotter.has_data_requested_file():
-        data_requested_file = monitor_plotter.get_data_requested_file()
+        data_requested_file = adjust_filepath(monitor_plotter.get_data_requested_file())
         if not data_requested_file.is_file():
             _pulse_logger.error(f"Data requested file does not exist: {data_requested_file}")
             return
-        results = serialize_data_requested_result_from_file(monitor_plotter.get_data_requested_file())
+        results = serialize_data_requested_result_from_file(adjust_filepath(monitor_plotter.get_data_requested_file()))
         for segment in results.get_segments():
             if segment.id == 0:  # Don't generate monitors for segment 0
                 continue
@@ -97,7 +97,7 @@ def generate_monitors(monitor_plotter: SEMonitorPlotter, benchmark: bool=False):
 
 def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="vitals_monitor.jpg"):
     # Read the CSV file
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(adjust_filepath(csv_file))
 
     # Filter rows between start time and end time in the "Time(s)" column
     filtered_data_long = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
@@ -233,7 +233,7 @@ def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s:
 
 def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="ventilator_monitor.jpg"):
     # Read the CSV file
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(adjust_filepath(csv_file))
 
     # Filter rows between 1.0 and 20.0 in the "Time(s)" column
     filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
@@ -244,6 +244,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     # Extract required data for subplots
     time = filtered_data["Time(s)"]
     airway_pressure = filtered_data["MechanicalVentilator-AirwayPressure(cmH2O)"] if "MechanicalVentilator-AirwayPressure(cmH2O)" in filtered_data else pd.Series([np.nan] * len(time))
+    muscle_pressure = filtered_data["TransMusclePressure(cmH2O)"] if "TransMusclePressure(cmH2O)" in filtered_data else pd.Series([np.nan] * len(time))
     inspiratory_flow = filtered_data["MechanicalVentilator-InspiratoryFlow(L/min)"] if "MechanicalVentilator-InspiratoryFlow(L/min)" in filtered_data else pd.Series([np.nan] * len(time))
     total_lung_volume = filtered_data["MechanicalVentilator-TotalLungVolume(mL)"] if "MechanicalVentilator-TotalLungVolume(mL)" in filtered_data else pd.Series([np.nan] * len(time))
 
@@ -253,11 +254,11 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     tidal_volume = f'{round(filtered_data["MechanicalVentilator-TidalVolume(mL)"].iloc[-1], 0):.0f}' if "MechanicalVentilator-TidalVolume(mL)" in filtered_data else "--"
     respiration_rate = f'{round(filtered_data["MechanicalVentilator-RespirationRate(1/min)"].iloc[-1], 0):.0f}' if "MechanicalVentilator-RespirationRate(1/min)" in filtered_data else "--"
     end_tidal_carbon_dioxide_pressure = f'{round(filtered_data["MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)"].iloc[-1], 0):.0f}' if "MechanicalVentilator-EndTidalCarbonDioxidePressure(mmHg)" in filtered_data else "--"
-    dynamic_pulmonary_compliance = f'{round(filtered_data["MechanicalVentilator-DynamicPulmonaryCompliance(mL/cmH2O)"].iloc[-1], 0):.0f}' if "MechanicalVentilator-DynamicPulmonaryCompliance(mL/cmH2O)" in filtered_data else "--"
+    static_pulmonary_compliance = f'{round(filtered_data["MechanicalVentilator-StaticRespiratoryCompliance(mL/cmH2O)"].iloc[-1], 0):.0f}' if "MechanicalVentilator-StaticRespiratoryCompliance(mL/cmH2O)" in filtered_data else "--"
     inspiratory_expiratory_ratio = f'1:{round(1 / filtered_data["MechanicalVentilator-InspiratoryExpiratoryRatio"].iloc[-1], 1):.1f}' if "MechanicalVentilator-InspiratoryExpiratoryRatio" in filtered_data else "--"
 
     # Create the figure and subplots
-    fig, axs = plt.subplots(3, 1, figsize=(14, 8))
+    fig, axs = plt.subplots(4, 1, figsize=(14, 14))
 
     # Set the facecolor of each subplot
     for ax in axs:
@@ -273,8 +274,8 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     axs[0].spines["left"].set_color("white")
     axs[0].axhline(0, color='grey')
 
-    axs[1].plot(time, inspiratory_flow, color="white")
-    axs[1].set_ylabel("Flow (L/min)", color="white", fontsize=18)
+    axs[1].plot(time, muscle_pressure, color="white")
+    axs[1].set_ylabel("Pmus (cmH2O)", color="white", fontsize=18)
     axs[1].tick_params(colors="white")
     axs[1].spines["bottom"].set_color("white")
     axs[1].spines["top"].set_color("white")
@@ -282,15 +283,24 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     axs[1].spines["left"].set_color("white")
     axs[1].axhline(0, color='grey')
 
-    axs[2].plot(time, total_lung_volume, color="white")
-    axs[2].set_xlabel("Time (s)", color="white", fontsize=18)
-    axs[2].set_ylabel("Volume (mL)", color="white", fontsize=18)
+    axs[2].plot(time, inspiratory_flow, color="white")
+    axs[2].set_ylabel("Flow (L/min)", color="white", fontsize=18)
     axs[2].tick_params(colors="white")
     axs[2].spines["bottom"].set_color("white")
     axs[2].spines["top"].set_color("white")
     axs[2].spines["right"].set_color("white")
     axs[2].spines["left"].set_color("white")
     axs[2].axhline(0, color='grey')
+
+    axs[3].plot(time, total_lung_volume, color="white")
+    axs[3].set_xlabel("Time (s)", color="white", fontsize=18)
+    axs[3].set_ylabel("Volume (mL)", color="white", fontsize=18)
+    axs[3].tick_params(colors="white")
+    axs[3].spines["bottom"].set_color("white")
+    axs[3].spines["top"].set_color("white")
+    axs[3].spines["right"].set_color("white")
+    axs[3].spines["left"].set_color("white")
+    axs[3].axhline(0, color='grey')
 
     # Create the number value boxes
     value_boxes_headings = [
@@ -299,7 +309,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
         f"VT (mL)\n",
         f"RR (/min)\n",
         f"etCO2 (mmHg)\n",
-        f"cDyn (mL/cmH2O)\n",
+        f"cStat (mL/cmH2O)\n",
         f"I:E\n",
     ]
 
@@ -309,7 +319,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
         f"\n{tidal_volume}",
         f"\n{respiration_rate}",
         f"\n{end_tidal_carbon_dioxide_pressure}",
-        f"\n{dynamic_pulmonary_compliance}",
+        f"\n{static_pulmonary_compliance}",
         f"\n{inspiratory_expiratory_ratio}",
     ]
 
@@ -362,7 +372,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
 
 def create_ventilator_loops_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="ventilator_loops.jpg"):
     # Read the CSV file
-    data = pd.read_csv(csv_file)
+    data = pd.read_csv(adjust_filepath(csv_file))
 
     # Filter rows between 1.0 and 20.0 in the "Time(s)" column
     filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]

@@ -79,11 +79,13 @@ namespace pulse
     double                m_InspiratoryFlow_L_Per_s;
     double                m_PreviousYPieceToConnectionFlow_L_Per_s;
     double                m_PreviousConnectionPressure_cmH2O;
+    bool                  m_PauseOccurred;
     eBreathState          m_CurrentBreathState;
     bool                  m_Initializing;
 
     double                m_PositiveEndExpiratoryPressure_cmH2O;
     double                m_PeakExpiratoryFlow_L_Per_s;
+    double                m_PeakInspiratoryFlow_L_Per_s;
     double                m_EndTidalCarbonDioxideFraction;
     double                m_EndTidalCarbonDioxidePressure_cmH2O;
     double                m_EndTidalOxygenFraction;

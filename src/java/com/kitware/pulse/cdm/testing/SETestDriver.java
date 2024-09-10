@@ -354,25 +354,6 @@ public class SETestDriver
         report.addKnownSuiteFailure(job.name);
         continue;
       }    
-      if (job.isAssessment)
-      {
-        SETestSuite ts = report.createTestSuite();
-        ts.setName(job.name);
-        ts.setPerformed(true);
-        SETestCase  tc = ts.createTestCase();
-        tc.setName(job.name);
-        if(new File(job.computedFiles.get(0)).exists())
-        {
-          ts.setPerformed(true);
-          currentGroup.add(ts.getName());
-        }
-        else
-        {
-          ts.setPerformed(false);
-          tc.AddFailure("Could not find assessment file");
-        }
-        continue;
-      }
       if(job.reportFiles.isEmpty())
       {
         report.createErrorSuite(job.name,"No reports found for "+job.name+" to summarize");

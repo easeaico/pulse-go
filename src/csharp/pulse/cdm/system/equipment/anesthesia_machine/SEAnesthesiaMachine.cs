@@ -108,8 +108,8 @@ namespace Pulse.CDM
     //    this.GetOxygenFraction().Set(from.GetOxygenFraction());
     //  if(from.oxygenSource!=null && from.oxygenSource != OxygenSource.NullSource)
     //  	this.setOxygenSource(from.GetOxygenSource());
-    //  if(from.HasPositiveEndExpiredPressure())
-    //    this.GetPositiveEndExpiredPressure().Set(from.GetPositiveEndExpiredPressure());
+    //  if(from.HasPositiveEndExpiratoryPressure())
+    //    this.GetPositiveEndExpiratoryPressure().Set(from.GetPositiveEndExpiratoryPressure());
     //  if(from.primaryGas!=null && from.primaryGas != PrimaryGas.NullGas)
     //  	this.setPrimaryGas(from.GetPrimaryGas());
     //  if(from.HasReliefValvePressure())
@@ -212,13 +212,13 @@ namespace Pulse.CDM
       return peakInspiratoryPressure == null ? false : peakInspiratoryPressure.IsValid();
     }
 
-    public SEScalarPressure GetPositiveEndExpiredPressure()
+    public SEScalarPressure GetPositiveEndExpiratoryPressure()
     {
       if (positiveEndExpiredPressure == null)
         positiveEndExpiredPressure = new SEScalarPressure();
       return positiveEndExpiredPressure;
     }
-    public bool HasPositiveEndExpiredPressure()
+    public bool HasPositiveEndExpiratoryPressure()
     {
       return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.IsValid();
     }
@@ -345,7 +345,7 @@ namespace Pulse.CDM
       + "\n\tOxygenFraction: " + GetOxygenFraction()
       + "\n\tOxygenSource: " + (HasOxygenSource() ? eAnesthesiaMachine.OxygenSource_Name(GetOxygenSource()) : "NotProvided")
       + "\n\tPeakInspiratoryPressure: " + GetPeakInspiratoryPressure()
-      + "\n\tPositiveEndExpiredPressure: " + GetPositiveEndExpiredPressure()
+      + "\n\tPositiveEndExpiratoryPressure: " + GetPositiveEndExpiratoryPressure()
       + "\n\tPrimaryGas: " + (HasPrimaryGas() ? eAnesthesiaMachine.PrimaryGas_Name(GetPrimaryGas()) : "NotProvided")
       + "\n\tRespiratoryRate: " + GetRespiratoryRate()
       + "\n\tReliefValvePressure: " + GetReliefValvePressure()

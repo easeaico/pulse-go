@@ -7,7 +7,7 @@ from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.environment_actions import SEChangeEnvironmentalConditions
 from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
                               PressureUnit, HeatResistanceAreaUnit, \
-                              MassPerVolumeUnit
+                              MassPerVolumeUnit, VolumeUnit
 
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
 
@@ -51,6 +51,7 @@ def HowTo_EnvironmentalConditions():
     environmental_conditions.get_ambient_temperature().set_value(22, TemperatureUnit.C)
     environmental_conditions.get_atmospheric_pressure().set_value(525, PressureUnit.mmHg)
     environmental_conditions.get_clothing_resistance().set_value(0.5, HeatResistanceAreaUnit.clo)
+    environmental_conditions.get_mechanical_dead_space().set_value(0.5, VolumeUnit.L)
     environmental_conditions.get_relative_humidity().set_value(0.5)
     # When changing ambient gas mixture, fractions must sum to 1
     environmental_conditions.remove_ambient_gasses()

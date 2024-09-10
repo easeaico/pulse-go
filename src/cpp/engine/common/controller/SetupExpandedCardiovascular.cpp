@@ -505,7 +505,7 @@ namespace pulse
 
 
     // Move a little volume from LargeIntestine to Gut1 for substance transport
-    // LargeIntestine1.GetVolumeBaseline().IncrementValue(-10, VolumeUnit::mL);
+    // LargeIntestine1.GetVolumeBaseline().Increment(-10, VolumeUnit::mL);
     SEFluidCircuitNode& Gut1 = cCardiovascular.CreateNode(pulse::ExpandedCardiovascularNode::Gut1);
     Gut1.GetVolumeBaseline().SetValue(VolumeFractionGutLiverArterioles * bloodVolume_mL, VolumeUnit::mL);
     Gut1.GetPressure().SetValue(VascularPressureTargetArterioles, PressureUnit::mmHg);
@@ -562,7 +562,7 @@ namespace pulse
     VenaCava1.GetPressure().SetValue(VascularPressureTargetVenules, PressureUnit::mmHg);
 
     SEFluidCircuitNode& VenaCava2 = cCardiovascular.CreateNode(pulse::ExpandedCardiovascularNode::VenaCava2);
-    VenaCava1.GetVolumeBaseline().IncrementValue(-50, VolumeUnit::mL);
+    VenaCava1.GetVolumeBaseline().Increment(-50, VolumeUnit::mL);
     VenaCava2.GetVolumeBaseline().SetValue(50, VolumeUnit::mL);
     VenaCava2.GetPressure().SetValue(VascularPressureTargetVenaCava, PressureUnit::mmHg);
 

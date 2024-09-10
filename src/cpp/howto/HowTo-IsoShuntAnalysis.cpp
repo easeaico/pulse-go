@@ -99,7 +99,7 @@ void HowToIsoShuntAnalysis()
         vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
         vc_ac.GetFractionInspiredOxygen().SetValue(FiO2);
         vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s); //This is optional
-        vc_ac.GetPositiveEndExpiredPressure().SetValue(PEEP_cmH2O, PressureUnit::cmH2O);
+        vc_ac.GetPositiveEndExpiratoryPressure().SetValue(PEEP_cmH2O, PressureUnit::cmH2O);
         vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
         vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
         pe->ProcessAction(vc_ac);

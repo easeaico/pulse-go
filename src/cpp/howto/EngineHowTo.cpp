@@ -14,7 +14,7 @@ int main()
 
   //HowToSandbox();
 
-  HowToEngineUse();
+  //HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
@@ -33,6 +33,7 @@ int main()
   //HowToCOPD();
   //HowToCOVID19Ventilated();
   //HowToCPR();
+  //HowToDehydration();
   //HowToECMO();
   //HowToEnvironmentChange();
   //HowToExercise();
@@ -47,9 +48,11 @@ int main()
   //HowToPulmonaryFibrosis();
   //HowToRespiratoryMechanics();
   //HowToRespiratoryMechanicsModification();
+  HowToRunToStable();
   HowToSepsis();
   //HowToSmoke();
   //HowToTensionPneumothorax();
+  //HowToVentilatorFeedbackLoop();
 
   // These ones do not really run, pure examples
   //HowToRunScenario();

@@ -123,6 +123,14 @@ public:
   virtual double GetPhosphate(const AmountPerVolumeUnit& unit) const;
   //@}
 
+  virtual bool HasPlasmaOsmolality() const;
+  virtual SEScalarOsmolality& GetPlasmaOsmolality();
+  virtual double GetPlasmaOsmolality(const OsmolalityUnit& unit) const;
+
+  virtual bool HasPlasmaOsmolarity() const;
+  virtual SEScalarOsmolarity& GetPlasmaOsmolarity();
+  virtual double GetPlasmaOsmolarity(const OsmolarityUnit& unit) const;
+
   /** @name PlasmaVolume
   *  @brief @copybrief Physiology_BloodChemistrySystemData_PlasmaVolume
   *  @{*/
@@ -305,6 +313,8 @@ protected:
   SEScalarMass*                   m_HemoglobinContent;
   SEScalar0To1*                   m_OxygenSaturation;
   SEScalarAmountPerVolume*        m_Phosphate;
+  SEScalarOsmolality*             m_PlasmaOsmolality;
+  SEScalarOsmolarity*             m_PlasmaOsmolarity;
   SEScalarVolume*                 m_PlasmaVolume;
   SEScalar0To1*                   m_PulseOximetry;
   SEScalarAmountPerVolume*        m_RedBloodCellCount;

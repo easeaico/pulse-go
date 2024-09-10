@@ -76,9 +76,9 @@ public:
   virtual SEScalarPressureTimePerVolume& GetValveResistance();
   virtual double GetValveResistance(const PressureTimePerVolumeUnit& unit) const;
 
-  virtual bool HasValvePositiveEndExpiredPressure() const;
-  virtual SEScalarPressure& GetValvePositiveEndExpiredPressure();
-  virtual double GetValvePositiveEndExpiredPressure(const PressureUnit& unit) const;
+  virtual bool HasValvePositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetValvePositiveEndExpiratoryPressure();
+  virtual double GetValvePositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
   bool HasFractionInspiredGas() const;
   bool HasFractionInspiredGas(const SESubstance& substance) const;
@@ -108,7 +108,7 @@ protected:
   SEScalarVolume*                              m_FilterVolume;
   SEScalarVolume*                              m_ConnectionVolume;
   SEScalarVolume*                              m_ValveVolume;
-  SEScalarPressure*                            m_ValvePositiveEndExpiredPressure;
+  SEScalarPressure*                            m_ValvePositiveEndExpiratoryPressure;
   SEScalarPressureTimePerVolume*               m_ValveResistance;
 
   std::vector<SESubstanceFraction*>            m_FractionInspiredGases;

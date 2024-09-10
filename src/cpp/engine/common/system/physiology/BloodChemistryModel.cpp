@@ -242,7 +242,7 @@ namespace pulse
     shunt = MIN(shunt, 1.0);
     GetShuntFraction().SetValue(shunt);
 
-    CheckBloodGasLevels();
+    CheckBloodSubstanceLevels();
 
     // Total up all active substances
     double bloodMass_ug;
@@ -265,6 +265,34 @@ namespace pulse
     GetTotalProteinConcentration().SetValue(albuminConcentration_ug_Per_mL * 1.6, MassPerVolumeUnit::ug_Per_mL);
     // 1.6 comes from reading http://www.drkaslow.com/html/proteins_-_albumin-_globulins-_etc.html
     ComputeExposedModelParameters();
+
+    // Compute plasma osmolality and osmolarity by looking at the aorta
+    // Specific gravity is calculated by dividing the mass of all the substances in a fluid & the fluid itself by the weight of just the fluid
+    SEScalarMass substanceMass;
+    for (SELiquidSubstanceQuantity* subQ : m_Aorta->GetSubstanceQuantities())
+    {
+      if (subQ->HasMass())
+        substanceMass.Increment(subQ->GetMass());
+    }
+
+    // Increment water mass onto substance mass to get total mass:
+    SEScalar specificGravity;
+    if (!GeneralMath::CalculateSpecificGravity(substanceMass, m_Aorta->GetVolume(), specificGravity))
+      Error("Unable to calculate specific gravity of aorta substances");
+
+    // Osmolality is the osmotic pressure of sodium, glucose and urea over the weight of the fluid
+    GeneralMath::CalculateOsmolality(m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetSodium())->GetMolarity(),
+      m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetPotassium())->GetMolarity(),
+      m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose())->GetMolarity(),
+      m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetUrea())->GetMolarity(),
+      specificGravity,
+      GetPlasmaOsmolality());
+
+    GeneralMath::CalculateOsmolarity(m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetSodium())->GetMolarity(),
+      m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetPotassium())->GetMolarity(),
+      m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose())->GetMolarity(),
+      m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetUrea())->GetMolarity(), 
+      GetPlasmaOsmolarity());
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -286,13 +314,14 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Checks the blood gas (oxygen, carbon dioxide) levels and sets events.
+  /// Checks the blood gas (oxygen, carbon dioxide) and other substance levels and sets events.
   ///
   /// \details
   /// Checks the oxygen and carbon dioxide levels in specific compartments of the body. 
-  /// Set events for hypercapnia, Hypoxia, and Brain and MyoCardium Oxygen Deficit based on the levels.
+  /// Set events for hypercapnia, Hypoxia, Brain, Oxygen Deficit, and MyoCardium Oxygen Deficit.
+  /// Also checks sodium levels and sets the hyponatremia and hypernatremia events.
   //--------------------------------------------------------------------------------------------------
-  void BloodChemistryModel::CheckBloodGasLevels()
+  void BloodChemistryModel::CheckBloodSubstanceLevels()
   {
     m_ArterialOxygen_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
     m_ArterialCarbonDioxide_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
@@ -364,6 +393,77 @@ namespace pulse
         {
           m_data.GetEvents().SetEvent(eEvent::SevereHypocapnia, false, m_data.GetSimulationTime());
           m_data.GetEvents().SetEvent(eEvent::ModerateHypocapnia, false, m_data.GetSimulationTime());
+        }
+
+        // sodium check
+        double sodiumMolarity_mEq_Per_L = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetSodium())->GetMolarity(AmountPerVolumeUnit::mEq_Per_L);
+
+        // Give little buffers to prevent lots of flipping at inflection points
+        double buffer_mEq_Per_L = 1.0;
+
+        if (sodiumMolarity_mEq_Per_L < 135.0 || ///\cite rondon2017hyponatremia
+          (m_data.GetEvents().IsEventActive(eEvent::Hyponatremia) && sodiumMolarity_mEq_Per_L < 135.0 + buffer_mEq_Per_L))
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyponatremia, true, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::Hypernatremia, false, m_data.GetSimulationTime());
+        }
+        else if (sodiumMolarity_mEq_Per_L > 145.0 || ///\cite Lewis2023Hypernatremia
+          (m_data.GetEvents().IsEventActive(eEvent::Hypernatremia) && sodiumMolarity_mEq_Per_L > 145.0 - buffer_mEq_Per_L))
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyponatremia, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::Hypernatremia, true, m_data.GetSimulationTime());
+        }
+        else
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyponatremia, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::Hypernatremia, false, m_data.GetSimulationTime());
+        }
+
+        double bloodGlucoseConcentration_mg_Per_dL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
+        if (bloodGlucoseConcentration_mg_Per_dL > 180.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyperglycemia, true, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::Hypoglycemia, false, m_data.GetSimulationTime());
+        }
+        else if (bloodGlucoseConcentration_mg_Per_dL < 70.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyperglycemia, false, m_data.GetSimulationTime());
+          m_data.GetEvents().SetEvent(eEvent::Hypoglycemia, true, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Hyperglycemia) && bloodGlucoseConcentration_mg_Per_dL < 178.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hyperglycemia, false, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Hypoglycemia) && bloodGlucoseConcentration_mg_Per_dL >  72.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Hypoglycemia, false, m_data.GetSimulationTime());
+        }
+
+        if (bloodGlucoseConcentration_mg_Per_dL > 250.0 && m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis))
+        {
+          m_data.GetEvents().SetEvent(eEvent::Ketoacidosis, true, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Ketoacidosis) && !m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis))
+        {
+          m_data.GetEvents().SetEvent(eEvent::Ketoacidosis, false, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::Ketoacidosis) && bloodGlucoseConcentration_mg_Per_dL < 240.0)
+        {
+          m_data.GetEvents().SetEvent(eEvent::Ketoacidosis, false, m_data.GetSimulationTime());
+        }
+
+        double bloodLactateConcentration_mg_Per_dL = m_data.GetSubstances().GetLactate().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
+        if (bloodLactateConcentration_mg_Per_dL > 36.04 && m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis)) // > 4 mmol/L
+        {
+          m_data.GetEvents().SetEvent(eEvent::LacticAcidosis, true, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::LacticAcidosis) && !m_data.GetEvents().IsEventActive(eEvent::MetabolicAcidosis))
+        {
+          m_data.GetEvents().SetEvent(eEvent::LacticAcidosis, false, m_data.GetSimulationTime());
+        }
+        else if (m_data.GetEvents().IsEventActive(eEvent::LacticAcidosis) && bloodLactateConcentration_mg_Per_dL < 35.04)
+        {
+          m_data.GetEvents().SetEvent(eEvent::LacticAcidosis, false, m_data.GetSimulationTime());
         }
       }
 

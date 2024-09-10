@@ -50,6 +50,7 @@ namespace pulse
 
     // Preprocess Methods
     void ProduceAlbumin(double duration_s);
+    void Dehydration();
 
     /*Tissue System*/
     void CalculateMetabolicConsumptionAndProduction(double time);
@@ -74,13 +75,13 @@ namespace pulse
     double MoveMassByFacilitatedDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double combinedCoefficient_g_Per_s, double timestep_s);
     double MoveMassByActiveTransport(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double DiffusingCapacityO2_mL_Per_s_mmHg, double timestep_s);
 
-    // Serializable member variables (Set in Initialize and in schema
+    // Serializable member variables (Set in Initialize and in schema)
     double m_RestingTissueGlucose_g;
     double m_RestingBloodGlucose_mg_Per_mL;
     double m_RestingBloodLipid_mg_Per_mL;
     double m_RestingBloodInsulin_mg_Per_mL;
-    double m_RestingPatientMass_kg;
     double m_RestingFluidMass_kg;
+    double m_PreviousFluidMass_kg;
     // Cache of flows to use to calculate consumption/production during cardiac arrest
     std::map<SELiquidCompartment*, double> m_CardiacArrestVascularFlows_ml_per_min;
 
@@ -98,6 +99,7 @@ namespace pulse
     SESubstance* m_Sodium;
     SESubstance* m_Calcium;
     SESubstance* m_Insulin;
+    SESubstanceCompound* m_Sweat;
 
     SEFluidCircuitNode* m_GutT1;
     SEFluidCircuitPath* m_GutT1ToGutT3;

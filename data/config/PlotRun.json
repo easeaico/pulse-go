@@ -433,30 +433,12 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "Comment": "Heart Failure",
-        "PlotConfig":
-        {
-          "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/VentricularSystolicDysfunctionResults.csv" }
-        ],
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "HeartFailure", "YHeader": [ "BloodVolume(L)" ] }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
         "Comment": "Drugs Methodology Report - Validation - Albuterol",
         "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Drugs/" },
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/AlbuterolValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/AlbuterolValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -479,7 +461,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/EtomidateValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/EtomidateValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -502,7 +484,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FentanylValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/FentanylValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -525,7 +507,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/FurosemideValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/FurosemideValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -548,7 +530,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/KetamineValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/KetamineValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -571,7 +553,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/LorazepamValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/LorazepamValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -594,7 +576,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MidazolamValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/MidazolamValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -617,7 +599,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/MorphineValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/MorphineValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -640,7 +622,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/NaloxoneValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/NaloxoneValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -663,7 +645,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PralidoximeValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/PralidoximeValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -686,7 +668,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PrednisoneValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/PrednisoneValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -709,7 +691,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/PropofolValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/PropofolValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -732,7 +714,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/RocuroniumValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/RocuroniumValidationResults.csv",
             "LineFormat": "-b"
           }
         ],
@@ -755,7 +737,7 @@
         "PlotSource":
         [
           {
-            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drugs/SuccinylcholineValidationResults.csv",
+            "CSVData": "$VERIFICATION_DIR/scenarios/validation/drug_pk/SuccinylcholineValidationResults.csv",
             "LineFormat": "-b"
           }
         ],

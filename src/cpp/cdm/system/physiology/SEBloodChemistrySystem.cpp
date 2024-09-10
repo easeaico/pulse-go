@@ -7,6 +7,8 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarOsmolality.h"
+#include "cdm/properties/SEScalarOsmolarity.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarHeatCapacitancePerMass.h"
@@ -24,6 +26,8 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
   m_HemoglobinContent = nullptr;
   m_OxygenSaturation = nullptr;
   m_Phosphate = nullptr;
+  m_PlasmaOsmolality = nullptr;
+  m_PlasmaOsmolarity = nullptr;
   m_PlasmaVolume = nullptr;
   m_PulseOximetry = nullptr;
   m_RedBloodCellCount = nullptr;
@@ -57,6 +61,8 @@ SEBloodChemistrySystem::~SEBloodChemistrySystem()
   SAFE_DELETE(m_HemoglobinContent);
   SAFE_DELETE(m_OxygenSaturation);
   SAFE_DELETE(m_Phosphate);
+  SAFE_DELETE(m_PlasmaOsmolality);
+  SAFE_DELETE(m_PlasmaOsmolarity);
   SAFE_DELETE(m_PlasmaVolume);
   SAFE_DELETE(m_PulseOximetry);
   SAFE_DELETE(m_RedBloodCellCount);
@@ -90,6 +96,8 @@ void SEBloodChemistrySystem::Clear()
   INVALIDATE_PROPERTY(m_HemoglobinContent);
   INVALIDATE_PROPERTY(m_OxygenSaturation);
   INVALIDATE_PROPERTY(m_Phosphate);
+  INVALIDATE_PROPERTY(m_PlasmaOsmolality);
+  INVALIDATE_PROPERTY(m_PlasmaOsmolarity);
   INVALIDATE_PROPERTY(m_PlasmaVolume);
   INVALIDATE_PROPERTY(m_PulseOximetry);
   INVALIDATE_PROPERTY(m_RedBloodCellCount);
@@ -134,6 +142,10 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
     return &GetOxygenSaturation();
   if (name.compare("Phosphate") == 0)
     return &GetPhosphate();
+  if (name.compare("PlasmaOsmolality") == 0)
+    return &GetPlasmaOsmolality();
+  if (name.compare("PlasmaOsmolarity") == 0)
+    return &GetPlasmaOsmolarity();
   if (name.compare("PlasmaVolume") == 0)
     return &GetPlasmaVolume();
   if (name.compare("PulseOximetry") == 0)
@@ -357,6 +369,40 @@ double SEBloodChemistrySystem::GetPhosphate(const AmountPerVolumeUnit& unit) con
   if (m_Phosphate == nullptr)
     return SEScalar::dNaN();
   return m_Phosphate->GetValue(unit);
+}
+
+bool SEBloodChemistrySystem::HasPlasmaOsmolality() const
+{
+  return m_PlasmaOsmolality == nullptr ? false : m_PlasmaOsmolality->IsValid();
+}
+SEScalarOsmolality& SEBloodChemistrySystem::GetPlasmaOsmolality()
+{
+  if (m_PlasmaOsmolality == nullptr)
+    m_PlasmaOsmolality = new SEScalarOsmolality();
+  return *m_PlasmaOsmolality;
+}
+double SEBloodChemistrySystem::GetPlasmaOsmolality(const OsmolalityUnit& unit) const
+{
+  if (m_PlasmaOsmolality == nullptr)
+    return SEScalar::dNaN();
+  return m_PlasmaOsmolality->GetValue(unit);
+}
+
+bool SEBloodChemistrySystem::HasPlasmaOsmolarity() const
+{
+  return m_PlasmaOsmolarity == nullptr ? false : m_PlasmaOsmolarity->IsValid();
+}
+SEScalarOsmolarity& SEBloodChemistrySystem::GetPlasmaOsmolarity()
+{
+  if (m_PlasmaOsmolarity == nullptr)
+    m_PlasmaOsmolarity = new SEScalarOsmolarity();
+  return *m_PlasmaOsmolarity;
+}
+double SEBloodChemistrySystem::GetPlasmaOsmolarity(const OsmolarityUnit& unit) const
+{
+  if (m_PlasmaOsmolarity == nullptr)
+    return SEScalar::dNaN();
+  return m_PlasmaOsmolarity->GetValue(unit);
 }
 
 bool SEBloodChemistrySystem::HasPlasmaVolume() const

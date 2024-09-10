@@ -52,6 +52,7 @@ set(PULSE_CSHARP_BIND_FILES
 set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_CreateState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_DeathState.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Dehydration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_EngineUse.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Environment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_ECMO.cs
@@ -163,6 +164,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicPericardialEffusion.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicRenalStenosis.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEDehydration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEImpairedAlveolarExchange.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPatientCondition.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEPneumonia.cs

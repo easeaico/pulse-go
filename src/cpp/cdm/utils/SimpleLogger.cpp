@@ -311,7 +311,7 @@ Loggable::Loggable(std::string const& logfile)
 Loggable::~Loggable()
 {
   if (myLogger)
-    delete m_Logger;
+    SAFE_DELETE(m_Logger);
 }
 
 Logger* Loggable::GetLogger() const

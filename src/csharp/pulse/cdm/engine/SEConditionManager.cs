@@ -10,6 +10,7 @@ namespace Pulse.CDM
     //protected SEConsumeMeal consume_meal;
     protected SEChronicObstructivePulmonaryDisease copd;
     protected SEChronicVentricularSystolicDysfunction cvsd;
+    protected SEDehydration dehydration;
     protected SEImpairedAlveolarExchange impaired_alveolar_exchange;
     protected SEChronicPericardialEffusion pericardial_effusion;
     protected SEPneumonia pneumonia;
@@ -32,6 +33,7 @@ namespace Pulse.CDM
       //consume_meal = null;
       copd = null;
       cvsd = null;
+      dehydration = null;
       impaired_alveolar_exchange = null;
       pericardial_effusion = null;
       pneumonia = null;
@@ -58,6 +60,8 @@ namespace Pulse.CDM
         return false;
       //if (HasConsumeMeal())
       //  return false;
+      if (HasDehydration())
+        return false;
       if (HasImpairedAlveolarExchange())
         return false;
       if (HasPneumonia())
@@ -101,14 +105,19 @@ namespace Pulse.CDM
         pericardial_effusion = (SEChronicPericardialEffusion)c;
         return true;
       }
+      if (c.GetType().IsAssignableFrom(typeof(SEChronicRenalStenosis)))
+      {
+        renal_stenosis = (SEChronicRenalStenosis)c;
+        return true;
+      }
       //if (c.GetType().IsAssignableFrom(typeof(SEConsumeMeal)))
       //{
       //  consume_meal = (SEConsumeMeal)c;
       //  return true;
       //}
-      if (c.GetType().IsAssignableFrom(typeof(SEChronicRenalStenosis)))
+      if (c.GetType().IsAssignableFrom(typeof(SEDehydration)))
       {
-        renal_stenosis = (SEChronicRenalStenosis)c;
+        dehydration = (SEDehydration)c;
         return true;
       }
       if (c.GetType().IsAssignableFrom(typeof(SEImpairedAlveolarExchange)))
@@ -242,6 +251,21 @@ namespace Pulse.CDM
     //public bool HasConsumeMeal()
     //public SEConsumeMeal GetConsumeMeal()
     //public void RemoveConsumeMeal()
+
+    public bool HasDehydration()
+    {
+      return dehydration == null ? false : dehydration.IsValid();
+    }
+    public SEDehydration GetDehydration()
+    {
+      if (dehydration == null)
+        dehydration = new SEDehydration();
+      return dehydration;
+    }
+    public void RemoveDehydration()
+    {
+      dehydration = null;
+    }
 
     public bool HasImpairedAlveolarExchange()
     {

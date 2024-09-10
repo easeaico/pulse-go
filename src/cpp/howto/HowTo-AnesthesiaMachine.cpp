@@ -86,7 +86,7 @@ void HowToAnesthesiaMachine()
   config.GetInspiratoryExpiratoryRatio().SetValue(.5);
   config.GetOxygenFraction().SetValue(.5);
   config.SetOxygenSource(eAnesthesiaMachine_OxygenSource::Wall);
-  config.GetPositiveEndExpiredPressure().SetValue(0.0, PressureUnit::cmH2O);
+  config.GetPositiveEndExpiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
   config.SetPrimaryGas(eAnesthesiaMachine_PrimaryGas::Nitrogen);
   config.GetReliefValvePressure().SetValue(20.0, PressureUnit::cmH2O);
   config.GetRespiratoryRate().SetValue(12, FrequencyUnit::Per_min);
@@ -131,7 +131,7 @@ void HowToAnesthesiaMachine()
   pe->GetLogger()->Info(std::stringstream() <<"Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());;
 
   config.GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
-  config.GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
+  config.GetPositiveEndExpiratoryPressure().SetValue(3.0, PressureUnit::cmH2O);
   config.GetPeakInspiratoryPressure().SetValue(22.0, PressureUnit::cmH2O);
   pe->ProcessAction(AMConfig);
   pe->GetLogger()->Info("Setting the ventilator pressure to drive the machine. Also increasing the inlet flow and positive end expired pressure to test machine controls.");
@@ -147,7 +147,7 @@ void HowToAnesthesiaMachine()
   pe->GetLogger()->Info(std::stringstream() <<"Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());;
 
   config.GetInspiratoryExpiratoryRatio().SetValue(1.0);
-  config.GetPositiveEndExpiredPressure().SetValue(1.0, PressureUnit::cmH2O);
+  config.GetPositiveEndExpiratoryPressure().SetValue(1.0, PressureUnit::cmH2O);
   config.GetRespiratoryRate().SetValue(18.0, FrequencyUnit::Per_min);
   config.GetPeakInspiratoryPressure().SetValue(10.0, PressureUnit::cmH2O);
   pe->ProcessAction(AMConfig);

@@ -508,7 +508,7 @@ namespace pulse
 
   bool Controller::Stabilize(const SEPatientConfiguration& patient_configuration)
   {
-    m_EventManager->SetEvent(eEvent::Stabilization, true, m_SimulationTime);
+    m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
     // Stabilize the engine to a resting state (with a standard meal and environment)
     if (!m_Config->HasStabilization())
     {
@@ -538,7 +538,7 @@ namespace pulse
         return false;
     }
     AtSteadyState(EngineState::AtSecondaryStableState);
-    m_EventManager->SetEvent(eEvent::Stabilization, false, m_SimulationTime);
+    m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
     return true;
   }
 
@@ -676,11 +676,21 @@ namespace pulse
     const SEAdvanceUntilStable* adv2Stable = dynamic_cast<const SEAdvanceUntilStable*>(&action);
     if (adv2Stable != nullptr)
     {
-      m_EventManager->SetEvent(eEvent::Stabilization, true, m_SimulationTime);
+      m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
       m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
-      if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, SEEngineStabilization::AdvanceUntilStable))
-        Error("Engine was unable to AdvanceUntilStable");
-      m_EventManager->SetEvent(eEvent::Stabilization, false, m_SimulationTime);
+      std::string criteria = SEEngineStabilization::AdvanceUntilStable;
+      if (adv2Stable->HasCriteria())
+        criteria = adv2Stable->GetCriteria();
+      if (!m_Config->GetStabilization()->HasConvergenceCriteria(criteria))
+        Error("Provided criteria not found: " + criteria);
+      else
+      {
+        Info("Advancing until stable using criteria: " + criteria);
+        if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, criteria))
+          Error("Engine was unable to AdvanceUntilStable");
+      }
+
+      m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
       return true;
     }
 
@@ -825,7 +835,7 @@ namespace pulse
     const SECardiovascularMechanicsModification* cvMod = dynamic_cast<const SECardiovascularMechanicsModification*>(&action);
     if (cvMod != nullptr && !cvMod->GetIncremental())
     {
-      m_EventManager->SetEvent(eEvent::Stabilization, true, m_SimulationTime);
+      m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
       m_NervousModel->SetBaroreceptorFeedback(eSwitch::Off);
       m_NervousModel->SetChemoreceptorFeedback(eSwitch::Off);
       m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
@@ -839,18 +849,18 @@ namespace pulse
       GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetCardiovascular().GetSystolicArterialPressure());
       GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetCardiovascular().GetDiastolicArterialPressure());
 
-      m_EventManager->SetEvent(eEvent::Stabilization, false, m_SimulationTime);
+      m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
     }
 
     const SERespiratoryMechanicsModification* rMod = dynamic_cast<const SERespiratoryMechanicsModification*>(&action);
     if (rMod != nullptr && !rMod->GetIncremental())
     {
-      m_EventManager->SetEvent(eEvent::Stabilization, true, m_SimulationTime);
+      m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
       m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
       if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, SEEngineStabilization::AdvanceUntilStable))
         Error("Unable to restabilize to provided respiratory modifiers");
       m_Actions->GetPatientActions().GetRespiratoryMechanicsModification().SetIncremental(true);
-      m_EventManager->SetEvent(eEvent::Stabilization, false, m_SimulationTime);
+      m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
     }
 
     return true;

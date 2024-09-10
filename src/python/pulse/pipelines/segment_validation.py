@@ -76,7 +76,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         _pulse_logger.error(f"Results directory ({validate_dir}) does not exist. Aborting")
         return
 
-    sce_ids = gen_scenarios_and_targets(xls_file, scenario_dir, test_results_dir, exec_opt == eExecOpt.MarkdownOnly)
+    sce_ids = gen_scenarios_and_targets(xls_file, scenario_dir, test_results_dir)
     if exec_opt is eExecOpt.GenerateOnly:
         return
 
@@ -91,15 +91,17 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         base_md = Path(get_root_dir()) / "docs" / "Validation" / f"{xls_basename}.md"
     if base_md.is_file():
         md_files.append(base_md)
+        # Find any other files that start with this name
     for sce_id in sce_ids:
-        md_file = Path(xls_dir / f"{xls_basename}-{sce_id}.md")
+        md_file = Path(get_root_dir()) / "docs" / "Validation" / f"{xls_basename}-{sce_id}.md"
         if not md_file.is_file():
             md_file = Path(get_root_dir()) / "docs" / "Validation" / f"{sce_id}.md"
             if not md_file.is_file():
-                md_file = None
+                md_file = Path(xls_dir / f"{xls_basename}-{sce_id}.md")
+                if not md_file.is_file():
+                    md_file = None
         if md_file is not None:
             md_files.append(md_file)
-
 
     if len(md_files) == 0:
         _pulse_logger.error(f"Could not find md files, at least one should be in:")
@@ -168,7 +170,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         abs_targets_filename = Path(scenario_dir / target_file)
         abs_segments_filename = Path(validate_dir / target_file.replace("-ValidationTargets", "Results-Segments"))
         if not abs_segments_filename.exists():
-            _pulse_logger.error(f"Unable to locate segments for {target_file}. Continuing without validating.")
+            _pulse_logger.error(f"Unable to locate segments for {abs_segments_filename}. Continuing without validating.")
             continue
 
         table_dir = Path("./validation/tables/" + xls_basename + '/' + target_file.split('-')[0])
@@ -246,6 +248,9 @@ if __name__ == "__main__":
         # In the future, we will do all xlsx in the data/validation dir
         # But for now, we are just hard coding the automated xlsx files
         xls_files.append("AirwayObstruction.xlsx")
+        xls_files.append("Dehydration.xlsx")
+        xls_files.append("MechanicalVentilator.xlsx")
+        xls_files.append("CSTARS.xlsx")
 
     exec_opt = eExecOpt.Full
     if opts.generate_only:

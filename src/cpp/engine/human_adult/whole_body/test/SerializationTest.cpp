@@ -163,7 +163,7 @@ namespace pulse { namespace human_adult_whole_body
     amConfig.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
     amConfig.GetConfiguration().GetOxygenFraction().SetValue(0.4);
     amConfig.GetConfiguration().SetOxygenSource(eAnesthesiaMachine_OxygenSource::Wall);
-    amConfig.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
+    amConfig.GetConfiguration().GetPositiveEndExpiratoryPressure().SetValue(3.0, PressureUnit::cmH2O);
     amConfig.GetConfiguration().SetPrimaryGas(eAnesthesiaMachine_PrimaryGas::Nitrogen);
     amConfig.GetConfiguration().GetReliefValvePressure().SetValue(20, PressureUnit::cmH2O);
     amConfig.GetConfiguration().GetRespiratoryRate().SetValue(16.0, FrequencyUnit::Per_min);

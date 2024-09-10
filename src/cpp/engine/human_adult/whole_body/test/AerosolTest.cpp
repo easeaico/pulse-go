@@ -85,7 +85,7 @@ namespace pulse { namespace human_adult_whole_body
                                                    // Bin n contains 
 
     SizeIndependentDepositionEfficencyCoefficientsTest(normalDistributionSuite, normalDistributedSubstance, 0.043737, 0.045737, 0.090432, 0.3115);
-    DepositionFractionTest(normalDistributionSuite, normalDistributedSubstance, 0.074548, 0.0774748, 0.0751394, 0.144502, 0.0755068, 0.145212);
+    DepositionFractionTest(normalDistributionSuite, normalDistributedSubstance, 0.074548, 0.0774748, 0.0750439, 0.144502, 0.0754057, 0.145212);
 
     // Create another suite...
     // Create a suite
@@ -114,7 +114,7 @@ namespace pulse { namespace human_adult_whole_body
     monoConcentrations.GetFraction().push_back(0);     // Bin 5 (Bounded by Boundary 5 and Boundary 6)
 
     SizeIndependentDepositionEfficencyCoefficientsTest(monodispersedSuite, monodispersedSubstance, 0.024864, 0.025498, 0.083839, 0.32856);
-    DepositionFractionTest(monodispersedSuite, monodispersedSubstance, 0.0438201, 0.0447655, 0.0715328, 0.15274, 0.0718575, 0.153452);
+    DepositionFractionTest(monodispersedSuite, monodispersedSubstance, 0.0438201, 0.0447655, 0.0714445, 0.15274, 0.0717642, 0.153452);
 
     // Create a suite
     SETestSuite& mono2Suite = testReport.CreateTestSuite();
@@ -170,7 +170,7 @@ namespace pulse { namespace human_adult_whole_body
     mono3Concentrations.GetFraction().push_back(0);     // Bin 5 (Bounded by Boundary 5 and Boundary 6)
 
     SizeIndependentDepositionEfficencyCoefficientsTest(mono3Suite, mono3Substance, 0.43617, 0.77358, 0.21788, 0.005489);
-    DepositionFractionTest(mono3Suite, mono3Substance, 0.417621, 0.592992, 0.112553, 0.00248646, 0.113877, 0.00250667);
+    DepositionFractionTest(mono3Suite, mono3Substance, 0.417621, 0.592992, 0.112428, 0.00248646, 0.113745, 0.00250667);
 
     // Create a suite
     SETestSuite& zhangDispersion = testReport.CreateTestSuite();
@@ -206,7 +206,7 @@ namespace pulse { namespace human_adult_whole_body
     zhangConcentrations.GetFraction().push_back(0.016661235);     // Bin 9 (Bounded by Boundary 9 and Boundary 10)
 
     SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
-    DepositionFractionTest(zhangDispersion, zhangSubstance, 0.333249, 0.423409, 0.000104601, 0.000108576, 0.000105008, 0.000109058);
+    DepositionFractionTest(zhangDispersion, zhangSubstance, 0.333249, 0.423409, 0.000104459, 0.000108576, 0.000105008, 0.000109058);
 
     testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.json");
   }
@@ -416,19 +416,19 @@ namespace pulse { namespace human_adult_whole_body
             depositedRightAnatomicDeadSpaceParticulate_ug + depositedRightAlveoliParticulate_ug;
 
           // Remove the delta from the compartment substance quantity mass
-          airwayParticulate->GetMass().IncrementValue(-depositedAirwayParticulate_ug, MassUnit::ug); airwayParticulate->Balance(BalanceLiquidBy::Mass);
-          carinaParticulate->GetMass().IncrementValue(-depositedCarinaParticulate_ug, MassUnit::ug); carinaParticulate->Balance(BalanceLiquidBy::Mass);
-          leftAnatomicDeadSpaceParticulate->GetMass().IncrementValue(-depositedLeftAnatomicDeadSpaceParticulate_ug, MassUnit::ug); leftAnatomicDeadSpaceParticulate->Balance(BalanceLiquidBy::Mass);
-          leftAlveoliParticulate->GetMass().IncrementValue(-depositedLeftAlveoliParticulate_ug, MassUnit::ug); leftAlveoliParticulate->Balance(BalanceLiquidBy::Mass);
-          rightAnatomicDeadSpaceParticulate->GetMass().IncrementValue(-depositedRightAnatomicDeadSpaceParticulate_ug, MassUnit::ug); rightAnatomicDeadSpaceParticulate->Balance(BalanceLiquidBy::Mass);
-          rightAlveoliParticulate->GetMass().IncrementValue(-depositedRightAlveoliParticulate_ug, MassUnit::ug); rightAlveoliParticulate->Balance(BalanceLiquidBy::Mass);
+          airwayParticulate->GetMass().Increment(-depositedAirwayParticulate_ug, MassUnit::ug); airwayParticulate->Balance(BalanceLiquidBy::Mass);
+          carinaParticulate->GetMass().Increment(-depositedCarinaParticulate_ug, MassUnit::ug); carinaParticulate->Balance(BalanceLiquidBy::Mass);
+          leftAnatomicDeadSpaceParticulate->GetMass().Increment(-depositedLeftAnatomicDeadSpaceParticulate_ug, MassUnit::ug); leftAnatomicDeadSpaceParticulate->Balance(BalanceLiquidBy::Mass);
+          leftAlveoliParticulate->GetMass().Increment(-depositedLeftAlveoliParticulate_ug, MassUnit::ug); leftAlveoliParticulate->Balance(BalanceLiquidBy::Mass);
+          rightAnatomicDeadSpaceParticulate->GetMass().Increment(-depositedRightAnatomicDeadSpaceParticulate_ug, MassUnit::ug); rightAnatomicDeadSpaceParticulate->Balance(BalanceLiquidBy::Mass);
+          rightAlveoliParticulate->GetMass().Increment(-depositedRightAlveoliParticulate_ug, MassUnit::ug); rightAlveoliParticulate->Balance(BalanceLiquidBy::Mass);
           // Add the delta to the compartment substance quantity mass deposited
-          airwayParticulate->GetMassDeposited().IncrementValue(depositedAirwayParticulate_ug, MassUnit::ug);
-          carinaParticulate->GetMassDeposited().IncrementValue(depositedCarinaParticulate_ug, MassUnit::ug);
-          leftAnatomicDeadSpaceParticulate->GetMassDeposited().IncrementValue(depositedLeftAnatomicDeadSpaceParticulate_ug, MassUnit::ug);
-          leftAlveoliParticulate->GetMassDeposited().IncrementValue(depositedLeftAlveoliParticulate_ug, MassUnit::ug);
-          rightAnatomicDeadSpaceParticulate->GetMassDeposited().IncrementValue(depositedRightAnatomicDeadSpaceParticulate_ug, MassUnit::ug);
-          rightAlveoliParticulate->GetMassDeposited().IncrementValue(depositedRightAlveoliParticulate_ug, MassUnit::ug);
+          airwayParticulate->GetMassDeposited().Increment(depositedAirwayParticulate_ug, MassUnit::ug);
+          carinaParticulate->GetMassDeposited().Increment(depositedCarinaParticulate_ug, MassUnit::ug);
+          leftAnatomicDeadSpaceParticulate->GetMassDeposited().Increment(depositedLeftAnatomicDeadSpaceParticulate_ug, MassUnit::ug);
+          leftAlveoliParticulate->GetMassDeposited().Increment(depositedLeftAlveoliParticulate_ug, MassUnit::ug);
+          rightAnatomicDeadSpaceParticulate->GetMassDeposited().Increment(depositedRightAnatomicDeadSpaceParticulate_ug, MassUnit::ug);
+          rightAlveoliParticulate->GetMassDeposited().Increment(depositedRightAlveoliParticulate_ug, MassUnit::ug);
         }
       }
 

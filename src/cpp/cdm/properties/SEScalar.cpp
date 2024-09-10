@@ -142,6 +142,13 @@ double SEScalar::GetValue() const
   throw CommonDataModelException("SEScalar::GetValue is NaN");
 }
 
+double SEScalar::GetValue(int precision) const
+{
+  if (!m_isnan)
+    return SEScalar::Truncate(m_value, precision);
+  throw CommonDataModelException("SEScalar::GetValue is NaN");
+}
+
 void SEScalar::SetValue(double d)
 {
   if (m_readOnly)
@@ -172,11 +179,11 @@ double SEScalar::Increment(const SEScalar& s)
   if (!s.IsValid())
     Invalidate();
   else
-    IncrementValue(s.GetValue());
+    Increment(s.GetValue());
   return m_value;
 }
 
-double SEScalar::IncrementValue(double d)
+double SEScalar::Increment(double d)
 {
   if (!IsValid())
   {
@@ -187,7 +194,7 @@ double SEScalar::IncrementValue(double d)
   return m_value;
 }
 
-double SEScalar::ForceIncrementValue(double d)
+double SEScalar::ForceIncrement(double d)
 {
   if (!IsValid())
   {
@@ -198,16 +205,7 @@ double SEScalar::ForceIncrementValue(double d)
   return m_value;
 }
 
-double SEScalar::Multiply(const SEScalar& s)
-{
-  if (!s.IsValid())
-    Invalidate();
-  else
-    MultiplyValue(s.GetValue());
-  return m_value;
-}
-
-double SEScalar::MultiplyValue(double d)
+double SEScalar::Multiply(double d)
 {
   if (!IsValid())
   {
@@ -252,6 +250,29 @@ bool SEScalar::IsValue(double target, double value)
   if (value<(target + 1e-10) && value>(target - 1e-10))
     return true;
   return false;
+}
+
+double SEScalar::Truncate(double value, int decimal_places)
+{
+  switch (decimal_places)
+  {
+  case 1:
+    return std::ceil(value * 10) * 0.1;
+  case 2:
+    return std::ceil(value * 100) * 0.01;
+  case 3:
+    return std::ceil(value * 1000) * 0.001;
+  case 4:
+    return std::ceil(value * 10000) * 0.0001;
+  case 5:
+    return std::ceil(value * 100000) * 0.00001;
+  case 6:
+    return std::ceil(value * 1000000) * 0.000001;
+  default:
+    const double multiplier = std::pow(10.0, decimal_places);
+    return std::ceil(value * multiplier) / multiplier;
+  }
+  return value;
 }
 
 bool SEScalar::IsZero(double d, double limit)
@@ -327,11 +348,19 @@ double SEGenericScalar::GetValue() const
 {
   return m_Scalar->GetValue();
 }
+double SEGenericScalar::GetValue(int decimal_places) const
+{
+  return SEScalar::Truncate(m_Scalar->GetValue(), decimal_places);
+}
 double SEGenericScalar::GetValue(const CCompoundUnit& unit) const
 {
   if (m_UnitScalar == nullptr)
     return SEScalar::dNaN();
   return m_UnitScalar->GetValue(unit);
+}
+double SEGenericScalar::GetValue(const CCompoundUnit& unit, int decimal_places) const
+{
+  return SEScalar::Truncate(GetValue(unit), decimal_places);
 }
 
 std::string SEGenericScalar::GetString() const

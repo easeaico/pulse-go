@@ -173,7 +173,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
 
         // Setup data requests
         drMgr.CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit::cmH2O);
-        drMgr.CreateMechanicalVentilatorDataRequest("DynamicPulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+        drMgr.CreateMechanicalVentilatorDataRequest("DynamicRespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction");
@@ -181,27 +181,29 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit::L_Per_s);
         drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit::mL);
+        drMgr.CreateMechanicalVentilatorDataRequest("ExtrinsicPositiveEndExpiratoryPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio");
         drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_min);
         drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit::mL);
-        drMgr.CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit::cmH2O);
+        drMgr.CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiratoryPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("LeakFraction");
         drMgr.CreateMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("PeakExpiratoryFlow", VolumePerTimeUnit::L_Per_s);
+        drMgr.CreateMechanicalVentilatorDataRequest("PeakInspiratoryFlow", VolumePerTimeUnit::L_Per_s);
         drMgr.CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit::cmH2O);
-        drMgr.CreateMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit::Per_min);
-        drMgr.CreateMechanicalVentilatorDataRequest("StaticPulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+        drMgr.CreateMechanicalVentilatorDataRequest("StaticRespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit::mL);
         drMgr.CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit::mL);
+        drMgr.CreateMechanicalVentilatorDataRequest("TotalPositiveEndExpiratoryPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_s);
 
         drMgr.CreatePhysiologyDataRequest("LungCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-        drMgr.CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-        drMgr.CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        drMgr.CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        drMgr.CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+        drMgr.CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        drMgr.CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         drMgr.CreatePhysiologyDataRequest("TransMusclePressure", PressureUnit::cmH2O);
         drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
         drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
@@ -322,7 +324,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
           vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
-          vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          vc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
 
@@ -341,7 +343,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit::cmH2O);
-          pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          pc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
           //Use a flow trigger to make it look more realistic
@@ -360,7 +362,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
-          cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          cpap.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
           //Use a flow trigger to make it look more realistic
           cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
@@ -381,7 +383,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetFlow().SetValue(40.0, VolumePerTimeUnit::L_Per_min);
           vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           vc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
-          vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          vc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(550.0, VolumeUnit::mL);
 
@@ -400,7 +402,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(23.0, PressureUnit::cmH2O);
-          pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          pc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
           //Use a flow trigger to make it look more realistic
@@ -419,7 +421,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
-          cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          cpap.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
           //Use a flow trigger to make it look more realistic
           cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
@@ -440,7 +442,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetFlow().SetValue(40.0, VolumePerTimeUnit::L_Per_min);
           vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           vc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
-          vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          vc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
 
@@ -459,7 +461,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.2, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(12.0, PressureUnit::cmH2O);
-          pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          pc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
           //Use a flow trigger to make it look more realistic
@@ -478,7 +480,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
-          cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          cpap.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
           //Use a flow trigger to make it look more realistic
           cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);

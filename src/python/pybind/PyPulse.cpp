@@ -1,6 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+
 #include <pybind11/pybind11.h>
 #include "PulseEngineThunk.h"
 

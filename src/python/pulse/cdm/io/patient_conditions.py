@@ -97,6 +97,17 @@ def serialize_chronic_ventricular_systolic_dysfunction_from_bind(src: ChronicVen
 
 #################################################################
 
+def serialize_dehydration_to_bind(src: SEDehydration , dst: DehydrationData):
+    serialize_patient_condition_to_bind(src, dst.PatientCondition)
+    if src.has_severity():
+        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+
+def serialize_dehydration_from_bind(src: DehydrationData, dst: SEDehydration):
+    serialize_patient_condition_from_bind(src.PatientCondition, dst)
+    raise Exception("serialize_dehydration_from_bind not implemented")
+
+#################################################################
+
 def serialize_impaired_alveolar_exchange_to_bind(src: SEImpairedAlveolarExchange , dst: ImpairedAlveolarExchangeData):
     serialize_patient_condition_to_bind(src, dst.PatientCondition)
     if src.has_impaired_fraction():

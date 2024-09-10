@@ -133,6 +133,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEChronicRenalStenosis.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEConsumeMeal.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEDehydration.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEImpairedAlveolarExchange.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEPatientCondition.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEPneumonia.java

@@ -45,9 +45,9 @@ public:
   virtual SEScalarFrequency& GetDriverDampingParameter();
   virtual double GetDriverDampingParameter(const FrequencyUnit& unit) const;
 
-  virtual bool HasPositiveEndExpiredPressure() const;
-  virtual SEScalarPressure& GetPositiveEndExpiredPressure();
-  virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
+  virtual bool HasPositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
+  virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
   virtual bool HasFunctionalResidualCapacity() const;
   virtual SEScalarPressure& GetFunctionalResidualCapacity();
@@ -195,7 +195,7 @@ protected:
   SEScalarFrequency*                           m_DriverDampingParameter;
 
   // Expiratory Baseline Properties (Only set 1)
-  SEScalarPressure*                            m_PositiveEndExpiredPressure;
+  SEScalarPressure*                            m_PositiveEndExpiratoryPressure;
   SEScalarPressure*                            m_FunctionalResidualCapacity;
 
   // Expriatory Cycle Properties (Only Set 1)

@@ -205,7 +205,7 @@ def generate_validation_targets(
     :param xls_file: Path to xls file.
     :param patient_validation: Where generated targets will be stored.
 
-    :return: Whether or not validation target generation was successful.
+    :return: Whether validation target generation was successful.
     """
     if not xls_file.is_file():
         _pulse_logger.error(f"Could not find xls file {xls_file}")
@@ -468,30 +468,47 @@ def generate_sheet_targets(
         if not vtb.request_type:
             _pulse_logger.info(f"Not validating {vtb.header} (no DR type)")
             continue
-        if "@" in vtb.request_type:
-            # Currently ignoring assessment types
-            continue
 
         if vtb.tgt_dest not in targets:
             targets[vtb.tgt_dest] = list()
         vts = targets[vtb.tgt_dest]
 
-        dr = generate_data_request(
-            request_type=vtb.request_type,
-            property_name=vtb.header,
-            unit_str=vtb.units.strip(),
-            precision=None
-        )
+        # Evaluate cells if needed
+        ref_val = vtb.ref_cell
+        if isinstance(ref_val, str) and ref_val.startswith("="):
+            if ref_val.startswith("="):
+                cell_loc = f"{system}!{get_column_letter(VTB_REF_CELL + 1)}{row_num + 2}"
+                ref_val = evaluator.evaluate(cell_loc)
+        unit_str = vtb.units.strip()
+        if unit_str.startswith("="):
+            cell_loc = f"{system}!{get_column_letter(VTB_UNITS + 1)}{row_num + 2}"
+            unit_str = evaluator.evaluate(cell_loc)
+        ref_str = vtb.references
+        if ref_str.startswith("="):
+            cell_loc = f"{system}!{get_column_letter(VTB_REFS + 1)}{row_num + 2}"
+            ref_str = evaluator.evaluate(cell_loc)
+        algo = vtb.algorithm
+        if algo.startswith("="):
+            cell_loc = f"{system}!{get_column_letter(VTB_ALGO + 1)}{row_num + 2}"
+            algo = evaluator.evaluate(cell_loc)
+
         tgt = SETimeSeriesValidationTarget()
-        tgt.set_header(dr.to_string())
-        tgt.set_reference(vtb.references)
+        tgt.set_reference(ref_str)
         tgt.set_notes(vtb.notes)
         tgt.set_patient_specific_setting(vtb.patient_specific)
         tgt.set_table_formatting(vtb.table_precision)
+        if "@" in vtb.request_type:
+            tgt.set_assessment(vtb.request_type)
+            vtb.request_type = "Physiology"
 
-        ref_val = vtb.ref_cell
+        dr = generate_data_request(
+            request_type=vtb.request_type,
+            property_name=vtb.header,
+            unit_str=unit_str,
+            precision=None
+        )
+        tgt.set_header(dr.to_string())
 
-        algo = vtb.algorithm
         if algo == "Max":
             algo = "Maximum"
         elif algo == "Min":
@@ -504,26 +521,22 @@ def generate_sheet_targets(
             _pulse_logger.error(f"Unknown validation target type: {algo}. Skipping validation target for {vtb.header} in {system}.")
             continue
 
-        # Evaluate cell if needed
-        if isinstance(ref_val, str) and ref_val.startswith("="):
-            if ref_val.startswith("="):
-                cell_loc = f"{system}!{get_column_letter(VTB_REF_CELL+1)}{row_num+2}"
-                ref_val = evaluator.evaluate(cell_loc)
-
         # TODO: Support other comparison types?
         if isinstance(ref_val, str):
-            s_vals = ref_val.strip()
-            s_vals = s_vals.replace('[', ' ')
-            s_vals = s_vals.replace(']', ' ')
-            vals = [float(s) for s in s_vals.split(',')]
-            tgt.set_range(min(vals), max(vals), algo)
+            if algo == SETimeSeriesValidationTarget.eTargetType.Enumeration:
+                tgt.set_equal_to_enum(ref_val, algo)
+            else:
+                s_vals = ref_val.strip()
+                s_vals = s_vals.replace('[', ' ')
+                s_vals = s_vals.replace(']', ' ')
+                vals = [float(s) for s in s_vals.split(',')]
+                tgt.set_range(min(vals), max(vals), algo)
         elif isinstance(ref_val, numbers.Number):
             val = float(ref_val)
             tgt.set_equal_to(val, algo)
         else:
             _pulse_logger.warning(f"Unknown reference value type {ref_val}")
-            tgt.set_range_min(np.nan)
-            tgt.set_range_max(np.nan)
+            tgt.set_range(np.nan, np.nan)
 
         vts.append(tgt)
 

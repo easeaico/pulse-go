@@ -10,18 +10,18 @@ import "pulse/cdm/bind/Substance.proto";
 
 message BagValveMaskData
 {
-  eBreathState                        BreathState                     = 1; /**<< @brief @ref eBreathStateTable */
-  eSwitch                             Connection                      = 2; /**<< @brief @ref BagValveMaskData_eConnectionTable */
+  eBreathState                        BreathState                        = 1; /**<< @brief @ref eBreathStateTable */
+  eSwitch                             Connection                         = 2; /**<< @brief @ref BagValveMaskData_eConnectionTable */
 
-  ScalarPressureTimePerVolumeData     BagResistance                   = 3; /**<< @brief Bag resistance. */
-  ScalarVolumeData                    ConnectionVolume                = 4; /**<< @brief Dead space volume of the connection (i.e., mask/tube). */
-  ScalarPressureTimePerVolumeData     FilterResistance                = 5; /**<< @brief Filter resistance. */
-  ScalarVolumeData                    FilterVolume                    = 6; /**<< @brief Dead space volume of the filter. */
-  ScalarPressureTimePerVolumeData     SealResistance                  = 7; /**<< @brief Seal resistance. */
-  ScalarPressureData                  ValvePositiveEndExpiredPressure = 8; /**<< @brief Maximum extrinsic pressure above atmosphere at the end of exhalation. */
-  ScalarPressureTimePerVolumeData     ValveResistance                 = 9; /**<< @brief Valve Resistance. */
-  ScalarVolumeData                    ValveVolume                     = 10;/**<< @brief Dead space volume of the valve. */
+  ScalarPressureTimePerVolumeData     BagResistance                      = 3; /**<< @brief Bag resistance. */
+  ScalarVolumeData                    ConnectionVolume                   = 4; /**<< @brief Dead space volume of the connection (i.e., mask/tube). */
+  ScalarPressureTimePerVolumeData     FilterResistance                   = 5; /**<< @brief Filter resistance. */
+  ScalarVolumeData                    FilterVolume                       = 6; /**<< @brief Dead space volume of the filter. */
+  ScalarPressureTimePerVolumeData     SealResistance                     = 7; /**<< @brief Seal resistance. */
+  ScalarPressureData                  ValvePositiveEndExpiratoryPressure = 8; /**<< @brief Maximum extrinsic pressure above atmosphere at the end of exhalation. */
+  ScalarPressureTimePerVolumeData     ValveResistance                    = 9; /**<< @brief Valve Resistance. */
+  ScalarVolumeData                    ValveVolume                        = 10;/**<< @brief Dead space volume of the valve. */
 
-  repeated SubstanceFractionData      FractionInspiredGas             = 11;/**<< @brief Break down of the gases, such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol    = 12;/**<< @brief Concentration of added aerosolized substances. */
+  repeated SubstanceFractionData      FractionInspiredGas                = 11;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol       = 12;/**<< @brief Concentration of added aerosolized substances. */
 }

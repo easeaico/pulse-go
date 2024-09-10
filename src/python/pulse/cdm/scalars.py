@@ -517,6 +517,100 @@ class SEScalarHeatCapacitancePerMass(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a HeatCapacitancePerMassUnit")
 
+
+class HeatConductanceUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == HeatConductanceUnit.W_Per_K.get_string():
+            return HeatConductanceUnit.W_Per_K
+        if string == HeatConductanceUnit.W_Per_C.get_string():
+            return HeatConductanceUnit.W_Per_C
+        if string == HeatConductanceUnit.kcal_Per_K_s.get_string():
+            return HeatConductanceUnit.kcal_Per_K_s
+        if string == HeatConductanceUnit.kcal_Per_C_s.get_string():
+            return HeatConductanceUnit.kcal_Per_C_s
+        raise Exception(f"No HeatConductanceUnit defined for {string}")
+HeatConductanceUnit.W_Per_K = HeatConductanceUnit("W/K")
+HeatConductanceUnit.W_Per_C = HeatConductanceUnit("W/degC")
+HeatConductanceUnit.kcal_Per_K_s = HeatConductanceUnit("kcal/K s")
+HeatConductanceUnit.kcal_Per_C_s = HeatConductanceUnit("kcal/degC s")
+class SEScalarHeatConductance(SEScalarQuantity):
+
+    def __init__(self, value: float=None, units: HeatConductanceUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value, units)
+
+    def set(self, scalar):
+        if isinstance(scalar, SEScalarHeatConductance):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarHeatConductance")
+
+    def get_value(self, units: HeatConductanceUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            return PyPulse.convert(self._value, str(self._units), str(units))
+
+    def set_value(self, value: float, units: HeatConductanceUnit):
+        if isinstance(units, HeatConductanceUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a HeatConductanceUnit")
+
+class HeatConductancePerAreaUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == HeatConductancePerAreaUnit.W_Per_m2_K.get_string():
+            return HeatConductancePerAreaUnit.W_Per_m2_K
+        if string == HeatConductancePerAreaUnit.W_Per_m2_C.get_string():
+            return HeatConductancePerAreaUnit.W_Per_m2_C
+        if string == HeatConductancePerAreaUnit.BTU_Per_hr_ft2_C.get_string():
+            return HeatConductancePerAreaUnit.BTU_Per_hr_ft2_C
+        raise Exception(f"No HeatConductancePerAreaUnit defined for {string}")
+HeatConductancePerAreaUnit.W_Per_m2_K = HeatConductancePerAreaUnit("W/m^2 K")
+HeatConductancePerAreaUnit.W_Per_m2_C = HeatConductancePerAreaUnit("W/m^2 degC")
+HeatConductancePerAreaUnit.BTU_Per_hr_ft2_C = HeatConductancePerAreaUnit("BTU/hr ft^2 degC")
+class SEScalarHeatConductancePerArea(SEScalarQuantity):
+
+    def __init__(self, value: float=None, units: HeatConductancePerAreaUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value, units)
+
+    def set(self, scalar):
+        if isinstance(scalar, SEScalarHeatConductancePerArea):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarHeatConductancePerArea")
+
+    def get_value(self, units: HeatConductancePerAreaUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            return PyPulse.convert(self._value, str(self._units), str(units))
+
+    def set_value(self, value: float, units: HeatConductancePerAreaUnit):
+        if isinstance(units, HeatConductancePerAreaUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a HeatConductancePerAreaUnit")
+
 class HeatResistanceAreaUnit(SEScalarUnit):
     @staticmethod
     def from_string(string: str):
@@ -1474,10 +1568,13 @@ class VolumeUnit(SEScalarUnit):
             return VolumeUnit.dL
         if string == VolumeUnit.m3.get_string():
             return VolumeUnit.m3
+        if string == VolumeUnit.uL.get_string():
+            return VolumeUnit.uL
         raise Exception("No VolumeUnit defined for " + string)
 VolumeUnit.L = VolumeUnit("L")
 VolumeUnit.mL = VolumeUnit("mL")
 VolumeUnit.dL = VolumeUnit("dL")
+VolumeUnit.uL = VolumeUnit("uL")
 VolumeUnit.m3 = VolumeUnit("m^3")
 class SEScalarVolume(SEScalarQuantity):
 
@@ -1823,6 +1920,8 @@ def get_unit(u: str):
         ForceUnit.from_string,
         FrequencyUnit.from_string,
         HeatCapacitancePerMassUnit.from_string,
+        HeatConductanceUnit.from_string,
+        HeatConductancePerAreaUnit.from_string,
         HeatResistanceAreaUnit.from_string,
         InversePressureUnit.from_string,
         LengthUnit.from_string,

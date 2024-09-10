@@ -122,7 +122,7 @@ def gen_rebase_config(test_cache: Dict[Path, Dict[str, str]]) -> None:
                                     _pulse_logger.info("Found scenario test warning : " + t_key)
                                     warnings.append(f"{t_key} = {t_val.lstrip()}")
                     else:
-                        _pulse_logger.error("Found unsupported error")
+                        _pulse_logger.error("Found unsupported error for "+ts.get_name())
 
     # Write out warnings and errors to a config
     out_file = Path("./test_results/warnings.config")

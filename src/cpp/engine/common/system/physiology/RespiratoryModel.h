@@ -92,6 +92,7 @@ namespace pulse
     /**/void ConsciousRespiration();
     /**/double VolumeToDriverPressure(double TargetVolume);
     /**/void UpdateDriverPressure();
+    /****/void CalculateMechanoreceptors();
     /**/void UpdateDriverPeriod();
     /**/double UpdateTargetVentilation(double targetAlveolarVentilation_L_Per_min);
     // Aerosol Deposition and various Effects
@@ -107,14 +108,15 @@ namespace pulse
     bool   m_BreathingCycle;
     bool   m_NotBreathing;
     double m_TopBreathTotalVolume_L;
-    double m_LastCardiacCycleBloodPH;
     double m_TopCarinaO2;
     double m_TopBreathElapsedTime_min;
     double m_BottomBreathElapsedTime_min;
     double m_BottomBreathTotalVolume_L;
     double m_BottomBreathAlveoliPressure_cmH2O;
+    double m_BottomBreathAirwayPressure_cmH2O;
     double m_PeakAlveolarPressure_cmH2O;
     double m_MaximalAlveolarPressure_cmH2O;
+    double m_LastCardiacCycleBloodPH;
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
@@ -150,6 +152,7 @@ namespace pulse
     double m_InspiratoryToExpiratoryPauseFraction;
     double m_ResidueFraction;
     double m_PreviousDyspneaSeverity;
+    double m_MechanoreceptorsDyspneaFactor;
 
     // Conscious Respiration
     bool m_ActiveConsciousRespirationCommand;
@@ -232,6 +235,7 @@ namespace pulse
       eSide                Side;
       SEFluidCircuitNode*  AlveoliNode;
       SEFluidCircuitNode*  DeadSpaceNode;
+      SEFluidCircuitPath*  ResistancePath;
       SEFluidCircuitPath*  CompliancePath;
       SEFluidCircuitPath*  ShuntPath;
       SEFluidCircuitPath*  CapillaryPath;

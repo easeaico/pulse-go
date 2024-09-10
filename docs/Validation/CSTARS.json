@@ -1,0 +1,494 @@
+{
+  "Plots" :
+  {
+    "PlotConfig": { "OutputPathOverride": "./docs/html/plots/CSTARS/" },
+    "Plotter" :
+    [
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 1)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Scenario1_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Scenario1_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Scenario1_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Scenario1_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Scenario1_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario1_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario1_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario1_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario1_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Scenario1_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Scenario1_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Scenario1_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Scenario1_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario1_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario1_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Scenario1_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Scenario1_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 1) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario1-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results-Segments.json"
+        }
+      }
+      ,
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 2)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Scenario2_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Scenario2_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Scenario2_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Scenario2_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Scenario2_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario2_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario2_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario2_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario2_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Scenario2_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Scenario2_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Scenario2_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Scenario2_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario2_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario2_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Scenario2_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Scenario2_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 2) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario2-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results-Segments.json"
+        }
+      }
+      ,
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 3)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Scenario3_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Scenario3_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Scenario3_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Scenario3_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Scenario3_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario3_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario3_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario3_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario3_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Scenario3_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Scenario3_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Scenario3_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Scenario3_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario3_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario3_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Scenario3_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Scenario3_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 3) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario3-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results-Segments.json"
+        }
+      }
+      ,
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 4)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Scenario4_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Scenario4_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Scenario4_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Scenario4_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Scenario4_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario4_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario4_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario4_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario4_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Scenario4_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Scenario4_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Scenario4_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Scenario4_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Scenario4_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Scenario4_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario4_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario4_LeftLungVolume", "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
+            { "OutputFilename": "Scenario4_RightLungVolume", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
+            { "OutputFilename": "Scenario4_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 4) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario4-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results-Segments.json"
+        }
+      }
+      ,
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 5)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Scenario5_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Scenario5_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Scenario5_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Scenario5_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Scenario5_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario5_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario5_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario5_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario5_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Scenario5_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Scenario5_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Scenario5_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Scenario5_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Scenario5_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Scenario5_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario5_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario5_LeftLungVolume", "YHeader": [ "LeftLungPulmonary-Volume(mL)" ] },
+            { "OutputFilename": "Scenario5_RightLungVolume", "YHeader": [ "RightLungPulmonary-Volume(mL)" ] },
+            { "OutputFilename": "Scenario5_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 5) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario5-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results-Segments.json"
+        }
+      }
+      ,
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 6)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Scenario6_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Scenario6_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Scenario6_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Scenario6_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Scenario6_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario6_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario6_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario6_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario6_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Scenario6_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Scenario6_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Scenario6_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Scenario6_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario6_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario6_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Scenario6_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Scenario6_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 6) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario6-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results-Segments.json"
+        }
+      }
+      ,
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 7)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Scenario7_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Scenario7_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Scenario7_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Scenario7_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Scenario7_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario7_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario7_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario7_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Scenario7_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Scenario7_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Scenario7_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Scenario7_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Scenario7_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario7_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Scenario7_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Scenario7_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Scenario7_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "CSTARS Validation (Scenario 7) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario7-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results-Segments.json"
+        }
+      }
+    ]
+  },
+  "Tables" :
+  {
+    "Table" :
+    [
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Scenario1",
+        "Segment": 1,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Scenario1",
+        "Segment": 2,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Scenario1",
+        "Segment": 3,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment4SegmentTable",
+        "ScenarioName": "Scenario1",
+        "Segment": 4,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Scenario2",
+        "Segment": 1,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Scenario2",
+        "Segment": 2,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Scenario2",
+        "Segment": 3,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Scenario3",
+        "Segment": 1,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Scenario3",
+        "Segment": 2,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Scenario3",
+        "Segment": 3,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Scenario4",
+        "Segment": 1,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Scenario4",
+        "Segment": 2,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Scenario4",
+        "Segment": 3,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Scenario5",
+        "Segment": 1,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Scenario5",
+        "Segment": 2,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Scenario5",
+        "Segment": 3,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Scenario6",
+        "Segment": 1,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Scenario6",
+        "Segment": 2,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Scenario6",
+        "Segment": 3,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Scenario7",
+        "Segment": 1,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Scenario7",
+        "Segment": 2,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Scenario7",
+        "Segment": 3,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      }
+    ]
+  }
+}

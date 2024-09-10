@@ -78,7 +78,7 @@ namespace pulse
     PBProperty::Load(src.heartcompliancemodifier(), *dst.m_HeartComplianceModifier);
     PBProperty::Load(src.aortacompliancemodifier(), *dst.m_AortaComplianceModifier);
     PBProperty::Load(src.venacavacompliancemodifier(), *dst.m_VenaCavaComplianceModifier);
-    PBProperty::Load(src.pulmonarycompliancemodifier(), *dst.m_PulmonaryComplianceModifier);
+    PBProperty::Load(src.pulmonarycompliancemodifier(), *dst.m_RespiratoryComplianceModifier);
     PBProperty::Load(src.systemicvascularresistancemodifier(), *dst.m_SystemicVascularResistanceModifier);
     PBProperty::Load(src.systemicvascularcompliancemodifier(), *dst.m_SystemicVascularComplianceModifier);
 
@@ -149,7 +149,7 @@ namespace pulse
     dst.set_allocated_heartcompliancemodifier(PBProperty::Unload(*src.m_HeartComplianceModifier));
     dst.set_allocated_aortacompliancemodifier(PBProperty::Unload(*src.m_AortaComplianceModifier));
     dst.set_allocated_venacavacompliancemodifier(PBProperty::Unload(*src.m_VenaCavaComplianceModifier));
-    dst.set_allocated_pulmonarycompliancemodifier(PBProperty::Unload(*src.m_PulmonaryComplianceModifier));
+    dst.set_allocated_pulmonarycompliancemodifier(PBProperty::Unload(*src.m_RespiratoryComplianceModifier));
     dst.set_allocated_systemicvascularresistancemodifier(PBProperty::Unload(*src.m_SystemicVascularResistanceModifier));
     dst.set_allocated_systemicvascularcompliancemodifier(PBProperty::Unload(*src.m_SystemicVascularComplianceModifier));
 
@@ -370,7 +370,6 @@ namespace pulse
     dst.m_LastMeanArterialPressure_mmHg = src.lastmeanarterialpressure_mmhg();
     dst.m_PreviousBloodVolume_mL = src.previousbloodvolume_ml();
     dst.m_PreviousHeartRhythm = (eHeartRhythm)src.previousheartrhythm();
-    dst.m_TotalSympatheticFraction = src.totalsympatheticfraction();
   }
   PULSE_BIND::NervousData* PBPhysiology::Unload(const NervousModel& src)
   {
@@ -391,7 +390,6 @@ namespace pulse
     dst.set_lastmeanarterialpressure_mmhg(src.m_LastMeanArterialPressure_mmHg);
     dst.set_previousbloodvolume_ml(src.m_PreviousBloodVolume_mL);
     dst.set_previousheartrhythm((CDM_BIND::eHeartRhythm)src.m_PreviousHeartRhythm);
-    dst.set_totalsympatheticfraction(src.m_TotalSympatheticFraction);
   }
 
   void PBPhysiology::Load(const PULSE_BIND::RenalData& src, RenalModel& dst)
@@ -463,6 +461,7 @@ namespace pulse
     dst.m_BottomBreathElapsedTime_min = src.bottombreathelapsedtime_min();
     dst.m_BottomBreathTotalVolume_L = src.bottombreathtotalvolume_l();
     dst.m_BottomBreathAlveoliPressure_cmH2O = src.bottombreathalveolipressure_cmh2o();
+    dst.m_BottomBreathAirwayPressure_cmH2O = src.bottombreathairwaypressure_cmh2o();
     dst.m_PeakAlveolarPressure_cmH2O = src.peakalveolarpressure_cmh2o();
     dst.m_MaximalAlveolarPressure_cmH2O = src.maximalalveolarpressure_cmh2o();
     PBProperty::Load(src.bloodphrunningaverage(), *dst.m_BloodPHRunningAverage);
@@ -500,6 +499,7 @@ namespace pulse
     dst.m_InspiratoryToExpiratoryPauseFraction = src.inspiratorytoexpiratorypausefraction();
     dst.m_ResidueFraction = src.residuefraction();
     dst.m_PreviousDyspneaSeverity = src.previousdyspneaseverity();
+    dst.m_MechanoreceptorsDyspneaFactor = src.mechanoreceptorsdyspneafactor();
 
     dst.m_LeftAlveoliDecrease_L = src.leftalveolidecrease_l();
     dst.m_RightAlveoliDecrease_L = src.rightalveolidecrease_l();
@@ -528,6 +528,7 @@ namespace pulse
     dst.set_topbreathelapsedtime_min(src.m_TopBreathElapsedTime_min);
     dst.set_bottombreathelapsedtime_min(src.m_BottomBreathElapsedTime_min);
     dst.set_bottombreathtotalvolume_l(src.m_BottomBreathTotalVolume_L);
+    dst.set_bottombreathairwaypressure_cmh2o(src.m_BottomBreathAirwayPressure_cmH2O);
     dst.set_bottombreathalveolipressure_cmh2o(src.m_BottomBreathAlveoliPressure_cmH2O);
     dst.set_peakalveolarpressure_cmh2o(src.m_PeakAlveolarPressure_cmH2O);
     dst.set_maximalalveolarpressure_cmh2o(src.m_MaximalAlveolarPressure_cmH2O);
@@ -566,6 +567,7 @@ namespace pulse
     dst.set_inspiratorytoexpiratorypausefraction(src.m_InspiratoryToExpiratoryPauseFraction);
     dst.set_residuefraction(src.m_ResidueFraction);
     dst.set_previousdyspneaseverity(src.m_PreviousDyspneaSeverity);
+    dst.set_mechanoreceptorsdyspneafactor(src.m_MechanoreceptorsDyspneaFactor);
 
     dst.set_activeconsciousrespirationcommand(src.m_ActiveConsciousRespirationCommand);
 
@@ -591,6 +593,7 @@ namespace pulse
     dst.m_RestingBloodLipid_mg_Per_mL = src.restingbloodlipid_mg_per_ml();
     dst.m_RestingBloodInsulin_mg_Per_mL = src.restingbloodinsulin_mg_per_ml();
     dst.m_RestingFluidMass_kg = src.restingfluidmass_kg();
+    dst.m_PreviousFluidMass_kg = src.previousfluidmass_kg();
     for (auto sitr : src.cardiacarrestvascularflows_ml_per_min())
     {
       bool found = false;
@@ -621,6 +624,7 @@ namespace pulse
     dst.set_restingbloodlipid_mg_per_ml(src.m_RestingBloodLipid_mg_Per_mL);
     dst.set_restingbloodinsulin_mg_per_ml(src.m_RestingBloodInsulin_mg_Per_mL);
     dst.set_restingfluidmass_kg(src.m_RestingFluidMass_kg);
+    dst.set_previousfluidmass_kg(src.m_PreviousFluidMass_kg);
     for (auto ditr : src.m_CardiacArrestVascularFlows_ml_per_min)
       (*dst.mutable_cardiacarrestvascularflows_ml_per_min())[ditr.first->GetName()] = ditr.second;
   }

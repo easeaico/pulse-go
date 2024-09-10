@@ -70,9 +70,9 @@ public:
   virtual eAnesthesiaMachine_OxygenSource GetOxygenSource() const;
   virtual void SetOxygenSource(eAnesthesiaMachine_OxygenSource name);
 
-  virtual bool HasPositiveEndExpiredPressure() const;
-  virtual SEScalarPressure& GetPositiveEndExpiredPressure();
-  virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
+  virtual bool HasPositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
+  virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
   
   virtual eAnesthesiaMachine_PrimaryGas GetPrimaryGas() const;
   virtual void SetPrimaryGas(eAnesthesiaMachine_PrimaryGas name);
@@ -116,7 +116,7 @@ protected:
   SEScalar*                                              m_InspiratoryExpiratoryRatio;
   SEScalar0To1*                                          m_OxygenFraction;
   eAnesthesiaMachine_OxygenSource                        m_OxygenSource;
-  SEScalarPressure*                                      m_PositiveEndExpiredPressure;
+  SEScalarPressure*                                      m_PositiveEndExpiratoryPressure;
   eAnesthesiaMachine_PrimaryGas                          m_PrimaryGas;
   SEScalarFrequency*                                     m_RespiratoryRate;
   SEScalarPressure*                                      m_ReliefValvePressure;

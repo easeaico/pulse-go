@@ -8,7 +8,7 @@
         "PulmonaryFibrosis": {
           "Severity": {
             "Scalar0To1": {
-              "Value": 0.9
+              "Value": 0.85
             }
           }
         }

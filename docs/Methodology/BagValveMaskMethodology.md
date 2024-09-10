@@ -201,7 +201,7 @@ The bag could be modeled as a compliance to be closer to reality.
 @ref BagValveMaskInstantaneousTable "BagValveMaskInstantaneous"
 
 
-## Acronyms
+## Glossary
 
 FiO2 - Fraction of Inpspired Oxygen
 

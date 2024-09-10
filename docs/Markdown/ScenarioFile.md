@@ -1333,7 +1333,7 @@ Cannot have any other equipment on at the same time <br>
         "InspiratoryExpiratoryRatio": { "Value":0.5 },
         "OxygenFraction": { "Scalar0To1": { "Value":0.23} },
         "OxygenSource":"Wall",
-        "PositiveEndExpiredPressure": { "ScalarPressure": { "Value":1.0, "Unit":"cmH2O"} },
+        "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value":1.0, "Unit":"cmH2O"} },
         "PrimaryGas":"Nitrogen",
         "RespiratoryRate": { "ScalarFrequency": { "Value":16.0, "Unit":"1/min" } },
         "VentilatorPressure": { "ScalarPressure": { "Value":10.5, "Unit":"cmH2O" } },
@@ -1600,7 +1600,7 @@ FATAL: Cannot have bvm, mechanical ventilator, and anesthesia machine on at the 
         "Configuration":
         {
           "Connection": "On",
-          "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
+          "ValvePositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
         }
     }
   }
@@ -1694,7 +1694,7 @@ FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
         "InspirationWaveform": "Square",
         "ExpirationWaveform": "Square",
         "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
-        "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
+        "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
         "InspirationTriggerTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
         "ExpirationCycleTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
         "FractionInspiredGas": [
@@ -1754,7 +1754,7 @@ FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
       "Connection": "On" },
      "DeltaPressureSupport": { "ScalarPressure": { "Value": 10, "Unit": "cmH2O" } },
      "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
-     "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+     "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
      "Slope": { "ScalarTime": { "Value": 0.2, "Unit": "s" } }
     }
    }
@@ -1776,7 +1776,7 @@ FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
      "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
      "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" } },
      "InspiratoryPressure": { "ScalarPressure": { "Value": 19, "Unit": "cmH2O" } },
-     "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+     "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
      "RespirationRate": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
      "Slope": { "ScalarTime": { "Unit": "s" } }
      }
@@ -1799,7 +1799,7 @@ FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
      "Flow": { "ScalarVolumePerTime": { "Value": 60, "Unit": "L/min" } },
      "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
      "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" } },
-     "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+     "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
      "RespirationRate": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
      "TidalVolume": { "ScalarVolume": { "Value": 900, "Unit": "mL" } }
     }

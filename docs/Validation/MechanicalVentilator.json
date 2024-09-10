@@ -1,0 +1,258 @@
+{
+  "Plots" :
+  {
+    "PlotConfig": { "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/" },
+    "Plotter" :
+    [
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (Healthy)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/HealthyResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Healthy_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Healthy_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Healthy_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Healthy_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Healthy_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Healthy_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Healthy_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Healthy_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Healthy_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Healthy_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Healthy_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Healthy_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Healthy_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Healthy_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Healthy_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Healthy_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Healthy_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (Healthy) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/HealthyResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Healthy-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/HealthyResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (ARDS)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/ARDSResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "ARDS_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "ARDS_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "ARDS_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "ARDS_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "ARDS_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "ARDS_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "ARDS_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "ARDS_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "ARDS_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "ARDS_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "ARDS_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "ARDS_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "ARDS_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "ARDS_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "ARDS_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "ARDS_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "ARDS_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (ARDS) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/ARDSResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "ARDS-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/ARDSResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (COPD)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/COPDResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "COPD_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "COPD_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "COPD_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "COPD_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "COPD_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "COPD_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "COPD_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "COPD_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "COPD_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "COPD_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "COPD_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "COPD_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "COPD_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "COPD_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "COPD_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "COPD_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "COPD_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (COPD) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/COPDResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "COPD-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/COPDResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (Recruitment)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/RecruitmentResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Recruitment_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
+            { "OutputFilename": "Recruitment_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Recruitment_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Recruitment_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Recruitment_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Recruitment_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Recruitment_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Recruitment_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Recruitment_ShuntFraction", "YHeader": [ "ShuntFraction" ] },
+            { "OutputFilename": "Recruitment_AlveolarDeadSpace", "YHeader": [ "AlveolarDeadSpace(mL)" ] },
+            { "OutputFilename": "Recruitment_PhysiologicDeadSpaceTidalVolumeRatio", "YHeader": [ "PhysiologicDeadSpaceTidalVolumeRatio" ] },
+            { "OutputFilename": "Recruitment_VentilationPerfusionRatio", "YHeader": [ "VentilationPerfusionRatio" ] },
+            { "OutputFilename": "Recruitment_TransthoracicPressure", "YHeader": [ "TransthoracicPressure(cmH2O)" ] },
+            { "OutputFilename": "Recruitment_IntrinsicPositiveEndExpiratoryPressure", "YHeader": [ "IntrinsicPositiveEndExpiratoryPressure(cmH2O)" ] },
+            { "OutputFilename": "Recruitment_Patient-FunctionalResidualCapacity", "YHeader": [ "Patient-FunctionalResidualCapacity(mL)" ] },
+            { "OutputFilename": "Recruitment_Patient-AlveoliSurfaceArea", "YHeader": [ "Patient-AlveoliSurfaceArea(m^2)" ] },
+            { "OutputFilename": "Recruitment_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "MechanicalVentilator Validation (Recruitment) Monitors",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/RecruitmentResults.csv" },
+          "Vitals": true, "Ventilator": true, "OutputPrefix": "Recruitment-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/MechanicalVentilator/RecruitmentResults-Segments.json"
+        }
+      }
+    ]
+  },
+  "Tables" :
+  {
+    "Table" :
+    [
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Healthy",
+        "Segment": 1,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "ARDS",
+        "Segment": 1,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "ARDS",
+        "Segment": 2,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "ARDS",
+        "Segment": 3,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "COPD",
+        "Segment": 1,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "COPD",
+        "Segment": 2,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "COPD",
+        "Segment": 3,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Recruitment",
+        "Segment": 1,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Recruitment",
+        "Segment": 2,
+        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "Header": []
+      }
+    ]
+  }
+}

@@ -116,6 +116,8 @@ void PBEnvironment::Serialize(const CDM_BIND::EnvironmentalConditionsData& src, 
     PBProperty::Load(src.emissivity(), dst.GetEmissivity());
   if (src.has_meanradianttemperature())
     PBProperty::Load(src.meanradianttemperature(), dst.GetMeanRadiantTemperature());
+  if (src.has_mechanicaldeadspace())
+    PBProperty::Load(src.mechanicaldeadspace(), dst.GetMechanicalDeadSpace());
   if (src.has_relativehumidity())
     PBProperty::Load(src.relativehumidity(), dst.GetRelativeHumidity());
   if (src.has_respirationambienttemperature())
@@ -179,6 +181,8 @@ void PBEnvironment::Serialize(const SEEnvironmentalConditions& src, CDM_BIND::En
     dst.set_allocated_emissivity(PBProperty::Unload(*src.m_Emissivity));
   if (src.HasMeanRadiantTemperature())
     dst.set_allocated_meanradianttemperature(PBProperty::Unload(*src.m_MeanRadiantTemperature));
+  if (src.HasMechanicalDeadSpace())
+    dst.set_allocated_mechanicaldeadspace(PBProperty::Unload(*src.m_MechanicalDeadSpace));
   if (src.HasRelativeHumidity())
     dst.set_allocated_relativehumidity(PBProperty::Unload(*src.m_RelativeHumidity));
   if (src.HasRespirationAmbientTemperature())

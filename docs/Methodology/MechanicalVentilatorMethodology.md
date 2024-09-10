@@ -726,67 +726,14 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive_CPAP-Validation.md
 
-@anchor ventilator-validation-table
-## Validation - Healthy vs. ARDS vs. COPD
 
-The outcomes of patients with various respiratory diseases and associated ventilator settings were validated by comparing engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
+@anchor ventilator-validation-diseases
+@insert ./validation/markdown/MechanicalVentilator.md
 
-<center><br>
-Table 21. Cumulative validation results for ventilator specific scenarios.
-</center>
 
-|	Key	|
-|	---	|
-|<span class="success">	Good agreement: correct trends or <10% deviation from expected	</span>|
-|<span class="warning"> 	Some deviation: correct trend and/or <30% deviation from expected	</span>|
-|<span class="danger">	Poor agreement: incorrect trends or >30% deviation from expected	</span>|
+@anchor cstars
+@insert ./validation/markdown/CSTARS.md
 
-|	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
-|	---	|	---	|	---	|	---	|	---	|
-|	Healthy PC-CMV	|	PC-CMV mode	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Healthy VC-CMV	|	VC-CMV mode	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Healthy VC-AC	|	VC-AC mode	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Mild ARDS	|	PC-CMV with Severity = 0.3	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Moderate ARDS	|	PC-CMV with Severity = 0.6	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Severe ARDS	|	PC-CMV with Severity = 0.9	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Mild COPD	|	PC-CMV with Severity = 0.3	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Moderate COPD	|	PC-CMV with Severity = 0.6	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Severe COPD	|	PC-CMV with Severity = 0.9	|<span class="success">	11	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Recruitment	|	Increase PEEP for improved recruitment	|<span class="success">	8	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	107	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-
-### Restrictive and Obstructive Conditions
-
-The %Respiratory ARDS and COPD models with mild, moderate, and severe severities is extensively tested in the scenarios shown in Table 22.  Each row is a separate invasive mechanical ventilation scenario that is run for several minutes to reach a new homeostatic point based on the patient's disease state and ventilator settings. The patient is administered a neuromuscular blockade to prevent spontaneous breathing for all but the VC-AC scenario.  Typical/ideal ventilator setting are used based on literature @cite arnal2013feasibility @cite el2020comparison @cite acute2000ventilation and subject matter @cite chatburnSME input. Results successfully match expected empirical data and trends.
-
-<center><br>
-Table 22. Validation results for ventilator specific scenarios.
-</center>
-
-|	Patient State	|	Ventilator Settings	|	Respiration Rate (bpm)	|	Inspiratory-Expiratory Ratio	|	Pulmonary Resistance (cmH2O-s/L)	|	Pulmonary Compliance (L/cmH2O)	|	pH	|	Arterial Carbon Dioxide Pressure (mmHg)	|	Arterial Oxygen Pressure (mmHg)	|	PaO2/FiO2 (mmHg)	|	Oxygen Saturation (%)	|	Pulmonary Shunt Fraction (%)	|	Alveolar Dead Space (L)	|
-|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Healthy	|	Mode: PC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 7<br>VT Target (mL): 527<br>PEEP (cm H2O): 5<br>FiO2 (%): 30<br>Mandatory Rate (bpm): 15 <br>I:E: 0.60<br>Minute Ventilation (L/min): 7.9<br>	|<span class="success">	15 (ventilator setting)	</span>|<span class="success">	0.6 (ventilator setting)	</span>|<span class="success">	12-17 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	20-54 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.27-7.40 @cite arnal2013feasibility	</span>|<span class="success">	35-42 @cite arnal2013feasibility	</span>|<span class="success">	85-114 @cite arnal2013feasibility	</span>|<span class="success">	264-366 @cite arnal2013feasibility, @cite ferguson2012berlin	</span>|<span class="success">	96.4-98.5 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	2-5 @cite Levitzky2013pulmonary, @cite radermacher2017fifty, @cite petersson2014gas	</span>|<span class="success">	~0 @cite Levitzky2013pulmonary	</span>|
-|	Healthy	|	Mode: VC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 7<br>VT Target (mL): 527<br>PEEP (cm H2O): 5<br>FiO2 (%): 30<br>Mandatory Rate (bpm): 15 <br>I:E: 0.60<br>Minute Ventilation (L/min): 7.9<br>	|<span class="success">	15 (ventilator setting)	</span>|<span class="success">	0.6 (ventilator setting)	</span>|<span class="success">	12-17 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	20-54 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.27-7.40 @cite arnal2013feasibility	</span>|<span class="success">	35-42 @cite arnal2013feasibility	</span>|<span class="success">	85-114 @cite arnal2013feasibility	</span>|<span class="success">	264-366 @cite arnal2013feasibility, @cite ferguson2012berlin	</span>|<span class="success">	96.4-98.5 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	2-5 @cite Levitzky2013pulmonary, @cite radermacher2017fifty, @cite petersson2014gas	</span>|<span class="success">	~0 @cite Levitzky2013pulmonary	</span>|
-|	Healthy	|	Mode: VC-AC<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 7<br>VT Target (mL): 527<br>PEEP (cm H2O): 5<br>FiO2 (%): 30<br>Mandatory Rate (bpm): 15 <br>I:E: 0.60<br>Minute Ventilation (L/min): 7.9<br>	|<span class="success">	15-21 @cite arnal2013feasibility	</span>|<span class="success">	0.4-0.8 @cite arnal2013feasibility	</span>|<span class="success">	12-17 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	20-54 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.27-7.40 @cite arnal2013feasibility	</span>|<span class="success">	35-42 @cite arnal2013feasibility	</span>|<span class="success">	85-114 @cite arnal2013feasibility	</span>|<span class="success">	264-366 @cite arnal2013feasibility, @cite ferguson2012berlin	</span>|<span class="success">	96.4-98.5 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	2-5 @cite Levitzky2013pulmonary, @cite radermacher2017fifty, @cite petersson2014gas	</span>|<span class="success">	~0 @cite Levitzky2013pulmonary	</span>|
-|	Mild ARDS (severity = 0.3)	|	Mode: PC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 6<br>VT Target (mL): 452<br>PEEP (cm H2O): 11<br>FiO2 (%): 40<br>Mandatory Rate (bpm): 17<br>I:E: 0.90<br>Minute Ventilation (L/min): 7.6<br>	|<span class="success">	17 (ventilator setting)	</span>|<span class="success">	0.9 (ventilator setting)	</span>|<span class="success">	No change, 10-16 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	Decrease, 20-54 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.15-7.34 @cite arnal2013feasibility	</span>|<span class="success">	45-57 @cite arnal2013feasibility	</span>|<span class="success">	103-133 @cite arnal2013feasibility	</span>|<span class="success">	Decrease, 200-300 @cite ferguson2012berlin	</span>|<span class="success">	98.0-99.0 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	Increase, >10% @cite radermacher2017fifty, @cite petersson2014gas	</span>|<span class="success">	Increase @cite nuckton2002pulmonary	</span>|
-|	Moderate ARDS (severity = 0.6)	|	Mode: PC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 6<br>VT Target (mL): 452<br>PEEP (cm H2O): 11<br>FiO2 (%): 70<br>Mandatory Rate (bpm): 20<br>I:E: 0.90<br>Minute Ventilation (L/min): 9.0<br>	|<span class="success">	20 (ventilator setting)	</span>|<span class="success">	0.9 (ventilator setting)	</span>|<span class="success">	No change, 10-16 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	Decrease, 20-54 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.15-7.34 @cite arnal2013feasibility	</span>|<span class="success">	45-57 @cite arnal2013feasibility	</span>|<span class="success">	81-117 @cite arnal2013feasibility	</span>|<span class="success">	Decrease, 100-200 @cite ferguson2012berlin	</span>|<span class="success">	95.9-98.6 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	Increase, >20% @cite radermacher2017fifty, @cite petersson2014gas	</span>|<span class="success">	Increase @cite nuckton2002pulmonary	</span>|
-|	Severe ARDS (severity = 0.9)	|	Mode: PC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 6<br>VT Target (mL): 452<br>PEEP (cm H2O): 11<br>FiO2 (%): 100<br>Mandatory Rate (bpm): 25<br>I:E: 0.90<br>Minute Ventilation (L/min): 11.5<br>	|<span class="success">	25 (ventilator setting)	</span>|<span class="success">	0.9 (ventilator setting)	</span>|<span class="success">	No change, 10-16 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	Decrease, 20-54 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.15-7.34 @cite arnal2013feasibility	</span>|<span class="success">	45-57 @cite arnal2013feasibility	</span>|<span class="success">	56-83 @cite arnal2013feasibility	</span>|<span class="success">	Decrease, <100 @cite ferguson2012berlin	</span>|<span class="success">	88.8-96.1 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	Increase, >40% @cite radermacher2017fifty, @cite petersson2014gas	</span>|<span class="success">	Increase @cite nuckton2002pulmonary	</span>|
-|	Mild COPD (severity = 0.3)	|	Mode: PC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 9.0<br>VT Target (mL): 678<br>PEEP (cm H2O): 8<br>FiO2 (%): 31<br>Mandatory Rate (bpm): 12<br>I:E: 0.43<br>Minute Ventilation (L/min): 8.0<br>	|<span class="success">	12 (ventilator setting)	</span>|<span class="success">	0.43 (ventilator setting)	</span>|<span class="success">	Increase, 17-26 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	Increase, 46-61 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.2-7.31 @cite arnal2013feasibility	</span>|<span class="success">	44-67 @cite arnal2013feasibility	</span>|<span class="success">	77-94 @cite arnal2013feasibility	</span>|<span class="success">	Decrease, 206-295 @cite ferguson2012berlin	</span>|<span class="success">	95.2-97.3 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	Increase @cite boerrigter2011cardiac	</span>|<span class="success">	Increase @cite Levitzky2013pulmonary	</span>|
-|	Moderate COPD (severity = 0.6)	|	Mode: PC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 8.5<br>VT Target (mL): 640<br>PEEP (cm H2O): 8<br>FiO2 (%): 31<br>Mandatory Rate (bpm): 14<br>I:E: 0.43<br>Minute Ventilation (L/min): 9.0<br>	|<span class="success">	14 (ventilator setting)	</span>|<span class="success">	0.43 (ventilator setting)	</span>|<span class="success">	Increase, 17-26 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	Increase, 46-61 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.2-7.31 @cite arnal2013feasibility	</span>|<span class="success">	44-67 @cite arnal2013feasibility	</span>|<span class="success">	77-94 @cite arnal2013feasibility	</span>|<span class="success">	Decrease, 206-295 @cite ferguson2012berlin	</span>|<span class="success">	95.2-97.3 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	Increase @cite boerrigter2011cardiac	</span>|<span class="success">	Increase @cite Levitzky2013pulmonary	</span>|
-|	Severe COPD (severity = 0.9)	|	Mode: PC-CMV<br>Inspiratory Pressure Target: set empirically to achieve VT Target<br>VT Target (mL/kg): 9.0<br>VT Target (mL): 678<br>PEEP (cm H2O): 8<br>FiO2 (%): 40<br>Mandatory Rate (bpm): 15<br>I:E: 0.43<br>Minute Ventilation (L/min): 10.2<br>	|<span class="success">	15 (ventilator setting)	</span>|<span class="success">	0.43 (ventilator setting)	</span>|<span class="success">	Increase, 17-26 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	Increase, 46-61 @cite arnal2013feasibility, @cite arnal2018parameters	</span>|<span class="success">	7.2-7.31 @cite arnal2013feasibility	</span>|<span class="success">	44-67 @cite arnal2013feasibility	</span>|<span class="success">	77-94 @cite arnal2013feasibility	</span>|<span class="success">	Decrease, 206-295 @cite ferguson2012berlin	</span>|<span class="success">	95.2-97.3 @cite arnal2013feasibility, @cite kacmarek2016egan	</span>|<span class="success">	Increase @cite boerrigter2011cardiac	</span>|<span class="success">	Increase @cite Levitzky2013pulmonary	</span>|
-
-### Recruitment
-
-Increasing PEEP in mechanical ventilation is a crucial strategy for improving lung function, particularly in conditions like ARDS. Maintaining a higher pressure in the lungs at the end of expiration prevents alveolar collapse, thereby expanding the alveolar surface area available for gas exchange. In the engine, this expansion not only increases the FRC of the lungs, ensuring more alveoli remain open and functional, but also significantly reduces pulmonary shunting. Table 22 shows how increased PEEP effectively enhances overall oxygenation and respiratory efficiency.
-
-<center><br>
-Table 22. Validation results for a scenario testing increased PEEP for improved lung recruitment.
-</center>
-
-|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Pulmonary Shunt (%)	|	Horowitz Index (mmHg)	|	Arterial Oxygen Partial Pressure (mmHg)	|	Arterial Carbon Dioxide Partial Pressure (mmHg)	|
-|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Ventilate patient with moderate ARDS	|	Apneic and intubated; VC-CMV: RR = 15 bpm, I:E = 0.6, TV = 7 mL/kg(ideal), FIO2 = 0.5, PEEP = 5.0 cmH2O	|	30	|	330	|<span class="success">	33 +/- 15 @cite karbing2020changes	</span>|<span class="success">	130 +/- 58 @cite karbing2020changes	</span>|<span class="success">	Increase @cite karbing2020changes	</span>|<span class="success">	No Change @cite musch2008relation	</span>|
-|	Increase PEEP	|	PEEP = 15.0 cmH2O	|	330	|	630	|<span class="success">	22 +/- 14 @cite karbing2020changes	</span>|<span class="success">	220 +/- 82 @cite karbing2020changes	</span>|<span class="success">	Increase @cite karbing2020changes	</span>|<span class="success">	No Change @cite musch2008relation	</span>|
 
 @anchor ventilator-conclusion
 ## Conclusion
@@ -819,7 +766,7 @@ The inherent modularity of this model could be leveraged to add parameters and e
 
 @ref MechanicalVentilatorTable "Mechanical Ventilator"
 
-## Acronyms
+## Glossary
 
 API - Application Programming Interface
 

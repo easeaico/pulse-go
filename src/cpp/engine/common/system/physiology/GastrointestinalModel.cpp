@@ -168,7 +168,7 @@ namespace pulse
         }
         DefaultNutritionRates(c.GetNutrition());
         m_StomachContents->Increment(c.GetNutrition());
-        m_data.GetCurrentPatient().GetWeight().IncrementValue(c.GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
+        m_data.GetCurrentPatient().GetWeight().Increment(c.GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
         m_data.GetActions().GetPatientActions().RemoveConsumeNutrients();
       }
       DigestStomachNutrients(m_data.GetTimeStep_s());
@@ -208,7 +208,7 @@ namespace pulse
     m_GItoCVPath->GetNextFlowSource().SetValue(absorptionRate_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
     //Need to manually remove volume, since there isn't a compliance
     if (m_data.GetState() == EngineState::Active) // Only if we are active
-      m_GItoCVPath->GetSourceNode().GetNextVolume().IncrementValue(-absorptionRate_mL_Per_min / 60.0 * m_data.GetTimeStep_s(), VolumeUnit::mL);
+      m_GItoCVPath->GetSourceNode().GetNextVolume().Increment(-absorptionRate_mL_Per_min / 60.0 * m_data.GetTimeStep_s(), VolumeUnit::mL);
     GetWaterAbsorptionRate().SetValue(absorptionRate_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
   }
 
@@ -244,13 +244,13 @@ namespace pulse
         }
         else
         {
-          m_StomachContents->GetSodium().IncrementValue(-digestedNa_g, MassUnit::g);
+          m_StomachContents->GetSodium().Increment(-digestedNa_g, MassUnit::g);
         }
 #ifdef logDigest
         m_ss << "Digested " << digestedNa_g << "(g) of Sodium";
         Info(m_ss);
 #endif
-        m_SmallIntestineSodium->GetMass().IncrementValue(digestedNa_g, MassUnit::g);
+        m_SmallIntestineSodium->GetMass().Increment(digestedNa_g, MassUnit::g);
         m_SmallIntestineSodium->Balance(BalanceLiquidBy::Mass);
       }
 
@@ -261,7 +261,7 @@ namespace pulse
         m_ss << "Digested " << digestedAmount << "(mL) of Water";
         Info(m_ss);
 #endif
-        m_SmallIntestineChyme->GetVolume().IncrementValue(digestedAmount, VolumeUnit::mL);
+        m_SmallIntestineChyme->GetVolume().Increment(digestedAmount, VolumeUnit::mL);
       }
       else
         Info("Stomach is out of Water");
@@ -278,7 +278,7 @@ namespace pulse
         m_ss << "Digested " << digestedAmount << "(g) of Carbs";
         Info(m_ss);
 #endif
-        m_SmallIntestineGlucose->GetMass().IncrementValue(digestedAmount, MassUnit::g);
+        m_SmallIntestineGlucose->GetMass().Increment(digestedAmount, MassUnit::g);
         m_SmallIntestineGlucose->Balance(BalanceLiquidBy::Mass);
       }
       else
@@ -294,7 +294,7 @@ namespace pulse
         m_ss << "Digested " << digestedAmount << "(g) of Fat";
         Info(m_ss);
 #endif
-        m_SmallIntestineTristearin->GetMass().IncrementValue(digestedAmount, MassUnit::g);
+        m_SmallIntestineTristearin->GetMass().Increment(digestedAmount, MassUnit::g);
         m_SmallIntestineTristearin->Balance(BalanceLiquidBy::Mass);
       }
       else
@@ -311,7 +311,7 @@ namespace pulse
         Info(m_ss);
 #endif
         double tuningFactor = 0.75; /// \todo Remove tuning factor and adjust protein to urea fraction following investigation
-        m_SmallIntestineUrea->GetMass().IncrementValue(digestedAmount * tuningFactor, MassUnit::g);
+        m_SmallIntestineUrea->GetMass().Increment(digestedAmount * tuningFactor, MassUnit::g);
         m_SmallIntestineUrea->Balance(BalanceLiquidBy::Mass);
       }
       else
@@ -329,7 +329,7 @@ namespace pulse
         m_ss << "Digested " << digestedAmount << "(g) of Calcium";
         Info(m_ss);
 #endif
-        m_SmallIntestineCalcium->GetMass().IncrementValue(digestedAmount, MassUnit::g);
+        m_SmallIntestineCalcium->GetMass().Increment(digestedAmount, MassUnit::g);
         m_SmallIntestineCalcium->Balance(BalanceLiquidBy::Mass);
       }
       else
@@ -359,7 +359,7 @@ namespace pulse
       }
       else
       {
-        totalAmt.IncrementValue(-digestedAmt, mass ? (const CCompoundUnit&)MassUnit::g : (const CCompoundUnit&)VolumeUnit::mL);
+        totalAmt.Increment(-digestedAmt, mass ? (const CCompoundUnit&)MassUnit::g : (const CCompoundUnit&)VolumeUnit::mL);
       }
     }
     return digestedAmt;

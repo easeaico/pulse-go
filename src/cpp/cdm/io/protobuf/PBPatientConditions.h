@@ -10,6 +10,7 @@ CDM_BIND_DECL2(ChronicPericardialEffusion)
 CDM_BIND_DECL2(ChronicRenalStenosis)
 CDM_BIND_DECL2(ChronicVentricularSystolicDysfunction)
 CDM_BIND_DECL2(ConsumeMeal)
+CDM_BIND_DECL2(Dehydration)
 CDM_BIND_DECL2(ImpairedAlveolarExchange)
 CDM_BIND_DECL2(Pneumonia)
 CDM_BIND_DECL2(PulmonaryFibrosis)
@@ -71,6 +72,12 @@ public:
   static void Serialize(const CDM_BIND::ConsumeMealData& src, SEConsumeMeal& dst);
   static void Serialize(const SEConsumeMeal& src, CDM_BIND::ConsumeMealData& dst);
   static void Copy(const SEConsumeMeal& src, SEConsumeMeal& dst);
+
+  static void Load(const CDM_BIND::DehydrationData& src, SEDehydration& dst);
+  static CDM_BIND::DehydrationData* Unload(const SEDehydration& src);
+  static void Serialize(const CDM_BIND::DehydrationData& src, SEDehydration& dst);
+  static void Serialize(const SEDehydration& src, CDM_BIND::DehydrationData& dst);
+  static void Copy(const SEDehydration& src, SEDehydration& dst);
 
   static void Load(const CDM_BIND::ImpairedAlveolarExchangeData& src, SEImpairedAlveolarExchange& dst);
   static CDM_BIND::ImpairedAlveolarExchangeData* Unload(const SEImpairedAlveolarExchange& src);

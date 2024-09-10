@@ -47,6 +47,12 @@ namespace Pulse.CDM
         Serialize(any.ChronicVentricularSystolicDysfunction, cvsd);
         return cvsd;
       }
+      if (any.Dehydration != null)
+      {
+        SEDehydration d = new SEDehydration();
+        Serialize(any.Dehydration, d);
+        return d;
+      }
       if (any.ImpairedAlveolarExchange != null)
       {
         SEImpairedAlveolarExchange iae = new SEImpairedAlveolarExchange();
@@ -112,6 +118,11 @@ namespace Pulse.CDM
       if (Condition.GetType().IsAssignableFrom(typeof(SEChronicVentricularSystolicDysfunction)))
       {
         any.ChronicVentricularSystolicDysfunction = Unload((SEChronicVentricularSystolicDysfunction)Condition);
+        return any;
+      }
+      if (Condition.GetType().IsAssignableFrom(typeof(SEDehydration)))
+      {
+        any.Dehydration = Unload((SEDehydration)Condition);
         return any;
       }
       if (Condition.GetType().IsAssignableFrom(typeof(SEImpairedAlveolarExchange)))
@@ -330,6 +341,33 @@ namespace Pulse.CDM
     {
       dst.PatientCondition = new pulse.cdm.bind.PatientConditionData();
       Serialize(src, dst.PatientCondition);
+    }
+    #endregion
+
+    #region SEDehydration
+    public static void Load(pulse.cdm.bind.DehydrationData src, SEDehydration dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.DehydrationData src, SEDehydration dst)
+    {
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
+      if (src.Severity != null)
+        PBProperty.Load(src.Severity, dst.GetSeverity());
+    }
+    public static pulse.cdm.bind.DehydrationData Unload(SEDehydration src)
+    {
+      pulse.cdm.bind.DehydrationData dst = new pulse.cdm.bind.DehydrationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEDehydration src, pulse.cdm.bind.DehydrationData dst)
+    {
+      dst.PatientCondition = new pulse.cdm.bind.PatientConditionData();
+      Serialize(src, dst.PatientCondition);
+      if (src.HasSeverity())
+        dst.Severity = PBProperty.Unload(src.GetSeverity());
     }
     #endregion
 

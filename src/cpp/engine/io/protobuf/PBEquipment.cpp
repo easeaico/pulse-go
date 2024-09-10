@@ -168,9 +168,11 @@ namespace pulse
     dst.m_InspiratoryFlow_L_Per_s = src.inspiratoryflow_l_per_s();
     dst.m_PreviousYPieceToConnectionFlow_L_Per_s = src.previousypiecetoconnectionflow_l_per_s();
     dst.m_PreviousConnectionPressure_cmH2O = src.previousconnectionpressure_cmh2o();
+    dst.m_PauseOccurred = src.pauseoccurred();
     dst.m_Initializing = src.initializing();
     dst.m_PositiveEndExpiratoryPressure_cmH2O = src.positiveendexpiratorypressure_cmh2o();
     dst.m_PeakExpiratoryFlow_L_Per_s = src.peakexpiratoryflow_l_per_s();
+    dst.m_PeakInspiratoryFlow_L_Per_s = src.peakinspiratoryflow_l_per_s();
     dst.m_EndTidalCarbonDioxideFraction = src.endtidalcarbondioxidefraction();
     dst.m_EndTidalCarbonDioxidePressure_cmH2O = src.endtidalcarbondioxidepressure_cmh2o();
     dst.m_EndTidalOxygenFraction = src.endtidaloxygenfraction();
@@ -197,9 +199,11 @@ namespace pulse
     dst.set_inspiratoryflow_l_per_s(src.m_InspiratoryFlow_L_Per_s);
     dst.set_previousypiecetoconnectionflow_l_per_s(src.m_PreviousYPieceToConnectionFlow_L_Per_s);
     dst.set_previousconnectionpressure_cmh2o(src.m_PreviousConnectionPressure_cmH2O);
+    dst.set_pauseoccurred(src.m_PauseOccurred);
     dst.set_initializing(src.m_Initializing);
     dst.set_positiveendexpiratorypressure_cmh2o(src.m_PositiveEndExpiratoryPressure_cmH2O);
     dst.set_peakexpiratoryflow_l_per_s(src.m_PeakExpiratoryFlow_L_Per_s);
+    dst.set_peakinspiratoryflow_l_per_s(src.m_PeakInspiratoryFlow_L_Per_s);
     dst.set_endtidalcarbondioxidefraction(src.m_EndTidalCarbonDioxideFraction);
     dst.set_endtidalcarbondioxidepressure_cmh2o(src.m_EndTidalCarbonDioxidePressure_cmH2O);
     dst.set_endtidaloxygenfraction(src.m_EndTidalOxygenFraction);

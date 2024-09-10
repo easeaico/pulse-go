@@ -17,6 +17,7 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
   protected SEScalar              intracellularFluidPH;
   protected SEScalarVolumePerTime oxygenConsumptionRate;
   protected SEScalar              respiratoryExchangeRatio;
+  protected SEScalarVolume        totalFluidVolume;
 
   public SETissueSystem()
   {
@@ -27,6 +28,7 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
     intracellularFluidPH = null;
     oxygenConsumptionRate = null;
     respiratoryExchangeRatio = null;
+    totalFluidVolume = null;
   }
 
   @Override
@@ -46,6 +48,8 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
       oxygenConsumptionRate.invalidate();
     if (respiratoryExchangeRatio != null)
       respiratoryExchangeRatio.invalidate();
+    if (totalFluidVolume != null)
+      totalFluidVolume.invalidate();
   }
 
   public static void load(TissueSystemData src, SETissueSystem dst)
@@ -64,6 +68,8 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
       SEScalarVolumePerTime.load(src.getOxygenConsumptionRate(),dst.getOxygenConsumptionRate());
     if (src.hasRespiratoryExchangeRatio())
       SEScalar.load(src.getRespiratoryExchangeRatio(),dst.getRespiratoryExchangeRatio());
+    if (src.hasTotalFluidVolume())
+      SEScalarVolume.load(src.getTotalFluidVolume(),dst.getTotalFluidVolume());
   }
 
   public static TissueSystemData unload(SETissueSystem src)
@@ -88,7 +94,9 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
     if (src.hasOxygenConsumptionRate())
       dst.setOxygenConsumptionRate(SEScalarVolumePerTime.unload(src.getOxygenConsumptionRate()));
     if (src.hasRespiratoryExchangeRatio())
-      dst.setRespiratoryExchangeRatio(SEScalar.unload(src.getRespiratoryExchangeRatio()));    
+      dst.setRespiratoryExchangeRatio(SEScalar.unload(src.getRespiratoryExchangeRatio()));
+    if (src.totalFluidVolume != null)
+      dst.setTotalFluidVolume(SEScalarVolume.unload(src.getTotalFluidVolume()));
   }
 
   public boolean hasCarbonDioxideProductionRate()
@@ -166,5 +174,16 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
     if (respiratoryExchangeRatio == null)
       respiratoryExchangeRatio = new SEScalar();
     return respiratoryExchangeRatio;
+  }
+
+  public boolean hasTotalFluidVolume()
+  {
+    return totalFluidVolume == null ? false : totalFluidVolume.isValid();
+  }
+  public SEScalarVolume getTotalFluidVolume()
+  {
+    if (totalFluidVolume == null)
+      totalFluidVolume = new SEScalarVolume();
+    return totalFluidVolume;
   }
 }

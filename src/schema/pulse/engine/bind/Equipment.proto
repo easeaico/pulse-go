@@ -64,9 +64,11 @@ message MechanicalVentilatorData
   double                                           InspiratoryFlow_L_Per_s                = 14;
   pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 15;
   double                                           PeakExpiratoryFlow_L_Per_s             = 16;
-  double                                           PreviousDriverFlow_L_Per_s             = 17;
-  double                                           PreviousConnectionPressure_cmH2O       = 18;
-  double                                           PreviousDriverPressure_cmH2O           = 19;
-  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 20;
-  double                                           PositiveEndExpiratoryPressure_cmH2O    = 21;
+  double                                           PeakInspiratoryFlow_L_Per_s            = 17;
+  double                                           PreviousDriverFlow_L_Per_s             = 18;
+  double                                           PreviousConnectionPressure_cmH2O       = 19;
+  bool                                             PauseOccurred                          = 20;
+  double                                           PreviousDriverPressure_cmH2O           = 21;
+  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 22;
+  double                                           PositiveEndExpiratoryPressure_cmH2O    = 23;
 }

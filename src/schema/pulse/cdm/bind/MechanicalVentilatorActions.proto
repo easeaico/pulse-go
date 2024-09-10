@@ -65,7 +65,7 @@ message MechanicalVentilatorContinuousPositiveAirwayPressureData
   ScalarPressureData                           InspirationPatientTriggerPressure         = 8; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger inspiration phase. */
 
   eDriverWaveform                              InspirationWaveform                       = 9;/**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
-  ScalarPressureData                           PositiveEndExpiredPressure                = 10;/**<< @brief Driver pressure during exhale */
+  ScalarPressureData                           PositiveEndExpiratoryPressure             = 10;/**<< @brief Driver pressure during exhale */
   ScalarTimeData                               Slope                                     = 11;/**<< @brief OPTIONAL Time to reach PIP */
 }
 
@@ -89,7 +89,7 @@ message MechanicalVentilatorPressureControlData
   eDriverWaveform                              InspirationWaveform                       = 6; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
   ScalarTimeData                               InspiratoryPeriod                         = 7; /**<< @brief OPTIONAL Time for inspiration part of the breathing cycle */
   ScalarPressureData                           InspiratoryPressure                       = 8; /**<< @brief Driver pressure during inspiration */
-  ScalarPressureData                           PositiveEndExpiredPressure                = 9;/**<< @brief Driver pressure during exhale */
+  ScalarPressureData                           PositiveEndExpiratoryPressure                = 9;/**<< @brief Driver pressure during exhale */
   ScalarFrequencyData                          RespirationRate                           = 10;/**<< @brief Driver minimum frequency */
   ScalarTimeData                               Slope                                     = 11;/**<< @brief OPTIONAL Time to reach PIP */
 }
@@ -114,7 +114,7 @@ message MechanicalVentilatorVolumeControlData
 
   eDriverWaveform                              InspirationWaveform                       = 7; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
   ScalarTimeData                               InspiratoryPeriod                         = 8; /**<< @brief OPTIONAL Time for inspiration part of the breathing cycle */
-  ScalarPressureData                           PositiveEndExpiredPressure                = 9;/**<< @brief Driver pressure during exhale */
+  ScalarPressureData                           PositiveEndExpiratoryPressure             = 9;/**<< @brief Driver pressure during exhale */
   ScalarFrequencyData                          RespirationRate                           = 10;/**<< @brief Driver minimum frequency */
   ScalarTimeData                               Slope                                     = 11;/**<< @brief OPTIONAL Time to reach tidal volume */
   ScalarVolumeData                             TidalVolume                               = 12;/**<< @brief Volume target/limit */

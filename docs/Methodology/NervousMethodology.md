@@ -288,7 +288,7 @@ The baroreceptor reflex is validated through simulation of an acute hemorrhage s
 
 |	Action	|	Notes	|	Sampled Scenario Time (s)	|	Heart Rate (beats/min)	|	Cardiac Output (mL/min)	|	Systemic Vascular Resistance (mmHg s/mL)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|
-|	Hemorrhage	|	10% blood loss in 30 s	|	200	|<span class="success">	Increase ~30% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|<span class="success">	Decrease ~15-20% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|<span class="success">	Increase 10-15% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|
+|	Hemorrhage	|	10% blood loss in 30 s	|	200	|<span class="success">	Increase ~30% @cite hosomi1979effect @cite ottesen2004applied	</span>|<span class="success">	Decrease ~15-20% @cite hosomi1979effect @cite ottesen2004applied	</span>|<span class="success">	Increase 10-15% @cite hosomi1979effect @cite ottesen2004applied	</span>|
 
 
 ### Brain Injury
@@ -369,7 +369,7 @@ Recommended Improvements
 
 Appendices
 ==========
-Acronyms
+Glossary
 --------
 CBF - Cerebral Blood Flow
 

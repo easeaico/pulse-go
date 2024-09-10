@@ -11,8 +11,8 @@
     "DataRequest":
     [
       { "DecimalFormat": { "Precision": 6 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Epinephrine", "PropertyName": "Concentration",                  "Unit": "ug/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology",                                                                    "PropertyName": "ExpiratoryPulmonaryResistance",  "Unit": "cmH2O s/L" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology",                                                                    "PropertyName": "InspiratoryPulmonaryResistance", "Unit": "cmH2O s/L" }
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology",                                                                    "PropertyName": "ExpiratoryRespiratoryResistance",  "Unit": "cmH2O s/L" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology",                                                                    "PropertyName": "InspiratoryRespiratoryResistance", "Unit": "cmH2O s/L" }
     ]
   },
   "AnyAction": [{

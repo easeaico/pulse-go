@@ -93,6 +93,7 @@ Data Flow
 The %Energy System determines its state at every timestep through a three-step process: Preprocess, Process, and Postprocess. In general, Preprocess determines the circuit element values based on feedback mechanisms and engine settings/actions. Process uses the generic circuit calculator to compute the entire state of the circuit and fill in all pertinent values. Postprocess is used to advance time.
 
 ### Preprocess
+
 #### Calculate Metabolic Heat Generation
 The metabolic rate is dictated by the current state of the core temperature. This function includes states of increased metabolic rate due to shivering or severe hyperthermia. Additionally, an extreme drop in core temperature leads to decreasing metabolic rate. If the core temperature does not meet any of the criteria for increases/decreases, the metabolic rate will be calculated as the basal metabolic rate.
 
@@ -230,15 +231,17 @@ There are three output parameters associated with the exercise action: the achie
 @anchor energy-conditions
 Conditions
 ----------
-** Please note that the Starvation and Dehydration conditions are temporarily disabled.**
+
+### Dehydration
+
+Even minimal levels of dehydration, such as a loss of less than 2% body weight, can elicit thermoregulatory responses that impair exercise capacity @cite murray1996dehydration. These responses include diminished peripheral circulation due to vasoconstriction in the skin, compensating for concentrated blood flow in core organs. Additionally, there is a reduction in sweating and impaired evaporative heat loss mechanisms, leading to an increased core temperature. To model these responses, we apply the thermoregulatory consequences of dehydration as if they progressed slowly and came to a new homeostasis. This involves adding a single bolus of heat to the core using the metabolic heat source in the internal temperature circuit. This stores heat in the core node, elevating its temperature. The model also incorporates reduced peripheral circulation due to vasoconstricted skin by increasing the core-to-skin resistance. Concurrently, a modifier reduces the sweat rate and thus the evaporative heat loss.
+
+For further details on the application and validation of the dehydration model, refer to the @ref TissueSystem and @ref NervousSystem documentation.
+
 
 ### Starvation
 **The starvation condition is disabled in the current release. An improved starvation condition is coming soon.**
 The starvation functionality simulates an extended time period without nutrient intake. This is accomplished by assuming a coarse timestep over which numerous mechanisms lead to the decay of nutrients in the body. With regards to the %Energy system, metabolic consumption calculations are carried out over the interval of the coarse timestep. This leads to a large decrement of vital nutrients in the tissues and increment of waste by-products at the beginning of condition stabilization. Other systems handle starvation in a similar manner. %Renal and systemic clearance volumes are calculated over the coarse timestep, and the resulting decrement in substances is distributed based on volume across all vascular and tissue compartments. For more information on renal and systemic clearance, see @ref RenalMethodology and @ref DrugsMethodology.
-
-### Dehydration
-**The dehydration condition is disabled in the current release. An improved dehydration condition is coming soon.**
-Dehydration functionality is simulated completely in the %Energy system. Similar to starvation, dehydration assumes a coarse timestep over which the fluid loss would occur. According to the Journal of Sports Medicine and Physical Fitness @cite shirreffs2000hydration , the average loss rate on the first day without liquid intake is 2600 milliliters. This rate decreases to 1600 milliliters for each subsequent day. The %Energy system uses these average rates and the time since last liquid consumption to calculate volume lost. The volume decrement is distributed via volume weighting instantaneously to all vascular and tissue compartments. 
 
 @anchor energy-events
 Events
@@ -399,7 +402,6 @@ Coming Soon
 - The fatigue model endurance energy store refill rate will be coupled to blood nutrient substance concentrations.
 - The nervous system will contain numerous chemoreceptor-related feedback mechanisms that will correct many of the exercise validation failures such as heart rate and blood pressure.
 - The response of body core temperature to exercise will be improved.
-- Sweat composition will include more than just water.
 
 Recommended Improvements
 ------------------------
@@ -413,7 +415,7 @@ Recommended Improvements
 Appendices
 ==========
 
-Acronyms
+Glossary
 --------
 RQ - Respiratory Quotient
 BMR - Basal Metabolic Rate

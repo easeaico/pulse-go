@@ -15,6 +15,7 @@
 #include "cdm/properties/SEScalarPower.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarVolume.h"
 #include "cdm/io/protobuf/PBEnvironment.h"
 
 
@@ -29,6 +30,7 @@ SEEnvironmentalConditions::SEEnvironmentalConditions(Logger* logger) : Loggable(
   m_ClothingResistance = nullptr;
   m_Emissivity = nullptr;
   m_MeanRadiantTemperature = nullptr;
+  m_MechanicalDeadSpace = nullptr;
   m_RelativeHumidity = nullptr;
   m_RespirationAmbientTemperature = nullptr;
 }
@@ -43,6 +45,7 @@ SEEnvironmentalConditions::~SEEnvironmentalConditions()
   SAFE_DELETE(m_ClothingResistance);
   SAFE_DELETE(m_Emissivity);
   SAFE_DELETE(m_MeanRadiantTemperature);
+  SAFE_DELETE(m_MechanicalDeadSpace);
   SAFE_DELETE(m_RelativeHumidity);
   SAFE_DELETE(m_RespirationAmbientTemperature);
 
@@ -63,6 +66,7 @@ void SEEnvironmentalConditions::Clear()
   INVALIDATE_PROPERTY(m_ClothingResistance);
   INVALIDATE_PROPERTY(m_Emissivity);
   INVALIDATE_PROPERTY(m_MeanRadiantTemperature);
+  INVALIDATE_PROPERTY(m_MechanicalDeadSpace);
   INVALIDATE_PROPERTY(m_RelativeHumidity);
   INVALIDATE_PROPERTY(m_RespirationAmbientTemperature);
   RemoveAmbientGases();
@@ -107,6 +111,8 @@ const SEScalar* SEEnvironmentalConditions::GetScalar(const std::string& name)
     return &GetEmissivity();
   if (name.compare("MeanRadiantTemperature") == 0)
     return &GetMeanRadiantTemperature();
+  if (name.compare("MechanicalDeadSpace") == 0)
+    return &GetMechanicalDeadSpace();
   if (name.compare("RelativeHumidity") == 0)
     return &GetRelativeHumidity();
   if (name.compare("RespirationAmbientTemperature") == 0)
@@ -126,6 +132,7 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from, SES
   COPY_PROPERTY(ClothingResistance);
   COPY_PROPERTY(Emissivity);
   COPY_PROPERTY(MeanRadiantTemperature);
+  COPY_PROPERTY(MechanicalDeadSpace);
   COPY_PROPERTY(RelativeHumidity);
   COPY_PROPERTY(RespirationAmbientTemperature);
 
@@ -291,6 +298,23 @@ double SEEnvironmentalConditions::GetMeanRadiantTemperature(const TemperatureUni
   if (m_MeanRadiantTemperature == nullptr)
     return SEScalar::dNaN();
   return m_MeanRadiantTemperature->GetValue(unit);
+}
+
+bool SEEnvironmentalConditions::HasMechanicalDeadSpace() const
+{
+  return m_MechanicalDeadSpace == nullptr ? false : m_MechanicalDeadSpace->IsValid();
+}
+SEScalarVolume& SEEnvironmentalConditions::GetMechanicalDeadSpace()
+{
+  if (m_MechanicalDeadSpace == nullptr)
+    m_MechanicalDeadSpace = new SEScalarVolume();
+  return *m_MechanicalDeadSpace;
+}
+double SEEnvironmentalConditions::GetMechanicalDeadSpace(const VolumeUnit& unit) const
+{
+  if (m_MechanicalDeadSpace == nullptr)
+    return SEScalar::dNaN();
+  return m_MechanicalDeadSpace->GetValue(unit);
 }
 
 bool SEEnvironmentalConditions::HasRelativeHumidity() const

@@ -237,10 +237,10 @@ protected:
   SEScalarVolumePerTime*              m_GlomerularFiltrationRate; 
   SEScalar0To1*                       m_FiltrationFraction;
 
-  SEScalarPressureTimePerVolume*             m_LeftAfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*      m_LeftAfferentArterioleResistance;
   SEScalarPressure*                   m_LeftBowmansCapsulesHydrostaticPressure;
   SEScalarPressure*                   m_LeftBowmansCapsulesOsmoticPressure;
-  SEScalarPressureTimePerVolume*             m_LeftEfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*      m_LeftEfferentArterioleResistance;
   SEScalarPressure*                   m_LeftGlomerularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_LeftGlomerularCapillariesOsmoticPressure;
   SEScalarVolumePerTimePressure*      m_LeftGlomerularFiltrationCoefficient;
@@ -263,10 +263,10 @@ protected:
   SEScalarVolumePerTime*              m_RenalPlasmaFlow;
   SEScalarPressureTimePerVolume*             m_RenalVascularResistance;
 
-  SEScalarPressureTimePerVolume*             m_RightAfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*      m_RightAfferentArterioleResistance;
   SEScalarPressure*                   m_RightBowmansCapsulesHydrostaticPressure;
   SEScalarPressure*                   m_RightBowmansCapsulesOsmoticPressure;
-  SEScalarPressureTimePerVolume*             m_RightEfferentArterioleResistance;
+  SEScalarPressureTimePerVolume*      m_RightEfferentArterioleResistance;
   SEScalarPressure*                   m_RightGlomerularCapillariesHydrostaticPressure;
   SEScalarPressure*                   m_RightGlomerularCapillariesOsmoticPressure;
   SEScalarVolumePerTimePressure*      m_RightGlomerularFiltrationCoefficient;

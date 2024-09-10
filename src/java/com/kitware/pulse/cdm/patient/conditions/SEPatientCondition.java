@@ -87,6 +87,12 @@ public abstract class SEPatientCondition extends SECondition
       SEConsumeMeal.load(c.getConsumeMeal(), newC);
       return newC;      
     }
+    case DEHYDRATION:
+    {
+      SEDehydration newC = new SEDehydration();
+      SEDehydration.load(c.getDehydration(), newC);
+      return newC;      
+    }
     case IMPAIREDALVEOLAREXCHANGE:
     {
       SEImpairedAlveolarExchange newC = new SEImpairedAlveolarExchange();
@@ -160,6 +166,11 @@ public abstract class SEPatientCondition extends SECondition
     if(c instanceof SEConsumeMeal)
     {
       dst.setConsumeMeal(SEConsumeMeal.unload((SEConsumeMeal)c));
+      return dst.build();
+    }
+    if(c instanceof SEDehydration)
+    {
+      dst.setDehydration(SEDehydration.unload((SEDehydration)c));
       return dst.build();
     }
     if(c instanceof SEImpairedAlveolarExchange)

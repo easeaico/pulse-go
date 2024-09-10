@@ -46,7 +46,7 @@ message AnesthesiaMachineData
   Scalar0To1Data                    OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */
   eOxygenSource                     OxygenSource                  = 5; /**<< @brief @ref AnesthesiaMachineData_eOxygenSourceTable */
   ScalarPressureData                PeakInspiratoryPressure       = 10;/**<< @brief The peak pressure of the ventilator. */
-  ScalarPressureData                PositiveEndExpiredPressure    = 6; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
+  ScalarPressureData                PositiveEndExpiratoryPressure = 6; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
   ePrimaryGas                       PrimaryGas                    = 7; /**<< @brief @ref AnesthesiaMachineData_ePrimaryGasTable */      
   ScalarPressureData                ReliefValvePressure           = 8; /**<< @brief Pressure at while the valve opens to prevent a build up of pressure in the system. */
   ScalarFrequencyData               RespiratoryRate               = 9; /**<< @brief The prescribed rate of positive-pressure ventilation. */

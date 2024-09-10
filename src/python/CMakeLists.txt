@@ -8,7 +8,7 @@ find_package(pybind11 CONFIG REQUIRED)
 
 set(_pypulse_dependencies MultiplexVentilationEngine)
 set(_study_support_cpp pybind/MultiplexVentilation.cpp)
-if(${PROJECT_NAME}_AS_SHARED)
+if(Pulse_AS_SHARED)
   message(WARNING "Python API will not include study classes since Pulse is a shared library")
   # Since Protobuf bind files are not exported from the dll and used directly in study classes
   set(_pypulse_dependencies Pulse)
@@ -44,8 +44,7 @@ install(TARGETS PyPulse
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
 
-set_target_properties (PyPulse PROPERTIES FOLDER ${PROJECT_NAME})
+set_target_properties (PyPulse PROPERTIES FOLDER Pulse)
 
 # Install protobuf python support, we don't get this unless python api is enabled
 install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/google DESTINATION ${CMAKE_INSTALL_PREFIX}/python)

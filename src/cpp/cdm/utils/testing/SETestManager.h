@@ -2,7 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+
 #include "cdm/CommonDefs.h"
+#include "cdm/utils/Logger.h"
 
 class CDM_DECL SETestManager : public Loggable
 {

@@ -129,7 +129,7 @@ namespace pulse
       insulinMassDelta_g = Convert(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min, AmountPerTimeUnit::mol_Per_s);
       insulinMassDelta_g *= m_insulinMolarMass_g_Per_mol * m_data.GetTimeStep_s();
     }
-    m_splanchnicInsulin->GetMass().IncrementValue(insulinMassDelta_g, MassUnit::g);
+    m_splanchnicInsulin->GetMass().Increment(insulinMassDelta_g, MassUnit::g);
     m_splanchnicInsulin->Balance(BalanceLiquidBy::Mass);
   }
 
@@ -146,8 +146,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void EndocrineModel::ReleaseEpinephrineAndNorepinephrine()
   {
-    SEPatient& Patient = m_data.GetCurrentPatient();
-    double patientWeight_kg = Patient.GetWeight(MassUnit::kg);
+    double patientWeight_kg = SEScalar::Truncate(m_data.GetCurrentPatient().GetWeight(MassUnit::kg), 4);
     double epinephrineBasalReleaseRate_ug_Per_min = .00229393 * patientWeight_kg; //We want it to be ~.18 ug/min for our StandardMale
     double epinephrineRelease_ug = (epinephrineBasalReleaseRate_ug_Per_min / 60) * m_data.GetTimeStep_s();  //amount released per timestep
     
@@ -155,7 +154,7 @@ namespace pulse
     double norepinephrineRelease_ug = (norepinephrineBasalReleaseRate_ug_Per_min / 60) * m_data.GetTimeStep_s();  //amount released per timestep
 
     double currentMetabolicRate_W = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::W);
-    double basalMetabolicRate_W = Patient.GetBasalMetabolicRate(PowerUnit::W);
+    double basalMetabolicRate_W = m_data.GetCurrentPatient().GetBasalMetabolicRate(PowerUnit::W);
     double epiReleaseMultiplier = 1.0;
     double norepiReleaseMultiplier = 1.0;
 
@@ -173,7 +172,7 @@ namespace pulse
     }
 
     norepinephrineRelease_ug *= norepiReleaseMultiplier;
-    m_aortaNorepinephrine->GetMass().IncrementValue(norepinephrineRelease_ug, MassUnit::ug);
+    m_aortaNorepinephrine->GetMass().Increment(norepinephrineRelease_ug, MassUnit::ug);
 
     // If we have a stress/anxiety response, release more epi
     if (m_data.GetActions().GetPatientActions().HasAcuteStress())
@@ -186,7 +185,7 @@ namespace pulse
 
     epinephrineRelease_ug *= epiReleaseMultiplier;
 
-    m_rKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);
-    m_lKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);
+    m_rKidneyEpinephrine->GetMass().Increment(0.5 * epinephrineRelease_ug, MassUnit::ug);
+    m_lKidneyEpinephrine->GetMass().Increment(0.5 * epinephrineRelease_ug, MassUnit::ug);
   }
 END_NAMESPACE

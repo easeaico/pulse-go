@@ -189,6 +189,6 @@ SESubstanceTransportGraph
 
 SESubstanceTransportVertex
 
-## Acronyms
+## Glossary
 
 CDM - Common Data Model

@@ -20,6 +20,10 @@ setup(
     packages=find_packages(),
     install_requires=[
         'six',
-        'numpy'
+        'numpy',
+        'matplotlib',
+        'pandas',
+        'openpyxl',
+        'pycel'
     ],
 )
