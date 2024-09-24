@@ -808,30 +808,46 @@ namespace pulse
 
     if (GetSettings().HasInspirationPatientTriggerPressure())
     {
-      triggerDefined = true;
-
-      double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-      double previousRelativePressure_cmH2O = m_PreviousConnectionPressure_cmH2O - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-      double triggerPressure_cmH2O = relativePressure_cmH2O - GetExtrinsicPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
-
-      if (triggerPressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
-        m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
-        relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
+      if (GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O) == 0.0)
       {
-        CycleMode(true);
-        return;
+        //Remove triggers set to 0.0
+        GetSettings().GetInspirationPatientTriggerPressure().Invalidate();
+      }
+      else
+      {
+        triggerDefined = true;
+
+        double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+        double previousRelativePressure_cmH2O = m_PreviousConnectionPressure_cmH2O - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+        double triggerPressure_cmH2O = relativePressure_cmH2O - GetExtrinsicPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
+
+        if (triggerPressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
+          m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
+          relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
+        {
+          CycleMode(true);
+          return;
+        }
       }
     }
     
     if (GetSettings().HasInspirationPatientTriggerFlow())
     {
-      triggerDefined = true;
-      if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= abs(GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s)) && //Allow it to be set as either positive or negative
-        m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
-        m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) > m_PreviousYPieceToConnectionFlow_L_Per_s) //Check if it's moving the right direction to prevent premature cycling
+      if (GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s) == 0.0)
       {
-        CycleMode(true);
-        return;
+        //Remove triggers set to 0.0
+        GetSettings().GetInspirationPatientTriggerFlow().Invalidate();
+      }
+      else
+      {
+        triggerDefined = true;
+        if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= abs(GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s)) && //Allow it to be set as either positive or negative
+          m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
+          m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) > m_PreviousYPieceToConnectionFlow_L_Per_s) //Check if it's moving the right direction to prevent premature cycling
+        {
+          CycleMode(true);
+          return;
+        }
       }
     }
 
