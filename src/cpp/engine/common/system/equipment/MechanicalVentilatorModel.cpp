@@ -224,14 +224,9 @@ namespace pulse
     m_PauseOccurred = false;
     m_Initializing = true;
 
-    // Default the relief valve threshold if not there
+    //Default the relief valve threshold if not there
     if (!GetSettings().HasReliefValveThreshold())
       GetSettings().GetReliefValveThreshold().SetValue(1000, PressureUnit::cmH2O);
-
-    // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
-
-    //Set the substance volume fractions ********************************************
-    std::vector<SESubstanceFraction*> gasFractions = GetSettings().GetFractionInspiredGases();
 
     //Reset the substance quantities at the connection
     for (SEGasSubstanceQuantity* subQ : m_Ventilator->GetSubstanceQuantities())
@@ -243,9 +238,14 @@ namespace pulse
       m_Ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
     }
 
+    //Set the substance volume fractions from our settings
+    std::vector<SESubstanceFraction*> gasFractions = GetSettings().GetFractionInspiredGases();
     //Has fractions defined
     for (auto f : gasFractions)
     {
+      if (!f->GetFractionAmount().IsValid())
+        continue;
+
       const SESubstance& sub = f->GetSubstance();
       double fraction = f->GetFractionAmount().GetValue();
 
@@ -260,25 +260,31 @@ namespace pulse
     double totalFractionDefined = 0.0;
     for (auto s : m_Ventilator->GetSubstanceQuantities())
     {
-      totalFractionDefined += m_Ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().GetValue();
+      if (s->GetVolumeFraction().IsValid())
+        totalFractionDefined += s->GetVolumeFraction().GetValue();
     }
 
     //Add or remove Nitrogen to balance
     double gasFractionDiff = 1.0 - totalFractionDefined;
-    double currentN2Fraction = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().GetValue();
+    SEGasSubstanceQuantity* N2 = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2());
+    double currentN2Fraction = 0;
+    if (N2->GetVolumeFraction().IsValid())
+      currentN2Fraction = N2->GetVolumeFraction().GetValue();
+    SEGasSubstanceQuantity* O2 = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    double FiO2 = 0;
+    if (O2->GetVolumeFraction().IsValid())
+      FiO2 = O2->GetVolumeFraction().GetValue();
     if (currentN2Fraction + gasFractionDiff < 0.0)
     {
-      double FiO2 = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
-
       m_ss << "FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value of " << FiO2 + currentN2Fraction + gasFractionDiff << ".";
       Error(m_ss);
-      m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(0.0);
-      m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(FiO2 + currentN2Fraction + gasFractionDiff);
+      N2->GetVolumeFraction().SetValue(0.0);
+      O2->GetVolumeFraction().SetValue(FiO2 + currentN2Fraction + gasFractionDiff);
     }
     else
     {
       Info("Adding "+cdm::to_string(currentN2Fraction + gasFractionDiff) + "% of N2 to the system");
-      m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
+      N2->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
     }
 
     //Set the aerosol concentrations ********************************************
@@ -293,6 +299,9 @@ namespace pulse
       //Has fractions defined
       for (auto f : liquidConcentrations)
       {
+        if (!f->GetConcentration().IsValid())
+          continue;
+
         const SESubstance& sub = f->GetSubstance();
         SEScalarMassPerVolume concentration = f->GetConcentration();
 
