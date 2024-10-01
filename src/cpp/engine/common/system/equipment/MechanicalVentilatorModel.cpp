@@ -369,6 +369,8 @@ namespace pulse
       m_PreviousConnectionPressure_cmH2O = 0.0;
       m_PauseOccurred = false;
       m_Initializing = false;
+      // Remove any active ventilator actions
+      m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorActions();
       return;
     }
 

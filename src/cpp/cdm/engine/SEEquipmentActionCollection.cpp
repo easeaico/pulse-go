@@ -105,6 +105,12 @@ void SEEquipmentActionCollection::Clear()
   RemoveBagValveMaskAutomated();
   RemoveBagValveMaskInstantaneous();
   RemoveBagValveMaskSqueeze();
+  RemoveMechanicalVentilatorActions();
+}
+
+void SEEquipmentActionCollection::RemoveMechanicalVentilatorActions()
+{
+  // NOTE: Configuration actions should be removed from the model after its processed
   RemoveMechanicalVentilatorHold();
   RemoveMechanicalVentilatorLeak();
   RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
@@ -120,6 +126,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     // NOTE Ventilator mode actions are translated into the ventilator configuration action
     // So any new mode will need to be handled the same way and Removes, ToConfiguration calls
     // will need to be peppered through out this insides of this if block. Just follow the pattern
+    // All ventilator actions are removed when the ventilator is turned off
 
     const SEMechanicalVentilatorConfiguration* config = dynamic_cast<const SEMechanicalVentilatorConfiguration*>(&action);
     if (config != nullptr)
@@ -128,11 +135,6 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_MechanicalVentilatorConfiguration->Activate();
       if (!m_MechanicalVentilatorConfiguration->IsActive())
         RemoveMechanicalVentilatorConfiguration();
-      {
-        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
-        RemoveMechanicalVentilatorPressureControl();
-        RemoveMechanicalVentilatorVolumeControl();
-      }
       return true;
     }
 
