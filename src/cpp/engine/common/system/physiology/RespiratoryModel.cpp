@@ -3495,7 +3495,7 @@ namespace pulse
         double minResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, startSeverity);
         double maxResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
 
-        tracheaResistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.6, 1.0, minResistance_cmH2O_s_Per_L, maxResistance_cmH2O_s_Per_L, severity);
+        tracheaResistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(startSeverity, 1.0, minResistance_cmH2O_s_Per_L, maxResistance_cmH2O_s_Per_L, severity);
       }
       else
       {
