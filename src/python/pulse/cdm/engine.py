@@ -863,7 +863,7 @@ class SESerializeState(SEAction):
     def __init__(self) -> None:
         super().__init__()
         self._filename = ""
-        self._type = eSerializationMode.Save
+        self._mode = eSerializationMode.Save
 
     def clear(self) -> None:
         super().clear()
