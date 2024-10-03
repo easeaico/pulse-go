@@ -72,7 +72,7 @@ def HowTo_UseEngine():
 
     # You can have pulse make a log file for you,
     # Pulse will only write a log if you pass a filename
-    pulse.set_log_filename("./test_results/howto/HowTo_EngineUse.py.log");
+    pulse.set_log_filename("./test_results/howto/HowTo_EngineUse.py.log")
 
     # You can also have Pulse write to the console (std::cout)
     # By default this is off

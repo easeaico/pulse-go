@@ -225,9 +225,8 @@ def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFra
             "min expected": expected_s.iloc[first_idx],
             "min row": diff.index[first_idx],
             "total": nan_count,
+            "rms": np.nan
         }
-
-        summary["rms"] = np.nan
     # No errors above threshold
     elif filtered.empty:
         summary = {
@@ -242,9 +241,8 @@ def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFra
             "min expected": np.nan,
             "min row": np.nan,
             "total": 0,
+            "rms": compute_rms(diff)
         }
-
-        summary["rms"] = compute_rms(diff)
     # Number-based errors present
     else:
         expected_s = expected[diff.name]
