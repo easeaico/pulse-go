@@ -406,9 +406,10 @@ void Loggable::Info(std::stringstream& msg) const
 
 void Loggable::Fatal(const std::string& msg) const
 {
-  std::cerr << "FATAL:" << msg << std::endl;
   if (m_Logger)
     m_Logger->Fatal(msg);
+  else
+    std::cerr << "FATAL:" << msg << std::endl;
 }
 void Loggable::Fatal(std::stringstream& msg) const
 {

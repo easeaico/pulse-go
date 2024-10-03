@@ -10,8 +10,10 @@
 class LoggerForwardJNI : public LoggerForward
 {
 public:
-  LoggerForwardJNI() { Reset(); }
-  virtual void Reset();
+  LoggerForwardJNI() { Clear(); }
+  virtual ~LoggerForwardJNI() { Clear(); }
+
+  void Clear();
 
   void ForwardDebug(const std::string& msg) override;
   void ForwardInfo(const std::string& msg) override;
@@ -28,9 +30,14 @@ public:
   jmethodID jniFatalMethodID;
 };
 
-class PulseEngineJNI : public PulseEngineThunk, public LoggerForwardJNI
+class PulseEngineJNI : public PulseEngineThunk
 {
 public:
   PulseEngineJNI(eModelType t, const std::string& dataDir);
-  ~PulseEngineJNI();
+  virtual ~PulseEngineJNI();
+
+  void Clear() override;
+
+  JNIEnv* jniEnv;
+  jobject jniObj;
 };

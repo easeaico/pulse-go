@@ -78,10 +78,10 @@ protected:
   SEEventHandler* m_ForwardEvents=nullptr;
 
   LogMessages m_logMsgs;
-  std::string m_dataDir;
+  std::string m_dataDir="./";
   std::vector<const SEEventChange*> m_events;
   std::vector<const SEActiveEvent*> m_activeEvents;
-  size_t m_length;
+  size_t m_length=0;
   double* m_requestedData = nullptr;
   std::vector<double> m_requestedValues;
 };
