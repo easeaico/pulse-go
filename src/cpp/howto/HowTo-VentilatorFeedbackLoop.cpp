@@ -26,6 +26,7 @@
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/properties/SEScalarLength.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
 
@@ -64,12 +65,12 @@ void HowToVentilatorFeedbackLoop()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_VentilatorFeedbackLoop.log");  
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_VentilatorFeedbackLoop.log");
   pe->GetLogger()->Info("HowTo_VentilatorFeedbackLoop");
 
   //Load the starting state that was saved at the end of Segment 1
   //Patient has mild ARDS
-  if (!pe->SerializeFromFile("CSTARS-Scenario1.json"))
+  if (!pe->SerializeFromFile("CSTARS-Scenario1-InitialHemeostasis.json"))
   {
     pe->GetLogger()->Error("Could not load state, loading Standard Male instead.");
     if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))// Select patient
@@ -107,8 +108,8 @@ void HowToVentilatorFeedbackLoop()
 
   //Increase ARDS severity to moderate
   SEAcuteRespiratoryDistressSyndromeExacerbation ARDS;
-  ARDS.GetSeverity(eLungCompartment::LeftLung).SetValue(0.57);
-  ARDS.GetSeverity(eLungCompartment::RightLung).SetValue(0.57);
+  ARDS.GetSeverity(eLungCompartment::LeftLung).SetValue(0.6);
+  ARDS.GetSeverity(eLungCompartment::RightLung).SetValue(0.6);
   pe->ProcessAction(ARDS);
 
   //Start spontaneously breathing
@@ -148,12 +149,14 @@ void HowToVentilatorFeedbackLoop()
   Dyspnea.GetRespirationRateSeverity().SetValue(1.0);
   pe->ProcessAction(Dyspnea);
 
-  // Drive the system for 5 mins
+  double previousTotalLungVolume_mL = pe->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL);
+
+  // Drive the system for 30 s
   double timeStep_s = pe->GetTimeStep(TimeUnit::s);
   double time_s = 0.0;
-  while (time_s < 300.0)
+  while (time_s < 30.0)
   {
-    //Going to update values every second
+    //Going to update values every timestep (50 ms)
 
     //Get pressure from sensor - be sure to guard against crazy readings
     //We will compute pressure waveform for this example
@@ -184,8 +187,23 @@ void HowToVentilatorFeedbackLoop()
     pe->GetLogger()->Info(std::stringstream() << "Respiration Rate: " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation: " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
 
-    //Use this variable that is referenced to the FRC for the control system - you may need to interpolate for higher frequency changes
+    //Output values for the control system
+    //You may need to interpolate one of these values for higher frequency changes
+
+    //This is the total lung volume
+    double totalLungVolume_mL = pe->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL);
+    pe->GetLogger()->Info(std::stringstream() << "Total Lung Volume: " << totalLungVolume_mL << VolumeUnit::mL);
+
+    //This is the total lung volume referenced to the FRC
     pe->GetLogger()->Info(std::stringstream() << "Relative Total Lung Volume: " << pe->GetRespiratorySystem()->GetRelativeTotalLungVolume(VolumeUnit::mL) << VolumeUnit::mL);
+
+    //This is the flow into the airway
+    pe->GetLogger()->Info(std::stringstream() << "Inspiratory Flow: " << pe->GetRespiratorySystem()->GetInspiratoryFlow(VolumePerTimeUnit::mL_Per_s) << VolumePerTimeUnit::mL_Per_s);
+
+    //This is the rate of volume change that will take into account other things like pnuemothorax
+    double totalLungVolumeChangeRate_mL_Per_s = (totalLungVolume_mL - previousTotalLungVolume_mL) / timeStep_s;
+    pe->GetLogger()->Info(std::stringstream() << "Total Lung Volume Change Rate: " << totalLungVolumeChangeRate_mL_Per_s << VolumePerTimeUnit::mL_Per_s);
+    previousTotalLungVolume_mL = totalLungVolume_mL;
 
     time_s += timeStep_s;
   }

@@ -177,6 +177,11 @@ void SEMechanicalVentilatorSettings::Clear()
   RemoveConcentrationInspiredAerosols();
 }
 
+void SEMechanicalVentilatorSettings::Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager& subMgr)
+{
+  PBMechanicalVentilator::Copy(src, *this, subMgr);
+}
+
 void SEMechanicalVentilatorSettings::ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr)
 {
   if (config.GetMergeType() == eMergeType::Replace)
@@ -201,16 +206,76 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   COPY_PROPERTY(DriverDampingParameter);
 
   // Oneof
-  COPY_PROPERTY(PositiveEndExpiratoryPressure);
-  COPY_PROPERTY(FunctionalResidualCapacity);
+  if (from.HasPositiveEndExpiratoryPressure())
+  {
+    COPY_PROPERTY(PositiveEndExpiratoryPressure);
+    if (HasFunctionalResidualCapacity())
+      GetFunctionalResidualCapacity().Invalidate();
+  }
+  else if (from.HasFunctionalResidualCapacity())
+  {
+    if (HasPositiveEndExpiratoryPressure())
+      GetPositiveEndExpiratoryPressure().Invalidate();
+    COPY_PROPERTY(FunctionalResidualCapacity);
+  }
 
   // Oneof
-  COPY_PROPERTY(ExpirationCycleFlow);
-  COPY_PROPERTY(ExpirationCyclePressure);
-  COPY_PROPERTY(ExpirationCycleVolume);
-  COPY_PROPERTY(ExpirationCycleTime);
-  if (from.HasExpirationCycleRespiratoryModel())
+  if (from.HasExpirationCycleFlow())
+  {
+    COPY_PROPERTY(ExpirationCycleFlow);
+    if (HasExpirationCyclePressure())
+      GetExpirationCyclePressure().Invalidate();
+    if (HasExpirationCycleVolume())
+      GetExpirationCycleVolume().Invalidate();
+    if (HasExpirationCycleTime())
+      GetExpirationCycleTime().Invalidate();
+    SetExpirationCycleRespiratoryModel(eSwitch::Off);
+  }
+  else if (from.HasExpirationCyclePressure())
+  {
+    if (HasExpirationCycleFlow())
+      GetExpirationCycleFlow().Invalidate();
+    COPY_PROPERTY(ExpirationCyclePressure);
+    if (HasExpirationCycleVolume())
+      GetExpirationCycleVolume().Invalidate();
+    if (HasExpirationCycleTime())
+      GetExpirationCycleTime().Invalidate();
+    SetExpirationCycleRespiratoryModel(eSwitch::Off);
+  }
+  else if (from.HasExpirationCycleVolume())
+  {
+    if (HasExpirationCycleFlow())
+      GetExpirationCycleFlow().Invalidate();
+    if (HasExpirationCyclePressure())
+      GetExpirationCyclePressure().Invalidate();
+    COPY_PROPERTY(ExpirationCycleVolume);
+    if (HasExpirationCycleTime())
+      GetExpirationCycleTime().Invalidate();
+    SetExpirationCycleRespiratoryModel(eSwitch::Off);
+  }
+  else if (from.HasExpirationCycleTime())
+  {
+    if (HasExpirationCycleFlow())
+      GetExpirationCycleFlow().Invalidate();
+    if (HasExpirationCyclePressure())
+      GetExpirationCyclePressure().Invalidate();
+    if (HasExpirationCycleVolume())
+      GetExpirationCycleVolume().Invalidate();
+    COPY_PROPERTY(ExpirationCycleTime);
+    SetExpirationCycleRespiratoryModel(eSwitch::Off);
+  }
+  else if (from.HasExpirationCycleRespiratoryModel())
+  {
+    if (HasExpirationCycleFlow())
+      GetExpirationCycleFlow().Invalidate();
+    if (HasExpirationCyclePressure())
+      GetExpirationCyclePressure().Invalidate();
+    if (HasExpirationCycleVolume())
+      GetExpirationCycleVolume().Invalidate();
+    if (HasExpirationCycleTime())
+      GetExpirationCycleTime().Invalidate();
     SetExpirationCycleRespiratoryModel(from.m_ExpirationCycleRespiratoryModel);
+  }
 
   COPY_PROPERTY(ExpirationTubeResistance);
   COPY_PROPERTY(ExpirationValveResistance);
@@ -219,24 +284,75 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   COPY_PROPERTY(ExpirationWaveformPeriod);
 
   // Oneof
-  COPY_PROPERTY(InspirationLimitFlow);
-  COPY_PROPERTY(InspirationLimitPressure);
-  COPY_PROPERTY(InspirationLimitVolume);
+  if (from.HasInspirationLimitFlow())
+  {
+    COPY_PROPERTY(InspirationLimitFlow);
+    if (HasInspirationLimitPressure())
+      GetInspirationLimitPressure().Invalidate();
+    if (HasInspirationLimitVolume())
+      GetInspirationLimitVolume().Invalidate();
+  }
+  else if (from.HasInspirationLimitPressure())
+  {
+    if (HasInspirationLimitFlow())
+      GetInspirationLimitFlow().Invalidate();
+    COPY_PROPERTY(InspirationLimitPressure);
+    if (HasInspirationLimitVolume())
+      GetInspirationLimitVolume().Invalidate();
+  }
+  else if (from.HasInspirationLimitVolume())
+  {
+    if (HasInspirationLimitFlow())
+      GetInspirationLimitFlow().Invalidate();
+    if (HasInspirationLimitPressure())
+      GetInspirationLimitPressure().Invalidate();
+    COPY_PROPERTY(InspirationLimitVolume);
+  }
 
   COPY_PROPERTY(InspirationPauseTime);
 
   // Oneof
-  COPY_PROPERTY(PeakInspiratoryPressure);
-  COPY_PROPERTY(InspirationTargetFlow);
+  if (from.HasPeakInspiratoryPressure())
+  {
+    COPY_PROPERTY(PeakInspiratoryPressure);
+    if (HasInspirationTargetFlow())
+      GetInspirationTargetFlow().Invalidate();
+  }
+  else if (from.HasInspirationTargetFlow())
+  {
+    if (HasPeakInspiratoryPressure())
+      GetPeakInspiratoryPressure().Invalidate();
+    COPY_PROPERTY(InspirationTargetFlow);
+  }
 
   // Oneof
   COPY_PROPERTY(InspirationMachineTriggerTime);
 
   // Oneof
-  COPY_PROPERTY(InspirationPatientTriggerFlow);
-  COPY_PROPERTY(InspirationPatientTriggerPressure);
-  if (from.HasInspirationPatientTriggerRespiratoryModel())
+  if (from.HasInspirationPatientTriggerFlow())
+  {
+    COPY_PROPERTY(InspirationPatientTriggerFlow);
+    if (HasInspirationPatientTriggerPressure())
+      GetInspirationPatientTriggerPressure().Invalidate();
+    if (HasInspirationPatientTriggerRespiratoryModel())
+      SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
+  }
+  else if (from.HasInspirationPatientTriggerPressure())
+  {
+    if (HasInspirationPatientTriggerFlow())
+      GetInspirationPatientTriggerFlow().Invalidate();
+    COPY_PROPERTY(InspirationPatientTriggerPressure);
+    if (HasInspirationPatientTriggerRespiratoryModel())
+      SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
+  }
+  else if (from.HasInspirationPatientTriggerRespiratoryModel())
+  {
+    if (HasInspirationPatientTriggerFlow())
+      GetInspirationPatientTriggerFlow().Invalidate();
+    if (HasInspirationPatientTriggerPressure())
+      GetInspirationPatientTriggerPressure().Invalidate();
     SetInspirationPatientTriggerRespiratoryModel(from.m_InspirationPatientTriggerRespiratoryModel);
+  }
 
   COPY_PROPERTY(InspirationTubeResistance);
   COPY_PROPERTY(InspirationValveResistance);
@@ -254,14 +370,10 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
   if (from.HasFractionInspiredGas())
   {
-    size_t cnt = 0;
     double amt;
-    double total = 0;
     const SESubstance* sub;
-    // Since we are allowing only O2 to be specified
-    // Remove everything so we know what is intentionally not provided
-    // And what is intentially set to 0 (don't just set to 0)
-    RemoveFractionInspiredGases();
+    // NOTE Users need to set substances to 0 that they want to remove from the ventilator
+    // OR set the configuration action merge type to replace
     for (SESubstanceFraction* osf : from.m_FractionInspiredGases)
     {
       sub = subMgr.GetSubstance(osf->GetSubstance().GetName());
@@ -270,30 +382,13 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
         Error("Do not have substance : " + osf->GetSubstance().GetName());
         continue;
       }
-      SESubstanceFraction& sf = GetFractionInspiredGas(*sub);
-      amt = osf->GetFractionAmount().GetValue();
-      sf.GetFractionAmount().SetValue(amt);
-      subMgr.AddActiveSubstance(*sub);
-      total += amt;
-      if (amt > 0)
-        cnt++; // Count of non-zero fractions
-    }
-
-    // It's Ok if you ONLY set Oxygen, i.e. FiO2
-    // Ventilator models should understand that common setting
-    if (!SEScalar::IsValue(1, total))
-    {
-      bool err = false;
-      if (cnt != 1)
-        err = true;
-      else
+      if (osf->GetFractionAmount().IsValid())
       {
-        const SESubstance* o2 = subMgr.GetSubstance("Oxygen");
-        if (!GetFractionInspiredGas(*o2).GetFractionAmount().IsPositive())
-          err = true;
+        SESubstanceFraction& sf = GetFractionInspiredGas(*sub);
+        amt = osf->GetFractionAmount().GetValue();
+        sf.GetFractionAmount().SetValue(amt);
+        subMgr.AddActiveSubstance(*sub);
       }
-      if(err)
-        Error("Mechanical Ventilator substance fractions do not sum to 1");
     }
   }
 
@@ -301,8 +396,11 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   {
     for (SESubstanceConcentration* sc : from.m_ConcentrationInspiredAerosols)
     {
-      SESubstanceConcentration& mine = GetConcentrationInspiredAerosol(sc->GetSubstance());
-      mine.GetConcentration().Set(sc->GetConcentration());
+      if (sc->GetConcentration().IsValid())
+      {
+        SESubstanceConcentration& mine = GetConcentrationInspiredAerosol(sc->GetSubstance());
+        mine.GetConcentration().Set(sc->GetConcentration());
+      }
     }
   }
 
@@ -988,7 +1086,7 @@ bool SEMechanicalVentilatorSettings::HasFractionInspiredGas() const
   if (m_FractionInspiredGases.empty())
     return false;
   for (auto a : m_FractionInspiredGases)
-    if (a->HasFractionAmount() && a->GetFractionAmount().IsPositive())
+    if (a->HasFractionAmount())
       return true;
   return false;
 }
@@ -997,7 +1095,7 @@ bool SEMechanicalVentilatorSettings::HasFractionInspiredGas(const SESubstance& s
   for (const SESubstanceFraction* sf : m_FractionInspiredGases)
   {
     if (&s == &sf->GetSubstance())
-      return sf->GetFractionAmount() > 0;
+      return sf->HasFractionAmount();
   }
   return false;
 }
@@ -1036,12 +1134,12 @@ const SESubstanceFraction* SEMechanicalVentilatorSettings::GetFractionInspiredGa
 void SEMechanicalVentilatorSettings::RemoveFractionInspiredGas(const SESubstance& s)
 {
   SESubstanceFraction& sf = GetFractionInspiredGas(s);
-  sf.GetFractionAmount().SetValue(0);
+  sf.GetFractionAmount().Invalidate();
 }
 void SEMechanicalVentilatorSettings::RemoveFractionInspiredGases()
 {
   for (SESubstanceFraction* sf : m_FractionInspiredGases)
-    sf->GetFractionAmount().SetValue(0);
+    sf->GetFractionAmount().Invalidate();
 }
 
 bool SEMechanicalVentilatorSettings::HasConcentrationInspiredAerosol() const
@@ -1049,7 +1147,7 @@ bool SEMechanicalVentilatorSettings::HasConcentrationInspiredAerosol() const
   if (m_ConcentrationInspiredAerosols.empty())
     return false;
   for (auto a : m_ConcentrationInspiredAerosols)
-    if (a->HasConcentration() && a->GetConcentration().IsPositive())
+    if (a->HasConcentration())
       return true;
   return false;
 }
@@ -1058,7 +1156,7 @@ bool SEMechanicalVentilatorSettings::HasConcentrationInspiredAerosol(const SESub
   for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
   {
     if (&substance == &sc->GetSubstance())
-      return sc->GetConcentration().IsPositive();
+      return sc->HasConcentration();
   }
   return false;
 }
@@ -1097,14 +1195,12 @@ const SESubstanceConcentration* SEMechanicalVentilatorSettings::GetConcentration
 void SEMechanicalVentilatorSettings::RemoveConcentrationInspiredAerosol(const SESubstance& substance)
 {
   SESubstanceConcentration& sc = GetConcentrationInspiredAerosol(substance);
-  auto& unit = *sc.GetConcentration().GetUnit();
-  sc.GetConcentration().SetValue(0, unit);
+  sc.GetConcentration().Invalidate();
 }
 void SEMechanicalVentilatorSettings::RemoveConcentrationInspiredAerosols()
 {
   for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
   {
-    auto& unit = *sc->GetConcentration().GetUnit();
-    sc->GetConcentration().SetValue(0, unit);
+    sc->GetConcentration().Invalidate();
   }
 }

@@ -6,9 +6,11 @@ import json
 import logging
 from enum import Enum
 from json import JSONDecodeError
-from typing import List, NamedTuple, Set
+from typing import List, NamedTuple
 
-from pulse.cdm.engine import SEAction
+from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.patient import SEPatient
+from pulse.cdm.io.patient import serialize_patient_from_string
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -52,9 +54,12 @@ def break_camel_case(string: str):
 
     return re.sub(camel_case_regex, r' \1', string, flags=re.VERBOSE)
 
+
 class ePrettyPrintType(Enum):
     Action = 0
     Condition = 1
+
+
 def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case: bool = False):
     ret = ""
     string = string.replace('"', '')
@@ -113,44 +118,19 @@ def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case:
 
     return ret
 
+
 class eActionEventCategory(Enum):
     ACTION = 0
     EVENT = 1
+
+
 class LogActionEvent(NamedTuple):
     time: float
     name: str
     text: str
     category: eActionEventCategory
-def parse_events(log_file: str, omit: List[str] = []):
-    event_tag = "[Event"
-    events = []
-    with open(log_file) as f:
-        lines = f.readlines()
-        for line in lines:
-            if len(line) == 0:
-                continue
-            match = re.search(
-                r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)[01]\](?P<event_text>.*)",
-                line
-            )
-            if match is None:
-                continue
-            event_text = match.group("event_text").strip()
-            event_name = match.group("event_name").strip()
-            event_time = float(match.group("time_val"))
 
-            # Check to see if it should be omitted
-            keep_event = True
-            for o in omit:
-                if o in event_text:
-                    keep_event = False
-                    break
-            if not keep_event:
-                continue
 
-            events.append(LogActionEvent(event_time, event_name, event_text, eActionEventCategory.EVENT))
-
-    return events
 def parse_actions(log_file: str, omit: List[str] = []):
     patient_action = "PatientAction"
     enviro_action = "EnvironmentAction"
@@ -240,3 +220,63 @@ def parse_actions(log_file: str, omit: List[str] = []):
             idx += 1
 
     return actions
+
+
+def parse_events(log_file: str, omit: List[str] = []):
+    event_tag = "[Event"
+    events = []
+    with open(log_file) as f:
+        lines = f.readlines()
+        for line in lines:
+            if len(line) == 0:
+                continue
+            match = re.search(
+                r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)[01]\](?P<event_text>.*)",
+                line
+            )
+            if match is None:
+                continue
+            event_text = match.group("event_text").strip()
+            event_name = match.group("event_name").strip()
+            event_time = float(match.group("time_val"))
+
+            # Check to see if it should be omitted
+            keep_event = True
+            for o in omit:
+                if o in event_text:
+                    keep_event = False
+                    break
+            if not keep_event:
+                continue
+
+            events.append(LogActionEvent(event_time, event_name, event_text, eActionEventCategory.EVENT))
+
+    return events
+
+
+def parse_patient(log_file: str):
+    patient_text = ""
+    patient_tag = "[Patient]"
+    with open(log_file) as f:
+        lines = f.readlines()
+        idx = 0
+        while idx < len(lines):
+            line = lines[idx]
+            if len(line) == 0:
+                idx += 1
+                continue
+            patient_idx = line.find(patient_tag)
+            if patient_idx == -1:
+                idx += 1
+                continue
+            else:
+                # Find blank line at end of action
+                while (idx + 1) < len(lines) and len(lines[idx+1].strip()) != 0:
+                    idx += 1
+                    line = lines[idx]
+                    patient_text = ''.join([patient_text, line])
+                patient = SEPatient()
+                serialize_patient_from_string(patient_text, patient, eSerializationFormat.JSON)
+                return patient
+    # No patient found in log...
+    return None

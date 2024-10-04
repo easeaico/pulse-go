@@ -183,7 +183,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeIniti
   if (patient_configuration == nullptr)
     return false;
   const char* pcStr = env->GetStringUTFChars(patient_configuration, JNI_FALSE);
-    
+
   const char* drStr = nullptr;
   if (dataRequests != nullptr)
     drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
@@ -233,14 +233,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetAss
   return assessment;
 }
 
-extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeForwardLogMessages(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
-{
-  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-  engineJNI->KeepLogMessages(b);
-}
+
 extern "C"
 JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSetLogFilename(JNIEnv * env, jobject obj, jlong ptr, jstring logFilename)
 {
@@ -250,6 +243,25 @@ JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSetLogFil
   const char* logF = env->GetStringUTFChars(logFilename, JNI_FALSE);
   engineJNI->SetLogFilename(logF);
   env->ReleaseStringUTFChars(logFilename, logF);
+}
+extern "C"
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeKeepLogMessages(JNIEnv* env, jobject obj, jlong ptr, jboolean b)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+  engineJNI->KeepLogMessages(b);
+}
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullLogMessages(JNIEnv* env, jobject obj, jlong ptr, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string out = engineJNI->PullLogMessages((eSerializationFormat)format);
+  jstring events = env->NewStringUTF(out.c_str());
+  return events;
 }
 
 extern "C"
@@ -352,15 +364,22 @@ JNIEXPORT jdoubleArray JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeP
 
 PulseEngineJNI::PulseEngineJNI(eModelType t, const std::string& dataDir) : PulseEngineThunk(t,dataDir)
 {
-  Reset();
+  Clear();
 }
 
 PulseEngineJNI::~PulseEngineJNI()
 {
-  Reset();
+  Clear();
 }
 
-void LoggerForwardJNI::Reset()
+void PulseEngineJNI::Clear()
+{
+  jniEnv = nullptr;
+  jniObj = nullptr;
+  PulseEngineThunk::Clear();
+}
+
+void LoggerForwardJNI::Clear()
 {
   jniEnv=nullptr;
   jniObj=nullptr;

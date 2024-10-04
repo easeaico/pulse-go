@@ -2,14 +2,18 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
+
 from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarArea, SEScalarFrequency, SEScalarLength, \
                               SEScalarMass, SEScalarMassPerTime, SEScalarMassPerVolume, SEScalarPower, \
                               SEScalarPressure, SEScalarTime, SEScalarVolume
 from pulse.cdm.engine import SEConditionManager
 
+
+
 class eSex(Enum):
     Male = 0
     Female = 1
+
 
 class SEPatientConfiguration():
     __slots__ = ["_patient", "_patient_file", "_condition_manager", "_data_root_dir"]
@@ -59,6 +63,7 @@ class SEPatientConfiguration():
         return self._condition_manager
     def invalidate_conditions(self):
         self._condition_manager = None
+
 
 class SEPatient():
     __slots__ = ["_name", "_sex", "_age", "_weight", "_height", "_body_density",

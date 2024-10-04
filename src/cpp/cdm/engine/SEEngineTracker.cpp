@@ -140,6 +140,20 @@ double SEEngineTracker::GetValue(const SEDataRequest& dr) const
   return drs->GetValue();
 }
 
+std::string SEEngineTracker::GetUnit(const SEDataRequest& dr) const
+{
+  auto drs = GetScalar(dr);
+  if (drs == nullptr)
+    return "";
+  if (!drs->IsValid())
+    return "";
+  if (dr.HasUnit())
+    return dr.GetUnit()->GetString();
+  if (drs->HasUnit())
+    return drs->GetUnit()->GetString();
+  return "";
+}
+
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
 {
   auto found = m_Request2Scalar.find(&dr);

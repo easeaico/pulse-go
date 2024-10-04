@@ -2750,9 +2750,9 @@ namespace pulse
       double healthyLungCompliance_L_Per_cmH2O = 0.0;
       double healthySideCompliance_L_Per_cmH2O = 0.0;
 
-      bool hasRespiratoryMechanicsCompliance = false;
-      const std::vector<SESegment*>* segments;
       SESegment* segment = nullptr;
+      const std::vector<SESegment*>* segments = nullptr;
+      bool hasRespiratoryMechanicsCompliance = false;
 
       if (iterLung == 0) //right lung
       {
