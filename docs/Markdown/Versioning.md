@@ -13,15 +13,17 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ## Pulse Integration (Current new feature set)
 
--TBD
-
-## Pulse Integration (Current new feature set)
+- CDM API Changes
+  - Ventilator API Updates
+    - Remove triggers with zero values
+    - Address issues when combining mode and configuration actions
 
 - Software Architecture Improvements
-  - Combined DataModelBindings, CommonDataModel and PulseEngine into a single Pulse library
-    - Plan is to provide an option to build a shared Pulse library rather than a static one
+  - Link to static C++ runtime when building for Android
+  - Fix logging in Java API
 
 - Physiology Model Improvements
+  - Improve severe airway obstruction validation
 
 ---
 
