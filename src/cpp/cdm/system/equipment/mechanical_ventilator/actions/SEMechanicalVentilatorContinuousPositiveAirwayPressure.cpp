@@ -74,7 +74,8 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
         positiveEndExpiredPressure_cmH2O + GetDeltaPressureSupport(PressureUnit::cmH2O);
     if (positiveEndExpiredPressure_cmH2O > peakInspiratoryPressure_cmH2O)
     {
-        Fatal("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+        Error("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+        return false;
     }
     s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);

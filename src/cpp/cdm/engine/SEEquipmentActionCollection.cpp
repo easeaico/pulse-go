@@ -171,8 +171,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         // Convert to a SEMechanicalVentilatorConfiguration
         GetMechanicalVentilatorConfiguration().Clear();
         GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
-        m_MechanicalVentilatorConfiguration->Activate();
+        if (!GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        {
+          RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+          GetMechanicalVentilatorConfiguration().Clear();
+          Error("Ignoring invalid SEMechanicalVentilatorContinuousPositiveAirwayPressure action");
+        }
+        else
+          m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
     }
@@ -190,8 +196,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         // Convert to a SEMechanicalVentilatorConfiguration
         GetMechanicalVentilatorConfiguration().Clear();
         GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        GetMechanicalVentilatorPressureControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
-        m_MechanicalVentilatorConfiguration->Activate();
+        if (!GetMechanicalVentilatorPressureControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        {
+          RemoveMechanicalVentilatorPressureControl();
+          GetMechanicalVentilatorConfiguration().Clear();
+          Error("Ignoring invalid SEMechanicalVentilatorPressureControl action");
+        }
+        else
+          m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
     }
@@ -209,8 +221,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         // Convert to a SEMechanicalVentilatorConfiguration
         GetMechanicalVentilatorConfiguration().Clear();
         GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        GetMechanicalVentilatorVolumeControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
-        m_MechanicalVentilatorConfiguration->Activate();
+        if (!GetMechanicalVentilatorVolumeControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        {
+          RemoveMechanicalVentilatorVolumeControl();
+          GetMechanicalVentilatorConfiguration().Clear();
+          Error("Ignoring invalid SEMechanicalVentilatorVolumeControl action");
+        }
+        else
+          m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
     }

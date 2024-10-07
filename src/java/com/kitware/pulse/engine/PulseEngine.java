@@ -332,31 +332,7 @@ public class PulseEngine
       Log.error("Engine could not advance time");
       alive=false;
     }
-    if (logListener != null)
-    {
-      String msgs = nativePullLogMessages(nativeObj, thunkType.value());
-      if(msgs!=null && !msgs.isEmpty())
-      {
-        try
-        {
-          LogMessagesData.Builder b = LogMessagesData.newBuilder();
-          JsonFormat.parser().merge(msgs, b);
-          for(String msg : b.getDebugMessagesList())
-            logListener.debug(msg);
-          for(String msg : b.getInfogMessagesList())
-            logListener.info(msg);
-          for(String msg : b.getErrorMessagesList())
-            logListener.error(msg);
-          for(String msg : b.getFatalMessagesList())
-            logListener.fatal(msg);
-        }
-        catch(Exception ex)
-        {
-          Log.error("Unable to process log messages");
-          Log.error(ex.getMessage());
-        }
-      }
-    }
+    pullLogMessages();
     // Grab any event changes and pass them to handler
     if (eventHandler != null)
     {
@@ -419,6 +395,35 @@ public class PulseEngine
     return Doubles.asList(nativePullData(nativeObj));
   }
   
+  public void pullLogMessages()
+  {
+    if (logListener != null)
+    {
+      String msgs = nativePullLogMessages(nativeObj, thunkType.value());
+      if(msgs!=null && !msgs.isEmpty())
+      {
+        try
+        {
+          LogMessagesData.Builder b = LogMessagesData.newBuilder();
+          JsonFormat.parser().merge(msgs, b);
+          for(String msg : b.getDebugMessagesList())
+            logListener.debug(msg);
+          for(String msg : b.getInfogMessagesList())
+            logListener.info(msg);
+          for(String msg : b.getErrorMessagesList())
+            logListener.error(msg);
+          for(String msg : b.getFatalMessagesList())
+            logListener.fatal(msg);
+        }
+        catch(Exception ex)
+        {
+          Log.error("Unable to process log messages");
+          Log.error(ex.getMessage());
+        }
+      }
+    }
+  }
+  
   ////////////////////
   // ACTION SUPPORT //
   ////////////////////
@@ -447,16 +452,15 @@ public class PulseEngine
         if(!nativeProcessActions(nativeObj,actionsStr, thunkType.value()))
         {
           Log.error("Engine could not process actions");
-          alive=false;
         }
       }
       catch(Exception ex)
       {
         Log.error("Unable to convert action to json");
         Log.error(ex.getMessage());
-        alive = false;
       }
     }
+    pullLogMessages();
     return alive;
   }
   

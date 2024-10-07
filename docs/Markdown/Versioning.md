@@ -17,6 +17,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Ventilator API Updates
     - Remove triggers with zero values
     - Address issues when combining mode and configuration actions
+    - Ignore invalid mode actions and log as error, rather than log a fatal error
 
 - Software Architecture Improvements
   - Link to static C++ runtime when building for Android

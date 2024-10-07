@@ -82,7 +82,8 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
 
     if (inspiratoryPeriod_s > totalPeriod_s)
     {
-      Fatal("Inspiratory Period is longer than the total period applied using Respiration Rate.");
+      Error("Inspiratory Period is longer than the total period applied using Respiration Rate.");
+      return false;
     }
 
     double inspirationWaveformPeriod_s = inspiratoryPeriod_s;
@@ -92,7 +93,8 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
     }
     if (inspirationWaveformPeriod_s > inspiratoryPeriod_s)
     {
-      Fatal("Inspiration Waveform Period (i.e., Slope) cannot be longer than the Inspiratory Period.");
+      Error("Inspiration Waveform Period (i.e., Slope) cannot be longer than the Inspiratory Period.");
+      return false;
     }
 
     double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
