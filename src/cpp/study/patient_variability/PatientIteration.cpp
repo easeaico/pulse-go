@@ -241,6 +241,31 @@ namespace pulse::study::patient_variability
     WriteScenario();
   }
 
+  bool PatientIteration::FindExistingStates()
+  {
+    bool missing = false;
+    std::string basename, ext, stateFilename;
+    std::vector<SEScenarioExecStatus> statuses;
+    SEScenarioExecStatus::SerializeFromFile(m_ScenarioExecListFilename, statuses, GetLogger());
+    for (SEEngineInitializationStatus& status : statuses)
+    {
+      if (status.GetEngineInitializationState() == eEngineInitializationState::Initialized)
+      {
+        SplitFilenameExt(status.GetLogFilename(), basename, ext);
+        m_Name = basename;
+        m_Patient->SetName(basename);
+        stateFilename = m_StateDirectory + m_Name + ".pbb";
+        if (FileExists(stateFilename))
+          m_PatientStates[m_Name] = stateFilename;
+        else
+          missing = true;
+      }
+      else
+        missing = true;
+    }
+    return !missing;
+  }
+
   std::string PatientIteration::ToString(SEPatient& p)
   {
     std::string out;

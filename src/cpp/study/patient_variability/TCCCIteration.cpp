@@ -117,6 +117,7 @@ namespace pulse::study::patient_variability
     size_t RightTensionPneumothoraxWound = 0;
     double TBISeverity = 0;
     double InsultDuration_s = 0;
+    double InsultStateFrequency_s = 0;
 
     SetDescription(patientFolderAndStateFilename.first);
     SetEngineStateFile(patientFolderAndStateFilename.second);
@@ -128,7 +129,7 @@ namespace pulse::study::patient_variability
         LeftHemothoraxSeverity, RightHemothoraxSeverity, StressSeverity, TBISeverity,
         LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
         RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-        InsultDuration_s, patientFolderAndStateFilename.first);
+        InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
     }
 
     for (double s : m_HemorrhageSeverity.GetValues())
@@ -140,7 +141,7 @@ namespace pulse::study::patient_variability
           LeftHemothoraxSeverity, RightHemothoraxSeverity, StressSeverity, TBISeverity,
           LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
           RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-          InsultDuration_s, patientFolderAndStateFilename.first);
+          InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
       }
     }
 
@@ -151,7 +152,7 @@ namespace pulse::study::patient_variability
         s, RightHemothoraxSeverity, StressSeverity, TBISeverity,
         LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
         RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-        InsultDuration_s, patientFolderAndStateFilename.first);
+        InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
     }
 
     for (double s : m_RightHemothoraxSeverity.GetValues())
@@ -161,7 +162,7 @@ namespace pulse::study::patient_variability
         LeftHemothoraxSeverity, s, StressSeverity, TBISeverity,
         LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
         RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-        InsultDuration_s, patientFolderAndStateFilename.first);
+        InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
     }
 
     for (double s : m_StressSeverity.GetValues())
@@ -171,7 +172,7 @@ namespace pulse::study::patient_variability
         LeftHemothoraxSeverity, RightHemothoraxSeverity, s, TBISeverity,
         LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
         RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-        InsultDuration_s, patientFolderAndStateFilename.first);
+        InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
     }
 
     for (double s : m_TBISeverity.GetValues())
@@ -181,7 +182,7 @@ namespace pulse::study::patient_variability
         LeftHemothoraxSeverity, RightHemothoraxSeverity, StressSeverity, TBISeverity,
         LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
         RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-        InsultDuration_s, patientFolderAndStateFilename.first);
+        InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
     }
 
     for (double s : m_LeftTensionPneumothoraxSeverity.GetValues())
@@ -193,7 +194,7 @@ namespace pulse::study::patient_variability
           LeftHemothoraxSeverity, RightHemothoraxSeverity, StressSeverity, TBISeverity,
           s, w,
           RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-          InsultDuration_s, patientFolderAndStateFilename.first);
+          InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
       }
     }
 
@@ -206,7 +207,7 @@ namespace pulse::study::patient_variability
           LeftHemothoraxSeverity, RightHemothoraxSeverity, StressSeverity, TBISeverity,
           LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
           s, w,
-          InsultDuration_s, patientFolderAndStateFilename.first);
+          InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
       }
     }
 
@@ -247,6 +248,7 @@ namespace pulse::study::patient_variability
     size_t RightTensionPneumothoraxWound = 0;
     double TBISeverity = 0;
     double InsultDuration_s = 0;
+    double InsultStateFrequency_s = m_InsultStateFrequency_s;
 
     SetDescription(patientFolderAndStateFilename.first);
     SetEngineStateFile(patientFolderAndStateFilename.second);
@@ -278,7 +280,7 @@ namespace pulse::study::patient_variability
           LeftHemothoraxSeverity, RightHemothoraxSeverity, StressSeverity, TBISeverity,
           LeftTensionPneumothoraxSeverity, LeftTensionPneumothoraxWound,
           RightTensionPneumothoraxSeverity, RightTensionPneumothoraxWound,
-          InsultDuration_s, patientFolderAndStateFilename.first);
+          InsultDuration_s, InsultStateFrequency_s, patientFolderAndStateFilename.first);
       }
       m_Actions.clear();
     }
@@ -296,8 +298,10 @@ namespace pulse::study::patient_variability
                                        double RightTensionPneumothoraxSeverity,
                                        size_t RightTensionPneumothoraxWound,
                                        double InsultDuration_s,
+                                       double InsultStateFrequency_s,
                                        const std::string& PatientName)
   {
+    std::vector<SEAction*> to_delete; // If we dynamically allocate any actions, we need to delete them
     // Names are getting way long...
     // Let's just create a name with only the injuries
     std::string name;
@@ -510,12 +514,31 @@ namespace pulse::study::patient_variability
     // Advance the duration of the insult
     if (InsultDuration_s > 0)
     {
-      TotalAdvanceTime_s += InsultDuration_s;
-      m_Adv2Intervention.GetTime().SetValue(InsultDuration_s, TimeUnit::s);
-      m_Actions.push_back(&m_Adv2Intervention);
+      if (InsultStateFrequency_s <= 0)
+      {
+        TotalAdvanceTime_s += InsultDuration_s;
+        m_Adv2Intervention.GetTime().SetValue(InsultDuration_s, TimeUnit::s);
+        m_Actions.push_back(&m_Adv2Intervention);
+      }
+      else // Create a state file every sample time
+      {
+        for (size_t i = 0; i < size_t(InsultDuration_s / InsultStateFrequency_s); i++)
+        {
+          TotalAdvanceTime_s += InsultStateFrequency_s;
+          SEAdvanceTime* adv = new SEAdvanceTime();
+          adv->GetTime().SetValue(InsultStateFrequency_s, TimeUnit::s);
+          m_Actions.push_back(adv);
+          to_delete.push_back(adv);
+
+          SESerializeState* ss = new SESerializeState();
+          ss->SetFilename(m_StateDirectory + "/" + m_Name + "/" + "state@" + pulse::cdm::to_string(TotalAdvanceTime_s) + "s.pbb");
+          m_Actions.push_back(ss);
+          to_delete.push_back(ss);
+        }
+      }
     }
 
-    // Save State
+    // Save Final Injury State
     m_Serialize.SetFilename(m_StateDirectory+"/"+m_Name+".pbb");
     m_Actions.push_back(&m_Serialize);
 
@@ -534,5 +557,6 @@ namespace pulse::study::patient_variability
 
     // Track and Write the scenario
     WriteScenario();
+    SAFE_DELETE_VECTOR(to_delete)
   }
 }

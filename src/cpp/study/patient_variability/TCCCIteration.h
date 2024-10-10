@@ -84,6 +84,9 @@ namespace pulse::study::patient_variability
     ParameterIteration<double>& GetInsultDuration_s() { return m_InsultDuration_s; }
     const ParameterIteration<double>& GetInsultDuration_s() const { return m_InsultDuration_s; }
 
+    double GetInsultStateFrequency_s() const { return m_InsultStateFrequency_s; }
+    void SetInsultStateFrequency_s(double f) { m_InsultStateFrequency_s = f; }
+
     ParameterIteration<double>& GetSalineAvailable() { return m_SalineAvailable; }
     const ParameterIteration<double>& GetSalineAvailable() const { return m_SalineAvailable; }
 
@@ -109,6 +112,7 @@ namespace pulse::study::patient_variability
                           double RightTensionPneumothoraxSeverity,
                           size_t RightTensionPneumothoraxWound,
                           double InsultDuration_s,
+                          double InsultStateFrequency_s,
                           const std::string& PatientName);
 
     // Stateful
@@ -144,5 +148,6 @@ namespace pulse::study::patient_variability
     SETensionPneumothorax m_RightTensionPneumothorax;
     SEAdvanceTime         m_Adv2Intervention;
     SEAdvanceTime         m_Adv2End;
+    double                m_InsultStateFrequency_s;
   };
 }
