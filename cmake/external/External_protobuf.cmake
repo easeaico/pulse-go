@@ -1,6 +1,8 @@
 #-----------------------------------------------------------------------------
 # Add External Project
 #-----------------------------------------------------------------------------
+include(AddExternalProject)
+
 if(Pulse_MULTI_BUILD)
   message(STATUS "Building multiple protobuf configurations at once")
   set(PROTOBUF_DEBUG_BLD COMMAND ${CMAKE_COMMAND} --build . --config debug)
@@ -16,12 +18,12 @@ endif()
 # Generally, We only support the latest version at the time of a release
 # And any release that somebody has requested we support for compatibility with their application
 
-set(Protobuf_VERSION "27.3" CACHE STRING "Select the  version of ProtoBuf to build.")
-set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "27.3" "21.12")
+set(Protobuf_VERSION "29.0-rc1" CACHE STRING "Select the  version of ProtoBuf to build.")
+set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "29.0-rc1" "21.12")
 
-if (Protobuf_VERSION VERSION_EQUAL 27.3)# Latest, Can change
+if (Protobuf_VERSION VERSION_EQUAL 29.0-rc1)# Latest, Can change
   set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-${Protobuf_VERSION}.zip" )
-  set(Protobuf_md5 "0250ec2b8d8d2278e1678096b520c32f" )
+  set(Protobuf_md5 "8557b1251480efa9187129ff6f1b6f8a" )
 elseif (Protobuf_VERSION VERSION_EQUAL 21.12)# Last version before the ABSL dependency
   set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-all-${Protobuf_VERSION}.zip" )
   set(Protobuf_md5 "4ef7148d6f8b42bcdba687ea1b60292f" )
@@ -39,13 +41,11 @@ set(_pb_args)
 set(_pb_dependencies)
 message(STATUS "We are using protobuf ${Protobuf_VERSION}")
 if (Protobuf_VERSION VERSION_GREATER_EQUAL "22.0")
-  message(STATUS "Added ABSL dependency")
-  define_dependency(absl)
+  message(STATUS "Added ABSL dependency to ${absl_DIR}")
   set (_pb_dependencies absl)
   set(_pb_args -Dprotobuf_ABSL_PROVIDER:STRING=package -Dabsl_DIR:PATH=${absl_DIR})
 endif()
 
-include(AddExternalProject)
 define_external_dirs_ex(protobuf)
 add_external_project_ex( protobuf
   URL ${Protobuf_url}
@@ -78,7 +78,7 @@ endif()
 
 if (NOT USE_SYSTEM_protobuf)
   set(protobuf_INSTALL ${CMAKE_INSTALL_PREFIX})
-  if(WIN32)
+  if(WIN32 AND Protobuf_VERSION VERSION_LESS "29.0")
     set(protobuf_DIR ${protobuf_INSTALL}/cmake)
   else()
     set(protobuf_DIR ${protobuf_INSTALL}/${CMAKE_INSTALL_LIBDIR}/cmake/protobuf)

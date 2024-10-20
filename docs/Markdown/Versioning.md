@@ -13,6 +13,11 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ## Pulse Integration (Current new feature set)
 
+## Pulse v4.3.1 (November 2024)
+
+- ThirdParty
+  - Update to Protobuf 29.0
+    - Fixes the Microsoft SDK infinity issue
 - CDM API Changes
   - Ventilator API Updates
     - Remove triggers with zero values
@@ -22,6 +27,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - Software Architecture Improvements
   - Link to static C++ runtime when building for Android
   - Fix logging in Java API
+  - Correct 4.3.0 release bug that had MSVC configuration with optimizations turned off :(
 
 - Physiology Model Improvements
   - Improve severe airway obstruction validation

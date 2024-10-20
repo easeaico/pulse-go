@@ -1,6 +1,12 @@
 #-----------------------------------------------------------------------------
 # Add External Project
 #-----------------------------------------------------------------------------
+if ((DEFINED Protobuf_VERSION) AND (Protobuf_VERSION VERSION_LESS "22.0"))
+  return()
+endif()
+
+include(AddExternalProject)
+
 message(STATUS "Processing External_absl")
 if(${PROJECT_NAME}_MULTI_BUILD)
   message(STATUS "Building multiple abls configurations at once")

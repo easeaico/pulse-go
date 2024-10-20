@@ -18,6 +18,9 @@ endif()
 if(POLICY CMP0094)# For finding python
   cmake_policy(SET CMP0094 NEW)
 endif()
+if(POLICY CMP0177)# For normalizing install paths
+  cmake_policy(SET CMP0177 NEW)
+endif()
 
 if(NOT CMAKE_INSTALL_PREFIX OR CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   message(STATUS "Setting install dir inside build dir ${CMAKE_BINARY_DIR} ")
@@ -112,6 +115,17 @@ else()
   set(Pulse_LIB_TYPE SHARED)
 endif()
 
+if (MSVC)
+  # Allow the MP flag to get set externally
+  set(Pulse_ENABLE_MULTI_PROCESS_BUILDS ON CACHE BOOL "Enable multi-process builds")
+  set(PROCESSOR_COUNT "$ENV{NUMBER_OF_PROCESSORS}")
+  set(Pulse_NUM_BUILD_PROCESSES ${PROCESSOR_COUNT} CACHE STRING "The maximum number of processes for the /MP flag")
+  if(Pulse_ENABLE_MULTI_PROCESS_BUILDS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
+  endif()
+endif()
+
 #-----------------------------------------------------------------------------
 # iOS Support
 #-----------------------------------------------------------------------------
@@ -203,17 +217,6 @@ else()
   remove_cmake_variables(_Python3)
 endif()
 
-if(MSVC)
-  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc")
-  set(CMAKE_CXX_FLAGS_RELEASE "/MP /EHsc")
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Zi /MP /EHsc")
-  if(Pulse_MSVC_STATIC_RUNTIME)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-  else()
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-  endif()
-endif()
-
 #-----------------------------------------------------------------------------
 # SUPERBUILD
 #-----------------------------------------------------------------------------
@@ -228,13 +231,11 @@ if(Pulse_SUPERBUILD)
     mark_as_advanced(USE_SYSTEM_${extProj})
   endmacro()
 
+  define_dependency(absl)
   define_dependency(Eigen3)
   define_dependency(protobuf)
   message(STATUS "We are using protobuf ${Protobuf_VERSION}")
-  if (Protobuf_VERSION VERSION_GREATER_EQUAL "22.0")
-    message(STATUS "Added ABSL dependency")
-    define_dependency(absl)
-  endif()
+
   if(Pulse_PYTHON_API)
     if(Python3_FOUND)
       define_dependency(pybind11)
@@ -272,6 +273,22 @@ endif()
 #-----------------------------------------------------------------------------
 #                               INNERBUILD
 #-----------------------------------------------------------------------------
+
+if(MSVC)
+  # /Ob2 - Inline function expansion (Any)
+  # /Oi - Enable intrinsic function 
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Ob2 /Oi")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Ob2 /Oi")
+  set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /Ob2 /Oi")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Ob2 /Oi")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Ob2 /Oi")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ob2 /Oi")
+  if(Pulse_MSVC_STATIC_RUNTIME)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  else()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+  endif()
+endif()
 
 if ( CMAKE_COMPILER_IS_GNUCC )
   # Protobuf is not using the same variable name in its swap specificiation definitions

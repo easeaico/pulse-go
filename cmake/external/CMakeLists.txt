@@ -14,16 +14,6 @@ endif()
 #-----------------------------------------------------------------------------
 # CMake global args
 #-----------------------------------------------------------------------------
-if(MSVC)
-  # Allow the MP flag to get set externally
-  set(Pulse_ENABLE_MULTI_PROCESS_BUILDS ON CACHE BOOL "Enable multi-process builds")
-  set(PROCESSOR_COUNT "$ENV{NUMBER_OF_PROCESSORS}")
-  set(Pulse_NUM_BUILD_PROCESSES ${PROCESSOR_COUNT} CACHE STRING "The maximum number of processes for the /MP flag")
-  if(Pulse_ENABLE_MULTI_PROCESS_BUILDS)
-    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
-  endif()
-endif()
 
 if(CMAKE_TOOLCHAIN_FILE)
   message(STATUS "Passing toolchain file : ${CMAKE_TOOLCHAIN_FILE}")
