@@ -196,7 +196,7 @@ void HowToExpandedRespiratoryAnalysisOriginal()
   // Settings
   //std::vector<double> severityList = { 0.0, 0.9 };
   std::vector<double> severityList = { 0.0 };
-  unsigned int totalRuns = unsigned int(std::pow(severityList.size(), 6));
+  size_t totalRuns = std::pow(severityList.size(), 6);
 
   // Generate the initial state once to use throughout
   HowToExpandedRespiratoryAnalysisInitialState();
