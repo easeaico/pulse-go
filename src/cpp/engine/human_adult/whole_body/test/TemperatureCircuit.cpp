@@ -50,7 +50,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
 
@@ -130,7 +130,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
 
@@ -233,7 +233,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
 
@@ -335,7 +335,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
 
@@ -465,7 +465,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
 
@@ -625,7 +625,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
 
@@ -725,7 +725,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
     EnvironmentModel& env = (EnvironmentModel&)pc.GetEnvironment();

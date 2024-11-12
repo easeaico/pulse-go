@@ -38,7 +38,7 @@ namespace pulse { namespace human_adult_whole_body
   /// and variable values for the circuit elements.The outputs are the resultant flows and pressures
   /// on the circuit nodes and paths. These are then stored in a file in sTestDirectory
   //--------------------------------------------------------------------------------------------------
-  void EngineTest::MechanicalVentilatorCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory)
+  void EngineTest::MechanicalVentilatorCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory)
   {
     TimingProfile tmr;
     tmr.Start("Test");
@@ -57,7 +57,8 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedLungs(expandedLungs ? eSwitch::On : eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
     SEEnvironmentalConditions env(pc.GetLogger());
@@ -169,11 +170,16 @@ namespace pulse { namespace human_adult_whole_body
 
   void EngineTest::MechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    MechanicalVentilatorCircuitAndTransportTest(MechanicalVentilatorSolo, sTestDirectory);
+    MechanicalVentilatorCircuitAndTransportTest(MechanicalVentilatorSolo, false, sTestDirectory);
   }
 
   void EngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    MechanicalVentilatorCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, sTestDirectory);
+    MechanicalVentilatorCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, false, sTestDirectory);
+  }
+
+  void EngineTest::RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    MechanicalVentilatorCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, true, sTestDirectory);
   }
 END_NAMESPACE_EX

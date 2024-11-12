@@ -38,17 +38,23 @@ namespace pulse { namespace human_adult_whole_body
     void CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory);
     void CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory);
     void CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(const std::string& sTestDirectory);
+    void CardiovascularAndExpandedLungsCircuitAndTransportTest(const std::string& sTestDirectory);
     void FullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
-    void CardiovascularBloodGasesTest(const std::string& sTestDirectory);// Characterize the cv circuit
-    void TuneCardiovascularCircuitTest(const std::string& sTestDirectory);
+    void FullExpandedLungsCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
+    void CardiovascularBloodGasesTest(const std::string& sTestDirectory);// Everything with Saturation
+    void CardiovascularExpandedLungsBloodGasesTest(const std::string& sTestDirectory);// Everything with Saturation
     // Cardiovascular Utilities //
+    void TuneCardiovascularCircuitTest(const std::string& sTestDirectory);
     void CardiovascularCircuitScaleTests(const std::string& sTestDirectory);
   protected:
     enum CardiovascularDriver { Sinusoid = 0, Heart };
+    enum Expanded { None=0, Vasculature, Respiratory }; // Vasculature expansion defined by ComputationalLife
     void SinusoidHeartDriver(double time_s, double heartRate_s, double& lHeartElastance, double& rHeartElastance);
-    void CardiovascularCircuitAndTransportTest(CardiovascularDriver driverType, double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
-      double sysRes, double sysComp, double aortaRes, double aortaComp, double rightHeartRes, double venaCavaComp, bool connectTissue, bool connectRenal, bool connectCSF,
-    bool balanceBloodgases, const std::string& sTestDirectory, const std::string& sTestName, bool breakOutResults);
+    void CardiovascularCircuitAndTransportTest(CardiovascularDriver driverType, 
+      double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
+      double sysRes, double sysComp, double aortaRes, double aortaComp, double rightHeartRes, double venaCavaComp,
+      bool balanceBloodGases, bool connectCSF, bool connectTissue, bool expandedKidneys, bool expandedLungs,
+      const std::string& sTestDirectory, const std::string& sTestName, bool breakOutResults);
     void TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient);
 
     double m_MeanAortaPressure;
@@ -78,11 +84,12 @@ namespace pulse { namespace human_adult_whole_body
     // Respiratory //
     /////////////////
     void RespiratoryCircuitAndTransportTest(const std::string& sTestDirectory);
+    void RespiratoryExpandedLungsCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryDriverTest(const std::string& sTestDirectory);
   protected:
     enum RespiratoryConfiguration { RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation, MechanicalVentilatorSolo, RespiratoryWithMechanicalVentilator
     };
-    void RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
+    void RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory);
 
   public:
     ////////////////////////
@@ -90,8 +97,9 @@ namespace pulse { namespace human_adult_whole_body
     ////////////////////////
     void AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
+    void RespiratoryExpandedLungsWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
-    void AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
+    void AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory);
 
   public:
     ///////////////////////////
@@ -99,14 +107,16 @@ namespace pulse { namespace human_adult_whole_body
     ///////////////////////////
     void MechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
+    void RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
-    void MechanicalVentilatorCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
+    void MechanicalVentilatorCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory);
 
   public:
     /////////////
     // Inhaler //
     /////////////
     void RespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory);
+    void RespiratoryExpandedLungsWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
 
   public:
@@ -114,6 +124,7 @@ namespace pulse { namespace human_adult_whole_body
     // Mechanical Ventilation //
     ////////////////////////////
     void RespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory);
+    void RespiratoryExpandedLungsWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
 
   public:

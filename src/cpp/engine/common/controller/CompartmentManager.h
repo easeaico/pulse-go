@@ -61,8 +61,8 @@ namespace pulse
     std::vector<SEGasCompartment*>const& GetPulmonaryCompartments() { return m_PulmonaryCompartments; }
     std::vector<SEGasCompartment*>const& GetPulmonaryLeafCompartments() { return m_PulmonaryLeafCompartments; }
 
-    std::vector<SEGasCompartment*>const& GetExpandedPulmonaryCompartments() { return m_ExpandedPulmonaryCompartments; }
-    std::vector<SEGasCompartment*>const& GetExpandedPulmonaryLeafCompartments() { return m_ExpandedPulmonaryLeafCompartments; }
+    std::vector<SEGasCompartment*>const& GetExpandedLungsPulmonaryCompartments() { return m_ExpandedLungsPulmonaryCompartments; }
+    std::vector<SEGasCompartment*>const& GetExpandedLungsPulmonaryLeafCompartments() { return m_ExpandedLungsPulmonaryLeafCompartments; }
 
     std::vector<SEThermalCompartment*>const& GetTemperatureCompartments() { return m_TemperatureCompartments; }
     std::vector<SEThermalCompartment*>const& GetTemperatureLeafCompartments() { return m_TemperatureLeafCompartments; }
@@ -75,6 +75,12 @@ namespace pulse
 
     std::vector<SELiquidCompartment*>const& GetVascularCompartments() { return m_VascularCompartments; }
     std::vector<SELiquidCompartment*>const& GetVascularLeafCompartments() { return m_VascularLeafCompartments; }
+
+    std::vector<SELiquidCompartment*>const& GetExpandedLungsVascularCompartments() { return m_ExpandedLungsVascularCompartments; }
+    std::vector<SELiquidCompartment*>const& GetExpandedLungsVascularLeafCompartments() { return m_ExpandedLungsVascularLeafCompartments; }
+
+    std::vector<SELiquidCompartment*>const& GetComputationalLifeVascularCompartments() { return m_ComputationalLifeVascularCompartments; }
+    std::vector<SELiquidCompartment*>const& GetComputationalLifeVascularLeafCompartments() { return m_ComputationalLifeVascularLeafCompartments; }
 
     std::vector<SEGasCompartment*>const& GetAnesthesiaMachineCompartments() { return m_AnesthesiaMachineCompartments; }
     std::vector<SEGasCompartment*>const& GetAnesthesiaMachineLeafCompartments() { return m_AnesthesiaMachineLeafCompartments; }
@@ -154,8 +160,8 @@ namespace pulse
     std::vector<SELiquidCompartment*>  m_ChymeLeafCompartments;
     std::vector<SEGasCompartment*>     m_PulmonaryCompartments;
     std::vector<SEGasCompartment*>     m_PulmonaryLeafCompartments;
-    std::vector<SEGasCompartment*>     m_ExpandedPulmonaryCompartments;
-    std::vector<SEGasCompartment*>     m_ExpandedPulmonaryLeafCompartments;
+    std::vector<SEGasCompartment*>     m_ExpandedLungsPulmonaryCompartments;
+    std::vector<SEGasCompartment*>     m_ExpandedLungsPulmonaryLeafCompartments;
     std::vector<SEThermalCompartment*> m_TemperatureCompartments;
     std::vector<SEThermalCompartment*> m_TemperatureLeafCompartments;
     std::vector<SETissueCompartment*>  m_TissueCompartments;
@@ -163,6 +169,10 @@ namespace pulse
     std::vector<SELiquidCompartment*>  m_UrineLeafCompartments;
     std::vector<SELiquidCompartment*>  m_VascularCompartments;
     std::vector<SELiquidCompartment*>  m_VascularLeafCompartments;
+    std::vector<SELiquidCompartment*>  m_ExpandedLungsVascularCompartments;
+    std::vector<SELiquidCompartment*>  m_ExpandedLungsVascularLeafCompartments;
+    std::vector<SELiquidCompartment*>  m_ComputationalLifeVascularCompartments;
+    std::vector<SELiquidCompartment*>  m_ComputationalLifeVascularLeafCompartments;
     std::vector<SEGasCompartment*>     m_AnesthesiaMachineCompartments;
     std::vector<SEGasCompartment*>     m_AnesthesiaMachineLeafCompartments;
     std::vector<SEGasCompartment*>     m_BagValveMaskCompartments;

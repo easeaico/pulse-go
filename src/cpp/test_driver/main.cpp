@@ -51,8 +51,11 @@ int main(int argc, char* argv[])
       //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndTissueCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(hawbDir);
+      hawbTest.CardiovascularAndExpandedLungsCircuitAndTransportTest(hawbDir);
       //hawbTest.FullCardiovascularCircuitAndTransportTest(hawbDir);
+      hawbTest.FullExpandedLungsCardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularBloodGasesTest(hawbDir);
+      hawbTest.CardiovascularExpandedLungsBloodGasesTest(hawbDir);
       //hawbTest.TuneCardiovascularCircuitTest(hawbDir);
 
       //hawbTest.RenalCircuitAndTransportTest(hawbDir);
@@ -61,14 +64,19 @@ int main(int argc, char* argv[])
       //hawbTest.RenalSecretionTest(hawbDir);
       //hawbTest.RenalUrinateTest(hawbDir);
 
-      //hawbTest.RespiratoryCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryDriverTest(hawbDir);
+      //hawbTest.RespiratoryCircuitAndTransportTest(hawbDir);
+      hawbTest.RespiratoryExpandedLungsCircuitAndTransportTest(hawbDir);
       //hawbTest.AnesthesiaMachineCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(hawbDir);
+      hawbTest.RespiratoryExpandedLungsWithAnesthesiaMachineCircuitAndTransportTest(hawbDir);
       //hawbTest.MechanicalVentilatorCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
+      hawbTest.RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithInhalerCircuitAndTransportTest(hawbDir);
+      hawbTest.RespiratoryExpandedLungsWithInhalerCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
+      hawbTest.RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
 
       //hawbTest.InternalTemperatureVariableBMRCircuitTest(hawbDir);
       //hawbTest.InternalTemperatureVariableSkinCircuitTest(hawbDir);

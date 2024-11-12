@@ -32,7 +32,7 @@
 
 namespace pulse { namespace human_adult_whole_body
 {
-  void EngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string & sTestDirectory)
+  void EngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string & sTestDirectory)
   {
     TimingProfile tmr;
     tmr.Start("Test");
@@ -53,10 +53,9 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
-    //Aaron - Make a seperate test that turns this on
-    pc.m_Config->UseExpandedRespiratory(eSwitch::On);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
+    pc.m_Config->UseExpandedLungs(expandedLungs ? eSwitch::On : eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
     pc.GetSubstances().InitializeGasCompartments();
     SEEnvironmentalConditions& env = pc.GetEnvironment().GetEnvironmentalConditions();
@@ -196,17 +195,32 @@ namespace pulse { namespace human_adult_whole_body
 
   void EngineTest::RespiratoryCircuitAndTransportTest(const std::string & sTestDirectory)
   {
-    RespiratoryCircuitAndTransportTest(RespiratorySolo, sTestDirectory);
+    RespiratoryCircuitAndTransportTest(RespiratorySolo, false, sTestDirectory);
+  }
+
+  void EngineTest::RespiratoryExpandedLungsCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    RespiratoryCircuitAndTransportTest(RespiratorySolo, true, sTestDirectory);
   }
 
   void EngineTest::RespiratoryWithInhalerCircuitAndTransportTest(const std::string & sTestDirectory)
   {
-    RespiratoryCircuitAndTransportTest(RespiratoryWithInhaler, sTestDirectory);
+    RespiratoryCircuitAndTransportTest(RespiratoryWithInhaler, false, sTestDirectory);
+  }
+
+  void EngineTest::RespiratoryExpandedLungsWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    RespiratoryCircuitAndTransportTest(RespiratoryWithInhaler, true, sTestDirectory);
   }
 
   void EngineTest::RespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string & sTestDirectory)
   {
-    RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilation, sTestDirectory);
+    RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilation, false, sTestDirectory);
+  }
+
+  void EngineTest::RespiratoryExpandedLungsWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilation, true, sTestDirectory);
   }
 
   void EngineTest::RespiratoryDriverTest(const std::string & sTestDirectory)
@@ -222,7 +236,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
     SEEnvironmentalConditions env(pc.GetLogger());

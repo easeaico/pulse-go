@@ -38,7 +38,7 @@ namespace pulse { namespace human_adult_whole_body
   /// and variable values for the circuit elements.The outputs are the resultant flows and pressures
   /// on the circuit nodes and paths. These are then stored in a file in sTestDirectory
   //--------------------------------------------------------------------------------------------------
-  void EngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory)
+  void EngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory)
   {
     TimingProfile tmr;
     tmr.Start("Test");
@@ -57,7 +57,8 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
+    pc.m_Config->UseExpandedLungs(expandedLungs ? eSwitch::On : eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
     SEEnvironmentalConditions env(pc.GetLogger());
@@ -174,11 +175,16 @@ namespace pulse { namespace human_adult_whole_body
 
   void EngineTest::AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    AnesthesiaMachineCircuitAndTransportTest(AnesthesiaMachineSolo, sTestDirectory);
+    AnesthesiaMachineCircuitAndTransportTest(AnesthesiaMachineSolo, false, sTestDirectory);
   }
 
   void EngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    AnesthesiaMachineCircuitAndTransportTest(RespiratoryWithAnesthesiaMachine, sTestDirectory);
+    AnesthesiaMachineCircuitAndTransportTest(RespiratoryWithAnesthesiaMachine, false, sTestDirectory);
+  }
+
+  void EngineTest::RespiratoryExpandedLungsWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    AnesthesiaMachineCircuitAndTransportTest(RespiratoryWithAnesthesiaMachine, true, sTestDirectory);
   }
 END_NAMESPACE_EX

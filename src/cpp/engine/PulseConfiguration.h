@@ -64,6 +64,7 @@ public:
   virtual SEScalarProperties& GetModifiers();
   virtual const SEScalarProperties& GetModifiers() const;
 protected:
+  virtual void InitializeCardiovascularModifiers();
 
   SEScalarTime*                 m_TimeStep;
   eSwitch                       m_AllowDynamicTimeStep;
@@ -126,8 +127,8 @@ public:
   virtual SEScalar& GetStandardPulmonaryCapillaryCoverage();
   virtual double GetStandardPulmonaryCapillaryCoverage() const;
 
-  virtual eSwitch UseExpandedVasculature() const { return m_UseExpandedVasculature; }
-  virtual void UseExpandedVasculature(eSwitch s);
+  virtual eSwitch UseComputationalLifeExpansion() const { return m_UseComputationalLifeExpansion; }
+  virtual void UseComputationalLifeExpansion(eSwitch s);
   
   virtual eSwitch TuneCardiovascularCircuit() const { return m_TuneCardiovascularCircuit; }
   virtual void TuneCardiovascularCircuit(eSwitch s) { m_TuneCardiovascularCircuit = s; }
@@ -142,7 +143,7 @@ protected:
   SEScalarPressurePerVolume* m_RightHeartElastanceMaximum;
   SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
   SEScalar*                  m_StandardPulmonaryCapillaryCoverage;
-  eSwitch                    m_UseExpandedVasculature;
+  eSwitch                    m_UseComputationalLifeExpansion;
   eSwitch                    m_TuneCardiovascularCircuit;
   std::string                m_CardiovascularTuningFile;
 
@@ -487,8 +488,8 @@ protected:
   /** Renal */
   ////////////
 public:
-  virtual bool IsRenalEnabled() const { return m_RenalEnabled == eSwitch::On; }
-  virtual void EnableRenal(eSwitch s) { m_RenalEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+  virtual eSwitch UseExpandedKidneys() const { return m_UseExpandedKidneys; }
+  virtual void UseExpandedKidneys(eSwitch s);
 
   virtual bool HasPlasmaSodiumConcentrationSetPoint() const;
   virtual SEScalarMassPerVolume& GetPlasmaSodiumConcentrationSetPoint();
@@ -541,7 +542,7 @@ public:
   virtual bool HasTargetSodiumDelivery();
   virtual SEScalarMassPerTime& GetTargetSodiumDelivery();
 protected:
-  eSwitch                              m_RenalEnabled;
+  eSwitch m_UseExpandedKidneys;
 
   SEScalarMassPerVolume* m_PlasmaSodiumConcentrationSetPoint;
   SEScalarMassPerVolume* m_PeritubularPotassiumConcentrationSetPoint;
@@ -566,6 +567,9 @@ protected:
   /** Respiratory */
   //////////////////
 public:
+  virtual eSwitch UseExpandedLungs() const { return m_UseExpandedLungs; }
+  virtual void UseExpandedLungs(eSwitch s);
+
   virtual bool HasCentralControllerCO2PressureSetPoint() const;
   virtual SEScalarPressure& GetCentralControllerCO2PressureSetPoint();
   virtual double GetCentralControllerCO2PressureSetPoint(const PressureUnit& unit) const;
@@ -603,10 +607,8 @@ public:
   virtual SEScalarPressure& GetVentilatoryOcclusionPressure();
   virtual double GetVentilatoryOcclusionPressure(const PressureUnit& unit) const;
 
-  virtual eSwitch UseExpandedRespiratory() const { return m_UseExpandedRespiratory; }
-  virtual void UseExpandedRespiratory(eSwitch s);
-
 protected:
+  eSwitch                 m_UseExpandedLungs;
   SEScalarPressure*       m_CentralControllerCO2PressureSetPoint;
   SEScalar*               m_CentralVentilatoryControllerGain;
   SEScalarTime*           m_MinimumAllowableInpiratoryAndExpiratoryPeriod;
@@ -616,7 +618,6 @@ protected:
   SEScalarVolumePerTime*  m_PulmonaryVentilationRateMaximum;
   SEScalarVolume*         m_VentilationTidalVolumeIntercept;
   SEScalarPressure*       m_VentilatoryOcclusionPressure;
-  eSwitch                 m_UseExpandedRespiratory;
 
   /////////////
   /** Tissue */

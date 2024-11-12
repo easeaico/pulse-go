@@ -38,32 +38,40 @@ namespace pulse
 {
   bool Controller::CreateCircuitsAndCompartments()
   {
+    if (m_Config->UseExpandedLungs() == eSwitch::On &&
+      m_Config->UseComputationalLifeExpansion() == eSwitch::On)
+    {
+      Error("Cannot setup an engine with both ExpangedLungs and ComputationalLifeExpansion");
+      return false;
+    }
     m_Circuits->Clear();
     m_Compartments->Clear();
     m_Compartments->Setup();
-    if (m_Config->UseExpandedVasculature() == eSwitch::On)
+
+    if (m_Config->UseComputationalLifeExpansion() == eSwitch::On)
     {
-      SetupExpandedCardiovascular();
-      if(m_Config->IsRenalEnabled())
-        SetupExpandedCardiovascularRenal();
+      SetupComputationalLifeCardiovascular();
+      if (m_Config->UseExpandedKidneys() == eSwitch::On)
+        SetupComputationalLifeRenal();
       if (m_Config->IsTissueEnabled())
-        SetupExpandedCardiovascularTissue();
+        SetupComputationalLifeTissue();
       if (m_Config->IsCerebrospinalFluidEnabled())
-        SetupExpandedCardiovascularCerebrospinalFluid();
+        SetupComputationalLifeCerebrospinalFluid();
     }
     else
     {
-      if (m_Config->UseExpandedRespiratory() == eSwitch::On)
-        SetupExpandedPulmonaryCardiovascular();
+      if (m_Config->UseExpandedLungs() == eSwitch::On)
+        SetupExpandedLungsCardiovascular();
       else
         SetupCardiovascular();
-      if (m_Config->IsRenalEnabled())
+      if (m_Config->UseExpandedKidneys() == eSwitch::On)
         SetupRenal();
       if (m_Config->IsTissueEnabled())
         SetupTissue();
       if (m_Config->IsCerebrospinalFluidEnabled())
         SetupCerebrospinalFluid();
     }
+
     SetupGastrointestinal();
     SetupECMO();
 
@@ -108,10 +116,11 @@ namespace pulse
     m_EnvironmentModel->Clear();
     m_EnvironmentModel->Initialize();
 
-    if (m_Config->UseExpandedRespiratory() == eSwitch::On)
-      SetupExpandedPulmonaryRespiratory();
+    if (m_Config->UseExpandedLungs() == eSwitch::On)
+      SetupExpandedLungsRespiratory();
     else
       SetupRespiratory();
+
     SetupAnesthesiaMachine();
     SetupBagValveMask();
     SetupInhaler();
@@ -2425,10 +2434,10 @@ namespace pulse
     /////////////////
     // Left Kidney //
     SEFluidCircuitNode* LeftKidney1;
-    if (!m_Config->IsRenalEnabled())
-      LeftKidney1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1);
-    else
+    if (m_Config->UseExpandedKidneys() == eSwitch::On)
       LeftKidney1 = cCombinedCardiovascular.GetNode(pulse::RenalNode::LeftGlomerularCapillaries);
+    else
+      LeftKidney1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1);
 
     SEFluidCircuitNode& LeftKidneyT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT1);
     SEFluidCircuitNode& LeftKidneyT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT2);
@@ -2477,7 +2486,7 @@ namespace pulse
     ///////////////
     // Left Lung //
     //TODO: Make this work for the expanded model
-    if (m_Config->UseExpandedRespiratory() == eSwitch::Off)
+    if (m_Config->UseExpandedLungs() == eSwitch::Off)
     {
       SEFluidCircuitNode* LeftLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftPulmonaryCapillaries1);
       SEFluidCircuitNode& LeftLungT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftLungT1);
@@ -2669,10 +2678,10 @@ namespace pulse
     //////////////////
     // Right Kidney //
     SEFluidCircuitNode* RightKidney1;
-    if (!m_Config->IsRenalEnabled())
-      RightKidney1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::RightKidney1);
-    else
+    if (m_Config->UseExpandedKidneys() == eSwitch::On)
       RightKidney1 = cCombinedCardiovascular.GetNode(pulse::RenalNode::RightGlomerularCapillaries);
+    else
+      RightKidney1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::RightKidney1);
 
     SEFluidCircuitNode& RightKidneyT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT1);
     SEFluidCircuitNode& RightKidneyT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT2);
@@ -2721,7 +2730,7 @@ namespace pulse
     ////////////////
     // Right Lung //
     //TODO: Make this work for the expanded model
-    if (m_Config->UseExpandedRespiratory() == eSwitch::Off)
+    if (m_Config->UseExpandedLungs() == eSwitch::Off)
     {
       SEFluidCircuitNode* RightLung1 = cCardiovascular.GetNode(pulse::CardiovascularNode::RightPulmonaryCapillaries1);
       SEFluidCircuitNode& RightLungT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightLungT1);

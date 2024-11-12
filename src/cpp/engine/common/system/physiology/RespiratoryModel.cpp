@@ -500,7 +500,7 @@ namespace pulse
     // Capillary Path
     // Alveoli Compartment
     // Capillary Compartment
-    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
     {
       // Side
       // Alveoli Node
@@ -551,218 +551,218 @@ namespace pulse
       m_LungComponents[eLungCompartment::RightSuperiorLobeApical] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightSuperiorLobeApicalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightSuperiorLobeApicalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightSuperiorApicoposteriorBronchusToRightSuperiorLobeApicalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightSuperiorLobeApicalAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightSuperiorLobeApicalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightSuperiorLobeApicalPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightSuperiorLobeApicalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightSuperiorLobeApicalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightSuperiorLobeApicalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightSuperiorLobeApicalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightSuperiorApicoposteriorBronchusToRightSuperiorLobeApicalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightSuperiorLobeApicalAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightSuperiorLobeApicalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightSuperiorLobeApicalPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightSuperiorLobeApicalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightSuperiorLobeApicalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightSuperiorLobePosterior] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightSuperiorLobePosteriorAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightSuperiorLobePosteriorAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightSuperiorApicoposteriorBronchusToRightSuperiorLobePosteriorBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightSuperiorLobePosteriorAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightSuperiorLobePosteriorShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightSuperiorLobePosteriorPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightSuperiorLobePosteriorAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightSuperiorLobePosteriorPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightSuperiorLobePosteriorAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightSuperiorLobePosteriorAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightSuperiorApicoposteriorBronchusToRightSuperiorLobePosteriorBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightSuperiorLobePosteriorAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightSuperiorLobePosteriorShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightSuperiorLobePosteriorPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightSuperiorLobePosteriorAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightSuperiorLobePosteriorPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightSuperiorLobeAnterior] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightSuperiorLobeAnteriorAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightSuperiorLobeAnteriorAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightSuperiorLobarBronchusToRightSuperiorLobeAnteriorBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightSuperiorLobeAnteriorAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightSuperiorLobeAnteriorShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightSuperiorLobeAnteriorPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightSuperiorLobeAnteriorAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightSuperiorLobeAnteriorPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightSuperiorLobeAnteriorAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightSuperiorLobeAnteriorAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightSuperiorLobarBronchusToRightSuperiorLobeAnteriorBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightSuperiorLobeAnteriorAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightSuperiorLobeAnteriorShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightSuperiorLobeAnteriorPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightSuperiorLobeAnteriorAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightSuperiorLobeAnteriorPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightMiddleLobeLateral] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightMiddleLobeLateralAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightMiddleLobeLateralAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightMiddleLobarBronchusToRightMiddleLobeLateralBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightMiddleLobeLateralAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightMiddleLobeLateralShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightMiddleLobeLateralPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightMiddleLobeLateralAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightMiddleLobeLateralPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightMiddleLobeLateralAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightMiddleLobeLateralAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightMiddleLobarBronchusToRightMiddleLobeLateralBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightMiddleLobeLateralAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightMiddleLobeLateralShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightMiddleLobeLateralPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightMiddleLobeLateralAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightMiddleLobeLateralPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightMiddleLobeMedial] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightMiddleLobeMedialAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightMiddleLobeMedialAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightMiddleLobarBronchusToRightMiddleLobeMedialBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightMiddleLobeMedialAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightMiddleLobeMedialShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightMiddleLobeMedialPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightMiddleLobeMedialAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightMiddleLobeMedialPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightMiddleLobeMedialAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightMiddleLobeMedialAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightMiddleLobarBronchusToRightMiddleLobeMedialBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightMiddleLobeMedialAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightMiddleLobeMedialShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightMiddleLobeMedialPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightMiddleLobeMedialAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightMiddleLobeMedialPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightInferiorLobeSuperior] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeSuperiorAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeSuperiorAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobarBronchus1ToRightInferiorLobeSuperiorBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobeSuperiorAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeSuperiorShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeSuperiorPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightInferiorLobeSuperiorAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightInferiorLobeSuperiorPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeSuperiorAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeSuperiorAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobarBronchus1ToRightInferiorLobeSuperiorBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobeSuperiorAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeSuperiorShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeSuperiorPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightInferiorLobeSuperiorAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightInferiorLobeSuperiorPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightInferiorLobeMedialBasal] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeMedialBasalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeMedialBasalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobarBronchus2ToRightInferiorLobeMedialBasalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobeMedialBasalAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeMedialBasalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeMedialBasalPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightInferiorLobeMedialBasalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightInferiorLobeMedialBasalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeMedialBasalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeMedialBasalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobarBronchus2ToRightInferiorLobeMedialBasalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobeMedialBasalAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeMedialBasalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeMedialBasalPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightInferiorLobeMedialBasalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightInferiorLobeMedialBasalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightInferiorLobeAnteriorBasal] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeAnteriorBasalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeAnteriorBasalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobarBronchus3ToRightInferiorLobeAnteriorBasalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobeAnteriorBasalAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeAnteriorBasalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeAnteriorBasalPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightInferiorLobeAnteriorBasalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightInferiorLobeAnteriorBasalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeAnteriorBasalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeAnteriorBasalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobarBronchus3ToRightInferiorLobeAnteriorBasalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobeAnteriorBasalAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeAnteriorBasalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeAnteriorBasalPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightInferiorLobeAnteriorBasalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightInferiorLobeAnteriorBasalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightInferiorLobeLateralBasal] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeLateralBasalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobeLateralBasalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobarBronchus4ToRightInferiorLobeLateralBasalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobeLateralBasalAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeLateralBasalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobeLateralBasalPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightInferiorLobeLateralBasalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightInferiorLobeLateralBasalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeLateralBasalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobeLateralBasalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobarBronchus4ToRightInferiorLobeLateralBasalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobeLateralBasalAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeLateralBasalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobeLateralBasalPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightInferiorLobeLateralBasalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightInferiorLobeLateralBasalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::RightInferiorLobePosteriorBasal] =
       {
         eSide::Right,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobePosteriorBasalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::RightInferiorLobePosteriorBasalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobarBronchus4ToRightInferiorLobePosteriorBasalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::RightInferiorLobePosteriorBasalAlveoliToRightPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobePosteriorBasalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightInferiorLobePosteriorBasalPulmonaryCapillariesToRightPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::RightInferiorLobePosteriorBasalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightInferiorLobePosteriorBasalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobePosteriorBasalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::RightInferiorLobePosteriorBasalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobarBronchus4ToRightInferiorLobePosteriorBasalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::RightInferiorLobePosteriorBasalAlveoliToRightPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobePosteriorBasalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::RightInferiorLobePosteriorBasalPulmonaryCapillariesToRightPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::RightInferiorLobePosteriorBasalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::RightInferiorLobePosteriorBasalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftInferiorLobePosteriorBasal] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobePosteriorBasalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobePosteriorBasalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobarBronchus3ToLeftInferiorLobeLateralBasalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobePosteriorBasalAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobePosteriorBasalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobePosteriorBasalPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftInferiorLobePosteriorBasalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftInferiorLobePosteriorBasalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobePosteriorBasalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobePosteriorBasalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobarBronchus3ToLeftInferiorLobeLateralBasalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobePosteriorBasalAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobePosteriorBasalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobePosteriorBasalPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftInferiorLobePosteriorBasalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftInferiorLobePosteriorBasalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftInferiorLobeLateralBasal] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobeLateralBasalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobeLateralBasalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobarBronchus3ToLeftInferiorLobePosteriorBasalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobeLateralBasalAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobeLateralBasalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobeLateralBasalPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftInferiorLobeLateralBasalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftInferiorLobeLateralBasalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobeLateralBasalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobeLateralBasalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobarBronchus3ToLeftInferiorLobePosteriorBasalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobeLateralBasalAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobeLateralBasalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobeLateralBasalPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftInferiorLobeLateralBasalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftInferiorLobeLateralBasalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftInferiorLobeAnteromedialBasal] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobeAnteromedialBasalAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobeAnteromedialBasalAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobarBronchus2ToLeftInferiorLobeAnteromedialBasalBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobeAnteromedialBasalAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobeAnteromedialBasalShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobeAnteromedialBasalPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftInferiorLobeAnteromedialBasalAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftInferiorLobeAnteromedialBasalPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobeAnteromedialBasalAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobeAnteromedialBasalAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobarBronchus2ToLeftInferiorLobeAnteromedialBasalBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobeAnteromedialBasalAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobeAnteromedialBasalShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobeAnteromedialBasalPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftInferiorLobeAnteromedialBasalAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftInferiorLobeAnteromedialBasalPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftInferiorLobeSuperior] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobeSuperiorAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftInferiorLobeSuperiorAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobarBronchus1ToLeftInferiorLobeSuperiorBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftInferiorLobeSuperiorAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobeSuperiorShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftInferiorLobeSuperiorPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftInferiorLobeSuperiorAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftInferiorLobeSuperiorPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobeSuperiorAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftInferiorLobeSuperiorAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobarBronchus1ToLeftInferiorLobeSuperiorBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftInferiorLobeSuperiorAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobeSuperiorShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftInferiorLobeSuperiorPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftInferiorLobeSuperiorAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftInferiorLobeSuperiorPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftSuperiorLobeInferiorLingula] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeInferiorLingulaAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeInferiorLingulaAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftLingularBonchusToLeftSuperiorLobeInferiorLingulaBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftSuperiorLobeInferiorLingulaAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeInferiorLingulaShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeInferiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftSuperiorLobeInferiorLingulaAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftSuperiorLobeInferiorLingulaPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeInferiorLingulaAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeInferiorLingulaAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftLingularBonchusToLeftSuperiorLobeInferiorLingulaBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftSuperiorLobeInferiorLingulaAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeInferiorLingulaShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeInferiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftSuperiorLobeInferiorLingulaAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftSuperiorLobeInferiorLingulaPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftSuperiorLobeSuperiorLingula] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeSuperiorLingulaAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeSuperiorLingulaAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftLingularBonchusToLeftSuperiorLobeSuperiorLingulaBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftSuperiorLobeSuperiorLingulaAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeSuperiorLingulaShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeSuperiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftSuperiorLobeSuperiorLingulaAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeSuperiorLingulaAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeSuperiorLingulaAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftLingularBonchusToLeftSuperiorLobeSuperiorLingulaBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftSuperiorLobeSuperiorLingulaAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeSuperiorLingulaShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeSuperiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftSuperiorLobeSuperiorLingulaAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftSuperiorLobeAnterior] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeAnteriorAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeAnteriorAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeAnteriorBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftSuperiorLobeAnteriorAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeAnteriorShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeAnteriorPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftSuperiorLobeAnteriorAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftSuperiorLobeAnteriorPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeAnteriorAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeAnteriorAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeAnteriorBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftSuperiorLobeAnteriorAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeAnteriorShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeAnteriorPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftSuperiorLobeAnteriorAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftSuperiorLobeAnteriorPulmonaryCapillaries)
       };
       m_LungComponents[eLungCompartment::LeftSuperiorLobeApicoposterior] =
       {
         eSide::Left,
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeApicoposteriorAlveoli),
-        m_RespiratoryCircuit->GetNode(pulse::ExpandedRespiratoryNode::LeftSuperiorLobeApicoposteriorAlveolarDeadSpace),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeApicoposteriorBronchiole),
-        m_RespiratoryCircuit->GetPath(pulse::ExpandedRespiratoryPath::LeftSuperiorLobeApicoposteriorAlveoliToLeftPleuralConnection),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeApicoposteriorShunt),
-        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftSuperiorLobeApicoposteriorPulmonaryCapillariesToLeftPulmonaryVeins1),
-        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedPulmonaryCompartment::LeftSuperiorLobeApicoposteriorAlveoli),
-        m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftSuperiorLobeApicoposteriorPulmonaryCapillaries)
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeApicoposteriorAlveoli),
+        m_RespiratoryCircuit->GetNode(pulse::ExpandedLungsRespiratoryNode::LeftSuperiorLobeApicoposteriorAlveolarDeadSpace),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeApicoposteriorBronchiole),
+        m_RespiratoryCircuit->GetPath(pulse::ExpandedLungsRespiratoryPath::LeftSuperiorLobeApicoposteriorAlveoliToLeftPleuralConnection),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeApicoposteriorShunt),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::ExpandedLungsCardiovascularPath::LeftSuperiorLobeApicoposteriorPulmonaryCapillariesToLeftPulmonaryVeins1),
+        m_data.GetCompartments().GetGasCompartment(pulse::ExpandedLungsPulmonaryCompartment::LeftSuperiorLobeApicoposteriorAlveoli),
+        m_data.GetCompartments().GetLiquidCompartment(pulse::ExpandedLungsVascularCompartment::LeftSuperiorLobeApicoposteriorPulmonaryCapillaries)
       };
     }
 
@@ -979,7 +979,7 @@ namespace pulse
     //Update system data
     CalculateVitalSigns();
 
-    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
     {
       //TODO: Make this work for the expanded model
       ComputeExposedModelParameters();
@@ -3063,7 +3063,7 @@ namespace pulse
     //TODO: Make this work for the expanded model
     double leftHealthyLungCompliance_L_Per_cmH2O = 0.1;
     double rightHealthyLungCompliance_L_Per_cmH2O = 0.1;
-    if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::Off)
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
     {
       leftHealthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
       rightHealthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
@@ -3174,7 +3174,7 @@ namespace pulse
 
       double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
 
-      if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+      if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::On)
       {
         //TODO: Make this work for the expanded model
         healthyLungCompliance_L_Per_cmH2O = 0.1;
@@ -3672,6 +3672,20 @@ namespace pulse
     double leftAlveoliResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     double esophagusResistance_cmH2O_s_Per_L = m_AirwayToStomach->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
+    double rightBronchiResistance_cmH2O_s_Per_L = 0.0;
+    double leftBronchiResistance_cmH2O_s_Per_L = 0.0;
+    double rightAlveoliResistance_cmH2O_s_Per_L = 0.0;
+    double leftAlveoliResistance_cmH2O_s_Per_L = 0.0;
+
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
+    {
+      //TODO: Make this work for the expanded model
+      rightBronchiResistance_cmH2O_s_Per_L = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      leftBronchiResistance_cmH2O_s_Per_L = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      rightAlveoliResistance_cmH2O_s_Per_L = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      leftAlveoliResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+
     bool inhaling = false;
     if (m_PharynxToCarina->GetNextFlow(VolumePerTimeUnit::L_Per_s) > 0.0)
     {
@@ -3758,7 +3772,7 @@ namespace pulse
             //Tuned based on mechanical ventilator validation data
             tracheaResistance_cmH2O_s_Per_L *= intubationTracheatracheaResistanceMultiplier_cmH2O_s_Per_L;
 
-            if (m_data.GetConfiguration().UseExpandedRespiratory() == eSwitch::On)
+            if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::On)
             {
               //Trachea resistance was tuned from 1.125 to 0.8 cmH2O-s/L in the circuit setup
               tracheaResistance_cmH2O_s_Per_L *= 1.125 / 0.8;
@@ -4122,12 +4136,24 @@ namespace pulse
     BLIM(leftAlveoliResistance_cmH2O_s_Per_L, m_DefaultClosedResistance_cmH2O_s_Per_L, m_DefaultOpenResistance_cmH2O_s_Per_L);
 
     //Set new values
-    m_PharynxToCarina->GetNextResistance().SetValue(tracheaResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(rightBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(leftBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance().SetValue(rightAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance().SetValue(leftAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    m_AirwayToStomach->GetNextResistance().SetValue(esophagusResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
+    {
+      //TODO: Make this work for the expanded model
+      m_PharynxToCarina->GetNextResistance().SetValue(tracheaResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(rightBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(leftBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance().SetValue(rightAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance().SetValue(leftAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_AirwayToStomach->GetNextResistance().SetValue(esophagusResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
+    {
+      //TODO: Make this work for the expanded model
+      m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(rightBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_CarinaToLeftAnatomicDeadSpace->GetNextResistance().SetValue(leftBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance().SetValue(rightAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance().SetValue(leftAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
 
     //------------------------------------------------------------------------------------------------------
     //Restrictive
@@ -5640,15 +5666,15 @@ namespace pulse
       return pulse::PulmonaryCompartment::RightLung;
 
     //case eLungCompartment::LeftInferiorLobe:
-    //  return pulse::ExpandedPulmonaryCompartment::LeftInferiorLobeLung;
+    //  return pulse::ExpandedLungsPulmonaryCompartment::LeftInferiorLobeLung;
     //case eLungCompartment::LeftSuperiorLobe:
-    //  return pulse::ExpandedPulmonaryCompartment::LeftSuperiorLobe;
+    //  return pulse::ExpandedLungsPulmonaryCompartment::LeftSuperiorLobe;
     //case eLungCompartment::RightInferiorLobe:
-    //  return pulse::ExpandedPulmonaryCompartment::RightInferiorLobe;
+    //  return pulse::ExpandedLungsPulmonaryCompartment::RightInferiorLobe;
     //case eLungCompartment::RightMiddleLobe:
-    //  return pulse::ExpandedPulmonaryCompartment::RightMiddleLobe;
+    //  return pulse::ExpandedLungsPulmonaryCompartment::RightMiddleLobe;
     //case eLungCompartment::RightSuperiorLobe:
-    //  return pulse::ExpandedPulmonaryCompartment::RightSuperiorLobe;
+    //  return pulse::ExpandedLungsPulmonaryCompartment::RightSuperiorLobe;
 
     default:
       Warning("Unsupported eLungCompartment");
@@ -5663,15 +5689,15 @@ namespace pulse
     if (cmpt == pulse::PulmonaryCompartment::RightLung)
       return eLungCompartment::RightLung;
 
-    //if (cmpt == pulse::ExpandedPulmonaryCompartment::LeftInferiorLobe)
+    //if (cmpt == pulse::ExpandedLungsPulmonaryCompartment::LeftInferiorLobe)
     //  return eLungCompartment::LeftInferiorLobe;
-    //if (cmpt == pulse::ExpandedPulmonaryCompartment::LeftSuperiorLobe)
+    //if (cmpt == pulse::ExpandedLungsPulmonaryCompartment::LeftSuperiorLobe)
     //  return eLungCompartment::LeftSuperiorLobe;
-    //if (cmpt == pulse::ExpandedPulmonaryCompartment::RightInferiorLobe)
+    //if (cmpt == pulse::ExpandedLungsPulmonaryCompartment::RightInferiorLobe)
     //  return eLungCompartment::RightInferiorLobe;
-    //if (cmpt == pulse::ExpandedPulmonaryCompartment::RightMiddleLobe)
+    //if (cmpt == pulse::ExpandedLungsPulmonaryCompartment::RightMiddleLobe)
     //  return eLungCompartment::RightMiddleLobe;
-    //if (cmpt == pulse::ExpandedPulmonaryCompartment::RightSuperiorLobe)
+    //if (cmpt == pulse::ExpandedLungsPulmonaryCompartment::RightSuperiorLobe)
     //  return eLungCompartment::RightSuperiorLobe;
 
     return (eLungCompartment)-1;

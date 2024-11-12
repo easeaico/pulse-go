@@ -55,7 +55,7 @@ void HowToExpandedRespiratory()
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ExpandedRespiratory.log");
 
   PulseConfiguration config;
-  config.UseExpandedRespiratory(eSwitch::On);
+  config.UseExpandedLungs(eSwitch::On);
   pe->SetConfigurationOverride(&config);
 
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -152,7 +152,7 @@ void HowToExpandedRespiratoryAnalysisInitialState()
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ExpandedRespiratoryAnalysisInitialState.log");
 
   PulseConfiguration config;
-  config.UseExpandedRespiratory(eSwitch::On);
+  config.UseExpandedLungs(eSwitch::On);
   pe->SetConfigurationOverride(&config);
 
   SEPatientConfiguration pc;
@@ -207,7 +207,7 @@ void HowToExpandedRespiratoryAnalysisOriginal()
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ExpandedRespiratoryAnalysisOriginal.log");
 
   PulseConfiguration config;
-  config.UseExpandedRespiratory(eSwitch::On);
+  config.UseExpandedLungs(eSwitch::On);
   pe->SetConfigurationOverride(&config);
 
   // Create an ofstream object for output file
@@ -594,7 +594,7 @@ void HowToExpandedRespiratoryAnalysis()
       pe->GetLogger()->AddForward(&myLogger);
 
       PulseConfiguration config;
-      config.UseExpandedRespiratory(eSwitch::On);
+      config.UseExpandedLungs(eSwitch::On);
       pe->SetConfigurationOverride(&config);
 
       // Load the state to start fresh each run

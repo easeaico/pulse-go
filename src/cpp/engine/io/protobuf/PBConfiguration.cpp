@@ -78,6 +78,8 @@ namespace pulse
     if (src.has_cardiovascularconfiguration())
     {
       const PULSE_BIND::ConfigurationData_CardiovascularConfigurationData& config = src.cardiovascularconfiguration();
+      if (config.computationallifeexpansion() != CDM_BIND::eSwitch::NullSwitch)
+        dst.UseComputationalLifeExpansion((eSwitch)config.computationallifeexpansion());
       if (config.has_leftheartelastancemaximum())
         PBProperty::Load(config.leftheartelastancemaximum(), dst.GetLeftHeartElastanceMaximum());
       if (config.has_leftheartelastanceminimum())
@@ -90,8 +92,6 @@ namespace pulse
         PBProperty::Load(config.rightheartelastanceminimum(), dst.GetRightHeartElastanceMinimum());
       if (config.has_standardpulmonarycapillarycoverage())
         PBProperty::Load(config.standardpulmonarycapillarycoverage(), dst.GetStandardPulmonaryCapillaryCoverage());
-      if (config.useexpandedvasculature() != CDM_BIND::eSwitch::NullSwitch)
-        dst.UseExpandedVasculature((eSwitch)config.useexpandedvasculature());
       if (config.tunecardiovascularcircuit() != CDM_BIND::eSwitch::NullSwitch)
         dst.TuneCardiovascularCircuit((eSwitch)config.tunecardiovascularcircuit());
       dst.CardiovascularTuningFile(config.cardiovasculartuningfile());
@@ -288,8 +288,8 @@ namespace pulse
     {
       const PULSE_BIND::ConfigurationData_RenalConfigurationData& config = src.renalconfiguration();
 
-      if (config.enablerenal() != CDM_BIND::eSwitch::NullSwitch)
-        dst.EnableRenal((eSwitch)config.enablerenal());
+      if (config.expandedkidneys() != CDM_BIND::eSwitch::NullSwitch)
+        dst.UseExpandedKidneys((eSwitch)config.expandedkidneys());
 
       if (config.has_plasmasodiumconcentrationsetpoint())
         PBProperty::Load(config.plasmasodiumconcentrationsetpoint(), dst.GetPlasmaSodiumConcentrationSetPoint());
@@ -327,6 +327,8 @@ namespace pulse
     if (src.has_respiratoryconfiguration())
     {
       const PULSE_BIND::ConfigurationData_RespiratoryConfigurationData& config = src.respiratoryconfiguration();
+      if (config.expandedlungs() != CDM_BIND::eSwitch::NullSwitch)
+        dst.UseExpandedLungs((eSwitch)config.expandedlungs());
       if (config.has_centralcontrollerco2pressuresetpoint())
         PBProperty::Load(config.centralcontrollerco2pressuresetpoint(), dst.GetCentralControllerCO2PressureSetPoint());
       if (config.has_centralventilatorycontrollergain())
@@ -345,8 +347,6 @@ namespace pulse
         PBProperty::Load(config.ventilationtidalvolumeintercept(), dst.GetVentilationTidalVolumeIntercept());
       if (config.has_ventilatoryocclusionpressure())
         PBProperty::Load(config.ventilatoryocclusionpressure(), dst.GetVentilatoryOcclusionPressure());
-      if (config.useexpandedrespiratory() != CDM_BIND::eSwitch::NullSwitch)
-        dst.UseExpandedRespiratory((eSwitch)config.useexpandedrespiratory());
     }
 
     // Tissue
@@ -402,6 +402,7 @@ namespace pulse
 
     // Cardiovascular
     PULSE_BIND::ConfigurationData_CardiovascularConfigurationData* cv = dst.mutable_cardiovascularconfiguration();
+    cv->set_computationallifeexpansion((CDM_BIND::eSwitch)src.m_UseComputationalLifeExpansion);
     if (src.HasLeftHeartElastanceMaximum())
       cv->set_allocated_leftheartelastancemaximum(PBProperty::Unload(*src.m_LeftHeartElastanceMaximum));
     if (src.HasLeftHeartElastanceMinimum())
@@ -414,7 +415,6 @@ namespace pulse
       cv->set_allocated_rightheartelastanceminimum(PBProperty::Unload(*src.m_RightHeartElastanceMinimum));
     if (src.HasStandardPulmonaryCapillaryCoverage())
       cv->set_allocated_standardpulmonarycapillarycoverage(PBProperty::Unload(*src.m_StandardPulmonaryCapillaryCoverage));
-    cv->set_useexpandedvasculature((CDM_BIND::eSwitch)src.m_UseExpandedVasculature);
     cv->set_tunecardiovascularcircuit((CDM_BIND::eSwitch)src.m_TuneCardiovascularCircuit);
     cv->set_cardiovasculartuningfile(src.m_CardiovascularTuningFile);
 
@@ -554,7 +554,7 @@ namespace pulse
 
     // Renal
     PULSE_BIND::ConfigurationData_RenalConfigurationData* renal = dst.mutable_renalconfiguration();
-    renal->set_enablerenal((CDM_BIND::eSwitch)src.m_RenalEnabled);
+    renal->set_expandedkidneys((CDM_BIND::eSwitch)src.m_UseExpandedKidneys);
     if (src.HasPlasmaSodiumConcentrationSetPoint())
       renal->set_allocated_plasmasodiumconcentrationsetpoint(PBProperty::Unload(*src.m_PlasmaSodiumConcentrationSetPoint));
     if (src.HasPeritubularPotassiumConcentrationSetPoint())
@@ -585,6 +585,7 @@ namespace pulse
 
     // Respiratory
     PULSE_BIND::ConfigurationData_RespiratoryConfigurationData* resp = dst.mutable_respiratoryconfiguration();
+    resp->set_expandedlungs((CDM_BIND::eSwitch)src.m_UseExpandedLungs);
     if (src.HasCentralControllerCO2PressureSetPoint())
       resp->set_allocated_centralcontrollerco2pressuresetpoint(PBProperty::Unload(*src.m_CentralControllerCO2PressureSetPoint));
     if (src.HasCentralVentilatoryControllerGain())
@@ -603,7 +604,6 @@ namespace pulse
       resp->set_allocated_ventilationtidalvolumeintercept(PBProperty::Unload(*src.m_VentilationTidalVolumeIntercept));
     if (src.HasVentilatoryOcclusionPressure())
       resp->set_allocated_ventilatoryocclusionpressure(PBProperty::Unload(*src.m_VentilatoryOcclusionPressure));
-    resp->set_useexpandedrespiratory((CDM_BIND::eSwitch)src.m_UseExpandedRespiratory);
 
     // Tissue
     PULSE_BIND::ConfigurationData_TissueConfigurationData* tissue = dst.mutable_tissueconfiguration();
