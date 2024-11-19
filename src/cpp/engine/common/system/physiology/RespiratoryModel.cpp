@@ -4677,12 +4677,11 @@ namespace pulse
       double restrictiveModifier = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, restrictiveSeverity);
 
       //------------------------------------------------------------------------------------------------------
-      double combinedSeverity = 0.0;
       if (!m_PositivePressureVentilation)
       {
-        combinedSeverity = MAX(obstructiveModifier, restrictiveModifier);
+        double combinedSeverity = MAX(obstructiveModifier, restrictiveModifier);
+        dyspneaSeverity += combinedSeverity * alveoliVolumeRatio;
       }
-      dyspneaSeverity += combinedSeverity * alveoliVolumeRatio;
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -4762,12 +4761,15 @@ namespace pulse
       //Mechanoreceptors
       CalculateMechanoreceptors();
 
-      //Dampen the change to prevent pressure waveform strangeness
-      //This needs to be way faster than other dyspnea reasons because it's applied during each breath seperately
-      double dampenFraction_perSec = 0.01;
-      m_AppliedMechanoreceptorsDyspneaFactor = GeneralMath::Damper(m_MechanoreceptorsDyspneaFactor, m_PreviousDyspneaSeverity, dampenFraction_perSec, m_data.GetTimeStep_s());
-
-      dyspneaSeverity = MAX(dyspneaSeverity, m_AppliedMechanoreceptorsDyspneaFactor);
+      if (m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+        m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+      {
+        //Dampen the change to prevent pressure waveform strangeness
+        //This needs to be way faster than other dyspnea reasons because it's applied during each breath seperately
+        double dampenFraction_perSec = 0.01;
+        m_AppliedMechanoreceptorsDyspneaFactor = GeneralMath::Damper(m_MechanoreceptorsDyspneaFactor, m_PreviousDyspneaSeverity, dampenFraction_perSec, m_data.GetTimeStep_s());
+        dyspneaSeverity = MAX(dyspneaSeverity, m_AppliedMechanoreceptorsDyspneaFactor);
+      }
     }
 
     m_PreviousDyspneaSeverity = dyspneaSeverity;
