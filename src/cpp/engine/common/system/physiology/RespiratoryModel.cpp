@@ -654,8 +654,7 @@ namespace pulse
     m_PositivePressureVentilation = 
       (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
       m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
-      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator ||
-      m_data.GetAirwayMode() == eAirwayMode::BagValveMask);
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator);
 
     CalculateWork();
     CalculateFatigue();
@@ -3489,7 +3488,7 @@ namespace pulse
       else
       {
         //Positive Pressure Ventilation assuming a mask if not intubated
-        if (m_PositivePressureVentilation)
+        if (m_PositivePressureVentilation || m_data.GetAirwayMode() == eAirwayMode::BagValveMask)
         {
           tracheaResistance_cmH2O_s_Per_L *= 20.0;
         }
@@ -4753,7 +4752,7 @@ namespace pulse
       {
         //Dampen the change to prevent potential craziness
         //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
-        double dampenFraction_perSec = 0.001 * 50.0;
+        double dampenFraction_perSec = 0.0006 * 50.0;
         dyspneaSeverity = GeneralMath::Damper(dyspneaSeverity, m_PreviousDyspneaSeverity, dampenFraction_perSec, m_data.GetTimeStep_s());
       }
 
