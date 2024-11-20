@@ -112,8 +112,7 @@ ExternalProject_Add( Pulse
 )
 set_target_properties (Pulse PROPERTIES FOLDER Pulse)
 
-# Need Java Utils to generate data
-if (Pulse_JAVA_API)
+if (Pulse_GEN_DATA)
   add_custom_target(PulseData ALL)
   add_dependencies(PulseData Pulse)
   add_custom_command(TARGET PulseData POST_BUILD
@@ -133,12 +132,8 @@ if (Pulse_JAVA_API)
       BYPRODUCTS "${CMAKE_INSTALL_PREFIX}/bin/states/StandardMale@0s.json")
   set_target_properties (PulseData PROPERTIES FOLDER Pulse)
 else()
-  message(STATUS "!!! Without Java Utils, this build will not generate required data files needed for Pulse to execute !!!")
-  message(STATUS "!!! You will need to get these required data files from another build/source !!!")
-endif()
-
-if (NOT Pulse_PYTHON_API)
-  message(STATUS "!!! Without Python Utils, this build will not generate files and utilities needed for Pulse testing and development !!!")
+  message(STATUS "!!! Not generating Pulse data !!!")
+  message(STATUS "!!! - You will need to get these required data files from another build/source !!!")
 endif()
 
 if(Pulse_DOWNLOAD_BASELINES)

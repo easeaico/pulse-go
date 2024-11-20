@@ -89,6 +89,7 @@ option(Pulse_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline r
 option(Pulse_CSHARP_API "Build C# API" OFF)
 option(Pulse_JAVA_API "Build Java API and utils for data generation and testing" ON)
 option(Pulse_PYTHON_API "Build Python API and utils for data generation and testing" ON)
+option(Pulse_GEN_DATA "Generate Pulse data. Requires JAVA and PYTHON API" ON)
 option(Pulse_DEPENDENT_BUILD "Pulse is being built as part of a different superbuild" OFF)
 option(Pulse_MSVC_STATIC_RUNTIME "Link static runtime libraries" OFF)
 # This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
@@ -242,6 +243,15 @@ if(Pulse_SUPERBUILD)
       message(STATUS "Using python: ${Python3_EXECUTABLE}")
       else()
         message(FATAL_ERROR "Unable to support Python API, cannot find Python3")
+    endif()
+  endif()
+
+  if (Pulse_GEN_DATA)
+    if (NOT Pulse_JAVA_API OR NOT Pulse_PYTHON_API)
+      set(Pulse_GEN_DATA OFF CACHE BOOL INTERNAL FORCE)
+      message(STATUS "!!! Disabling data generation in build !!!")
+      message(STATUS "!!! You need both Python and JAVA API enabled to generate data. !!!")
+      message(STATUS "!!! You will need to get these required data files from another build/source !!!")
     endif()
   endif()
 

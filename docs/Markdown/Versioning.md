@@ -28,6 +28,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Link to static C++ runtime when building for Android
   - Fix logging in Java API
   - Correct 4.3.0 release bug that had MSVC configuration with optimizations turned off :(
+  - Improved configurability of dockcross builds (i.e. building cross platform PulseJNI binaries)
 
 - Physiology Model Improvements
   - Improve severe airway obstruction validation
