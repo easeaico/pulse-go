@@ -153,6 +153,10 @@ namespace pulse
     double m_ResidueFraction;
     double m_PreviousDyspneaSeverity;
     double m_MechanoreceptorsDyspneaFactor;
+    double m_AppliedMechanoreceptorsDyspneaFactor;
+
+    // Positive Pressure Ventilation
+    bool m_PositivePressureVentilation;
 
     // Conscious Respiration
     bool m_ActiveConsciousRespirationCommand;

@@ -32,6 +32,8 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 - Physiology Model Improvements
   - Improve severe airway obstruction validation
+  - Improve blood gas regulation during assisted mechanical ventilation
+      - Updated the interactions between the respiratory mechanoreceptor and chemoreceptor models
 
 ---
 
