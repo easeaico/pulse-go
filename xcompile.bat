@@ -13,6 +13,6 @@
 set BUILD_JAVA=OFF
 
 cmake -DIMAGE:STRING=manylinux2014-x64 -DJAVA:BOOL=%BUILD_JAVA% -DINSTALLER:STRING="YUM" -P xcompile.cmake
-::cmake -DIMAGE:STRING=android-arm -DJAVA:BOOL=%BUILD_JAVA% -DBIND:STRING=manylinux2014-x64 -P xcompile.cmake
+cmake -DIMAGE:STRING=android-arm -DJAVA:BOOL=%BUILD_JAVA% -DBIND:STRING=manylinux2014-x64 -P xcompile.cmake
 cmake -DIMAGE:STRING=android-arm64 -DJAVA:BOOL=%BUILD_JAVA% -DBIND:STRING=manylinux2014-x64 -P xcompile.cmake
 ::cmake -DIMAGE:STRING=linux-x64-clang -DJAVA:BOOL=%BUILD_JAVA%
