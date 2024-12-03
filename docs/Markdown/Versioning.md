@@ -18,11 +18,15 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - ThirdParty
   - Update to Protobuf 29.0
     - Fixes the Microsoft SDK infinity issue
+
 - CDM API Changes
   - Ventilator API Updates
     - Remove triggers with zero values
     - Address issues when combining mode and configuration actions
     - Ignore invalid mode actions and log as error, rather than log a fatal error
+  - Fix issues found in the C# API
+    - Anesthesia Machine was not full implemented
+    - ARDS/COPD/Pneumonia actions/conditions were not using dicts properly
 
 - Software Architecture Improvements
   - Link to static C++ runtime when building for Android

@@ -18,12 +18,12 @@ namespace Pulse.CDM
         volume.Invalidate();
     }
 
-    //public void Copy(SEAnesthesiaMachineOxygenBottle from)
-    //{
-    //  Clear();
-    //  if(from.HasVolume())
-    //    this.GetVolume().Set(from.GetVolume());
-    //}
+    public void Copy(SEAnesthesiaMachineOxygenBottle from)
+    {
+      Clear();
+      if(from.HasVolume())
+        this.GetVolume().Set(from.GetVolume());
+    }
 
     public bool HasVolume()
     {

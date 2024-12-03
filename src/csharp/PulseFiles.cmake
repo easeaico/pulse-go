@@ -50,6 +50,9 @@ set(PULSE_CSHARP_BIND_FILES
 )
 
 set(PULSE_CSHARP_HOWTO_FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_AnesthesiaMachine.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_ARDS.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_COPD.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_CreateState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_DeathState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Dehydration.cs
@@ -60,6 +63,7 @@ set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Hemothorax.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_MechanicalVentilator.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_PatientStates.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Pneumonia.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_SystemModifiers.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RespiratoryMechanics.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RunScenarios.cs
