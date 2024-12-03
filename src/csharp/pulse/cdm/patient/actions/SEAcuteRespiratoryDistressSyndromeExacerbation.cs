@@ -43,13 +43,9 @@ namespace Pulse.CDM
     }
     public SEScalar0To1 GetSeverity(eLungCompartment c)
     {
-      SEScalar0To1 s = severities[c];
-      if(s == null)
-      {
-        s = new SEScalar0To1();
-        severities[c] = s;
-      }
-      return s;
+      if (!severities.ContainsKey(c))
+        severities[c] = new SEScalar0To1();
+      return severities[c];
     }
     public LungImpairmentMap GetSeverities()
     {

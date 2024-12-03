@@ -34,13 +34,11 @@ namespace Pulse.CDM
     protected SEScalarFrequency respiratoryRate;
     protected SEScalarPressure reliefValvePressure;
 
-    //protected SEAnesthesiaMachineChamber        leftChamber;
-    //protected SEAnesthesiaMachineChamber        rightChamber;
+    protected SEAnesthesiaMachineChamber        leftChamber;
+    protected SEAnesthesiaMachineChamber        rightChamber;
 
-    //protected SEAnesthesiaMachineOxygenBottle   oxygenBottleOne;
-    //protected SEAnesthesiaMachineOxygenBottle   oxygenBottleTwo;
-
-    //protected Map<Event,Boolean> events = new HashMap<Event,Boolean>();
+    protected SEAnesthesiaMachineOxygenBottle   oxygenBottleOne;
+    protected SEAnesthesiaMachineOxygenBottle   oxygenBottleTwo;
 
     public SEAnesthesiaMachine()
     {
@@ -55,11 +53,11 @@ namespace Pulse.CDM
       respiratoryRate = null;
       reliefValvePressure = null;
 
-      //leftChamber = null;
-      //rightChamber = null;
+      leftChamber = null;
+      rightChamber = null;
 
-      //oxygenBottleOne = null;
-      //oxygenBottleTwo = null;
+      oxygenBottleOne = null;
+      oxygenBottleTwo = null;
     }
 
     public override void Clear()
@@ -83,64 +81,50 @@ namespace Pulse.CDM
       if (reliefValvePressure != null)
         reliefValvePressure.Invalidate();
 
-      //if (HasLeftChamber())
-      //  leftChamber.Clear();
-      //if (HasRightChamber())
-      //  rightChamber.Clear();
-      //if (HasOxygenBottleOne())
-      //  oxygenBottleOne.Clear();
-      //if (HasOxygenBottleTwo())
-      //  oxygenBottleTwo.Clear();
-
-      //events.clear();
+      if (HasLeftChamber())
+        leftChamber.Clear();
+      if (HasRightChamber())
+        rightChamber.Clear();
+      if (HasOxygenBottleOne())
+        oxygenBottleOne.Clear();
+      if (HasOxygenBottleTwo())
+        oxygenBottleTwo.Clear();
     }
 
-    //public void Copy(SEAnesthesiaMachine from)
-    //{
-    //  Clear();
-    //  if(from.connection!=null && from.connection != Connection.NullSwitch)
-    //  	this.connection=from.connection;
-    //  if(from.HasInletFlow())
-    //    this.GetInletFlow().Set(from.GetInletFlow());
-    //  if(from.HasInspiratoryExpiratoryRatio())
-    //    this.GetInspiratoryExpiratoryRatio().Set(from.GetInspiratoryExpiratoryRatio());
-    //  if(from.HasOxygenFraction())
-    //    this.GetOxygenFraction().Set(from.GetOxygenFraction());
-    //  if(from.oxygenSource!=null && from.oxygenSource != OxygenSource.NullSource)
-    //  	this.setOxygenSource(from.GetOxygenSource());
-    //  if(from.HasPositiveEndExpiratoryPressure())
-    //    this.GetPositiveEndExpiratoryPressure().Set(from.GetPositiveEndExpiratoryPressure());
-    //  if(from.primaryGas!=null && from.primaryGas != PrimaryGas.NullGas)
-    //  	this.setPrimaryGas(from.GetPrimaryGas());
-    //  if(from.HasReliefValvePressure())
-    //    this.GetReliefValvePressure().Set(from.GetReliefValvePressure());
-    //  if(from.HasRespiratoryRate())
-    //    this.GetRespiratoryRate().Set(from.GetRespiratoryRate());
-    //  if(from.HasVentilatorPressure())
-    //    this.GetVentilatorPressure().Set(from.GetVentilatorPressure());    
+    public void Copy(SEAnesthesiaMachine from)
+    {
+      Clear();
+      if(from.connection!=null && from.connection != eSwitch.NullSwitch)
+        this.connection=from.connection;
+      if(from.HasInletFlow())
+        this.GetInletFlow().Set(from.GetInletFlow());
+      if(from.HasInspiratoryExpiratoryRatio())
+        this.GetInspiratoryExpiratoryRatio().Set(from.GetInspiratoryExpiratoryRatio());
+      if(from.HasOxygenFraction())
+        this.GetOxygenFraction().Set(from.GetOxygenFraction());
+      if(from.oxygenSource!=null && from.oxygenSource != eAnesthesiaMachine_OxygenSource.NullSource)
+        this.SetOxygenSource(from.GetOxygenSource());
+      if(from.HasPositiveEndExpiratoryPressure())
+        this.GetPositiveEndExpiratoryPressure().Set(from.GetPositiveEndExpiratoryPressure());
+      if(from.primaryGas!=null && from.primaryGas != eAnesthesiaMachine_PrimaryGas.NullGas)
+        this.SetPrimaryGas(from.GetPrimaryGas());
+      if(from.HasReliefValvePressure())
+        this.GetReliefValvePressure().Set(from.GetReliefValvePressure());
+      if(from.HasRespiratoryRate())
+        this.GetRespiratoryRate().Set(from.GetRespiratoryRate());
 
-    //  if(from.HasLeftChamber())    
-    //    GetLeftChamber().copy(from.GetLeftChamber());
-    //  if(from.HasRightChamber())
-    //    GetRightChamber().copy(from.GetRightChamber());
-    //  if(from.HasOxygenBottleOne())
-    //    GetOxygenBottleOne().copy(from.GetOxygenBottleOne());
-    //  if(from.HasOxygenBottleTwo())
-    //    GetOxygenBottleTwo().copy(from.GetOxygenBottleTwo());
+      if(from.HasPeakInspiratoryPressure())
+        this.GetPeakInspiratoryPressure().Set(from.GetPeakInspiratoryPressure());
 
-    //  events.putAll(from.events);
-    //}
-
-    //public void SetEvent(Event type, bool active)
-    //{
-    //  this.events.put(type, active);
-    //}
-    //public bool IsEventActive(Event type)
-    //{
-    //  if(!this.events.containsKey(type))
-    //    return false;
-    //  return this.events.Get(type);
-    //}
+      if(from.HasLeftChamber())
+        GetLeftChamber().Copy(from.GetLeftChamber());
+      if(from.HasRightChamber())
+        GetRightChamber().Copy(from.GetRightChamber());
+      if(from.HasOxygenBottleOne())
+        GetOxygenBottleOne().Copy(from.GetOxygenBottleOne());
+      if(from.HasOxygenBottleTwo())
+        GetOxygenBottleTwo().Copy(from.GetOxygenBottleTwo());
+    }
 
     public eSwitch GetConnection()
     {
@@ -258,85 +242,84 @@ namespace Pulse.CDM
       return reliefValvePressure == null ? false : reliefValvePressure.IsValid();
     }
 
-    //public bool HasLeftChamber()
-    //{
-    //  return leftChamber == null ? false : true;
-    //}
-    //public SEAnesthesiaMachineChamber GetLeftChamber()
-    //{
-    //  if(leftChamber==null)
-    //    this.leftChamber=new SEAnesthesiaMachineChamber();
-    //  return leftChamber;
-    //}
-    //public void RemoveLeftChamber()
-    //{
-    //  leftChamber = null;
-    //}
+    public bool HasLeftChamber()
+    {
+      return leftChamber == null ? false : true;
+    }
+    public SEAnesthesiaMachineChamber GetLeftChamber()
+    {
+      if(leftChamber==null)
+        this.leftChamber=new SEAnesthesiaMachineChamber();
+      return leftChamber;
+    }
+    public void RemoveLeftChamber()
+    {
+      leftChamber = null;
+    }
 
-    //public bool HasRightChamber()
-    //{
-    //  return rightChamber == null ? false : true;
-    //}
-    //public SEAnesthesiaMachineChamber GetRightChamber()
-    //{
-    //  if(rightChamber==null)
-    //    this.rightChamber=new SEAnesthesiaMachineChamber();
-    //  return rightChamber;
-    //}
-    //public void RemoveRightChamber()
-    //{
-    //  rightChamber = null;
-    //}
+    public bool HasRightChamber()
+    {
+      return rightChamber == null ? false : true;
+    }
+    public SEAnesthesiaMachineChamber GetRightChamber()
+    {
+      if(rightChamber==null)
+        this.rightChamber=new SEAnesthesiaMachineChamber();
+      return rightChamber;
+    }
+    public void RemoveRightChamber()
+    {
+      rightChamber = null;
+    }
 
-    //public SEAnesthesiaMachineOxygenBottle GetOxygenBottleOne()
-    //{
-    //  if (oxygenBottleOne == null)
-    //    oxygenBottleOne = new SEAnesthesiaMachineOxygenBottle();
-    //  return oxygenBottleOne;
-    //}
-    //public bool HasOxygenBottleOne()
-    //{
-    //  return oxygenBottleOne == null ? false : true;
-    //}
+    public SEAnesthesiaMachineOxygenBottle GetOxygenBottleOne()
+    {
+      if (oxygenBottleOne == null)
+        oxygenBottleOne = new SEAnesthesiaMachineOxygenBottle();
+      return oxygenBottleOne;
+    }
+    public bool HasOxygenBottleOne()
+    {
+      return oxygenBottleOne == null ? false : true;
+    }
 
-    //public SEAnesthesiaMachineOxygenBottle GetOxygenBottleTwo()
-    //{
-    //  if (oxygenBottleTwo == null)
-    //    oxygenBottleTwo = new SEAnesthesiaMachineOxygenBottle();
-
-    //  return oxygenBottleTwo;
-    //}
-    //public bool HasOxygenBottleTwo()
-    //{
-    //  return oxygenBottleTwo == null ? false : true;
-    //}
+    public SEAnesthesiaMachineOxygenBottle GetOxygenBottleTwo()
+    {
+      if (oxygenBottleTwo == null)
+        oxygenBottleTwo = new SEAnesthesiaMachineOxygenBottle();
+      return oxygenBottleTwo;
+    }
+    public bool HasOxygenBottleTwo()
+    {
+      return oxygenBottleTwo == null ? false : true;
+    }
 
     public override string ToString()
     {
       string leftChamber = "Left Chamber: NotProvided";
-      //if(HasLeftChamber())
-      //{
-      //  leftChamber = GetLeftChamber().ToString();
-      //  leftChamber = leftChamber.ReplaceAll("Chamber", "Left Chamber");
-      //}
+      if(HasLeftChamber())
+      {
+        leftChamber = GetLeftChamber().ToString();
+        leftChamber = leftChamber.Replace("Chamber", "Left Chamber");
+      }
       string rightChamber = "Right Chamber: NotProvided";
-      //if(HasRightChamber())
-      //{
-      //  rightChamber = GetRightChamber().ToString();
-      //  rightChamber = rightChamber.ReplaceAll("Chamber", "Right Chamber");
-      //}
+      if(HasRightChamber())
+      {
+        rightChamber = GetRightChamber().ToString();
+        rightChamber = rightChamber.Replace("Chamber", "Right Chamber");
+      }
       string o2BottleOne = "Oxygen Bottle One: NotProvided";
-      //if(HasOxygenBottleOne())
-      //{
-      //  o2BottleOne = GetOxygenBottleOne().ToString();
-      //  o2BottleOne = o2BottleOne.ReplaceAll("Bottle", "Bottle One");
-      //}
+      if(HasOxygenBottleOne())
+      {
+        o2BottleOne = GetOxygenBottleOne().ToString();
+        o2BottleOne = o2BottleOne.Replace("Bottle", "Bottle One");
+      }
       string o2BottleTwo = "Oxygen Bottle Two: NotProvided";
-      //if(HasOxygenBottleTwo())
-      //{
-      //  o2BottleTwo = GetOxygenBottleTwo().ToString();
-      //  o2BottleTwo = o2BottleTwo.ReplaceAll("Bottle", "Bottle Two");
-      //}
+      if(HasOxygenBottleTwo())
+      {
+        o2BottleTwo = GetOxygenBottleTwo().ToString();
+        o2BottleTwo = o2BottleTwo.Replace("Bottle", "Bottle Two");
+      }
 
       return "Anesthesia Machine"
       + "\n\tConnection: " + (HasConnection() ? eEnum.Name(GetConnection()) : "NotProvided")
