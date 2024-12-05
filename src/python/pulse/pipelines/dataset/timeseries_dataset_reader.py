@@ -7,6 +7,7 @@ import logging
 import numbers
 import tempfile
 import numpy as np
+from enum import Enum
 from pathlib import Path
 from pycel import ExcelCompiler
 from dataclasses import dataclass
@@ -27,6 +28,12 @@ from pulse.engine.PulseEngineResults import PulseLog
 from pulse.pipelines.dataset.utils import generate_data_request
 
 _pulse_logger = logging.getLogger('pulse')
+
+
+class EngineConfig(Enum):
+    Standard = 1
+    ExpandedLungs = 3
+    ComputationalLife = 2
 
 
 def gen_patient_targets(
@@ -154,6 +161,7 @@ def gen_patient_targets(
     xls_file = Path(get_validation_dir() + "/SystemValidationData.xlsx")
     generate_validation_targets(
         xls_file=xls_file,
+        config=EngineConfig.Standard,
         patient_validation=patient_validation
     )
     return patient_validation
@@ -184,6 +192,7 @@ def extract_patient(patient_file: Path) -> SEPatient:
 
 def generate_validation_targets(
     xls_file: Path,
+    config: EngineConfig,
     patient_validation: SEPatientTimeSeriesValidation
 ) -> bool:
     """
@@ -211,7 +220,11 @@ def generate_validation_targets(
     tmp_xls_path = Path('./tmp.xlsx')
 
     # xlsx sheets to skip when generating targets and requests
-    ignore_sheets = ["Patient", "CardiovascularExtended"]
+    ignore_sheets = ["Patient"]
+    if config == EngineConfig.Standard:
+        ignore_sheets.append("CardiovascularExpandedLungs")
+        ignore_sheets.append("RespiratoryExpandedLungs")
+        ignore_sheets.append("CardiovascularComputationalLife")
 
     try:
         # Update patient sheet so formulas can be re-evaluated with correct parameters
@@ -464,23 +477,26 @@ def generate_sheet_targets(
         vts = targets[vtb.tgt_dest]
 
         # Evaluate cells if needed
-        ref_val = vtb.ref_cell
-        if isinstance(ref_val, str) and ref_val.startswith("="):
-            if ref_val.startswith("="):
-                cell_loc = f"{system}!{get_column_letter(VTB_REF_CELL + 1)}{row_num + 2}"
-                ref_val = evaluator.evaluate(cell_loc)
-        unit_str = vtb.units.strip()
-        if unit_str.startswith("="):
-            cell_loc = f"{system}!{get_column_letter(VTB_UNITS + 1)}{row_num + 2}"
-            unit_str = evaluator.evaluate(cell_loc)
-        ref_str = vtb.references
-        if ref_str.startswith("="):
-            cell_loc = f"{system}!{get_column_letter(VTB_REFS + 1)}{row_num + 2}"
-            ref_str = evaluator.evaluate(cell_loc)
-        algo = vtb.algorithm
-        if algo.startswith("="):
-            cell_loc = f"{system}!{get_column_letter(VTB_ALGO + 1)}{row_num + 2}"
-            algo = evaluator.evaluate(cell_loc)
+        try:
+            ref_val = vtb.ref_cell
+            if isinstance(ref_val, str) and ref_val.startswith("="):
+                if ref_val.startswith("="):
+                    cell_loc = f"{system}!{get_column_letter(VTB_REF_CELL + 1)}{row_num + 2}"
+                    ref_val = evaluator.evaluate(cell_loc)
+            unit_str = vtb.units.strip()
+            if unit_str.startswith("="):
+                cell_loc = f"{system}!{get_column_letter(VTB_UNITS + 1)}{row_num + 2}"
+                unit_str = evaluator.evaluate(cell_loc)
+            ref_str = vtb.references
+            if ref_str.startswith("="):
+                cell_loc = f"{system}!{get_column_letter(VTB_REFS + 1)}{row_num + 2}"
+                ref_str = evaluator.evaluate(cell_loc)
+            algo = vtb.algorithm
+            if algo.startswith("="):
+                cell_loc = f"{system}!{get_column_letter(VTB_ALGO + 1)}{row_num + 2}"
+                algo = evaluator.evaluate(cell_loc)
+        except:
+            _pulse_logger.fatal(f"Cannot evaluate: {cell_loc}")
 
         tgt = SETimeSeriesValidationTarget()
         tgt.set_reference(ref_str)
