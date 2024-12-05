@@ -167,6 +167,9 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::On)
     {
       SORT_CMPTS(ExpandedLungsPulmonary, Gas);
+      // Add Expanded Leafs to Pulmonary Leafs
+      for (SEGasCompartment* leaf : m_ExpandedLungsPulmonaryLeafCompartments)
+        m_PulmonaryLeafCompartments.push_back(leaf);
     }
     SORT_CMPTS(Temperature, Thermal);
     if (m_data.GetConfiguration().IsTissueEnabled())
@@ -187,10 +190,16 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::On)
     {
       SORT_CMPTS(ExpandedLungsVascular, Liquid);
+      // Add Expanded Leafs to Vascular Leafs
+      for (SELiquidCompartment* leaf : m_ExpandedLungsVascularLeafCompartments)
+        m_VascularLeafCompartments.push_back(leaf);
     }
     else if (m_data.GetConfiguration().UseComputationalLifeExpansion() == eSwitch::On)
     {
       SORT_CMPTS(ComputationalLifeVascular, Liquid);
+      // Add Expanded Leafs to Vascular Leafs
+      for (SELiquidCompartment* leaf : m_ComputationalLifeVascularLeafCompartments)
+        m_VascularLeafCompartments.push_back(leaf);
     }
 
     // Equipment

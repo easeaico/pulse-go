@@ -1,0 +1,114 @@
+{
+  "DataRequest":
+  [
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobeApicalAlveoli",  "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobeApicalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobeApicalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightSuperiorLobeApicalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightSuperiorLobeApicalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobePosteriorAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobePosteriorAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobePosteriorAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightSuperiorLobePosteriorPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightSuperiorLobePosteriorPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobeAnteriorAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobeAnteriorAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightSuperiorLobeAnteriorAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightSuperiorLobeAnteriorPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightSuperiorLobeAnteriorPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightMiddleLobeLateralAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightMiddleLobeLateralAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightMiddleLobeLateralAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightMiddleLobeLateralPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightMiddleLobeLateralPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightMiddleLobeMedialAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightMiddleLobeMedialAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightMiddleLobeMedialAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightMiddleLobeMedialPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightMiddleLobeMedialPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeSuperiorAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeSuperiorAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeSuperiorAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeSuperiorPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeSuperiorPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeMedialBasalAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeMedialBasalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeMedialBasalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeMedialBasalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeMedialBasalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeAnteriorBasalAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeAnteriorBasalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeAnteriorBasalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeAnteriorBasalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeAnteriorBasalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeLateralBasalAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeLateralBasalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobeLateralBasalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeLateralBasalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobeLateralBasalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobePosteriorBasalAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobePosteriorBasalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "RightInferiorLobePosteriorBasalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobePosteriorBasalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightInferiorLobePosteriorBasalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobePosteriorBasalAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobePosteriorBasalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobePosteriorBasalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobePosteriorBasalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobePosteriorBasalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeLateralBasalAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeLateralBasalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeLateralBasalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobeLateralBasalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobeLateralBasalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeAnteromedialBasalAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeAnteromedialBasalAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeAnteromedialBasalAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobeAnteromedialBasalPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobeAnteromedialBasalPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeSuperiorAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeSuperiorAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftInferiorLobeSuperiorAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobeSuperiorPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftInferiorLobeSuperiorPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeInferiorLingulaAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeInferiorLingulaAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeInferiorLingulaAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeInferiorLingulaPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeInferiorLingulaPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeSuperiorLingulaAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeSuperiorLingulaAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeSuperiorLingulaAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeAnteriorAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeAnteriorAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeAnteriorAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeAnteriorPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeAnteriorPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeApicoposteriorAlveoli", "PropertyName": "Volume",   "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeApicoposteriorAlveoli",  "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "GasCompartment",    "CompartmentName": "LeftSuperiorLobeApicoposteriorAlveoli",  "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeApicoposteriorPulmonaryCapillaries",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftSuperiorLobeApicoposteriorPulmonaryCapillaries",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+
+
+  ]
+}
