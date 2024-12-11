@@ -273,13 +273,16 @@ def main():
                 [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardFemale"][0]))
             all_validation.insert(0, all_validation.pop(
                 [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardMale"][0]))
-        html_file = "./test_results/PatientValidation.html"
+        html_file = "./test_results/PatientSystemValidation.html"
         _pulse_logger.info(f"Writing {html_file}")
         f = open(html_file, "w")
         f.write("<html>\n")
-        f.writelines("<body>\n")
-        f.write("<h1>Patient Validation</h1>\n")
+        f.write("<body>\n")
+        f.write("<details>\n")
+        f.write("<summary><font size=\"5\"><b>Patient Validation</b></font></summary>\n")
         for validation in all_validation:
+            f.write("<details>\n")
+            f.write(f"<summary>{validation.get_patient().get_name()}</summary><p>\n")
             f.write("<br>\n")
             for type, tgts in validation.get_targets().items():
                 f.writelines("<table border=\"1\">\n")
@@ -305,6 +308,8 @@ def main():
                     f.write(f"<td>{format_float(tgt.get_error_value())}%</td>")
                     f.write("<td>" + tgt.get_notes() + "</td></tr>\n")
                 f.write("</table><br>\n")
+            f.write("</p></details>\n")  # End patient details
+        f.write("</p></details>\n")  # End header details
         f.write("</body>\n")
         f.write("</html>\n")
         f.close()

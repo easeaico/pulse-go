@@ -18,8 +18,8 @@ if __name__ == "__main__":
     reports.append(Path("./test_results/EngineUnitTests.html"))
     reports.append(Path("./test_results/ScenarioVerification.html"))
     reports.append(Path("./test_results/DrugPKVerification.html"))
-    reports.append(Path("./test_results/PatientVerification.html"))
-    reports.append(Path("./test_results/PatientValidation.html"))
+    reports.append(Path("./test_results/PatientSystemVerification.html"))
+    reports.append(Path("./test_results/PatientSystemValidation.html"))
 
     html_file = "./test_results/PulseTestReport.html"
     _pulse_logger.info(f"Writing {html_file}")
@@ -28,6 +28,9 @@ if __name__ == "__main__":
     f.write("<body>\n")
     for report in reports:
         f.writelines("<br>\n")
+        if not report.exists():
+            f.write(f"Missing Report: {str(report)}")
+            continue
         with open(report) as file:
             while line := file.readline():
                 line = line.replace("<html>", "")
