@@ -2133,16 +2133,16 @@ Dyspnea or shortness of breath directly effects the achieved respiratory driver 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Tidal Volume (mL)	|	Respiration Rate (breaths/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|
 |	Dysnea: Tidal Volulme Severity = 0.3	|	Mild amplitude effect	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|<span class="success">	Increase	</span>|
-|	Dysnea: Tidal Volulme Severity = 0.6	|	Moderate amplitude effect	|	30	|	210	|<span class="success">	Decrease to ~30% of healthy	</span>|<span class="success">	Increase	</span>|
-|	Dysnea: Tidal Volulme Severity = 1.0	|	Full amplitude effect	|	30	|	210	|<span class="success">	0	</span>|<span class="success">	0	</span>|
-|	Dysnea: Severity = 0.0	|	Healthy	|	210	|	510	|<span class="success">	Return to Normal	</span>|<span class="success">	Return to Normal	</span>|
-|	Dysnea: Respiration Rate Severity = 0.3	|	Mild frequency effect	|	30	|	210	|<span class="success">	Increase	</span>|<span class="success">	Decrease to ~70% of healthy	</span>|
-|	Dysnea: Respiration Rate Severity = 0.6	|	Moderate frequency effect	|	30	|	210	|<span class="success">	Increase	</span>|<span class="success">	Decrease to ~30% of healthy	</span>|
-|	Dysnea: Respiration Rate Severity = 1.0	|	Full frequency effect	|	30	|	210	|<span class="success">	0	</span>|<span class="success">	0	</span>|
-|	Dysnea: Severity = 0.0	|	Healthy	|	210	|	510	|<span class="success">	Return to Normal	</span>|<span class="success">	Return to Normal	</span>|
-|	Dysnea: Tidal Volume Severity = 0.3, Respiration Rate Severity = 0.3	|	Mild amplitude and frequency effect	|	30	|	210	|<span class="success">	Decrease to ~70% of healthy	</span>|<span class="success">	Decrease to ~70% of healthy	</span>|
-|	Dysnea: Tidal Volume Severity = 0.6, Respiration Rate Severity = 0.6	|	Moderate amplitude and frequency effect	|	30	|	210	|<span class="success">	Decrease to ~30% of healthy	</span>|<span class="success">	Decrease to ~30% of healthy	</span>|
-|	Dysnea: Tidal Volume Severity = 1.0, Respiration Rate Severity = 1.0	|	Full amplitude and frequency effect	|	30	|	210	|<span class="success">	0	</span>|<span class="success">	0	</span>|
+|	Dysnea: Tidal Volulme Severity = 0.6	|	Moderate amplitude effect	|	210	|	390	|<span class="success">	Decrease to ~30% of healthy	</span>|<span class="success">	Increase	</span>|
+|	Dysnea: Tidal Volulme Severity = 1.0	|	Full amplitude effect	|	390	|	570	|<span class="success">	0	</span>|<span class="success">	0	</span>|
+|	Dysnea: Severity = 0.0	|	Healthy	|	570	|	750	|<span class="success">	Return to Normal	</span>|<span class="success">	Return to Normal	</span>|
+|	Dysnea: Respiration Rate Severity = 0.3	|	Mild frequency effect	|	750	|	930	|<span class="success">	Increase	</span>|<span class="success">	Decrease to ~70% of healthy	</span>|
+|	Dysnea: Respiration Rate Severity = 0.6	|	Moderate frequency effect	|	930	|	1110	|<span class="success">	Increase	</span>|<span class="success">	Decrease to ~30% of healthy	</span>|
+|	Dysnea: Respiration Rate Severity = 1.0	|	Full frequency effect	|	1110	|	1290	|<span class="success">	0	</span>|<span class="success">	0	</span>|
+|	Dysnea: Severity = 0.0	|	Healthy	|	1290	|	1470	|<span class="success">	Return to Normal	</span>|<span class="success">	Return to Normal	</span>|
+|	Dysnea: Tidal Volume Severity = 0.3, Respiration Rate Severity = 0.3	|	Mild amplitude and frequency effect	|	1470	|	1650	|<span class="success">	Decrease to ~70% of healthy	</span>|<span class="success">	Decrease to ~70% of healthy	</span>|
+|	Dysnea: Tidal Volume Severity = 0.6, Respiration Rate Severity = 0.6	|	Moderate amplitude and frequency effect	|	1650	|	1830	|<span class="success">	Decrease to ~30% of healthy	</span>|<span class="success">	Decrease to ~30% of healthy	</span>|
+|	Dysnea: Tidal Volume Severity = 1.0, Respiration Rate Severity = 1.0	|	Full amplitude and frequency effect	|	1830	|	2010	|<span class="success">	0	</span>|<span class="success">	0	</span>|
 
 ### Supplemental Oxygen
 
