@@ -42,7 +42,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       }
       catch(InvalidProtocolBufferException ex2)
       {
-        Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name);
+        Log.error("Unable to read scenario "+job.scenarioDirectory+"/"+job.name);
         Log.error(ex2.getMessage());
         return false;
       }

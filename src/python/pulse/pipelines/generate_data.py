@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     # In the future, we will do all xlsx in the data/validation dir
     # But for now, we are just hard coding the automated xlsx files
-    xls_files = ["AirwayObstruction.xlsx", "Dehydration.xlsx", "MechanicalVentilator.xlsx", "CSTARS.xlsx"]
+    xls_files = ["Hemorrhage.xlsx", "AirwayObstruction.xlsx", "Dehydration.xlsx", "MechanicalVentilator.xlsx", "CSTARS.xlsx"]
 
     for xls_file in xls_files:
         segment_validation_pipeline(

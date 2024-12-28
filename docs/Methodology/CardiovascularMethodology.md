@@ -412,7 +412,7 @@ All feedback and imapcts from additional actions will NOT impact the hemodynamic
 #### Hemorrhage
 A hemorrhage is a significant reduction in blood volume, which triggers a physiologic response to stabilize cardiovascular function. Hypovolemia is any loss in blood volume, where a loss of more than 35% is considered hypovolemic shock. Hemorrhage causes a reduction in filling pressure for the circulation, leading to a decrease in venous return. This is evidenced by the decrease in mean arterial pressure and cardiac output. If these physiologic values continue to drop, hemorrhagic or hypovolemic shock will occur. There are three stages of shock: a nonprogressive stage, which the normal circulatory responses will lead to a recovery; a progressive stage, which leads to progressively worsening condition and eventual death without intervention; and an irreversible stage, which leads to death regardless of intervention. The sympathetic response is triggered by the decrease in mean arterial blood pressure, specifically by causing the stretch receptors (baroreceptors) to activate. This response triggers an increase in systemic vascular resistance, heart rate, and a decrease in venous compliance. This is discussed in detail in the @ref NervousMethodology. 
 
-Hemorrhage can be intiated in the engine through two methods. The first method allows the user to characterize the hemorrhage by specifying the location (compartment) and bleed rate. Multiple hemorrhages can be applied to a single compartment or to multiple compartments. The user specifies a cardiovascular compartment to apply a hemorrhage. After the hemorrhage has been specified, the total loss rate is the sum of each individual bleed rate to that compartment. This value is set as a negative flow source. This results in a decrease in total blood volume that is linearly proportional to the total loss rate. This flow rate will remain constant throughout the computation. As the blood volume decreases, the blood flow to each compartment will begin to decrease. This could lead to an invalid flow rate for the compartment over time. A second method for specifying hemorrhage deals with this issue. A hemorrhage can also be characterized by specifying the location (compartment) and a severity. The severity is specified with a value between 0 and 1. A path is added to the cardiovascular circuit, but instead of specifying a negative flow rate, a resistance is specified on the path. This provides a calculated flow rate that will increase and decrease based on the dynamic physics of the circuit. This will prevent the insufficient blood flow/volume errors that can occur if the flow rate is not manually managed. When a hemorrhage is initiated with a severity, a minimum and maximum resistance are calculated to bound the severity, as shown in Equations 3 and 4, respectively.
+Hemorrhage can be initiated in the engine through two methods. The first method allows the user to characterize the hemorrhage by specifying the location (compartment) and bleed rate. Multiple hemorrhages can be applied to a single compartment or to multiple compartments. The user specifies a cardiovascular compartment to apply a hemorrhage. After the hemorrhage has been specified, the total loss rate is the sum of each individual bleed rate to that compartment. This value is set as a negative flow source. This results in a decrease in total blood volume that is linearly proportional to the total loss rate. This flow rate will remain constant throughout the computation. As the blood volume decreases, the blood flow to each compartment will begin to decrease. This could lead to an invalid flow rate for the compartment over time. A second method for specifying hemorrhage deals with this issue. A hemorrhage can also be characterized by specifying the location (compartment) and a severity. The severity is specified with a value between 0 and 1. A path is added to the cardiovascular circuit, but instead of specifying a negative flow rate, a resistance is specified on the path. This provides a calculated flow rate that will increase and decrease based on the dynamic physics of the circuit. This will prevent the insufficient blood flow/volume errors that can occur if the flow rate is not manually managed. When a hemorrhage is initiated with a severity, a minimum and maximum resistance are calculated to bound the severity, as shown in Equations 3 and 4, respectively.
 
 \f[R_{\min} = (P-P_{T})/cQ \f]
 <center>
@@ -445,89 +445,7 @@ Figure 8 demonstrates the different severity specifications and the impact on th
 <i>Figure 8. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).</i>
 </center><br>
 
-An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. For the severity implementation, the hemorrhage outlet compartment is specified as the abdominal cavity for Equation 3. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation. At this time, the internal hemorrhage is only associated with the abdominal region. In the future, we will add functionality for the brain and lungs (hemothorax).
-
-The hemorrhage response was validated with a comparison to the literature. The mean arterial pressure and cardiac output were computed as a function of their baseline value and plotted with the percent blood loss, as shown in Figure 9. The computed results are shown on the left and the validation data @cite guyton2006medical is shown on the right.
-
-@htmlonly
-<center>
-<table>
-<tr>
-<td><a href="./plots/Cardiovascular/MeanArterialPressureShock.jpg"><img src="./plots/Cardiovascular/MeanArterialPressureShock.jpg" width="550"></a>
-</td>
-<td><a href="./plots/Cardiovascular/CardiacOutputShock.jpg"><img src="./plots/Cardiovascular/CardiacOutputShock.jpg" width="550"></a>
-</td>
-</tr>
-</table>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 9. Normalized mean arterial pressure (left) and cardiac output (right) as blood loss increases for the Pulse model and the validation data @cite guyton2006medical.</i>
-</center><br>
-
-For the hemorrhage to shock scenario, our results maintain MAP through a 20% blood loss and CO begins to slowly decrease as expected. At 20%, we see an approximately linear drop in MAP from a as expected compared to experimental data from @cite guyton2006medical. The cardiac output shows the correct trend but a larger error for this region. The "last ditch" plateau is then exhibited from a blood loss of just under 35% to just under 45%. The MAP and CO then drop precipitously as expected. 
-
-The different types of shock are evident in the data collected for groups of dogs and published in @cite guyton2006medical. Groups I, II, and III show cases of nonprogressive shock, Groups IV, and V show cases of progressive shock, and Group VI is an irreversible shock case. The first three groups recover without intervention, the final case leads quickly to death, and the Group IV and V cases show a short rebound before the physiologic decline that occurs without treatment. These cases were duplicated in the Pulse engine. The results and comparison to validation data are shown in Figure 10.
-
-@htmlonly
-<center>
-<table>
-<tr>
-<td><a href="./plots/Cardiovascular/HemorrhageGroups.jpg"><img src="./plots/Cardiovascular/HemorrhageGroups.jpg" width="550"></a>
-</td>
-<td style="vertical-align:top"><a href="./Images/Cardiovascular/HemorrhageGroupsValidation.jpg"><img src="./Images/Cardiovascular/HemorrhageGroupsValidation.jpg" width="250"></a>
-</td>
-</tr>
-</table>
-</br>
-
-</center>
-@endhtmlonly
-<center>
-<i>Figure 10. Normalized mean arterial pressure for different hemorrhage severities to demonstrate the different shock types. The computed Pulse results are on the left and the validation data @cite guyton2006medical is on the right.</i>
-</center><br>
-
-For the first three group hemorrhage scenarios (90%, 65%, and 50% blood loss), if the hemorrhage is arrested the MAP begins to rise and reaches a stable value. However, for the remaining three scenarios, the hemorrhage is unrecoverable for the patient. This is expected compared to the experimental data and for the degree of shock. However, one limitation of the model is that at the turning point between progressive and irreversible shock, the expected behavior is a temporary recovery lasting minutes to hours followed by deterioration and death. The current model has no ability to reverse the curve once the final deterioration toward deaths occurs. This is triggered at a blood pressure of approximately 40-45 mmHg. While the outcome is the same, the short recovery is not captured. Future work will incorporate this improvement.
-
-We also saw the expected blood volume, pressure, heart rate, and substance concentration values follow expected trends for the fluid resuscitation scenarios. Figures 11 and 12 show the appropriate substance behavior coupled with the blood volume changes. Like blood volume, the decrease in the substance will be linearly proportional to the bleed rate. For more specific information regarding these substances and their loss due to bleeding, see @ref BloodChemistryMethodology and @ref SubstanceTransportMethodology. Figure 11 shows the blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no intervention other than the cessation of hemorrhage. Figure 12 shows a hemorrhage event with subsequent saline administration. Note that the hemoglobin content remains diminished as the blood volume recovers with IV saline. By comparison, [Figure 14](@ref cardiovascular-blood-administration) shows a blood-product intervention following a hemorrhage event. In that figure, the hemoglobin increases with the blood infusion.
-
-@htmlonly
-<center>
-<table>
-<tr>
-<td><a href="./plots/Cardiovascular/Class4NoFluid_BloodVolume.jpg"><img src="./plots/Cardiovascular/Class4NoFluid_BloodVolume.jpg" width="550"></a>
-</td>
-<td><a href="./plots/Cardiovascular/Class4NoFluid_Hb.jpg"><img src="./plots/Cardiovascular/Class4NoFluid_Hb.jpg" width="550"></a>
-</td>
-</tr>
-</table>
-</br>
-<a href="./plots/Cardiovascular/Class4NoFluid_Legend.jpg"><img src="./plots/Cardiovascular/Class4NoFluid_Legend.jpg" width="450"></a>
-</center><br>
-@endhtmlonly
-<center>
-<i>Figure 11. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no subsequent intervention.</i>
-</center>
-<br>
-
-@htmlonly
-<table>
-<tr>
-<td><a href="./plots/Cardiovascular/Class2Saline_BloodVolume.jpg"><img src="./plots/Cardiovascular/Class2Saline_BloodVolume.jpg" width="550"></a>
-</td>
-<td><a href="./plots/Cardiovascular/Class2Saline_Hb.jpg"><img src="./plots/Cardiovascular/Class2Saline_Hb.jpg" width="550"></a>
-</td>
-</tr>
-</table>
-</br>
-<a href="./plots/Cardiovascular/Class2Saline_Legend.jpg"><img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="450"></a>
-</br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 12. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with a subsequent infusion of saline.</i>
-</center><br>
+An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. For the severity implementation, the hemorrhage outlet compartment is specified as the abdominal cavity for Equation 3. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation. At this time, the internal hemorrhage is only associated with the abdominal region. See the hemothorax model in @ref RespiratoryMethodology for details about hemorrhage into the pleural space. In the future, we plan to add functionality for the brain.
 
 #### Pericardial Effusion
 The pericardial effusion action is used to model acute pericardial effusion by adding a flow source on the pericardium. This action leads to a volume accumulation over the course of the simulation. The accumulated volume is used to calculate a pressure source that is applied to the left and right heart. This pressure source is identical to the one used in the pericardial effusion condition. For the pericardial effusion action, the strain-rate dependent compliance of the pericardium is modeled so that the change in intrapericardial pressure is a function of flow rate and the current volume of the pericardium @cite Metoyer2014Modeling.
@@ -816,110 +734,8 @@ There are three CPR scenarios for validation. Each scenario perscribes the same 
 |	Chest CompressionsForce Scale	|	40	|	165-170	|<span class="success">	80 per minute [Direct calculation]	</span>|<span class="success">	39.27 @cite redberg1993physiology Approx. 70-80 @cite gruben1990system 105 +/- 41 @cite kim2008direction	</span>|<span class="success">	13.97 @cite redberg1993physiology Approx. 40 @cite gruben1990system 33 +/- 10 @cite kim2008direction 	</span>|<span class="warning">	21.13 @cite redberg1993physiology	</span>|<span class="success">	17-27% Normal @cite kim2008direction 	</span>|<span class="success">	19.7 @cite redberg1993physiology 25 +/- 8 @cite kim2008direction 	</span>|<span class="success">	> 0 during compression (translated from dog study) @cite rudikoff1980mechanisms	</span>|<span class="success">	34% +/- 16 @cite kim2008direction	</span>|	
 
 
-### Hemorrhage
-The hemorrhage action is tested using several scenarios. The class 2 hemorrhage scenario with blood intravenous (IV) administration begins with a healthy patient. After a few seconds, a hemorrhage action is initiated at a rate of 250 milliliters (mL) per minute. The hemorrhage continues for four minutes before the bleeding rate is reduced to 0 mL per minute. After two minutes, 500 mL of IV blood is administered intravenously over five minutes. The other hemorrhage scenarios are similar but with different subsequent interventions. There are also two multi-compartment hemorrhage scenarios. Figure 14 demonstrates the time-evolution of select data, and the validation results are displayed in Tables 6a-f.
-
-The results show decreases in the systolic pressure and minor increases in the diastolic pressure during the course of the hemorrhage. In response to the decreasing arterial pressures, the baroreceptor response raises the heart rate. The blood volume and hemoglobin content were validated through direct calculation by decreasing blood volume by the bleeding rate multiplied by the time. There is a difference between the computed and simulated blood volume post-hemorrhage due to fluid shift between the intravascular and extravascular space. This shift is evident in the period between cessation of hemorrhage and the start of the infusion (top-left panel of Figure 12).
-
-Following the completion of the hemorrhage, intravenous blood is administered. The validation of this action can be found in the IV Fluid Administration section, with the exception of hemoglobin content. There will be an increase in hemoglobin content directly proportional to the amount of blood added from the IV. This value was calculated directly from the known blood volume in the IV bag and hemoglobin concentration of the blood. The engine matched this calculated value exactly. 
-
-@anchor cardiovascular-blood-administration
-
-@htmlonly
-<center>
-<table>
-<tr>
-<td><a href="./plots/Cardiovascular/Class2Blood_BloodVolume.jpg"><img src="./plots/Cardiovascular/Class2Blood_BloodVolume.jpg" width="550"></a>
-</td>
-<td><a href="./plots/Cardiovascular/Class2Blood_Diastolic.jpg"><img src="./plots/Cardiovascular/Class2Blood_Diastolic.jpg" width="550"></a>
-</td>
-</tr>
-<tr>
-<td><a href="./plots/Cardiovascular/Class2Blood_Hb.jpg"><img src="./plots/Cardiovascular/Class2Blood_Hb.jpg" width="550"></a>
-</td>
-<td><a href="./plots/Cardiovascular/Class2Blood_Systolic.jpg"><img src="./plots/Cardiovascular/Class2Blood_Systolic.jpg" width="550"></a>
-</td>
-</tr>
-</table>
-</br>
-<a href="./plots/Cardiovascular/Class2Saline_Legend.jpg"><img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="500"></a>
-</br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 20. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250 milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5 minutes. Both the blood volume and hemoglobin content increase linearly with this administration.</i>
-</center>
-
-<br><center>
-*Table 14. Validation matrix for a class I hemorrhage from the femoral artery. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 90 ml/min Hemorrhage	|				|	30	|	580	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|<span class="success">	4675	</span>|<span class="warning">	No Change @guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	700	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	580	|	980	|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
-
-
-<br><center>
-*Table 15. Validation matrix for a class II hemorrhage from the brachial artery. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 60 ml/min Hemorrhage from Right Arm	|				|	30	|	1405	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="warning">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4125	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	620	</span>|<span class="warning">	No Change @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	1405	|	1800	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
-
-
-<br><center>
-*Table 16. Validation matrix for a class II hemorrhage followed by an intravenous administration of whole blood. The table engine shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 140 ml/min Hemorrhage 	|				|	30	|	590	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4190	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|
-|	Start IV Fluids: Blood at 100 mL/min with a 500 mL bag	|				|	590	|	1090	|<span class="success">	Decrease @cite metoyer2016SME	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	4590	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	690	</span>|<span class="success">	No Change	</span>|
-
-
-<br><center>
-*Table 17. Validation matrix for a class II hemorrhage followed by an intravenous administration of saline. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 140 ml/min Hemorrhage 	|				|	30	|	590	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% normal @cite guyton2006medical	</span>|<span class="success">	4190	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="success">	No Change @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	1405	|	1800	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
-|	Start IV Fluids: Saline at 100 mL/min with a 500 mL bag	|				|	590	|	1090	|<span class="success">	Decrease @cite metoyer2016SME	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	4590	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
-
-
-<br><center>
-*Table 18. Validation matrix for an internal class II hemorrhage from the spleen. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 60 ml/min Hemorrhage from Spleen	|				|	30	|	1230	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~80% - No Change bc internal pressure normal @cite guyton2006medical	</span>|<span class="success">	4300	</span>|<span class="success">	Decrease ~65-70% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	630	</span>|<span class="danger">	No Change @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	1230	|	1500	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
-
-
-<br><center>
-*Table 19. Validation matrix for a class III hemorrhage. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 200 ml/min Hemorrhage from leg and vena cava	|				|	30	|	575	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~50% normal @cite guyton2006medical	</span>|<span class="success">	3600	</span>|<span class="success">	Decrease ~50% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	575	</span>|<span class="danger">	Increase @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	605	|	1000	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
-
-
-*Table 20. Validation matrix for a class III hemorrhage followed by intravenous administration of packed red blood cells. The table engine shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 250 ml/min Hemorrhage from leg and vena cava	|				|	30	|	400	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~60% normal @cite guyton2006medical	</span>|<span class="success">	3800	</span>|<span class="success">	Decrease ~50% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	575	</span>|<span class="danger">	Increase @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	430	|	550	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
-|	Start IV Fluids: Packed RBCs at 5 mL/min with a 250 mL bag	|				|	550	|	2000	</span>|<span class="warning">	No Change	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase 	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|
-
-
-*Table 21. Validation matrix for a class IV hemorrhage. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Initiate 200 ml/min Hemorrhage from leg and vena cava	|				|	30	|	650	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~60% normal @cite guyton2006medical	</span>|<span class="success">	3400	</span>|<span class="success">	Decrease ~50% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	500	</span>|<span class="danger">	Increase @cite guyton2006medical	</span>|
-|	Stop Hemorrhage	|				|	680	|	750	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Decrease  @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	Decrease  @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	No Change	</span>|<span class="success">	No Change	</span>|
+@anchor hemorrhage-validation
+@insert ./validation/markdown/Hemorrhage.md
 
 
 ### Pericardial Effusion
