@@ -978,40 +978,43 @@ namespace pulse
     }
     //Update system data
     CalculateVitalSigns();
-
-    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
-    {
-      //TODO: Make this work for the expanded model
-      ComputeExposedModelParameters();
-    }
+    ComputeExposedModelParameters();
   }
   void RespiratoryModel::ComputeExposedModelParameters()
   {
-    double leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-    double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-    double leftLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-    double rightLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-    double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
-    double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
-    double totalCompliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
-    GetTotalRespiratoryModelCompliance().SetValue(totalCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-
-    double airwayResistance_cmH2O_s_Per_L = m_PharynxToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double leftBronchiResistance_cmH2O_s_Per_L = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double rightBronchiResistance_cmH2O_s_Per_L = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double leftAlveoliDuctResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double rightAlveoliDuctResistance_cmH2O_s_Per_L = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double leftSideResistance_cmH2O_s_Per_L = leftBronchiResistance_cmH2O_s_Per_L + leftAlveoliDuctResistance_cmH2O_s_Per_L;
-    double rightSideResistance_cmH2O_s_Per_L = rightBronchiResistance_cmH2O_s_Per_L + rightAlveoliDuctResistance_cmH2O_s_Per_L;
-    double totalDownstreamResistance_cmH2O_s_Per_L = 1.0 / (1.0 / leftSideResistance_cmH2O_s_Per_L + 1.0 / rightSideResistance_cmH2O_s_Per_L);
-    double totalResistance_cmH2O_s_Per_L = airwayResistance_cmH2O_s_Per_L + totalDownstreamResistance_cmH2O_s_Per_L;
-    if (m_PharynxToCarina->GetFlow(VolumePerTimeUnit::L_Per_s) > 0.0)
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
     {
-      GetTotalRespiratoryModelInspiratoryResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double leftChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      double rightChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      double leftLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      double rightLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetNextCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      double leftSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / leftChestWallCompliance_L_Per_cmH2O + 1.0 / leftLungCompliance_L_Per_cmH2O);
+      double rightSideCompliance_L_Per_cmH2O = 1.0 / (1.0 / rightChestWallCompliance_L_Per_cmH2O + 1.0 / rightLungCompliance_L_Per_cmH2O);
+      double totalCompliance_L_Per_cmH2O = leftSideCompliance_L_Per_cmH2O + rightSideCompliance_L_Per_cmH2O;
+      GetTotalRespiratoryModelCompliance().SetValue(totalCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+
+      double airwayResistance_cmH2O_s_Per_L = m_PharynxToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double leftBronchiResistance_cmH2O_s_Per_L = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double rightBronchiResistance_cmH2O_s_Per_L = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double leftAlveoliDuctResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double rightAlveoliDuctResistance_cmH2O_s_Per_L = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      double leftSideResistance_cmH2O_s_Per_L = leftBronchiResistance_cmH2O_s_Per_L + leftAlveoliDuctResistance_cmH2O_s_Per_L;
+      double rightSideResistance_cmH2O_s_Per_L = rightBronchiResistance_cmH2O_s_Per_L + rightAlveoliDuctResistance_cmH2O_s_Per_L;
+      double totalDownstreamResistance_cmH2O_s_Per_L = 1.0 / (1.0 / leftSideResistance_cmH2O_s_Per_L + 1.0 / rightSideResistance_cmH2O_s_Per_L);
+      double totalResistance_cmH2O_s_Per_L = airwayResistance_cmH2O_s_Per_L + totalDownstreamResistance_cmH2O_s_Per_L;
+      if (m_PharynxToCarina->GetFlow(VolumePerTimeUnit::L_Per_s) > 0.0)
+      {
+        GetTotalRespiratoryModelInspiratoryResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
+      else
+      {
+        GetTotalRespiratoryModelExpiratoryResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
     }
     else
     {
-      GetTotalRespiratoryModelExpiratoryResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      // TODO Compute TotalRespiratoryModelCompliance on the expanded lungs
+      // TODO Compute TotalRespiratoryModelResistance on the expanded lungs
     }
   }
 
