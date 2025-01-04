@@ -331,7 +331,8 @@ namespace pulse
     GetRespiratoryElastance().SetValue(1.0 / 0.1, PressurePerVolumeUnit::cmH2O_Per_L);
 
     GetTotalRespiratoryModelCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
-    GetTotalRespiratoryModelResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    GetTotalRespiratoryModelInspiratoryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    GetTotalRespiratoryModelExpiratoryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
     GetInspiratoryRespiratoryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     GetExpiratoryRespiratoryResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -747,8 +748,14 @@ namespace pulse
     double rightSideResistance_cmH2O_s_Per_L = rightBronchiResistance_cmH2O_s_Per_L + rightAlveoliDuctResistance_cmH2O_s_Per_L;
     double totalDownstreamResistance_cmH2O_s_Per_L = 1.0 / (1.0 / leftSideResistance_cmH2O_s_Per_L + 1.0 / rightSideResistance_cmH2O_s_Per_L);
     double totalResistance_cmH2O_s_Per_L = airwayResistance_cmH2O_s_Per_L + totalDownstreamResistance_cmH2O_s_Per_L;
-
-    GetTotalRespiratoryModelResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    if (m_PharynxToCarina->GetFlow(VolumePerTimeUnit::L_Per_s) > 0.0)
+    {
+      GetTotalRespiratoryModelInspiratoryResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+    else
+    {
+      GetTotalRespiratoryModelExpiratoryResistance().SetValue(totalResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
   }
 
   //--------------------------------------------------------------------------------------------------

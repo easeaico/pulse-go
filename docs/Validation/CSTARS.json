@@ -406,6 +406,13 @@
         "Header": []
       },
       {
+        "TableName": "Segment4SegmentTable",
+        "ScenarioName": "Scenario3",
+        "Segment": 4,
+        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "Header": []
+      },
+      {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario4",
         "Segment": 1,

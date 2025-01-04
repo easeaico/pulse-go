@@ -42,6 +42,10 @@
     { "DecimalFormat": { "Precision": 3 }, "Category": "MechanicalVentilator",        "PropertyName": "ExtrinsicPositiveEndExpiratoryPressure", "Unit": "cmH2O" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "MechanicalVentilator",        "PropertyName": "TotalPositiveEndExpiratoryPressure",   "Unit": "cmH2O" },
 
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "TotalRespiratoryModelInspiratoryResistance", "Unit": "cmH2O s/L" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "TotalRespiratoryModelExpiratoryResistance",  "Unit": "cmH2O s/L" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "TotalRespiratoryModelCompliance",            "Unit": "mL/cmH2O" },
+
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "ExtrinsicPositiveEndExpiratoryPressure", "Unit": "cmH2O"     },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "TotalPositiveEndExpiratoryPressure",  "Unit": "cmH2O"     },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "EndTidalCarbonDioxidePressure",       "Unit": "mmHg" },

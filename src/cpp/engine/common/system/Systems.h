@@ -279,7 +279,8 @@ namespace pulse
     {
       SERespiratorySystem::Clear();
       m_TotalRespiratoryModelCompliance.Invalidate();
-      m_TotalRespiratoryModelResistance.Invalidate();
+      m_TotalRespiratoryModelInspiratoryResistance.Invalidate();
+      m_TotalRespiratoryModelExpiratoryResistance.Invalidate();
     }
 
     virtual const SEScalar* GetScalar(const std::string & name) override
@@ -290,14 +291,17 @@ namespace pulse
       // Check to see if this a model specific request
       if (name.compare("TotalRespiratoryModelCompliance") == 0)
         return &m_TotalRespiratoryModelCompliance;
-      if (name.compare("TotalRespiratoryModelResistance") == 0)
-        return &m_TotalRespiratoryModelResistance;
+      if (name.compare("TotalRespiratoryModelInspiratoryResistance") == 0)
+        return &m_TotalRespiratoryModelInspiratoryResistance;
+      if (name.compare("TotalRespiratoryModelExpiratoryResistance") == 0)
+        return &m_TotalRespiratoryModelExpiratoryResistance;
       return nullptr;
     }
     virtual void ComputeExposedModelParameters() = 0;
 
     DEFINE_UNIT_SCALAR(TotalRespiratoryModelCompliance, VolumePerPressure);
-    DEFINE_UNIT_SCALAR(TotalRespiratoryModelResistance, PressureTimePerVolume);
+    DEFINE_UNIT_SCALAR(TotalRespiratoryModelInspiratoryResistance, PressureTimePerVolume);
+    DEFINE_UNIT_SCALAR(TotalRespiratoryModelExpiratoryResistance, PressureTimePerVolume);
   };
 
   class PULSE_DECL TissueSystem : public SETissueSystem

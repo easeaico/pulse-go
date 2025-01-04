@@ -31,6 +31,10 @@
     { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "IntrapulmonaryPressure",                     "Unit": "cmH2O"     },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "VentilationPerfusionRatio",                  "Unit": "unitless"  },
 
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalRespiratoryModelExpiratoryResistance",  "Unit": "cmH2O s/L" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalRespiratoryModelInspiratoryResistance", "Unit": "cmH2O s/L" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalRespiratoryModelCompliance",            "Unit": "L/cmH2O"   },
+
     { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "LeftLungPulmonary",  "PropertyName": "Volume", "Unit": "mL" },
     { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "RightLungPulmonary", "PropertyName": "Volume", "Unit": "mL" },
 
