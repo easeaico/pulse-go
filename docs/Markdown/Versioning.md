@@ -13,10 +13,10 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ## Pulse Integration (Current new feature set)
 
-## Pulse v4.3.1 (November 2024)
+## Pulse v4.3.1 (January 2025)
 
 - ThirdParty
-  - Update to Protobuf 29.0
+  - Update to Protobuf 29.2
     - Fixes the Microsoft SDK infinity issue
 
 - CDM API Changes

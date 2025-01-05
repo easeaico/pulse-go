@@ -18,12 +18,12 @@ endif()
 # Generally, We only support the latest version at the time of a release
 # And any release that somebody has requested we support for compatibility with their application
 
-set(Protobuf_VERSION "29.0-rc1" CACHE STRING "Select the  version of ProtoBuf to build.")
-set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "29.0-rc1" "21.12")
+set(Protobuf_VERSION "29.2" CACHE STRING "Select the  version of ProtoBuf to build.")
+set_property(CACHE Protobuf_VERSION PROPERTY STRINGS "29.2" "21.12")
 
-if (Protobuf_VERSION VERSION_EQUAL 29.0-rc1)# Latest, Can change
+if (Protobuf_VERSION VERSION_EQUAL 29.2)# Latest, Can change
   set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-${Protobuf_VERSION}.zip" )
-  set(Protobuf_md5 "8557b1251480efa9187129ff6f1b6f8a" )
+  set(Protobuf_md5 "d1ec2e72f9eb3d4cbcb15006d2232184" )
 elseif (Protobuf_VERSION VERSION_EQUAL 21.12)# Last version before the ABSL dependency
   set(Protobuf_url "https://github.com/protocolbuffers/protobuf/releases/download/v${Protobuf_VERSION}/protobuf-all-${Protobuf_VERSION}.zip" )
   set(Protobuf_md5 "4ef7148d6f8b42bcdba687ea1b60292f" )
