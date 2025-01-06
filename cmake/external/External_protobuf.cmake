@@ -33,8 +33,9 @@ else()
 endif()
 
 set(BUILD_PROTOC_BINARIES ON)
-if(Pulse_C_AS_STATIC)
+if(Pulse_C_AS_STATIC OR Pulse_NATIVE_BUILD_DIR)
   set(BUILD_PROTOC_BINARIES OFF)
+  message(STATUS "Not building protoc binaries")
 endif()
 
 set(_pb_args)
@@ -59,6 +60,7 @@ add_external_project_ex( protobuf
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
     -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=${Pulse_MSVC_STATIC_RUNTIME}
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
+    -Dprotobuf_BUILD_LIBUPB:BOOL=OFF
     -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
     ${_pb_args}
   ${PROTOBUF_MULTI_BUILD}
