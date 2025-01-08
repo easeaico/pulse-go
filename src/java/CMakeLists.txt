@@ -2,7 +2,7 @@ if(NOT Pulse_JAVA_API)
   return()
 endif()
 
-find_package(Java REQUIRED)
+find_package(Java COMPONENTS Development)
 include(UseJava)
 find_package(JNI REQUIRED)
 
