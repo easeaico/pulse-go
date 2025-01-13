@@ -34,7 +34,6 @@
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "LeftAfferentArterioleResistance",   "Unit": "mmHg min/mL" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RightAfferentArterioleResistance",  "Unit": "mmHg min/mL" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance",        "Unit": "mmHg s/mL" },
-    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "BaseExcess", "Unit": "mEq/L"},
 
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
@@ -43,9 +42,8 @@
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightTubules", "SubstanceName": "Sodium",        "PropertyName": "Concentration",   "Unit": "g/L" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftTubules",  "SubstanceName": "Sodium",        "PropertyName": "Concentration",   "Unit": "g/L" },
 
-    { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Lactate","PropertyName": "BloodConcentration",  "Unit": "ug/L" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Oxygen",        "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer",    "Unit": "mL/s" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Oxygen",        "PropertyName": "AlveolarTransfer",    "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer",    "Unit": "mL/min" },
 
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
