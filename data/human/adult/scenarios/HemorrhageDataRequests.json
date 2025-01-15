@@ -9,6 +9,9 @@
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart",   "PropertyName": "InFlow",  "Unit": "mL/min" },
 
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
-      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"}
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "BaseExcess", "Unit": "mEq/L"},
+
+      { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Lactate","PropertyName": "BloodConcentration",  "Unit": "ug/L" }
   ]
 }
