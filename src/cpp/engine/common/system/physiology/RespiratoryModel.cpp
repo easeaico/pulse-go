@@ -4744,7 +4744,13 @@ namespace pulse
 
     //------------------------------------------------------------------------------------------------------
     m_NotBreathing = false;
-    if (SEScalar::IsZero(1.0 - dyspneaSeverity, ZERO_APPROX)) //~1.0
+    double respirationRateDyspneaSeverity = 0.0;
+    if (m_PatientActions->GetDyspnea().HasRespirationRateSeverity())
+    {
+      respirationRateDyspneaSeverity = m_PatientActions->GetDyspnea().GetRespirationRateSeverity().GetValue();
+    }
+    if (SEScalar::IsZero(1.0 - dyspneaSeverity, ZERO_APPROX) ||
+      SEScalar::IsZero(1.0 - respirationRateDyspneaSeverity, ZERO_APPROX)) //~1.0
     {
       dyspneaSeverity = 1.0;
       m_NotBreathing = true;
