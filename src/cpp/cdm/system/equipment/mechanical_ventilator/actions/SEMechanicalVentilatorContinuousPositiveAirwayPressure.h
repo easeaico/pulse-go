@@ -17,7 +17,7 @@ public:
   std::string GetName() const override { return Name; }
 
   void Clear() override;
-  virtual void Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, bool /*preserveState*/ = false);
+  virtual void Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
 
   bool IsValid() const override;

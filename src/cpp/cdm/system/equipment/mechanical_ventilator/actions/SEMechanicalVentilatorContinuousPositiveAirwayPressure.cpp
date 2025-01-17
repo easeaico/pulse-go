@@ -51,9 +51,9 @@ void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Clear()
   INVALIDATE_PROPERTY(m_ExpirationCyclePressure);
 }
 
-void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, bool /*preserveState*/)
+void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
@@ -85,11 +85,11 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
     // Optional Values (Transfer data, let the SEMechanicalVentilatorSettings class handle precedence)
 
     s.SetExpirationCycleRespiratoryModel(eSwitch::Off);
-    if (HasInspirationPatientTriggerFlow())
-      s.GetInspirationPatientTriggerFlow().Set(GetInspirationPatientTriggerFlow());
-    if (HasInspirationPatientTriggerPressure())
-      s.GetInspirationPatientTriggerPressure().Set(GetInspirationPatientTriggerPressure());
-    if(!HasInspirationPatientTriggerFlow() && !HasInspirationPatientTriggerPressure())
+    if (HasExpirationCycleFlow())
+      s.GetExpirationCycleFlow().Set(GetExpirationCycleFlow());
+    if (HasExpirationCyclePressure())
+      s.GetExpirationCyclePressure().Set(GetExpirationCyclePressure());
+    if (!HasExpirationCycleFlow() && !HasExpirationCyclePressure())
       s.SetExpirationCycleRespiratoryModel(eSwitch::On);
 
     if (HasExpirationWaveform())
@@ -98,11 +98,11 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
       s.SetExpirationWaveform(eDriverWaveform::Square);
 
     s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-    if (HasExpirationCycleFlow())
-      s.GetExpirationCycleFlow().Set(GetExpirationCycleFlow());
-    if (HasExpirationCyclePressure())
-      s.GetExpirationCyclePressure().Set(GetExpirationCyclePressure());
-    if (!HasExpirationCycleFlow() && !HasExpirationCyclePressure())
+    if (HasInspirationPatientTriggerFlow())
+      s.GetInspirationPatientTriggerFlow().Set(GetInspirationPatientTriggerFlow());
+    if (HasInspirationPatientTriggerPressure())
+      s.GetInspirationPatientTriggerPressure().Set(GetInspirationPatientTriggerPressure());
+    if (!HasInspirationPatientTriggerFlow() && !HasInspirationPatientTriggerPressure())
       s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
     if (HasInspirationWaveform())

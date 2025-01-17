@@ -52,9 +52,9 @@ void SEMechanicalVentilatorPressureControl::Clear()
   INVALIDATE_PROPERTY(m_Slope);
 }
 
-void SEMechanicalVentilatorPressureControl::Copy(const SEMechanicalVentilatorPressureControl& src, bool /*preserveState*/)
+void SEMechanicalVentilatorPressureControl::Copy(const SEMechanicalVentilatorPressureControl& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)

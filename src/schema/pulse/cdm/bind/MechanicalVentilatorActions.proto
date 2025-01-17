@@ -45,6 +45,7 @@ message MechanicalVentilatorModeData
   MechanicalVentilatorActionData               MechanicalVentilatorAction                = 1;
   
   eSwitch                                      Connection                                = 2; /**<< @brief @ref eSwitchTable */
+  MechanicalVentilatorSettingsData             SupplementalSettings                      = 3; /**<< @brief Additional settings to apply with the mode (ex. Drugs). */
 }
 
 message MechanicalVentilatorContinuousPositiveAirwayPressureData

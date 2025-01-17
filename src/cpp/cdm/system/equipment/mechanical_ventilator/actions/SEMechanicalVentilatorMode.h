@@ -22,7 +22,12 @@ public:
   virtual eSwitch GetConnection() const;
   virtual void SetConnection(eSwitch c);
 
+  bool HasSupplementalSettings() const;
+  SEMechanicalVentilatorSettings& GetSupplementalSettings();
+  const SEMechanicalVentilatorSettings* GetSupplementalSettings() const;
+
 protected:
 
   eSwitch             m_Connection;
-};  
+  SEMechanicalVentilatorSettings* m_SupplementalSettings;
+};

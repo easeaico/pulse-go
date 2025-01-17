@@ -161,7 +161,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorContinuousPositiveAirwayPressure* cpap = dynamic_cast<const SEMechanicalVentilatorContinuousPositiveAirwayPressure*>(&action);
     if (cpap != nullptr)
     {
-      GetMechanicalVentilatorContinuousPositiveAirwayPressure().Copy(*cpap, true);
+      GetMechanicalVentilatorContinuousPositiveAirwayPressure().Copy(*cpap, m_SubMgr, true);
       m_MechanicalVentilatorContinuousPositiveAirwayPressure->Activate();
       if (!m_MechanicalVentilatorContinuousPositiveAirwayPressure->IsActive())
         RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
@@ -186,7 +186,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorPressureControl* pc = dynamic_cast<const SEMechanicalVentilatorPressureControl*>(&action);
     if (pc != nullptr)
     {
-      GetMechanicalVentilatorPressureControl().Copy(*pc, true);
+      GetMechanicalVentilatorPressureControl().Copy(*pc, m_SubMgr, true);
       m_MechanicalVentilatorPressureControl->Activate();
       if (!m_MechanicalVentilatorPressureControl->IsActive())
         RemoveMechanicalVentilatorPressureControl();
@@ -211,7 +211,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorVolumeControl* vc = dynamic_cast<const SEMechanicalVentilatorVolumeControl*>(&action);
     if (vc != nullptr)
     {
-      GetMechanicalVentilatorVolumeControl().Copy(*vc, true);
+      GetMechanicalVentilatorVolumeControl().Copy(*vc, m_SubMgr, true);
       m_MechanicalVentilatorVolumeControl->Activate();
       if (!m_MechanicalVentilatorVolumeControl->IsActive())
         RemoveMechanicalVentilatorVolumeControl();
