@@ -7,6 +7,48 @@
       {
         "MultiHeaderSeriesPlotter":
         {
+          "Comment": "Hemorrhages - Severity",
+          "PlotConfig":
+          {
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/VaryingSeverityResults.csv" }
+          ],
+          "Series":
+          [
+            { "Title": "Varying Severity of Hemorrhage", "OutputFilename": "HemorrhageSeverity",
+            "YHeader": [ "TotalHemorrhageRate(mL/s)" ], "YLabel": "Hemorrhage Flow Rate",
+            "YBounds": { "LowerBound": 0, "UpperBound": 10 }
+            }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhages - Severity To Flow",
+          "PlotConfig":
+          {
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/SeverityToFlowToSeverityResults.csv" }
+          ],
+          "Series":
+          [
+            { "Title": "Severity to Flow Rate to Severity Hemorrhage", "OutputFilename": "HemorrhageSeverityToFlow",
+            "YHeader": [ "TotalHemorrhageRate(mL/s)" ], "YLabel": "Hemorrhage Flow Rate",
+            "YBounds": { "LowerBound": 0, "UpperBound": 10 }
+            }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
           "Comment": "Hemorrhages - Class 4 No Fluid",
           "PlotConfig":
           {
@@ -64,12 +106,12 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup1Results.csv", "Label": "Group 1" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup2Results.csv", "Label": "Group 2" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup3Results.csv", "Label": "Group 3" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup4Results.csv", "Label": "Group 4" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup5Results.csv", "Label": "Group 5" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup6Results.csv", "Label": "Group 6" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group1Results.csv", "Label": "Group 1" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group2Results.csv", "Label": "Group 2" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group3Results.csv", "Label": "Group 3" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group4Results.csv", "Label": "Group 4" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group5Results.csv", "Label": "Group 5" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group6Results.csv", "Label": "Group 6" }
           ],
           "Series":
           [
@@ -138,7 +180,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageToShockResults.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/HemorrhageToShockResults.csv" }
           ],
           "Series":
           [
@@ -520,7 +562,7 @@
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass4NoFluidResults.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class4NoFluidResults.csv" }
           ],
           "ValidationSource":
           {
@@ -534,31 +576,6 @@
                 "YLabel": "Pulse Normalized Mean Arterial Pressure", "X2Header": "BloodVolumeLost(%)",
                 "Y2Header": [ "NormalizedMeanArterialPressure" ],
                 "Y2Label": "Validation Normalized Mean Arterial Pressure" }
-          ]
-        }
-      },
-      {
-        "MultiHeaderSeriesPlotter":
-        {
-          "Comment": "Hemorrhage Groups",
-          "PlotConfig":
-          {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY"
-          },
-          "PlotSource":
-          [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup1Results.csv", "Label": "Group 1" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup2Results.csv", "Label": "Group 2" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup3Results.csv", "Label": "Group 3" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup4Results.csv", "Label": "Group 4" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup5Results.csv", "Label": "Group 5" },
-            { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageGroup6Results.csv", "Label": "Group 6" }
-          ],
-          "Series":
-          [
-            { "Title": "Cardiovascular Hemorrhage Groups", "OutputFilename": "HemorrhageGroups",
-                "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
-                "YBounds": { "LowerBound": 0, "UpperBound": 105 } }
           ]
         }
       }

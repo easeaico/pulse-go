@@ -12,7 +12,7 @@ The cardiovascular system is a closed-loop system of compartments that represent
 Introduction
 ------------
 ### Cardiovascular Physiology
-The cardiovascular system is a large organ system comprised of the heart and the blood vessels. It serves as the body's primary transport and distribution system. The cardiovascular system is sometimes described as two separate circulations: the systemic circulation and the pulmonary circulation. In the systemic circulation, oxygenated blood leaves the left side of the heart, travels  through arteries and into the capillaries, and then returns as deoxygenated blood through the veins to the right side of the heart. From the right side of the heart, the deoxygenated blood travels in the pulmonary circulation through the pulmonary arteries, is re-oxygenated in the pulmonary capillaries, and then returns to the left side of the heart through the pulmonary veins (Figure 1). Whether the cardiovascular circulation is thought of as one closed circuit with a single dual-purpose pump or two interconnected circuits with separate synchronous pumps, the key combination of systemic and pulmonary vasculature serves as a distribution and exchange network, providing vital oxygen to the tissues and removing toxic carbon dioxide while distributing nutrients and other substances necessary for healthy physiologic function.
+The cardiovascular system is a large organ system comprised of the heart and the blood vessels. It serves as the body's primary transport and distribution system. The cardiovascular system is sometimes described as two separate circulations: the systemic circulation and the pulmonary circulation. In the systemic circulation, oxygenated blood leaves the left side of the heart, travels  through arteries and into the capillaries, and then returns as deoxygenated blood through the veins to the right side of the heart. From the right side of the heart, the deoxygenated blood travels in the pulmonary circulation through the pulmonary arteries, is re-oxygenated in the pulmonary capillaries, and then returns to the left side of the heart through the pulmonary veins (@figureref {SystemDiagram}). Whether the cardiovascular circulation is thought of as one closed circuit with a single dual-purpose pump or two interconnected circuits with separate synchronous pumps, the key combination of systemic and pulmonary vasculature serves as a distribution and exchange network, providing vital oxygen to the tissues and removing toxic carbon dioxide while distributing nutrients and other substances necessary for healthy physiologic function.
 
 \htmlonly
 <center>
@@ -23,7 +23,7 @@ The cardiovascular system is a large organ system comprised of the heart and the
 </center>
 @endhtmlonly
 <center>
-<i>Figure 1. The cardiovascular System with pulmonary and systemic circulations of the human body @cite KVDP2014Circulatory. 
+<i>@figuredef {SystemDiagram} The cardiovascular System with pulmonary and systemic circulations of the human body @cite KVDP2014Circulatory. 
 Both the pulmonary and systemic circulation originate in the heart, which acts as a pump driving the blood through the entire body. The blood then returns to the right heart via the vena cava, where the right ventricle sends it to the pulmonary arteries and into the lungs. Gas exchange occurs in the vascular arterioles, creating oxygen-rich blood. This blood then returns via the pulmonary veins to the left atrium of the heart. The oxygen-rich blood enters the systemic circulation, providing oxygen to the rest of the body.</i>
 </center>
 <br>
@@ -91,7 +91,7 @@ Features, Capabilities, and Dependencies
 ### The Cardiovascular Circuit
 The CV circuit (Figure 2) estimates blood pressure, flow, and volume for organs that are represented by several compartments. These compartments are comprised of lumped parameter models that use resistors and capacitors. Inductors may also be used to model inertial effects. The system is discretized into nodes that are connected by paths (see @ref CircuitMethodology). The circuit used to represent the CV System was designed to provide a level of resolution and fidelity that meets the [requirements](@ref MainPageFAQ) of the overall project.
 
-For example, to provide a means for clearing drugs and substances from the bloodstream, the liver and kidneys must have blood flow, pressure, and volume calculations. Another example is the four extremities (right and left arms and legs) that provide extremity hemorrhage capabilities, having been implemented in a previous project (HumanSim: Combat Medic). In this way, the lumped parameter model provides a mechanism for increasing fidelity as required by the anatomic region or physiologic condition being modeled. The large thoracic arteries are lumped together into one &ldquo;Aorta&rdquo; compartment, which is represented by four nodes and three paths. The fidelity of any compartment could be easily improved by increasing the level of discretization. By adding nodes and paths, the engine &ldquo;Aorta&rdquo; could become the &ldquo;Ascending Aorta&rdquo; and &ldquo;Descending Aorta&rdquo; to accommodate the fidelity demands of the other systems. This could provide an opportunity to model more complex geometries and pathologies, such as stenosis. Figure 2 shows the cardiovascular circuit. For clarity, the more discretized [renal circuit](@ref renal-circuit) is not shown in this diagram. 
+For example, to provide a means for clearing drugs and substances from the bloodstream, the liver and kidneys must have blood flow, pressure, and volume calculations. Another example is the four extremities (right and left arms and legs) that provide extremity hemorrhage capabilities, having been implemented in a previous project (HumanSim: Combat Medic). In this way, the lumped parameter model provides a mechanism for increasing fidelity as required by the anatomic region or physiologic condition being modeled. The large thoracic arteries are lumped together into one &ldquo;Aorta&rdquo; compartment, which is represented by four nodes and three paths. The fidelity of any compartment could be easily improved by increasing the level of discretization. By adding nodes and paths, the engine &ldquo;Aorta&rdquo; could become the &ldquo;Ascending Aorta&rdquo; and &ldquo;Descending Aorta&rdquo; to accommodate the fidelity demands of the other systems. This could provide an opportunity to model more complex geometries and pathologies, such as stenosis. @figureref {CircuitDiagram} shows the cardiovascular circuit. For clarity, the more discretized [renal circuit](@ref renal-circuit) is not shown in this diagram. 
 
 @htmlonly
 <center>
@@ -100,7 +100,7 @@ For example, to provide a means for clearing drugs and substances from the blood
 </center>
 @endhtmlonly
 <center>
-<i>Figure 2. The cardiovascular circuit consists of nodes that are connected via paths. These segments of nodes and paths are mapped to several compartments which represent the anatomy of the cardiovascular system. The circuit is used to estimate the blood pressure, flow, and volume of these anatomical compartments.</i>
+<i>@figureref {CircuitDiagram} The cardiovascular circuit consists of nodes that are connected via paths. These segments of nodes and paths are mapped to several compartments which represent the anatomy of the cardiovascular system. The circuit is used to estimate the blood pressure, flow, and volume of these anatomical compartments.</i>
 </center><br>
 
 Nodes serve as the connection points for paths and are the locations at which pressures are measured. Each CV node contains a pressure value, which is given with respect to the atmospheric reference node (indicated in the diagram by the equipotential symbol). Paths contain information about the flow (volume per time). The @ref CircuitMethodology document contains more information about circuit definitions and modeling. The @ref SubstanceTransportMethodology contains more information about the substance transport. In general, nodes contain "across" information and paths contain "through" information.
@@ -113,23 +113,23 @@ Derived values for the hemodynamic parameters are available, particularly for sp
 The heart model generates pressure that drives the hemodynamics through a variable capacitor that simulates the changing elastance of the myocardium throughout the cardiac cycle. The simulated heart has two sides, left and right, simulating the two sides of the human heart. The atria are not included in the heart model; only the ventricular behavior is modeled.
 
 #### Heart Elastance and Compliance
-The heart compliance is calculated from the inverse of the heart elastance. The heart elastance model used is adapted from the one developed by Stergiopulos et al @cite stergiopulos1996elastance. This model utilizes a double Hill function to represent heart elastance over the cardiac cycle time period. It was chosen due to its ability to scale with increasing or decreasing cardiac cycle times. The functional form for elastance of both left and right ventricles is shown in Equation 1 and Equation 2.
+The heart compliance is calculated from the inverse of the heart elastance. The heart elastance model used is adapted from the one developed by Stergiopulos et al @cite stergiopulos1996elastance. This model utilizes a double Hill function to represent heart elastance over the cardiac cycle time period. It was chosen due to its ability to scale with increasing or decreasing cardiac cycle times. The functional form for elastance of both left and right ventricles is shown in @equationref {elastance1} and @equationref {elastance2}.
 
 \f[E_{v} (t)=(E_{\max ,v} -E_{\min ,v} )\left(\frac{f(t)}{f_{\max } } \right)+E_{\min ,v} \f]
 <center>
-*Equation 1.*
+*@equationdef {elastance1}*
 </center><br>
 
 Where *E<sub>max,v</sub>* is the maximum ventricle elastance in mmHg per mL. *E<sub>min,v</sub>* is the minimum ventricle elastance in mmHg per mL. *f(t)* is the double Hill function, and *f<sub>max</sub>* is the maximum value of the double Hill over the cardiac cycle length.
 
 \f[f(t)=\left[\frac{\left(\frac{t}{\alpha _{1} T} \right)^{n_{1} } }{1+\left(\frac{t}{\alpha _{1} T} \right)^{n_{1} } } \right]\left[\frac{1}{1+\left(\frac{t}{\alpha _{2} T} \right)^{n_{2} } } \right] \f]
 <center>
-*Equation 2.*
+*@equationdef {elastance2}*
 </center><br>
 
 Where &alpha;<sub>1</sub> , &alpha;<sub>2</sub> , *n<sub>1</sub>*, and *n<sub>2</sub>* are shape parameters used to determine the distribution of the double Hill function. *T* is the cardiac cycle time period and *t* is the current time within the cardiac cycle.
 
-The relationship between the elastance and compliance in the engine is shown in Figure 3.
+The relationship between the elastance and compliance in the engine is shown in @equationref {ComplianceandElastance}.
 
 @htmlonly
 <center>
@@ -138,11 +138,11 @@ The relationship between the elastance and compliance in the engine is shown in 
 </center>
 @endhtmlonly
 <center>
-<i>Figure 3. The left heart compliance and elastance are shown to be inversely related to each other. The elastance represents the change in pressure per change in volume, while the compliance is the change in volume per change in pressure. These quantities define the contraction of the heart, which drives the pressure and flow of the cardiovascular circuit.</i>
+<i>@figuredef {ComplianceandElastance} The left heart compliance and elastance are shown to be inversely related to each other. The elastance represents the change in pressure per change in volume, while the compliance is the change in volume per change in pressure. These quantities define the contraction of the heart, which drives the pressure and flow of the cardiovascular circuit.</i>
 </center><br>
 
 #### Heart Pressure, Volume, and Flow
-The variable compliance, which is used to model heart contraction and relaxation, yields pressure and volume changes that drive the flow through the CV circuit. This variable compliance driver allows the pressures and volumes to be calculated within the heart, as shown in Figure 4.
+The variable compliance, which is used to model heart contraction and relaxation, yields pressure and volume changes that drive the flow through the CV circuit. This variable compliance driver allows the pressures and volumes to be calculated within the heart, as shown in @equationref {PressurevsVolume}.
 
 
 @htmlonly
@@ -152,10 +152,10 @@ The variable compliance, which is used to model heart contraction and relaxation
 </center>
 @endhtmlonly
 <center>
-<i>Figure 4. Relationship between pressure and volume in the left heart throughout the cardiac cycle. The relaxation of the heart muscle is modeled by increasing the compliance, resulting in an increase in left heart volume with a relatively constant left heart pressure. The contraction is represented by a rapid decrease in the compliance, leading to large pressure increases for small volume additions. This large pressure value drives the fluid out of the heart with flow rates calculated based on the circuit solution.</i>
+<i>@figuredef {PressurevsVolume} Relationship between pressure and volume in the left heart throughout the cardiac cycle. The relaxation of the heart muscle is modeled by increasing the compliance, resulting in an increase in left heart volume with a relatively constant left heart pressure. The contraction is represented by a rapid decrease in the compliance, leading to large pressure increases for small volume additions. This large pressure value drives the fluid out of the heart with flow rates calculated based on the circuit solution.</i>
 </center><br>
 
-A pressure-volume curve is used to represent the evolution of the cardiac cycle from the systolic contraction to diastolic relaxation. The pressure-volume curve for the left ventricle is shown in Figure 5. Starting from the bottom left and moving clockwise, the curve demonstrates a rapid increase in pressure with no change in volume. This indicates the systolic contraction of the cardiac cycle. Following this, the pressure declines rapidly as the heart expands during diastole. The last portion of the curve shows decreasing volume at constant pressure. Normally, the pressure would decrease slightly due to the imperfect mitral valve, which does not close instantly. The engine uses ideal valves, which close instantaneously, causing the pressure to be maintained as volume decreases.
+A pressure-volume curve is used to represent the evolution of the cardiac cycle from the systolic contraction to diastolic relaxation. The pressure-volume curve for the left ventricle is shown in @equationref {PVLoop}. Starting from the bottom left and moving clockwise, the curve demonstrates a rapid increase in pressure with no change in volume. This indicates the systolic contraction of the cardiac cycle. Following this, the pressure declines rapidly as the heart expands during diastole. The last portion of the curve shows decreasing volume at constant pressure. Normally, the pressure would decrease slightly due to the imperfect mitral valve, which does not close instantly. The engine uses ideal valves, which close instantaneously, causing the pressure to be maintained as volume decreases.
 
 @htmlonly
 <center>
@@ -164,7 +164,7 @@ A pressure-volume curve is used to represent the evolution of the cardiac cycle 
 </center>
 @endhtmlonly
 <center>
-<i>Figure 5. The pressure-volume curve for the left ventricle is represented as a pressure vs. volume plot. It demonstrates the the contracting and relaxing portions of the cardiac cycle. In addition, the curve demonstrates the use of ideal valves in the simulated heart due to instantaneous changes in volume at a set pressure.</i>
+<i>@figuredef {PVLoop} The pressure-volume curve for the left ventricle is represented as a pressure vs. volume plot. It demonstrates the the contracting and relaxing portions of the cardiac cycle. In addition, the curve demonstrates the use of ideal valves in the simulated heart due to instantaneous changes in volume at a set pressure.</i>
 </center><br>
 
 ### Drug Effects
@@ -177,7 +177,7 @@ This data is stored in a text file.
 To account for the variable heart rate, rhythms are time series of voltage that is representative of a single cardiac cycle.
 The points are then interpolated based on the length of the cardiac cycle.
 
-Figure 6 shows the lead 3 sinus waveform in Pulse compared to an example sinus waveform with the key features highlighted.
+@equationref {SinusECG} shows the lead 3 sinus waveform in Pulse compared to an example sinus waveform with the key features highlighted.
 
 @htmlonly
 <center>
@@ -193,7 +193,7 @@ Figure 6 shows the lead 3 sinus waveform in Pulse compared to an example sinus w
 </center>
 @endhtmlonly
 <center>
-<i>Figure 6. The ECG system produces a normal sinus waveform with the expected features.</i>
+<i>@figuredef {SinusECG} The ECG system produces a normal sinus waveform with the expected features.</i>
 </center><br>
 
 @anchor cardiovascular-variability
@@ -261,7 +261,7 @@ All feedback and imapcts from additional actions will NOT impact the hemodynamic
 <a href="./plots/Cardiovascular/Asystole_Engine.jpg"><img src="./plots/Cardiovascular/Asystole_Engine.jpg" width="250"></a>
 <br>
 @endhtmlonly
-<i>Figure 7. The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole.</i>
+<i>@figuredef {ECGAsystole} The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole.</i>
 </center><br>
 
 <b>Sinus Tachycardia</b>
@@ -284,7 +284,7 @@ All feedback and imapcts from additional actions will still impact the hemodynam
 </table>
 <br>
 @endhtmlonly
-<i>Figure 8. Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
+<i>@figuredef {ECFSinusTachycardia} Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
 </center><br>
 
 <b>Sinus Bradycardia</b>
@@ -307,7 +307,7 @@ All feedback and imapcts from additional actions will still impact the hemodynam
 </table>
 @endhtmlonly
 <br>
-<i>Figure 9. The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
+<i>@figuredef {SinusBradycardia} The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
 </center><br>
 
 <b>Pulseless Electrical Activity (PEA)</b>
@@ -322,7 +322,7 @@ All feedback and imapcts from additional actions will NOT impact the hemodynamic
 <a href="./plots/Cardiovascular/SinusPEA_Engine.jpg"><img src="./plots/Cardiovascular/SinusPEA_Engine.jpg" width="500"></a>
 <br>
 @endhtmlonly
-<i>Figure 10. PEA is characterized by organized electrical activity in a normal sinus rhythm shape with a reduced amplitude @cite ACLS2021Pulseless.</i>
+<i>@figuredef {ECGPEA} PEA is characterized by organized electrical activity in a normal sinus rhythm shape with a reduced amplitude @cite ACLS2021Pulseless.</i>
 </center><br>
 
 <b>Ventricular Fibrillation Arrhythmias</b>
@@ -354,7 +354,7 @@ All feedback and imapcts from additional actions will NOT impact the hemodynamic
 </table>
 <br>
 @endhtmlonly
-<i>Figure 11. Ventricular fibrillation is characterized by disorganized electrical activity. Coarse (Left) has higher electrical signal than fine (Right) ventricular fibrillation @cite ClevelandClinic2021vfib. </i>
+<i>@figuredef {ECGVentricularFib} Ventricular fibrillation is characterized by disorganized electrical activity. Coarse (Left) has higher electrical signal than fine (Right) ventricular fibrillation @cite ClevelandClinic2021vfib. </i>
 </center><br>
 
 <b>Ventricular Tachycardia Arrhythmias</b>
@@ -375,14 +375,14 @@ Unstable ventricular tachycardia is characterized by a heart rate of over 150 @c
 </table>
 <br>
 @endhtmlonly
-<i>Figure 12. This ventricular tachycardia ECG waveform is used for both stable and unstable types and is scaled to the heart rate. </i>
+<i>@figuredef {ECFVentricularTachy} This ventricular tachycardia ECG waveform is used for both stable and unstable types and is scaled to the heart rate. </i>
 </center><br>
 
 Pulse will transition the patient to this heart rate over 60s.
 For stable ventricular tachycardia, the heart rate baseline is set to 130.
 For unstable ventricular tachycardia, the heart rate baseline is set to 160.
 The blood pressure was reduced through for unstable ventricular tachycardia by adding systemic compliance and resistance modifiers.
-The heart rate and blood pressure for stable and unstable ventricular tachycardia are shown in Figure 13.
+The heart rate and blood pressure for stable and unstable ventricular tachycardia are shown in @equationref {ECGHRVentricularTachy}.
 All feedback and imapcts from additional actions will still impact the hemodynamics of the cardiovascular system from this new starting rate.
 
 <center>
@@ -401,7 +401,7 @@ All feedback and imapcts from additional actions will still impact the hemodynam
 </table>
 <br>
 @endhtmlonly
-<i>Figure 13. Heart rate for stable (Far Left) and unstable ventricular (Middle Left) tachycardia meets the validation of 100-150 and greater than 150, respectively @cite ACLS2021Tachy.
+<i>@figuredef {ECGHRVentricularTachy} Heart rate for stable (Far Left) and unstable ventricular (Middle Left) tachycardia meets the validation of 100-150 and greater than 150, respectively @cite ACLS2021Tachy.
 Stable ventricular (Middle Right) tachycardia shows hemodynamic stability, while hemodynamic instability is present in unstable ventricular tachycardia (Far Right) @cite LearningNetwork2021stable @cite Wegria1958effect.</i>
 </center><br>
 
@@ -410,42 +410,8 @@ The ECG is set to a ventricular tachycardia rhythm for pulseless ventricular tac
 All feedback and imapcts from additional actions will NOT impact the hemodynamics of the cardiovascular system, as there is no hemodynamic activity during this arrhythmia.
 
 #### Hemorrhage
-A hemorrhage is a significant reduction in blood volume, which triggers a physiologic response to stabilize cardiovascular function. Hypovolemia is any loss in blood volume, where a loss of more than 35% is considered hypovolemic shock. Hemorrhage causes a reduction in filling pressure for the circulation, leading to a decrease in venous return. This is evidenced by the decrease in mean arterial pressure and cardiac output. If these physiologic values continue to drop, hemorrhagic or hypovolemic shock will occur. There are three stages of shock: a nonprogressive stage, which the normal circulatory responses will lead to a recovery; a progressive stage, which leads to progressively worsening condition and eventual death without intervention; and an irreversible stage, which leads to death regardless of intervention. The sympathetic response is triggered by the decrease in mean arterial blood pressure, specifically by causing the stretch receptors (baroreceptors) to activate. This response triggers an increase in systemic vascular resistance, heart rate, and a decrease in venous compliance. This is discussed in detail in the @ref NervousMethodology. 
-
-Hemorrhage can be initiated in the engine through two methods. The first method allows the user to characterize the hemorrhage by specifying the location (compartment) and bleed rate. Multiple hemorrhages can be applied to a single compartment or to multiple compartments. The user specifies a cardiovascular compartment to apply a hemorrhage. After the hemorrhage has been specified, the total loss rate is the sum of each individual bleed rate to that compartment. This value is set as a negative flow source. This results in a decrease in total blood volume that is linearly proportional to the total loss rate. This flow rate will remain constant throughout the computation. As the blood volume decreases, the blood flow to each compartment will begin to decrease. This could lead to an invalid flow rate for the compartment over time. A second method for specifying hemorrhage deals with this issue. A hemorrhage can also be characterized by specifying the location (compartment) and a severity. The severity is specified with a value between 0 and 1. A path is added to the cardiovascular circuit, but instead of specifying a negative flow rate, a resistance is specified on the path. This provides a calculated flow rate that will increase and decrease based on the dynamic physics of the circuit. This will prevent the insufficient blood flow/volume errors that can occur if the flow rate is not manually managed. When a hemorrhage is initiated with a severity, a minimum and maximum resistance are calculated to bound the severity, as shown in Equations 3 and 4, respectively.
-
-\f[R_{\min} = (P-P_{T})/cQ \f]
-<center>
-<i>Equation 3.</i>
-</center><br> 
-
-Where R<sub>min</sub> is the minimum resistance, P is the blood pressure at the compartment hemorrhaging, P<sub>T</sub> is the pressure at the hemorrhage flow outlet, Q is the flow through the hemorrhage compartment (not the hemorrhage flow), and c a tuning factor. The tuning factor is employed to ensure a severity of 1.0 corresponds to a hemorrhage rate of approximately 90% of the flow through the compartment. The severity specified in the hemorrhage action is then used to calculate the resistance on the path. 
-
-\f[R_{\max} = (c_{1})*R_{\min}/s \f]
-<center>
-<i>Equation 4.</i>
-</center><br>
-
-Figure 8 demonstrates the different severity specifications and the impact on the hemorrhage flow rate as the severity is changed or the body responds to the hemorrhage. The results show that the hemorrhage severity changes the flow rate for the hemorrhage as expected, i.e., a 0.5 severity corresponds to 50% of the flow associated with a severity of 1.0. The results also show that as time passes the flow rate will naturally decrease without changing the severity to correspond to the reduction in blood pressure that occurs with hemorrhage. These results also demonstrate the ability to transition from a severity to a flow implementation and back to severity, if required. 
-
-@htmlonly
-<center>
-<table>
-<tr>
-<td><a href="./Images/Cardiovascular/HemorrhageSeverity.png"><img src="./Images/Cardiovascular/HemorrhageSeverity.png" width="550"></a>
-</td>
-<td><a href="./Images/Cardiovascular/HemorrhageSeverityAndFlow.png"><img src="./Images/Cardiovascular/HemorrhageSeverityAndFlow.png" width="550"></a>
-</td>
-</tr>
-</table>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 8. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).</i>
-</center><br>
-
-An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. For the severity implementation, the hemorrhage outlet compartment is specified as the abdominal cavity for Equation 3. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation. At this time, the internal hemorrhage is only associated with the abdominal region. See the hemothorax model in @ref RespiratoryMethodology for details about hemorrhage into the pleural space. In the future, we plan to add functionality for the brain.
+@anchor hemorrhage-action
+@insert ./validation/markdown/HemorrhageAction.md
 
 #### Pericardial Effusion
 The pericardial effusion action is used to model acute pericardial effusion by adding a flow source on the pericardium. This action leads to a volume accumulation over the course of the simulation. The accumulated volume is used to calculate a pressure source that is applied to the left and right heart. This pressure source is identical to the one used in the pericardial effusion condition. For the pericardial effusion action, the strain-rate dependent compliance of the pericardium is modeled so that the change in intrapericardial pressure is a function of flow rate and the current volume of the pericardium @cite Metoyer2014Modeling.
@@ -501,10 +467,10 @@ The %Cardiovascular System was validated quantitatively and qualitatively under 
 @anchor cardiovascular-validation-resting
 Validation - Resting Physiologic State
 --------------------------------------
-Validation results for system and compartment quantities are listed in Tables 1 and 2. System-level quantities show favorable agreement with validation values. Heart rate, arterial pressures, blood volume, heart stroke volume, and cardiac output are the predominant CV System quantities. These values agree, on average, within ~8 percent of the expected values for the healthy standard patient. 
+Validation results for system and compartment quantities are listed in @tableref {SystemValidation} and @tableref {CompartmentValidation}. System-level quantities show favorable agreement with validation values. Heart rate, arterial pressures, blood volume, heart stroke volume, and cardiac output are the predominant CV System quantities. These values agree, on average, within ~8 percent of the expected values for the healthy standard patient. 
 
 <br><center>
-*Table 1. Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
+*@tabledef {SystemValidation} Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
 </center>
 
 <b>Standard Male</b>
@@ -516,7 +482,7 @@ Validation results for system and compartment quantities are listed in Tables 1 
 @insert ./test_results/tables/Cardiovascular-StandardFemaleValidationTable.md
 
 <br><center>
-*Table 2. Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
+*@tabledef {CompartmentValidation} Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
 </center>
 
 <b>Standard Male</b>
@@ -543,16 +509,16 @@ The arterial pressure waveform was validated according to the plot shown in Figu
 </center>
 @endhtmlonly
 <center>
-<i>Figure 13. Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
+<i>@figuredef {ArterialPRessureWaveforms} Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
 </center><br>
 
 @anchor cardiovascular-validation-conditions
 Validation - Actions and Conditions
 --------------------
-All actions in the CV System were validated. A summary of this validation is shown in Table 3. More details on each individual scenario's validation can be found below.
+All actions in the CV System were validated. A summary of this validation is shown in @tableref {ValidationSummary}. More details on each individual scenario's validation can be found below.
 
 <center>
-*Table 3. Cumulative validation results for %Cardiovascular specific conditions and actions scenarios.*
+*@tabledef {ValidationSummary} Cumulative validation results for %Cardiovascular specific conditions and actions scenarios.*
 </center>
 
 |	Key	|
@@ -597,7 +563,7 @@ Several additional scenarios test going to asystole and returning to each of the
 
 #### Asystole
 <br><center>
-*Table 3. Validation matrix for going from normal sinus, to asystole, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {AsysoleValidation} Validation matrix for going from normal sinus, to asystole, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -608,7 +574,7 @@ Several additional scenarios test going to asystole and returning to each of the
 #### Sinus Bradycardia
 
 <br><center>
-*Table 4. Validation matrix for going from nornal sinus, to sinus bradycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {SinusBradycardiaVal} Validation matrix for going from nornal sinus, to sinus bradycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To SinusBradycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -616,7 +582,7 @@ Several additional scenarios test going to asystole and returning to each of the
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
-*Table 5. Validation matrix form nornal sinus, to asystole, to sinus bradycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {SinusBradycardiaAsystoleVal} Validation matrix form nornal sinus, to asystole, to sinus bradycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To SinusBradycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -627,7 +593,7 @@ Several additional scenarios test going to asystole and returning to each of the
 #### Sinus Tachycardia
 
 <br><center>
-*Table 6. Validation matrix for going from nornal sinus, to sinus tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {SinusTachyVal} Validation matrix for going from nornal sinus, to sinus tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To SinusTachycardia	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -636,7 +602,7 @@ Several additional scenarios test going to asystole and returning to each of the
 
 
 <br><center>
-*Table 7. Validation matrix for going from nornal sinus, to asystole, to sinus tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {SinusTachyAsysoleVal} Validation matrix for going from nornal sinus, to asystole, to sinus tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To SinusTachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -646,7 +612,7 @@ Several additional scenarios test going to asystole and returning to each of the
 
 #### Sinus Pulseless Electrical Activity
 <br><center>
-*Table 8. Validation matrix for Sinus Pulseless Electrical Activity. The table shows the engine output compared to key hemodynamic and respiratory parameters*
+*@tabledef {PEAVal} Validation matrix for Sinus Pulseless Electrical Activity. The table shows the engine output compared to key hemodynamic and respiratory parameters*
 </center>
 |	Sinus Pulseless Electrical Activity To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -660,7 +626,7 @@ Course and fine ventricular fibrillation only differ by the ECG waveform output.
 Physiology is modelled identically for both.
 
 <br><center>
-*Table 9. Validation matrix for going from normal sinus, to coarse Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {VentribularFibCoarse} Validation matrix for going from normal sinus, to coarse Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Coarse Ventricular Fibrillation To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -668,7 +634,7 @@ Physiology is modelled identically for both.
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
-*Table 10. Validation matrix for going from normal sinus, to fine Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {VentribularFibFine} Validation matrix for going from normal sinus, to fine Ventricular Fibrillation, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Fine Ventricular Fibrillation To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -679,7 +645,7 @@ Physiology is modelled identically for both.
 #### Ventricular Tachycardia
 
 <br><center>
-*Table 11. Validation matrix for going from normal sinus, to stable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*T@tabledef {VentricularStableTachy} Validation matrix for going from normal sinus, to stable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To Stable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -687,7 +653,7 @@ Physiology is modelled identically for both.
 |	Normal Sinus	|		|	210	|	300	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
-*Table 12. Validation matrix for going from normal sinus, to asystole, to stable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {VentricularStableAsystole} Validation matrix for going from normal sinus, to asystole, to stable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To Stable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -695,7 +661,7 @@ Physiology is modelled identically for both.
 |	Stable Ventricular Tachycardia	|		|	30	|	130	|<span class="success">	100-150 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Increase @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Ventricular Tachycardia@cite ACLS2021Tachy	</span>|
 
 <br><center>
-*Table 13. Validation matrix for going from normal sinus, to unstable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {VentricularUnstableTachy} Validation matrix for going from normal sinus, to unstable Ventricular Tachycardia, back to normal sinus. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	NormalSinus To Unstable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -703,7 +669,7 @@ Physiology is modelled identically for both.
 |	Normal Sinus	|		|	210	|	300	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
-*Table 14. Validation matrix for going from normal sinus, to asystole, to unstable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {VentricularUnstableTacyAsystole} Validation matrix for going from normal sinus, to asystole, to unstable Ventricular Tachycardia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Asystole To Unstable Ventricular Tachycardia	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -713,7 +679,7 @@ Physiology is modelled identically for both.
 
 #### Pulseless Ventricular Tachycardia
 <br><center>
-*Table 15. Validation matrix for Pulseless Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*@tabledef {PulselessVentricularTachy} Validation matrix for Pulseless Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Pulseless Ventricular Tachycardia To NormalSinus	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Coronary Perfusion Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -725,7 +691,7 @@ Physiology is modelled identically for both.
 There are three CPR scenarios for validation. Each scenario perscribes the same frequency with the 3 different types of Chest compression actions. In each scenario, cardiac arrest is initiated externally. Ten seconds later, compressions begin. In each scenario, the compression rate is set to 80 per minute, and the force is set to 311 N (70 pounds) to match the conditions in @cite redberg1993physiology. Supplemental literature sources were used to validate outputs not available in @cite redberg1993physiology. All of the physiological variables were within validation ranges in both scenarios with the exception of mean arterial pressure and ejection fraction. The mean arterial pressure in the engine is slightly higher than expected. This is most likely due to the fact that the intravascular pressures are higher than those reported in @cite redberg1993physiology. However, the engine pressures are within ranges reported in other references @cite kim2008direction , @cite gruben1990system. The ejection fraction is considerably lower in the engine during CPR than the value reported in @cite kim2008direction. The engine ejection fraction is lower because blood tends to pool in the engine right heart during cardiac arrest. The validation failures that occur right at cardiac arrest are mostly due residual dynamics following asystole in the engine. Errors associated with the cessation of heart function in the engine are a known issue, and resolving this issue is a part of the cardiac arrest recommended improvements discussed [below](@ref cardiovascular-future).  
 
 <br><center>
-*Table 13. Validation matrix for cardiopulmonary resuscitation (CPR) validation results. The table shows the engine output compared to validation data for key hemodynamic values.*
+*@tabledef {CPR} Validation matrix for cardiopulmonary resuscitation (CPR) validation results. The table shows the engine output compared to validation data for key hemodynamic values.*
 </center>
 |	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate(beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Stroke Volume (mL)	|	Carotid Artery (Brain) Flow (mL/min)	|	Ejection Fraction (%)	|	
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	
@@ -735,14 +701,14 @@ There are three CPR scenarios for validation. Each scenario perscribes the same 
 
 
 @anchor hemorrhage-validation
-@insert ./validation/markdown/Hemorrhage.md
+@insert ./validation/markdown/HemorrhageValidation.md
 
 
 ### Pericardial Effusion
 The pericardial effusion scenario has a chronic effusion applied to the patient with a volume accumulation on the pericardium of 500 milliliters. There is a decrease in stroke volume, arterial pressures, and cardiac output. This is due to increasing intrapericardial pressure leading to a reduction in end diastolic volume. The validation trends somewhat follow this same behavior. Pericardial effusion can also be applied as an action and the action and condition can be applied to show a worsening of the chronic condition.
 
 <br><center>
-*Table 22. Validation matrix for a chronic case of pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
+*@tabledef {PericardialEffusionChronic} Validation matrix for a chronic case of pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
 </center>
 |	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|
 |	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -750,7 +716,7 @@ The pericardial effusion scenario has a chronic effusion applied to the patient 
 
 
 <br><center>
-*Table 23. Validation matrix for a chronic case of pericardial effusion combined with an acute worsening of the pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
+@tabledef {PericardialEffusionAcute} Validation matrix for a chronic case of pericardial effusion combined with an acute worsening of the pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
 </center>
 |	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|
 |	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|

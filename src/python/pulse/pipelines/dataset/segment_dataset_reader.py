@@ -273,7 +273,12 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationSegme
     all_actions_str += ']}'
     all_actions = []
     if all_actions_str != '{"AnyAction": []}':
-        all_actions = json.loads(all_actions_str)["AnyAction"]
+        try:
+          all_actions = json.loads(all_actions_str)["AnyAction"]
+        except Exception as e:
+          _pulse_logger.error(f"Unable to parse actions:{e}\n{all_actions_str}")
+          # TODO 
+          return "Error"
 
     # Load conditions into dict
     all_conditions_str = '{"AnyCondition": ['
