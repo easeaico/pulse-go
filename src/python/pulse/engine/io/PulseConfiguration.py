@@ -38,9 +38,8 @@ def serialize_pulse_configuration_to_bind(src: PulseConfiguration, dst: Configur
         dst.AllowDynamicTimeStep = src.allow_dynamic_timestep().value
     if src.has_time_step():
         serialize_scalar_time_to_bind(src.get_time_step(), dst.TimeStep)
-
-    if src.use_expanded_respiratory() is not eSwitch.NullSwitch:
-        dst.RespiratoryConfiguration.UseExpandedRespiratory = src.use_expanded_respiratory().value
+    if src.use_expanded_lungs() is not eSwitch.NullSwitch:
+        dst.RespiratoryConfigurationData.UseExpandedLungs = src.use_expanded_lungs().value
 
 
 def serialize_pulse_configuration_from_bind(src: ConfigurationData, dst: PulseConfiguration):
