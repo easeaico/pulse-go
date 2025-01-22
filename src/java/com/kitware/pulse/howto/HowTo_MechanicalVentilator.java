@@ -112,6 +112,8 @@ public class HowTo_MechanicalVentilator
     cpap.getDeltaPressureSupport().setValue(10.0, PressureUnit.cmH2O);
     cpap.getPositiveEndExpiratoryPressure().setValue(5.0, PressureUnit.cmH2O);
     cpap.getSlope().setValue(0.2, TimeUnit.s);
+ // If you understand our ventilator methodology, You can modify the underlying settings on any mode
+    cpap.getSupplementalSettings().getFractionInspiredGas("Desflurane").getAmount().setValue(0.01);
     pulse.processAction(cpap);
     pulse.advanceTime_s(10);
     // get the values of the data you requested at this time

@@ -6,6 +6,7 @@ namespace Pulse.CDM
   public class SEMechanicalVentilatorMode : SEMechanicalVentilatorAction
   {
     protected eSwitch connection;
+    protected SEMechanicalVentilatorSettings supplemetal_settings = null;
 
     public SEMechanicalVentilatorMode()
     {
@@ -21,12 +22,16 @@ namespace Pulse.CDM
     {
       base.Copy(other);
       connection = other.connection;
+      if (other.supplemetal_settings != null)
+        this.GetSupplementalSettings().Copy(other.supplemetal_settings);
     }
 
     public override void Clear()
     {
       base.Clear();
       connection = eSwitch.Off;
+      if (this.supplemetal_settings != null)
+        this.supplemetal_settings.Clear();
     }
 
     public override bool IsValid()
@@ -43,10 +48,23 @@ namespace Pulse.CDM
       connection = s;
     }
 
+    public bool HasSupplementalSettings()
+    {
+      return this.supplemetal_settings != null;
+    }
+    public SEMechanicalVentilatorSettings GetSupplementalSettings()
+    {
+      if (this.supplemetal_settings == null)
+        this.supplemetal_settings = new SEMechanicalVentilatorSettings();
+      return this.supplemetal_settings;
+    }
+
     public override string ToString()
     {
       string str = "Mechanical Ventilator Mode";
       str += "\n\tConnection: " + this.connection;
+      if (HasSupplementalSettings())
+        str += supplemetal_settings.ToString();
 
       return str;
     }

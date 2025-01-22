@@ -7,10 +7,12 @@ import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorModeData;
 import com.kitware.pulse.cdm.properties.SEScalarPressure;
 import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
+import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilatorSettings;
 
 public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
 {
   protected eSwitch connection;
+  protected SEMechanicalVentilatorSettings supplemental_settings=null;
 
   public SEMechanicalVentilatorMode()
   {
@@ -26,11 +28,15 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
   {
     super.copy(other);
     connection = other.connection;
+    if(other.supplemental_settings!=null)
+      this.getSupplementalSettings().copy(other.supplemental_settings);
   }
 
   public void clear()
   {
     connection = eSwitch.Off;
+    if (this.supplemental_settings != null)
+      this.supplemental_settings.clear();
   }
   
   protected static void load(MechanicalVentilatorModeData src, SEMechanicalVentilatorMode dst)
@@ -38,11 +44,15 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
     dst.clear();
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
     dst.setConnection(src.getConnection());
+    if(src.hasSupplementalSettings())
+      SEMechanicalVentilatorSettings.load(src.getSupplementalSettings(),dst.getSupplementalSettings());
   }
   protected static void unload(SEMechanicalVentilatorMode src, MechanicalVentilatorModeData.Builder dst)
   {
     SEMechanicalVentilatorAction.unload(src, dst.getMechanicalVentilatorActionBuilder());
     dst.setConnection(src.getConnection());
+    if(src.hasSupplementalSettings())
+      dst.setSupplementalSettings(SEMechanicalVentilatorSettings.unload(src.supplemental_settings));
   }
 
   public boolean isValid()
@@ -59,11 +69,24 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
   {
     connection = s;
   }
+  
+  public boolean hasSupplementalSettings()
+  {
+    return this.supplemental_settings!=null;
+  }
+  public SEMechanicalVentilatorSettings getSupplementalSettings()
+  {
+    if(this.supplemental_settings==null)
+      this.supplemental_settings=new SEMechanicalVentilatorSettings();
+    return this.supplemental_settings;
+  }
 
   public String toString()
   {
     String str = "Mechanical Ventilator Mode";
     str += "\n\tConnection: " + this.connection;
+    if(hasSupplementalSettings())
+      str += supplemental_settings.toString();
 
     return str;
   }

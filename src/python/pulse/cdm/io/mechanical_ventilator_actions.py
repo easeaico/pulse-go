@@ -48,6 +48,8 @@ def serialize_mechanical_ventilator_configuration_from_bind(src: MechanicalVenti
 def serialize_mechanical_ventilator_mode_to_bind(src: SEMechanicalVentilatorMode, dst: MechanicalVentilatorModeData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
     dst.Connection = src.get_connection().value
+    if src.has_supplemental_settings():
+        serialize_mechanical_ventilator_to_bind(src.get_supplemental_settings(), dst.SupplementalSettings)
 
 def serialize_mechanical_ventilator_mode_from_bind(src: MechanicalVentilatorModeData, dst: SEMechanicalVentilatorMode):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)
