@@ -288,6 +288,9 @@ void PulseScenarioExec::ControllerLoop(const std::string copy,
       sce.GetLogger()->AddConsolePrefix("["+sce.GetName()+"] ");
       //exec.Info("Executing " + working.GetScenarioFilename());
       // Check to see if we want scenario's to log to the console or not
+      std::string scenarioPath, scenarioFilename;
+      SplitPathFilename(working.GetScenarioFilename(), scenarioPath, scenarioFilename);
+      exec.GetDataRequestFilesSearch().insert(scenarioPath);
       exec.Execute(sce, &working);
     }
     else

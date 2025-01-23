@@ -40,12 +40,16 @@ if __name__ == "__main__":
     logging.info(f"Writing validation\\requests\\Patient.json")
     serialize_data_request_list_to_file(patient_drs, Path("./validation/requests/Patient.json"))
 
-    # In the future, we will do all xlsx in the data/validation dir
-    # But for now, we are just hard coding the automated xlsx files
-    xls_files = ["Hemorrhage.xlsx", "AirwayObstruction.xlsx", "Dehydration.xlsx", "MechanicalVentilator.xlsx", "CSTARS.xlsx"]
+    # In the future, we will do all folders in the data/validation dir
+    # But for now, we are just hard coding the automated directories
+    folders = ["Hemorrhage",
+               "AirwayObstruction",
+               "Dehydration",
+               "MechanicalVentilator",
+               "CSTARS"]
 
-    for xls_file in xls_files:
+    for folder in folders:
         segment_validation_pipeline(
-            xls_file=Path(xls_file),
+            folder=Path(folder),
             exec_opt=eExecOpt.GenerateOnly
         )
