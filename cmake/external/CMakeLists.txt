@@ -14,22 +14,6 @@ endif()
 #-----------------------------------------------------------------------------
 # CMake global args
 #-----------------------------------------------------------------------------
-if(MSVC)
-  # Allow the MP flag to get set externally
-  set(Pulse_ENABLE_MULTI_PROCESS_BUILDS ON CACHE BOOL "Enable multi-process builds")
-  set(PROCESSOR_COUNT "$ENV{NUMBER_OF_PROCESSORS}")
-  set(Pulse_NUM_BUILD_PROCESSES ${PROCESSOR_COUNT} CACHE STRING "The maximum number of processes for the /MP flag")
-  if(Pulse_ENABLE_MULTI_PROCESS_BUILDS)
-    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
-  endif()
-#elseif(ANDROID)
-#  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
-#  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
-#  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
-#  set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
-#  message(STATUS "Hello ANDROID")
-endif()
 
 if(CMAKE_TOOLCHAIN_FILE)
   message(STATUS "Passing toolchain file : ${CMAKE_TOOLCHAIN_FILE}")
@@ -128,8 +112,7 @@ ExternalProject_Add( Pulse
 )
 set_target_properties (Pulse PROPERTIES FOLDER Pulse)
 
-# Need Java Utils to generate data
-if (Pulse_JAVA_API)
+if (Pulse_GEN_DATA)
   add_custom_target(PulseData ALL)
   add_dependencies(PulseData Pulse)
   add_custom_command(TARGET PulseData POST_BUILD
@@ -149,12 +132,8 @@ if (Pulse_JAVA_API)
       BYPRODUCTS "${CMAKE_INSTALL_PREFIX}/bin/states/StandardMale@0s.json")
   set_target_properties (PulseData PROPERTIES FOLDER Pulse)
 else()
-  message(STATUS "!!! Without Java Utils, this build will not generate required data files needed for Pulse to execute !!!")
-  message(STATUS "!!! You will need to get these required data files from another build/source !!!")
-endif()
-
-if (NOT Pulse_PYTHON_API)
-  message(STATUS "!!! Without Python Utils, this build will not generate files and utilities needed for Pulse testing and development !!!")
+  message(STATUS "!!! Not generating Pulse data !!!")
+  message(STATUS "!!! - You will need to get these required data files from another build/source !!!")
 endif()
 
 if(Pulse_DOWNLOAD_BASELINES)

@@ -18,6 +18,9 @@ endif()
 if(POLICY CMP0094)# For finding python
   cmake_policy(SET CMP0094 NEW)
 endif()
+if(POLICY CMP0177)# For normalizing install paths
+  cmake_policy(SET CMP0177 NEW)
+endif()
 
 if(NOT CMAKE_INSTALL_PREFIX OR CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   message(STATUS "Setting install dir inside build dir ${CMAKE_BINARY_DIR} ")
@@ -40,7 +43,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 4.2.1 LANGUAGES C CXX)
+project(Pulse VERSION 4.3.1 LANGUAGES C CXX)
 include(GNUInstallDirs)
 
 function(remove_cmake_variables)
@@ -86,6 +89,7 @@ option(Pulse_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline r
 option(Pulse_CSHARP_API "Build C# API" OFF)
 option(Pulse_JAVA_API "Build Java API and utils for data generation and testing" ON)
 option(Pulse_PYTHON_API "Build Python API and utils for data generation and testing" ON)
+option(Pulse_GEN_DATA "Generate Pulse data. Requires JAVA and PYTHON API" ON)
 option(Pulse_DEPENDENT_BUILD "Pulse is being built as part of a different superbuild" OFF)
 option(Pulse_MSVC_STATIC_RUNTIME "Link static runtime libraries" OFF)
 # This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
@@ -112,6 +116,17 @@ else()
   set(Pulse_LIB_TYPE SHARED)
 endif()
 
+if (MSVC)
+  # Allow the MP flag to get set externally
+  set(Pulse_ENABLE_MULTI_PROCESS_BUILDS ON CACHE BOOL "Enable multi-process builds")
+  set(PROCESSOR_COUNT "$ENV{NUMBER_OF_PROCESSORS}")
+  set(Pulse_NUM_BUILD_PROCESSES ${PROCESSOR_COUNT} CACHE STRING "The maximum number of processes for the /MP flag")
+  if(Pulse_ENABLE_MULTI_PROCESS_BUILDS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP${Pulse_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
+  endif()
+endif()
+
 #-----------------------------------------------------------------------------
 # iOS Support
 #-----------------------------------------------------------------------------
@@ -135,6 +150,10 @@ if(iOS_TOOLCHAIN)
     set(Pulse_PYTHON_API OFF CACHE BOOL INTERNAL FORCE)
     message(WARNING "Disabling Python API for iOS build")
   endif()
+  if(Pulse_GEN_DATA)
+    set(Pulse_GEN_DATA OFF CACHE BOOL INTERNAL FORCE)
+    message(WARNING "Disabling data generation for iOS build")
+  endif()
 
   if(NOT EXISTS ${NATIVE_BIND_DIR})
     message(FATAL_ERROR "Crosscompiling for iOS, you must provide Pulse_NATIVE_BUILD_DIR")
@@ -154,12 +173,13 @@ if (Pulse_JAVA_API)
   endif()
   remove_cmake_variables(Java_)
   # Pulse uses Java in its development utility scripts
-  find_package(Java)
+  find_package(Java COMPONENTS Development)
   if(Java_FOUND)
     include(UseJava)
     if(Java_JAVA_EXECUTABLE)
       message(STATUS "Using Java executable : ${Java_JAVA_EXECUTABLE}")
       set(Java_CMD ${Java_JAVA_EXECUTABLE})
+      find_package(JNI REQUIRED) # Make sure we can find JNI early
     else()
       message(STATUS "Could not find Java_JAVA_EXECUTABLE")
     endif()
@@ -203,17 +223,6 @@ else()
   remove_cmake_variables(_Python3)
 endif()
 
-if(MSVC)
-  set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc")
-  set(CMAKE_CXX_FLAGS_RELEASE "/MP /EHsc")
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Zi /MP /EHsc")
-  if(Pulse_MSVC_STATIC_RUNTIME)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-  else()
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-  endif()
-endif()
-
 #-----------------------------------------------------------------------------
 # SUPERBUILD
 #-----------------------------------------------------------------------------
@@ -228,19 +237,26 @@ if(Pulse_SUPERBUILD)
     mark_as_advanced(USE_SYSTEM_${extProj})
   endmacro()
 
+  define_dependency(absl)
   define_dependency(Eigen3)
   define_dependency(protobuf)
   message(STATUS "We are using protobuf ${Protobuf_VERSION}")
-  if (Protobuf_VERSION VERSION_GREATER_EQUAL "22.0")
-    message(STATUS "Added ABSL dependency")
-    define_dependency(absl)
-  endif()
+
   if(Pulse_PYTHON_API)
     if(Python3_FOUND)
       define_dependency(pybind11)
       message(STATUS "Using python: ${Python3_EXECUTABLE}")
       else()
         message(FATAL_ERROR "Unable to support Python API, cannot find Python3")
+    endif()
+  endif()
+
+  if (Pulse_GEN_DATA)
+    if (NOT Pulse_JAVA_API OR NOT Pulse_PYTHON_API)
+      set(Pulse_GEN_DATA OFF CACHE BOOL INTERNAL FORCE)
+      message(STATUS "!!! Disabling data generation in build !!!")
+      message(STATUS "!!! You need both Python and JAVA API enabled to generate data. !!!")
+      message(STATUS "!!! You will need to get these required data files from another build/source !!!")
     endif()
   endif()
 
@@ -272,6 +288,22 @@ endif()
 #-----------------------------------------------------------------------------
 #                               INNERBUILD
 #-----------------------------------------------------------------------------
+
+if(MSVC)
+  # /Ob2 - Inline function expansion (Any)
+  # /Oi - Enable intrinsic function 
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Ob2 /Oi")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Ob2 /Oi")
+  set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /Ob2 /Oi")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Ob2 /Oi")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Ob2 /Oi")
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ob2 /Oi")
+  if(Pulse_MSVC_STATIC_RUNTIME)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  else()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+  endif()
+endif()
 
 if ( CMAKE_COMPILER_IS_GNUCC )
   # Protobuf is not using the same variable name in its swap specificiation definitions

@@ -3,7 +3,7 @@
 This product includes software developed by Kitware, Inc. and Contributors.
 
 Pulse Physiology Simulation Engine
-Copyright 2018-2021 Kitware, Inc. and Contributors
+Copyright 2018-2025 Kitware, Inc. and Contributors
 Distributed under the Apache License, Version 2.0.
 
 The following individuals and institutions are among the Contributors:
@@ -41,24 +41,25 @@ limitations under the License.
 
 This product uses the Eigen software package
 
-http://eigen.tuxfamily.org/index.php?title=Main_Page
+https://gitlab.com/libeigen/eigen
 
-Licensed under the Mozilla Public License Version 2.0
-
-https://www.mozilla.org/en-US/MPL/2.0/
-
+https://gitlab.com/libeigen/eigen/-/blob/master/COPYING.APACHE
 
 ------------------------------------------------------------------------------
 
 This product uses Google Protocol Buffers
 
-Copyright 2014, Google Inc.  All rights reserved.
+https://github.com/protocolbuffers/protobuf
 
-https://github.com/google/protobuf
+https://github.com/protocolbuffers/protobuf/blob/main/LICENSE
 
-Licensed under BSD 3-clause
+------------------------------------------------------------------------------
 
-https://opensource.org/licenses/BSD-3-Clause
+This product uses Absil via Google Protocol Buffers
+
+https://github.com/abseil/abseil-cpp
+
+https://github.com/abseil/abseil-cpp/blob/master/LICENSE
 
 ------------------------------------------------------------------------------
 
@@ -66,36 +67,6 @@ When building Python API support, this product uses the pybind11 package
 
 https://github.com/pybind/pybind11
 
-Licensed under the under the following:
-
-Copyright (c) 2016 Wenzel Jakob <wenzel.jakob@epfl.ch>, All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-3. Neither the name of the copyright holder nor the names of its contributors
-   may be used to endorse or promote products derived from this software
-   without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-Please also refer to the file CONTRIBUTING.md, which clarifies licensing of
-external contributions to this project including patches, pull requests, etc.
+https://github.com/pybind/pybind11/blob/master/LICENSE
 
 ------------------------------------------------------------------------------

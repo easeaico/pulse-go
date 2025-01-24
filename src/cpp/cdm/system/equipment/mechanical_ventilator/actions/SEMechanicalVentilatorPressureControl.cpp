@@ -52,9 +52,9 @@ void SEMechanicalVentilatorPressureControl::Clear()
   INVALIDATE_PROPERTY(m_Slope);
 }
 
-void SEMechanicalVentilatorPressureControl::Copy(const SEMechanicalVentilatorPressureControl& src, bool /*preserveState*/)
+void SEMechanicalVentilatorPressureControl::Copy(const SEMechanicalVentilatorPressureControl& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
@@ -77,12 +77,14 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     }
     else
     {
-      Fatal("No expiration cycle time defined. The Inspiratory Period and/or the Slope must be set.");
+      Error("No expiration cycle time defined. The Inspiratory Period and/or the Slope must be set.");
+      return false;
     }
 
     if (inspiratoryPeriod_s > totalPeriod_s)
     {
-      Fatal("Inspiratory Period is longer than the total period applied using Respiration Rate.");
+      Error("Inspiratory Period is longer than the total period applied using Respiration Rate.");
+      return false;
     }
 
     double inspirationWaveformPeriod_s = inspiratoryPeriod_s;
@@ -93,7 +95,8 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
 
     if (inspirationWaveformPeriod_s > inspiratoryPeriod_s)
     {
-        Fatal("Inspiration Waveform Period (i.e., Slope) cannot be longer than the Inspiratory Period.");
+        Error("Inspiration Waveform Period (i.e., Slope) cannot be longer than the Inspiratory Period.");
+        return false;
     }
 
     double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
@@ -102,7 +105,8 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     double positiveEndExpiredPressure_cmH2O = GetPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
     if (positiveEndExpiredPressure_cmH2O > peakInspiratoryPressure_cmH2O)
     {
-        Fatal("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+        Error("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+        return false;
     }
     s.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);

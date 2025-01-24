@@ -26,7 +26,8 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
 
     def clear(self):
         self._settings_file = None
-        if self._settings is not None: self._settings.invalidate()
+        if self._settings is not None:
+            self._settings.invalidate()
 
     def copy(self, src):
         if not isinstance(SEMechanicalVentilatorConfiguration, src):
@@ -56,14 +57,18 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
         return self._settings
 
 class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
-    __slots__ = ["_connection"]
+    __slots__ = ["_connection",
+                 "_supplemental_settings"]
 
     def __init__(self):
         super().__init__()
         self._connection = eSwitch.NullSwitch
+        self._supplemental_settings = None
 
     def clear(self):
         self._connection = eSwitch.NullSwitch
+        if self._supplemental_settings is not None:
+            self._supplemental_settings.invalidate()
 
     def copy(self, src):
         if not isinstance(SEMechanicalVentilatorMode, src):
@@ -71,6 +76,7 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
         self.clear()
         super().copy(src)
         self._connection = src._connection
+        self._supplemental_settings.copy(src._supplemental_settings)
 
     def is_valid(self):
         return self.has_connection()
@@ -84,6 +90,13 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
         return self._connection
     def set_connection(self, src : eSwitch):
         self._connection = src
+
+    def has_supplemental_settings(self):
+        return self._supplemental_settings is not None
+    def get_supplemental_settings(self):
+        if self._supplemental_settings is None:
+            self._supplemental_settings = SEMechanicalVentilatorSettings()
+        return self._supplemental_settings
 
     def __repr__(self):
         return "Mechanical Ventilator Mode" + "\n\tConnection: " + str(self._connection)

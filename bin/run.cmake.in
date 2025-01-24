@@ -102,7 +102,7 @@ elseif(cmd STREQUAL "doxygen" OR cmd STREQUAL "validate")
   elseif(cmd STREQUAL "validate")
     file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/header_minimum.html HEADER)
     file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/footer_minimum.html FOOTER)
-    # Assumption: always use the test results when explicitly runnning validation on a xlsx
+    # Assumption: always use the test results when explicitly running validation on a xlsx
     clean_docs(FALSE)
     file(COPY @CMAKE_SOURCE_DIR@/docs/Sources.bib DESTINATION @CMAKE_INSTALL_PREFIX@/bin/docs/)
     set(exec_opt "-tf")

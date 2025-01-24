@@ -15,6 +15,7 @@ import com.kitware.pulse.cdm.bind.Engine.ActionListData;
 import com.kitware.pulse.cdm.bind.Engine.AnyActionData;
 import com.kitware.pulse.cdm.bind.Engine.AnyConditionData;
 import com.kitware.pulse.cdm.bind.Engine.ConditionListData;
+import com.kitware.pulse.cdm.bind.Engine.LogMessagesData;
 import com.kitware.pulse.cdm.bind.Events.ActiveEventData;
 import com.kitware.pulse.cdm.bind.Events.ActiveEventListData;
 import com.kitware.pulse.cdm.bind.Events.EventChangeData;
@@ -331,6 +332,7 @@ public class PulseEngine
       Log.error("Engine could not advance time");
       alive=false;
     }
+    pullLogMessages();
     // Grab any event changes and pass them to handler
     if (eventHandler != null)
     {
@@ -352,7 +354,7 @@ public class PulseEngine
         }
         catch(Exception ex)
         {
-          Log.error("Unable to process log messages");
+          Log.error("Unable to process events");
           Log.error(ex.getMessage());
         }
       }
@@ -393,6 +395,35 @@ public class PulseEngine
     return Doubles.asList(nativePullData(nativeObj));
   }
   
+  public void pullLogMessages()
+  {
+    if (logListener != null)
+    {
+      String msgs = nativePullLogMessages(nativeObj, thunkType.value());
+      if(msgs!=null && !msgs.isEmpty())
+      {
+        try
+        {
+          LogMessagesData.Builder b = LogMessagesData.newBuilder();
+          JsonFormat.parser().merge(msgs, b);
+          for(String msg : b.getDebugMessagesList())
+            logListener.debug(msg);
+          for(String msg : b.getInfogMessagesList())
+            logListener.info(msg);
+          for(String msg : b.getErrorMessagesList())
+            logListener.error(msg);
+          for(String msg : b.getFatalMessagesList())
+            logListener.fatal(msg);
+        }
+        catch(Exception ex)
+        {
+          Log.error("Unable to process log messages");
+          Log.error(ex.getMessage());
+        }
+      }
+    }
+  }
+  
   ////////////////////
   // ACTION SUPPORT //
   ////////////////////
@@ -421,16 +452,15 @@ public class PulseEngine
         if(!nativeProcessActions(nativeObj,actionsStr, thunkType.value()))
         {
           Log.error("Engine could not process actions");
-          alive=false;
         }
       }
       catch(Exception ex)
       {
         Log.error("Unable to convert action to json");
         Log.error(ex.getMessage());
-        alive = false;
       }
     }
+    pullLogMessages();
     return alive;
   }
   
@@ -469,37 +499,11 @@ public class PulseEngine
   public void setLogListener(LogListener listener)
   {
     logListener = listener;
-    nativeForwardLogMessages(nativeObj, logListener!=null);
+    nativeKeepLogMessages(nativeObj, logListener!=null);
   }
   public void setLogFilename(String logFilename)
   {
     nativeSetLogFilename(nativeObj, logFilename);
-  }
-  
-  protected void handleDebug(String msg)
-  {
-    if(this.logListener!=null)
-      this.logListener.debug(msg);
-  }
-  protected void handleInfo(String msg)
-  {
-    if(this.logListener!=null)
-      this.logListener.info(msg);
-  }
-  protected void handleWarning(String msg)
-  {
-    if(this.logListener!=null)
-      this.logListener.warn(msg);
-  }
-  protected void handleError(String msg)
-  {
-    if(this.logListener!=null)
-      this.logListener.error(msg);
-  }
-  protected void handleFatal(String msg)
-  {
-    if(this.logListener!=null)
-      this.logListener.fatal(msg);
   }
   
   public void setEventHandler(SEEventHandler eh)
@@ -555,9 +559,9 @@ public class PulseEngine
   
   protected native boolean nativeInitializeEngine(long nativeObj, String patientConfiguration, String dataRequests, int format);
   
-  protected native void nativeLogToConsole(long nativeObj, boolean b);
   protected native void nativeSetLogFilename(long nativeObj, String filename);
-  protected native void nativeForwardLogMessages(long nativeObj, boolean b);
+  protected native void nativeKeepLogMessages(long nativeObj, boolean b);
+  protected native String nativePullLogMessages(long nativeObj, int format);
   
   protected native void nativeKeepEventChanges(long nativeObj, boolean b);
   protected native String nativePullEvents(long nativeObj, int format);

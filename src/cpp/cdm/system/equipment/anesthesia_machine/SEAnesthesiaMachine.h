@@ -118,8 +118,8 @@ protected:
   eAnesthesiaMachine_OxygenSource                        m_OxygenSource;
   SEScalarPressure*                                      m_PositiveEndExpiratoryPressure;
   eAnesthesiaMachine_PrimaryGas                          m_PrimaryGas;
-  SEScalarFrequency*                                     m_RespiratoryRate;
   SEScalarPressure*                                      m_ReliefValvePressure;
+  SEScalarFrequency*                                     m_RespiratoryRate;
 
   SEScalarPressure*                                      m_PeakInspiratoryPressure;
 

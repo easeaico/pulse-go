@@ -82,6 +82,8 @@ namespace pulse::study::patient_variability
     void GenerateScenarios();
     const std::map<std::string, std::string>& GetPatientStates() const { return m_PatientStates; }
 
+    bool FindExistingStates();
+
   protected:
     void FixUp() override;
     void GenerateScenario();

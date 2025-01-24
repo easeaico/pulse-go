@@ -51,9 +51,9 @@ void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Clear()
   INVALIDATE_PROPERTY(m_ExpirationCyclePressure);
 }
 
-void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, bool /*preserveState*/)
+void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
@@ -74,7 +74,8 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
         positiveEndExpiredPressure_cmH2O + GetDeltaPressureSupport(PressureUnit::cmH2O);
     if (positiveEndExpiredPressure_cmH2O > peakInspiratoryPressure_cmH2O)
     {
-        Fatal("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+        Error("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+        return false;
     }
     s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
@@ -84,11 +85,11 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
     // Optional Values (Transfer data, let the SEMechanicalVentilatorSettings class handle precedence)
 
     s.SetExpirationCycleRespiratoryModel(eSwitch::Off);
-    if (HasInspirationPatientTriggerFlow())
-      s.GetInspirationPatientTriggerFlow().Set(GetInspirationPatientTriggerFlow());
-    if (HasInspirationPatientTriggerPressure())
-      s.GetInspirationPatientTriggerPressure().Set(GetInspirationPatientTriggerPressure());
-    if(!HasInspirationPatientTriggerFlow() && !HasInspirationPatientTriggerPressure())
+    if (HasExpirationCycleFlow())
+      s.GetExpirationCycleFlow().Set(GetExpirationCycleFlow());
+    if (HasExpirationCyclePressure())
+      s.GetExpirationCyclePressure().Set(GetExpirationCyclePressure());
+    if (!HasExpirationCycleFlow() && !HasExpirationCyclePressure())
       s.SetExpirationCycleRespiratoryModel(eSwitch::On);
 
     if (HasExpirationWaveform())
@@ -97,11 +98,11 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
       s.SetExpirationWaveform(eDriverWaveform::Square);
 
     s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-    if (HasExpirationCycleFlow())
-      s.GetExpirationCycleFlow().Set(GetExpirationCycleFlow());
-    if (HasExpirationCyclePressure())
-      s.GetExpirationCyclePressure().Set(GetExpirationCyclePressure());
-    if (!HasExpirationCycleFlow() && !HasExpirationCyclePressure())
+    if (HasInspirationPatientTriggerFlow())
+      s.GetInspirationPatientTriggerFlow().Set(GetInspirationPatientTriggerFlow());
+    if (HasInspirationPatientTriggerPressure())
+      s.GetInspirationPatientTriggerPressure().Set(GetInspirationPatientTriggerPressure());
+    if (!HasInspirationPatientTriggerFlow() && !HasInspirationPatientTriggerPressure())
       s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
     if (HasInspirationWaveform())

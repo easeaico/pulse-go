@@ -42,7 +42,7 @@ def HowTo_MechanicalVentilator():
     # Give the patient Dyspnea
     dsypnea = SEDyspnea()
     dsypnea.set_comment("Patient's dsypnea occurs")
-    dsypnea.get_severity().set_value(1.0)
+    dsypnea.get_respiration_rate_severity().set_value(1.0)
     pulse.process_action(dsypnea)
     pulse.advance_time_s(10)
     # Get the values of the data you requested at this time
@@ -64,6 +64,8 @@ def HowTo_MechanicalVentilator():
     cpap.get_delta_pressure_support().set_value(8.0, PressureUnit.cmH2O)
     cpap.get_positive_end_expired_pressure().set_value(5.0, PressureUnit.cmH2O)
     cpap.get_slope().set_value(0.2, TimeUnit.s)
+    #  If you understand our ventilator methodology, You can modify the underlying settings on any mode
+    cpap.get_supplemental_settings().get_fraction_inspired_gas("Desflurane").get_fraction_amount().set_value(0.01);
     pulse.process_action(cpap)
     pulse.advance_time_s(10)
     # Get the values of the data you requested at this time
@@ -106,7 +108,7 @@ def HowTo_MechanicalVentilator():
     # Here is an example of programming a custom ventilator mode
     mechanical_ventilator_cfg = SEMechanicalVentilatorConfiguration()
     mechanical_ventilator_cfg.set_comment("Attach the mechanical ventilator")
-    # You could just point to an mechanical ventilator configuration file if you want (no examples)
+    # You could just point to a mechanical ventilator configuration file if you want (no examples)
     # mechanical_ventilator.set_settings_file("/path/to/file")
     mechanical_ventilator = mechanical_ventilator_cfg.get_settings()
     mechanical_ventilator.set_connection(eSwitch.On)
@@ -170,4 +172,5 @@ def HowTo_MechanicalVentilator():
     data_mgr.to_console(results)
 
 
-HowTo_MechanicalVentilator()
+if __name__ == "__main__":
+    HowTo_MechanicalVentilator()

@@ -13,15 +13,32 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ## Pulse Integration (Current new feature set)
 
--TBD
+## Pulse v4.3.1 (January 2025)
 
-## Pulse Integration (Current new feature set)
+- ThirdParty
+  - Update to Protobuf 29.2
+    - Fixes the Microsoft SDK infinity issue
+
+- CDM API Changes
+  - Ventilator API Updates
+    - Remove triggers with zero values
+    - Address issues when combining mode and configuration actions
+    - Ignore invalid mode actions and log as error, rather than log a fatal error
+    - Added a mechanical ventilator settings object to mode actions
+  - Fix issues found in the C# API
+    - Anesthesia Machine was not full implemented
+    - ARDS/COPD/Pneumonia actions/conditions were not using dicts properly
 
 - Software Architecture Improvements
-  - Combined DataModelBindings, CommonDataModel and PulseEngine into a single Pulse library
-    - Plan is to provide an option to build a shared Pulse library rather than a static one
+  - Link to static C++ runtime when building for Android
+  - Fix logging in Java API
+  - Correct 4.3.0 release bug that had MSVC configuration with optimizations turned off :(
+  - Improved configurability of dockcross builds (i.e. building cross platform PulseJNI binaries)
 
 - Physiology Model Improvements
+  - Improve severe airway obstruction validation
+  - Improve blood gas regulation during assisted mechanical ventilation
+      - Updated the interactions between the respiratory mechanoreceptor and chemoreceptor models
 
 ---
 

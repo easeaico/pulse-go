@@ -95,6 +95,7 @@ public:
 
 
   double GetValue(const SEDataRequest& dr) const;
+  std::string GetUnit(const SEDataRequest& dr) const;
 
 protected:
   const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;

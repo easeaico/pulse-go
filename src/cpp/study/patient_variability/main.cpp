@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
     female->SetResultsDirectory(rootDir + "/results/" + female->GetIterationName());
     iPatients.push_back(female);
 
-    if (false)
+    if (true)
     {
       TCCCIteration* tccc = new TCCCIteration(logger);
       tccc->SetIterationName("tccc");
@@ -221,7 +221,9 @@ int main(int argc, char* argv[])
       //  hemorrhageWounds.push_back(i);
       hemorrhageWounds.push_back((size_t)eHemorrhageWound::LeftLegLaceration);
       tccc->GetHemorrhageWound().SetValues(hemorrhageWounds);
-      tccc->GetInsultDuration_s().SetValues({ 5 });
+      // Make the Insult duration the rest of the simulation
+      tccc->GetInsultDuration_s().SetValues({ tccc->GetMaxSimTime_min()*60 - tccc->GetBaselineDuration_s()});
+      tccc->SetInsultStateFrequency_s(60); // Save a state every 60s
       iActions.push_back(tccc);
     }
   }
@@ -231,7 +233,11 @@ int main(int argc, char* argv[])
     for (PatientIteration* pi : iPatients)
     {
       if (!clear && FileExists(pi->GetScenarioExecListFilename()))
+      {
         logger.Info("Using previously run scenario exec list file: " + pi->GetScenarioExecListFilename());
+        if (!pi->FindExistingStates())
+          logger.Warning("Could not find all states associated with this exec list, might need to rerun scenario...");
+      }
       else
         pi->GenerateScenarios();
 

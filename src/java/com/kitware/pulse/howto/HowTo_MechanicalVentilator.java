@@ -11,9 +11,7 @@ import com.kitware.pulse.cdm.bind.Physiology.eLungCompartment;
 import com.kitware.pulse.cdm.engine.SEDataRequestManager;
 import com.kitware.pulse.cdm.patient.actions.SEAcuteRespiratoryDistressSyndromeExacerbation;
 import com.kitware.pulse.cdm.patient.actions.SEDyspnea;
-import com.kitware.pulse.cdm.patient.conditions.SEAcuteRespiratoryDistressSyndrome;
 import com.kitware.pulse.cdm.properties.CommonUnits.*;
-import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.cdm.substance.SESubstanceFraction;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilatorSettings;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.*;
@@ -101,7 +99,7 @@ public class HowTo_MechanicalVentilator
     pulse.processAction(dyspnea);
     
  // We have action support for several commonly used ventilator modes
-    // Pulse is not limited to these modes, These modes are designe for simple understanding
+    // Pulse is not limited to these modes, These modes are design for simple understanding
     // Our implementation supports any ventilator mode, you will just need to translate the user facing inputs
     // to a timing/control profile using our configuration settings
     // These modes are internally converted into a configuration setting,
@@ -114,6 +112,8 @@ public class HowTo_MechanicalVentilator
     cpap.getDeltaPressureSupport().setValue(10.0, PressureUnit.cmH2O);
     cpap.getPositiveEndExpiratoryPressure().setValue(5.0, PressureUnit.cmH2O);
     cpap.getSlope().setValue(0.2, TimeUnit.s);
+ // If you understand our ventilator methodology, You can modify the underlying settings on any mode
+    cpap.getSupplementalSettings().getFractionInspiredGas("Desflurane").getAmount().setValue(0.01);
     pulse.processAction(cpap);
     pulse.advanceTime_s(10);
     // get the values of the data you requested at this time

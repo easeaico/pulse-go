@@ -98,6 +98,8 @@ namespace HowTo_MechanicalVentilator
       cpap.GetDeltaPressureSupport().SetValue(8.0, PressureUnit.cmH2O);
       cpap.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit.cmH2O);
       cpap.GetSlope().SetValue(0.2, TimeUnit.s);
+      // If you understand our ventilator methodology, You can modify the underlying settings on any mode
+      cpap.GetSupplementalSettings().GetFractionInspiredGas("Desflurane").GetFractionAmount().SetValue(0.01);
       pulse.ProcessAction(cpap);
       pulse.AdvanceTime_s(10);
       // Get the values of the data you requested at this time

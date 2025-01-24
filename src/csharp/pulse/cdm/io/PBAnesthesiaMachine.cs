@@ -1,6 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+using pulse.cdm.bind;
+
 namespace Pulse.CDM
 {
   static class eAnesthesiaMachine
@@ -42,14 +44,14 @@ namespace Pulse.CDM
         PBProperty.Load(src.RespiratoryRate, dst.GetRespiratoryRate());
       if (src.ReliefValvePressure != null)
         PBProperty.Load(src.ReliefValvePressure, dst.GetReliefValvePressure());
-      //if (src.LeftChamber!=null)
-      //  PBAnesthesiaMachine.Load(src.GetLeftChamber(), dst.GetLeftChamber(), subMgr);
-      //if (src.RightChamber!=null)
-      //  PBAnesthesiaMachine.Load(src.GetRightChamber(), dst.GetRightChamber(), subMgr);
-      //if (src.OxygenBottleOne!=null)
-      //  PBAnesthesiaMachine.Load(src.GetOxygenBottleOne(), dst.GetOxygenBottleOne());
-      //if (src.OxygenBottleTwo!=null)
-      //  PBAnesthesiaMachine.Load(src.GetOxygenBottleTwo(), dst.GetOxygenBottleTwo());
+      if (src.LeftChamber != null)
+        PBAnesthesiaMachine.Load(src.LeftChamber, dst.GetLeftChamber());
+      if (src.RightChamber != null)
+        PBAnesthesiaMachine.Load(src.RightChamber, dst.GetRightChamber());
+      if (src.OxygenBottleOne != null)
+        PBAnesthesiaMachine.Load(src.OxygenBottleOne, dst.GetOxygenBottleOne());
+      if (src.OxygenBottleTwo != null)
+        PBAnesthesiaMachine.Load(src.OxygenBottleTwo, dst.GetOxygenBottleTwo());
     }
 
     public static pulse.cdm.bind.AnesthesiaMachineData Unload(SEAnesthesiaMachine src)
@@ -78,40 +80,62 @@ namespace Pulse.CDM
       if (src.HasReliefValvePressure())
         dst.ReliefValvePressure = PBProperty.Unload(src.GetReliefValvePressure());
 
-      //if (src.HasLeftChamber())
-      //  dst.LeftChamber(SEAnesthesiaMachineChamber.Unload(src.leftChamber));
-      //if (src.HasRightChamber())
-      //  dst.RightChamber(SEAnesthesiaMachineChamber.Unload(src.rightChamber));
-      //if (src.HasOxygenBottleOne())
-      //  dst.OxygenBottleOne(SEAnesthesiaMachineOxygenBottle.Unload(src.oxygenBottleOne));
-      //if (src.HasOxygenBottleTwo())
-      //  dst.OxygenBottleTwo(SEAnesthesiaMachineOxygenBottle.Unload(src.oxygenBottleTwo));
+      if (src.HasLeftChamber())
+        dst.LeftChamber = Unload(src.GetLeftChamber());
+      if (src.HasRightChamber())
+        dst.RightChamber = Unload(src.GetRightChamber());
+      if (src.HasOxygenBottleOne())
+        dst.OxygenBottleOne = Unload(src.GetOxygenBottleOne());
+      if (src.HasOxygenBottleTwo())
+        dst.OxygenBottleTwo = Unload(src.GetOxygenBottleTwo());
+    }
+    #endregion
+
+    #region SEAnesthesiaMachineChamber
+    public static void Load(AnesthesiaMachineChamberData src, SEAnesthesiaMachineChamber dst)
+    {
+      dst.Clear();
+      if (src.State != pulse.cdm.bind.eSwitch.NullSwitch)
+        dst.SetState((eSwitch)src.State);
+      if (src.Substance != null)
+        dst.SetSubstance(src.Substance);
+      if (src.SubstanceFraction != null)
+        PBProperty.Load(src.SubstanceFraction, dst.GetSubstanceFraction());
+    }
+    public static AnesthesiaMachineChamberData Unload(SEAnesthesiaMachineChamber src)
+    {
+      AnesthesiaMachineChamberData dst = new AnesthesiaMachineChamberData();
+      Unload(src, dst);
+      return dst;
+    }
+    protected static void Unload(SEAnesthesiaMachineChamber src, AnesthesiaMachineChamberData dst)
+    {
+      dst.State = (pulse.cdm.bind.eSwitch)src.GetState();
+      if (src.HasSubstance())
+        dst.Substance = src.GetSubstance();
+      if (src.HasSubstanceFraction())
+        dst.SubstanceFraction = PBProperty.Unload(src.GetSubstanceFraction());
+    }
+    #endregion
+
+    #region SEAnesthesiaMachineOxygenBottle
+    public static void Load(AnesthesiaMachineOxygenBottleData src, SEAnesthesiaMachineOxygenBottle dst)
+    {
+      dst.Clear();
+      if (src.Volume != null)
+        PBProperty.Load(src.Volume, dst.GetVolume());
+    }
+    public static AnesthesiaMachineOxygenBottleData Unload(SEAnesthesiaMachineOxygenBottle src)
+    {
+      AnesthesiaMachineOxygenBottleData dst = new AnesthesiaMachineOxygenBottleData();
+      Unload(src, dst);
+      return dst;
+    }
+    protected static void Unload(SEAnesthesiaMachineOxygenBottle src, AnesthesiaMachineOxygenBottleData dst)
+    {
+      if (src.HasVolume())
+        dst.Volume = PBProperty.Unload(src.GetVolume());
     }
     #endregion
   }
-
-  //public static void Load(AnesthesiaMachineChamberData src, SEAnesthesiaMachineChamber dst, SESubstanceManager subMgr)
-  //{
-  //  dst.reSet();
-  //  if (src.GetState() != eSwitch.UNRECOGNIZED && src.GetState() != eSwitch.NullSwitch)
-  //    dst.SetState(src.GetState());
-  //  if (src.GetSubstance() != null)
-  //    dst.SetSubstance(subMgr.GetSubstance(src.GetSubstance()));
-  //  if (src.HasSubstanceFraction())
-  //    SEScalar0To1.Load(src.GetSubstanceFraction(), dst.GetSubstanceFraction());
-  //}
-  //public static AnesthesiaMachineChamberData Unload(SEAnesthesiaMachineChamber src)
-  //{
-  //  AnesthesiaMachineChamberData.Builder dst = AnesthesiaMachineChamberData.newBuilder();
-  //  Unload(src, dst);
-  //  return dst.build();
-  //}
-  //protected static void Unload(SEAnesthesiaMachineChamber src, AnesthesiaMachineChamberData.Builder dst)
-  //{
-  //  if (src.HasSubstance())
-  //    dst.SetSubstance(src.substance.GetName());
-  //  dst.SetState(src.state);
-  //  if (src.HasSubstanceFraction())
-  //    dst.SetSubstanceFraction(SEScalar0To1.Unload(src.substanceFraction));
-  //}
 }

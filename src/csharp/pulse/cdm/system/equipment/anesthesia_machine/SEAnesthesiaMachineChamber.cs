@@ -6,31 +6,32 @@ namespace Pulse.CDM
   public class SEAnesthesiaMachineChamber
   {
     protected eSwitch state;
-    //protected SESubstance substance;
+    protected string substance;
     protected SEScalar0To1 substanceFraction;
 
     public SEAnesthesiaMachineChamber()
     {
       this.state = eSwitch.Off;
-      //this.substance = null;
+      this.substance = null;
       this.substanceFraction = null;
     }
 
     public void Clear()
     {
       state = eSwitch.Off;
+      this.substance = null;
       if (substanceFraction != null)
         substanceFraction.Invalidate();
     }
 
-    //public void copy(SEAnesthesiaMachineChamber from)
-    //{
-    //  Clear();
-    //  this.state = from.state;
-    //  this.substance = from.substance;
-    //  if (from.HasSubstanceFraction())
-    //    this.GetSubstanceFraction().Set(from.substanceFraction);
-    //}
+    public void Copy(SEAnesthesiaMachineChamber from)
+    {
+      Clear();
+      this.state = from.state;
+      this.substance = from.substance;
+      if (from.HasSubstanceFraction())
+        this.GetSubstanceFraction().Set(from.substanceFraction);
+    }
 
     public eSwitch GetState()
     {
@@ -52,25 +53,25 @@ namespace Pulse.CDM
       return substanceFraction;
     }
 
-    //public bool HasSubstance()
-    //{
-    //  return this.substance!=null;
-    //}
-    //public SESubstance GetSubstance()
-    //{
-    //  return substance;
-    //}
-    //public void SetSubstance(SESubstance substance)
-    //{
-    //  this.substance = substance;
-    //}
+    public bool HasSubstance()
+    {
+      return this.substance!=null;
+    }
+    public string GetSubstance()
+    {
+      return substance;
+    }
+    public void SetSubstance(string substance)
+    {
+      this.substance = substance;
+    }
 
-    public string toString()
+    public string ToString()
     {
       return "Anesthesia Machine Chamber"
       + "\n\tState: " + GetState()
       + "\n\tSubstance Fraction: " + GetSubstanceFraction()
-      ;// + "\n\tSubstance: " + (HasSubstance()?GetSubstance().GetName():"NotProvided");
+      + "\n\tSubstance: " + (HasSubstance()?GetSubstance():"NotProvided");
     }
   }
 }

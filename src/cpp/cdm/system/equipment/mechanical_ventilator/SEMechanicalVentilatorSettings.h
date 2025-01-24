@@ -18,6 +18,7 @@ public:
   virtual ~SEMechanicalVentilatorSettings();
 
   virtual void Clear();
+  virtual void Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager&);
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;

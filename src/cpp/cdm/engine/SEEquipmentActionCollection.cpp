@@ -105,6 +105,12 @@ void SEEquipmentActionCollection::Clear()
   RemoveBagValveMaskAutomated();
   RemoveBagValveMaskInstantaneous();
   RemoveBagValveMaskSqueeze();
+  RemoveMechanicalVentilatorActions();
+}
+
+void SEEquipmentActionCollection::RemoveMechanicalVentilatorActions()
+{
+  // NOTE: Configuration actions should be removed from the model after its processed
   RemoveMechanicalVentilatorHold();
   RemoveMechanicalVentilatorLeak();
   RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
@@ -120,6 +126,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     // NOTE Ventilator mode actions are translated into the ventilator configuration action
     // So any new mode will need to be handled the same way and Removes, ToConfiguration calls
     // will need to be peppered through out this insides of this if block. Just follow the pattern
+    // All ventilator actions are removed when the ventilator is turned off
 
     const SEMechanicalVentilatorConfiguration* config = dynamic_cast<const SEMechanicalVentilatorConfiguration*>(&action);
     if (config != nullptr)
@@ -128,11 +135,6 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_MechanicalVentilatorConfiguration->Activate();
       if (!m_MechanicalVentilatorConfiguration->IsActive())
         RemoveMechanicalVentilatorConfiguration();
-      {
-        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
-        RemoveMechanicalVentilatorPressureControl();
-        RemoveMechanicalVentilatorVolumeControl();
-      }
       return true;
     }
 
@@ -159,7 +161,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorContinuousPositiveAirwayPressure* cpap = dynamic_cast<const SEMechanicalVentilatorContinuousPositiveAirwayPressure*>(&action);
     if (cpap != nullptr)
     {
-      GetMechanicalVentilatorContinuousPositiveAirwayPressure().Copy(*cpap, true);
+      GetMechanicalVentilatorContinuousPositiveAirwayPressure().Copy(*cpap, m_SubMgr, true);
       m_MechanicalVentilatorContinuousPositiveAirwayPressure->Activate();
       if (!m_MechanicalVentilatorContinuousPositiveAirwayPressure->IsActive())
         RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
@@ -169,8 +171,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         // Convert to a SEMechanicalVentilatorConfiguration
         GetMechanicalVentilatorConfiguration().Clear();
         GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
-        m_MechanicalVentilatorConfiguration->Activate();
+        if (!GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        {
+          RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+          GetMechanicalVentilatorConfiguration().Clear();
+          Error("Ignoring invalid SEMechanicalVentilatorContinuousPositiveAirwayPressure action");
+        }
+        else
+          m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
     }
@@ -178,7 +186,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorPressureControl* pc = dynamic_cast<const SEMechanicalVentilatorPressureControl*>(&action);
     if (pc != nullptr)
     {
-      GetMechanicalVentilatorPressureControl().Copy(*pc, true);
+      GetMechanicalVentilatorPressureControl().Copy(*pc, m_SubMgr, true);
       m_MechanicalVentilatorPressureControl->Activate();
       if (!m_MechanicalVentilatorPressureControl->IsActive())
         RemoveMechanicalVentilatorPressureControl();
@@ -188,8 +196,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         // Convert to a SEMechanicalVentilatorConfiguration
         GetMechanicalVentilatorConfiguration().Clear();
         GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        GetMechanicalVentilatorPressureControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
-        m_MechanicalVentilatorConfiguration->Activate();
+        if (!GetMechanicalVentilatorPressureControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        {
+          RemoveMechanicalVentilatorPressureControl();
+          GetMechanicalVentilatorConfiguration().Clear();
+          Error("Ignoring invalid SEMechanicalVentilatorPressureControl action");
+        }
+        else
+          m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
     }
@@ -197,7 +211,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorVolumeControl* vc = dynamic_cast<const SEMechanicalVentilatorVolumeControl*>(&action);
     if (vc != nullptr)
     {
-      GetMechanicalVentilatorVolumeControl().Copy(*vc, true);
+      GetMechanicalVentilatorVolumeControl().Copy(*vc, m_SubMgr, true);
       m_MechanicalVentilatorVolumeControl->Activate();
       if (!m_MechanicalVentilatorVolumeControl->IsActive())
         RemoveMechanicalVentilatorVolumeControl();
@@ -207,8 +221,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         // Convert to a SEMechanicalVentilatorConfiguration
         GetMechanicalVentilatorConfiguration().Clear();
         GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        GetMechanicalVentilatorVolumeControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
-        m_MechanicalVentilatorConfiguration->Activate();
+        if (!GetMechanicalVentilatorVolumeControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        {
+          RemoveMechanicalVentilatorVolumeControl();
+          GetMechanicalVentilatorConfiguration().Clear();
+          Error("Ignoring invalid SEMechanicalVentilatorVolumeControl action");
+        }
+        else
+          m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
     }

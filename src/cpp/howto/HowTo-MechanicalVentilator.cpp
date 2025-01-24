@@ -167,7 +167,7 @@ void HowToMechanicalVentilator()
   vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s); //This is optional
   vc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit::cmH2O);
   vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
-  vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
+  vc_ac.GetTidalVolume().SetValue(540.0, VolumeUnit::mL);
   vc_ac.GetSlope().SetValue(0.2, TimeUnit::s); //This is optional and would be left out for square waveforms
 
   // Trigger options (choose one):

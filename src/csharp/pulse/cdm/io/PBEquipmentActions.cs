@@ -1062,6 +1062,8 @@ namespace Pulse.CDM
       if (src.MechanicalVentilatorAction != null)
         Serialize(src.MechanicalVentilatorAction, dst);
       dst.SetConnection((eSwitch)src.Connection);
+      if (src.SupplementalSettings != null)
+        PBMechanicalVentilator.Load(src.SupplementalSettings, dst.GetSupplementalSettings());
     }
     public static pulse.cdm.bind.MechanicalVentilatorModeData Unload(SEMechanicalVentilatorMode src)
     {
@@ -1074,6 +1076,8 @@ namespace Pulse.CDM
       dst.MechanicalVentilatorAction = new pulse.cdm.bind.MechanicalVentilatorActionData();
       Serialize(src, dst.MechanicalVentilatorAction);
       dst.Connection = (pulse.cdm.bind.eSwitch)(int)src.GetConnection();
+      if (src.HasSupplementalSettings())
+        dst.SupplementalSettings = PBMechanicalVentilator.Unload(src.GetSupplementalSettings());
     }
     #endregion
 

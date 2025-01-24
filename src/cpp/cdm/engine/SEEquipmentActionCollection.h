@@ -185,6 +185,8 @@ public:
   const SEMechanicalVentilatorVolumeControl* GetMechanicalVentilatorVolumeControl() const;
   void RemoveMechanicalVentilatorVolumeControl();
 
+  void RemoveMechanicalVentilatorActions();
+
   void GetAllActions(std::vector<const SEAction*>& v) const;
   const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
   

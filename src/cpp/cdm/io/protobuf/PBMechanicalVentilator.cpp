@@ -364,6 +364,14 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
     dst.mutable_concentrationinspiredaerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
 
+void PBMechanicalVentilator::Copy(const SEMechanicalVentilatorSettings& src, SEMechanicalVentilatorSettings& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorSettingsData data;
+  PBMechanicalVentilator::Serialize(src, data);
+  PBMechanicalVentilator::Serialize(data, dst, subMgr);
+}
+
 bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilatorSettings& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::MechanicalVentilatorSettingsData data;
