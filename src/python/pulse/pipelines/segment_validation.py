@@ -24,6 +24,7 @@ from pulse.engine.PulseScenarioExec import PulseScenarioExec
 
 _pulse_logger = logging.getLogger('pulse')
 
+
 class eExecOpt(Enum):
     GenerateOnly = 0
     SkipScenarioExecution = 1
