@@ -10,7 +10,7 @@
           "Comment": "Hemorrhages - Severity",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular"
           },
           "PlotSource":
           [
@@ -20,7 +20,7 @@
           [
             { "Title": "Varying Severity of Hemorrhage", "OutputFilename": "HemorrhageSeverity",
             "YHeader": [ "TotalHemorrhageRate(mL/s)" ], "YLabel": "Hemorrhage Flow Rate",
-            "YBounds": { "LowerBound": 0, "UpperBound": 10 }
+            "YBounds": { "LowerBound": 0, "UpperBound": 8 }
             }
           ]
         }
@@ -31,7 +31,7 @@
           "Comment": "Hemorrhages - Severity To Flow",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular"
           },
           "PlotSource":
           [
@@ -41,7 +41,7 @@
           [
             { "Title": "Severity to Flow Rate to Severity Hemorrhage", "OutputFilename": "HemorrhageSeverityToFlow",
             "YHeader": [ "TotalHemorrhageRate(mL/s)" ], "YLabel": "Hemorrhage Flow Rate",
-            "YBounds": { "LowerBound": 0, "UpperBound": 10 }
+            "YBounds": { "LowerBound": 0, "UpperBound": 8 }
             }
           ]
         }
