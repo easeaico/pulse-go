@@ -194,63 +194,63 @@
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Healthy",
         "Segment": 1,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "ARDS",
         "Segment": 1,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "ARDS",
         "Segment": 2,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "ARDS",
         "Segment": 3,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "COPD",
         "Segment": 1,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "COPD",
         "Segment": 2,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "COPD",
         "Segment": 3,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Recruitment",
         "Segment": 1,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Recruitment",
         "Segment": 2,
-        "DataRequestFile": ["MechanicalVentilatorDataRequests.json"],
+        "DataRequestFile": ["MechanicalVentilatorTableDataRequests.json"],
         "Header": []
       }
     ]
