@@ -10,7 +10,7 @@
           "Comment": "Hemorrhages - Severity",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage"
           },
           "PlotSource":
           [
@@ -31,7 +31,7 @@
           "Comment": "Hemorrhages - Severity To Flow",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage"
           },
           "PlotSource":
           [
@@ -52,7 +52,7 @@
           "Comment": "Hemorrhages - Class 4 No Fluid",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage", "PercentOfBaselineMode": "All"
           },
           "PlotSource":
           [
@@ -75,7 +75,7 @@
           "Comment": "Hemorrhages - Class 4 No Fluid",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage", "PercentOfBaselineMode": "All"
           },
           "PlotSource":
           [
@@ -102,7 +102,7 @@
           "Comment": "Hemorrhage Groups",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "OnlyY"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage", "PercentOfBaselineMode": "OnlyY"
           },
           "PlotSource":
           [
@@ -128,7 +128,7 @@
           "PlotConfig":
           {
             "ImageProperties": { "Height_inch": 7, "Width_inch": 11 }, "LegendMode": "NoLegends",
-            "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true
+            "OutputPathOverride": "./docs/html/plots/Hemorrhage/", "PlotActions": true, "PlotEvents": true
           },
           "PlotSource":
           [
@@ -153,7 +153,7 @@
           "PlotConfig":
           {
             "ImageProperties": { "Height_inch": 7, "Width_inch": 11 }, "LegendMode": "NoLegends",
-            "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true
+            "OutputPathOverride": "./docs/html/plots/Hemorrhage/", "PlotActions": true, "PlotEvents": true
           },
           "PlotSource":
           [
@@ -176,7 +176,7 @@
           "PlotConfig":
           {
             "ImageProperties": { "Height_inch": 7, "Width_inch": 11 }, "LegendMode": "NoLegends",
-            "OutputPathOverride": "./docs/html/plots/Cardiovascular/", "PlotActions": true, "PlotEvents": true
+            "OutputPathOverride": "./docs/html/plots/Hemorrhage/", "PlotActions": true, "PlotEvents": true
           },
           "PlotSource":
           [
@@ -558,7 +558,7 @@
           "Comment": "Hemorrhages - Class 4 No Fluid",
           "PlotConfig":
           {
-            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular", "PercentOfBaselineMode": "All"
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage", "PercentOfBaselineMode": "All"
           },
           "PlotSource":
           [
