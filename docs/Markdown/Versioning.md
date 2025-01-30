@@ -13,6 +13,17 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ## Pulse Integration (Current new feature set)
 
+- Software Architecture Improvements
+  - Automated Validation Updates
+    - Improved organization for automated validation modules
+    - Fix the need for duplicate data request files
+    - Support multiple md files for a validation xlsx
+    - Change argument from xlsx filename to the directory
+
+- Physiology Model Improvements
+    - Moved hemorrrhage model validation to an automated validation module
+
+
 ## Pulse v4.3.1 (January 2025)
 
 - ThirdParty
