@@ -133,6 +133,7 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path,
                     ref_defs.append(ref_name)
 
             return ref_defs
+
         table_num = 1
         fig_num = 1
         eq_num = 1
@@ -166,6 +167,9 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path,
             for idx, word in enumerate(words):
                 if tag in word:
                     ref_name = get_table_tag(words[idx + 1])
+                    if ref_name not in ref_defs:
+                        _pulse_logger.fatal(f"Could not find {ref_name} in {ref_defs}")
+                        exit(0)
                     words[idx] = word.replace(tag, f"{replacement}")
                     words[idx+1] = words[idx + 1].replace(ref_name, f"{ref_defs[ref_name]}")
             words[:] = [word for word in words if word]
@@ -186,10 +190,13 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path,
                 line = _replace_refs(line, "@equationref", "Equation", eq_refs)
             lines[idx] = line
 
+
         return lines
 
     def _process_file(fpath: Path, ancestors: Set[Path]) -> List[str]:
         _pulse_logger.info(f"Processing file: {fpath}")
+        # if "Hemorrhage_Validation.md" in str(fpath):
+        #    print("Here")
         if fpath.resolve() in ancestors:
             raise RuntimeError(f"Circular insert involving {fpath} detected. Aborting.")
         ancestors.add(fpath.resolve())
@@ -264,7 +271,7 @@ def main():
                 _pulse_logger.error(f"Cannot find source directory: {sys.argv[1]}")
         else:
             _pulse_logger.error(
-                "Command arguments are: <Directory to process> " \
+                "Command arguments are: <Directory to process> "
                 "<Directory to place processed files> [Directory where to find references for insert tags]"
         )
     except Exception as e:

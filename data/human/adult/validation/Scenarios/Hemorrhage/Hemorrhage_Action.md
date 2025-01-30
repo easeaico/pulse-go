@@ -20,9 +20,9 @@ Where R<sub>min</sub> is the minimum resistance, P is the blood pressure at the 
 <center>
 <table>
 <tr>
-<td><a href="./plots/Cardiovascular/HemorrhageSeverity.jpg"><img src="./plots/Cardiovascular/HemorrhageSeverity.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/HemorrhageSeverity.jpg"><img src="./plots/Hemorrhage/HemorrhageSeverity.jpg" width="550"></a>
 </td>
-<td><a href="./plots/Cardiovascular/HemorrhageSeverityToFlow.jpg"><img src="./plots/Cardiovascular/HemorrhageSeverityToFlow.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/HemorrhageSeverityToFlow.jpg"><img src="./plots/Hemorrhage/HemorrhageSeverityToFlow.jpg" width="550"></a>
 </td>
 </tr>
 </table>
@@ -39,9 +39,9 @@ The hemorrhage response was validated with a comparison to the literature. The m
 <center>
 <table>
 <tr>
-<td><a href="./plots/Cardiovascular/MeanArterialPressureShock.jpg"><img src="./plots/Cardiovascular/MeanArterialPressureShock.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/MeanArterialPressureShock.jpg"><img src="./plots/Hemorrhage/MeanArterialPressureShock.jpg" width="550"></a>
 </td>
-<td><a href="./plots/Cardiovascular/CardiacOutputShock.jpg"><img src="./plots/Cardiovascular/CardiacOutputShock.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/CardiacOutputShock.jpg"><img src="./plots/Hemorrhage/CardiacOutputShock.jpg" width="550"></a>
 </td>
 </tr>
 </table>
@@ -60,9 +60,9 @@ The different types of shock are evident in the data collected for groups of dog
 <center>
 <table>
 <tr>
-<td><a href="./plots/Cardiovascular/HemorrhageGroups.jpg"><img src="./plots/Cardiovascular/HemorrhageGroups.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/HemorrhageGroups.jpg"><img src="./plots/Hemorrhage/HemorrhageGroups.jpg" width="550"></a>
 </td>
-<td style="vertical-align:top"><a href="./Images/Cardiovascular/HemorrhageGroupsValidation.jpg"><img src="./Images/Cardiovascular/HemorrhageGroupsValidation.jpg" width="500"></a>
+<td><a href="./Images/Hemorrhage/HemorrhageGroupsValidation.jpg"><img src="./Images/Hemorrhage/HemorrhageGroupsValidation.jpg" width="500"></a>
 </td>
 </tr>
 </table>
@@ -82,14 +82,14 @@ We also saw the expected blood volume, pressure, heart rate, and substance conce
 <center>
 <table>
 <tr>
-<td><a href="./plots/Cardiovascular/Class4NoFluid_BloodVolume.jpg"><img src="./plots/Cardiovascular/Class4NoFluid_BloodVolume.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class4NoFluid_BloodVolume.jpg"><img src="./plots/Hemorrhage/Class4NoFluid_BloodVolume.jpg" width="550"></a>
 </td>
-<td><a href="./plots/Cardiovascular/Class4NoFluid_Hb.jpg"><img src="./plots/Cardiovascular/Class4NoFluid_Hb.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class4NoFluid_HemoglobinContent.jpg"><img src="./plots/Hemorrhage/Class4NoFluid_HemoglobinContent.jpg" width="550"></a>
 </td>
 </tr>
 </table>
 </br>
-<a href="./plots/Cardiovascular/Class4NoFluid_Legend.jpg"><img src="./plots/Cardiovascular/Class4NoFluid_Legend.jpg" width="450"></a>
+<a href="./plots/Hemorrhage/Class4NoFluid_Legend.jpg"><img src="./plots/Hemorrhage/Class4NoFluid_Legend.jpg" width="450"></a>
 </center><br>
 @endhtmlonly
 <center>
@@ -101,14 +101,14 @@ We also saw the expected blood volume, pressure, heart rate, and substance conce
 <center>
 <table>
 <tr>
-<td><a href="./plots/Cardiovascular/Class2Saline_BloodVolume.jpg"><img src="./plots/Cardiovascular/Class2Saline_BloodVolume.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class2Saline_BloodVolume.jpg"><img src="./plots/Hemorrhage/Class2Saline_BloodVolume.jpg" width="550"></a>
 </td>
-<td><a href="./plots/Cardiovascular/Class2Saline_Hb.jpg"><img src="./plots/Cardiovascular/Class2Saline_Hb.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class2Saline_HemoglobinContent.jpg"><img src="./plots/Hemorrhage/Class2Saline_HemoglobinContent.jpg" width="550"></a>
 </td>
 </tr>
 </table>
 </br>
-<a href="./plots/Cardiovascular/Class2Saline_Legend.jpg"><img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="450"></a>
+<a href="./plots/Hemorrhage/Class2Saline_Legend.jpg"><img src="./plots/Hemorrhage/Class2Saline_Legend.jpg" width="450"></a>
 </br>
 </center>
 @endhtmlonly
@@ -122,20 +122,20 @@ We also saw the expected blood volume, pressure, heart rate, and substance conce
 <center>
 <table>
 <tr>
-<td><a href="./plots/Cardiovascular/Class2Blood_BloodVolume.jpg"><img src="./plots/Cardiovascular/Class2Blood_BloodVolume.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class2Blood_BloodVolume.jpg"><img src="./plots/Hemorrhage/Class2Blood_BloodVolume.jpg" width="550"></a>
 </td>
-<td><a href="./plots/Cardiovascular/Class2Blood_Diastolic.jpg"><img src="./plots/Cardiovascular/Class2Blood_Diastolic.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class2Blood_DiastolicArterialPressure.jpg"><img src="./plots/Hemorrhage/Class2Blood_DiastolicArterialPressure.jpg" width="550"></a>
 </td>
 </tr>
 <tr>
-<td><a href="./plots/Cardiovascular/Class2Blood_Hb.jpg"><img src="./plots/Cardiovascular/Class2Blood_Hb.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class2Blood_HemoglobinContent.jpg"><img src="./plots/Hemorrhage/Class2Blood_HemoglobinContent.jpg" width="550"></a>
 </td>
-<td><a href="./plots/Cardiovascular/Class2Blood_Systolic.jpg"><img src="./plots/Cardiovascular/Class2Blood_Systolic.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/Class2Blood_SystolicArterialPressure.jpg"><img src="./plots/Hemorrhage/Class2Blood_SystolicArterialPressure.jpg" width="550"></a>
 </td>
 </tr>
 </table>
 </br>
-<a href="./plots/Cardiovascular/Class2Saline_Legend.jpg"><img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="500"></a>
+<a href="./plots/Hemorrhage/Class2Saline_Legend.jpg"><img src="./plots/Hemorrhage/Class2Saline_Legend.jpg" width="500"></a>
 </br>
 </center>
 @endhtmlonly

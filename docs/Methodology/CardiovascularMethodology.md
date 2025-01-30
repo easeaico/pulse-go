@@ -100,7 +100,7 @@ For example, to provide a means for clearing drugs and substances from the blood
 </center>
 @endhtmlonly
 <center>
-<i>@figureref {CircuitDiagram} The cardiovascular circuit consists of nodes that are connected via paths. These segments of nodes and paths are mapped to several compartments which represent the anatomy of the cardiovascular system. The circuit is used to estimate the blood pressure, flow, and volume of these anatomical compartments.</i>
+<i>@figuredef {CircuitDiagram} The cardiovascular circuit consists of nodes that are connected via paths. These segments of nodes and paths are mapped to several compartments which represent the anatomy of the cardiovascular system. The circuit is used to estimate the blood pressure, flow, and volume of these anatomical compartments.</i>
 </center><br>
 
 Nodes serve as the connection points for paths and are the locations at which pressures are measured. Each CV node contains a pressure value, which is given with respect to the atmospheric reference node (indicated in the diagram by the equipotential symbol). Paths contain information about the flow (volume per time). The @ref CircuitMethodology document contains more information about circuit definitions and modeling. The @ref SubstanceTransportMethodology contains more information about the substance transport. In general, nodes contain "across" information and paths contain "through" information.
@@ -129,7 +129,7 @@ Where *E<sub>max,v</sub>* is the maximum ventricle elastance in mmHg per mL. *E<
 
 Where &alpha;<sub>1</sub> , &alpha;<sub>2</sub> , *n<sub>1</sub>*, and *n<sub>2</sub>* are shape parameters used to determine the distribution of the double Hill function. *T* is the cardiac cycle time period and *t* is the current time within the cardiac cycle.
 
-The relationship between the elastance and compliance in the engine is shown in @equationref {ComplianceandElastance}.
+The relationship between the elastance and compliance in the engine is shown in @figureref {ComplianceandElastance}.
 
 @htmlonly
 <center>
@@ -142,7 +142,7 @@ The relationship between the elastance and compliance in the engine is shown in 
 </center><br>
 
 #### Heart Pressure, Volume, and Flow
-The variable compliance, which is used to model heart contraction and relaxation, yields pressure and volume changes that drive the flow through the CV circuit. This variable compliance driver allows the pressures and volumes to be calculated within the heart, as shown in @equationref {PressurevsVolume}.
+The variable compliance, which is used to model heart contraction and relaxation, yields pressure and volume changes that drive the flow through the CV circuit. This variable compliance driver allows the pressures and volumes to be calculated within the heart, as shown in @figureref {PressurevsVolume}.
 
 
 @htmlonly
@@ -155,7 +155,7 @@ The variable compliance, which is used to model heart contraction and relaxation
 <i>@figuredef {PressurevsVolume} Relationship between pressure and volume in the left heart throughout the cardiac cycle. The relaxation of the heart muscle is modeled by increasing the compliance, resulting in an increase in left heart volume with a relatively constant left heart pressure. The contraction is represented by a rapid decrease in the compliance, leading to large pressure increases for small volume additions. This large pressure value drives the fluid out of the heart with flow rates calculated based on the circuit solution.</i>
 </center><br>
 
-A pressure-volume curve is used to represent the evolution of the cardiac cycle from the systolic contraction to diastolic relaxation. The pressure-volume curve for the left ventricle is shown in @equationref {PVLoop}. Starting from the bottom left and moving clockwise, the curve demonstrates a rapid increase in pressure with no change in volume. This indicates the systolic contraction of the cardiac cycle. Following this, the pressure declines rapidly as the heart expands during diastole. The last portion of the curve shows decreasing volume at constant pressure. Normally, the pressure would decrease slightly due to the imperfect mitral valve, which does not close instantly. The engine uses ideal valves, which close instantaneously, causing the pressure to be maintained as volume decreases.
+A pressure-volume curve is used to represent the evolution of the cardiac cycle from the systolic contraction to diastolic relaxation. The pressure-volume curve for the left ventricle is shown in @figureref {PVLoop}. Starting from the bottom left and moving clockwise, the curve demonstrates a rapid increase in pressure with no change in volume. This indicates the systolic contraction of the cardiac cycle. Following this, the pressure declines rapidly as the heart expands during diastole. The last portion of the curve shows decreasing volume at constant pressure. Normally, the pressure would decrease slightly due to the imperfect mitral valve, which does not close instantly. The engine uses ideal valves, which close instantaneously, causing the pressure to be maintained as volume decreases.
 
 @htmlonly
 <center>
@@ -177,7 +177,7 @@ This data is stored in a text file.
 To account for the variable heart rate, rhythms are time series of voltage that is representative of a single cardiac cycle.
 The points are then interpolated based on the length of the cardiac cycle.
 
-@equationref {SinusECG} shows the lead 3 sinus waveform in Pulse compared to an example sinus waveform with the key features highlighted.
+@figureref {SinusECG} shows the lead 3 sinus waveform in Pulse compared to an example sinus waveform with the key features highlighted.
 
 @htmlonly
 <center>
@@ -382,7 +382,7 @@ Pulse will transition the patient to this heart rate over 60s.
 For stable ventricular tachycardia, the heart rate baseline is set to 130.
 For unstable ventricular tachycardia, the heart rate baseline is set to 160.
 The blood pressure was reduced through for unstable ventricular tachycardia by adding systemic compliance and resistance modifiers.
-The heart rate and blood pressure for stable and unstable ventricular tachycardia are shown in @equationref {ECGHRVentricularTachy}.
+The heart rate and blood pressure for stable and unstable ventricular tachycardia are shown in @figureref {ECGHRVentricularTachy}.
 All feedback and imapcts from additional actions will still impact the hemodynamics of the cardiovascular system from this new starting rate.
 
 <center>
@@ -700,6 +700,7 @@ There are three CPR scenarios for validation. Each scenario perscribes the same 
 |	Chest CompressionsForce Scale	|	40	|	165-170	|<span class="success">	80 per minute [Direct calculation]	</span>|<span class="success">	39.27 @cite redberg1993physiology Approx. 70-80 @cite gruben1990system 105 +/- 41 @cite kim2008direction	</span>|<span class="success">	13.97 @cite redberg1993physiology Approx. 40 @cite gruben1990system 33 +/- 10 @cite kim2008direction 	</span>|<span class="warning">	21.13 @cite redberg1993physiology	</span>|<span class="success">	17-27% Normal @cite kim2008direction 	</span>|<span class="success">	19.7 @cite redberg1993physiology 25 +/- 8 @cite kim2008direction 	</span>|<span class="success">	> 0 during compression (translated from dog study) @cite rudikoff1980mechanisms	</span>|<span class="success">	34% +/- 16 @cite kim2008direction	</span>|	
 
 
+### Hemorrhage
 @anchor hemorrhage-validation
 @insert ./validation/markdown/Hemorrhage_Validation.md
 
