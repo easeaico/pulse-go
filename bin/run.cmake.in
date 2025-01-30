@@ -72,9 +72,9 @@ elseif(cmd STREQUAL "doxygen" OR cmd STREQUAL "validate")
     file(APPEND ./docs/panel_footer.html "${FOOTER}")
   endfunction()
   if(cmd STREQUAL "doxygen")
-    clean_docs(TRUE)
     file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/header.html HEADER)
-    file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/footer.html FOOTER)
+    file(READ ./docs/footer.html FOOTER)
+    clean_docs(TRUE) # Clean needs HEADER and FOOTER set before its called
     file(COPY @CMAKE_SOURCE_DIR@/docs/Sources.bib DESTINATION @CMAKE_INSTALL_PREFIX@/bin/docs/)
     # These are run above
     execute_process(COMMAND "@Python_CMD@" "../python/pulse/pipelines/patient_validation.py" -i=verification RESULT_VARIABLE py_result)
@@ -100,9 +100,9 @@ elseif(cmd STREQUAL "doxygen" OR cmd STREQUAL "validate")
     setup_landing_page(focus.html)
     setup_landing_page(support.html)
   elseif(cmd STREQUAL "validate")
-    clean_docs(TRUE)
     file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/header_minimum.html HEADER)
-    file(READ @CMAKE_SOURCE_DIR@/docs/Doxygen/footer_minimum.html FOOTER)
+    file(READ ./docs/footer_minimum.html FOOTER)
+    clean_docs(TRUE) # Clean needs HEADER and FOOTER set before its called
     # Assumption: always use the test results when explicitly running validation on a xlsx
     file(COPY @CMAKE_SOURCE_DIR@/docs/Sources.bib DESTINATION @CMAKE_INSTALL_PREFIX@/bin/docs/)
     set(exec_opt "-tf")

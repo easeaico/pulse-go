@@ -13,6 +13,7 @@
 <div id="footer">
 <div class="container">
 <div class='row text-muted'>
+<div class='footer-row col-md-6' align="center">Generated @build_date@ - @export_git_hash@.</div>
 </div>
 </div>
 </div>
