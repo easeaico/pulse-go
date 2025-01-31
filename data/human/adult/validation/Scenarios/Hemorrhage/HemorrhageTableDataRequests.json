@@ -1,0 +1,65 @@
+{
+  "DataRequest":
+  [
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Patient",    "PropertyName": "Weight", "Unit": "kg" },
+
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HeartRate",                         "Unit": "1/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HeartStrokeVolume",                 "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction",             "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "BloodVolume",                       "Unit": "L" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExtravascularFluidVolume",          "Unit": "L" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "MeanArterialPressure",              "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "SystolicArterialPressure",          "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "DiastolicArterialPressure",         "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CardiacOutput",                     "Unit": "L/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HemoglobinContent",                 "Unit": "g" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CentralVenousPressure",             "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCapillariesWedgePressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TidalVolume",                       "Unit": "mL" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespirationRate",                   "Unit": "1/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CarbonDioxideSaturation",           "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxideFraction",     "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxidePressure",     "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalAlveolarVentilation",          "Unit": "L/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TranspulmonaryPressure",            "Unit": "cmH2O" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CoreTemperature",                   "Unit": "degC" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "SkinTemperature",                   "Unit": "degC" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespiratoryExchangeRatio",          "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "OxygenConsumptionRate",             "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CarbonDioxideProductionRate",       "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "GlomerularFiltrationRate",          "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RenalBloodFlow",                    "Unit": "L/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "UrineProductionRate",               "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "LeftAfferentArterioleResistance",   "Unit": "mmHg min/mL" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RightAfferentArterioleResistance",  "Unit": "mmHg min/mL" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance",        "Unit": "mmHg s/mL" },
+
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta",        "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightTubules", "SubstanceName": "Sodium",        "PropertyName": "Concentration",   "Unit": "g/L" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "LeftTubules",  "SubstanceName": "Sodium",        "PropertyName": "Concentration",   "Unit": "g/L" },
+
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "Oxygen",        "PropertyName": "AlveolarTransfer",    "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Substance", "SubstanceName": "CarbonDioxide", "PropertyName": "AlveolarTransfer",    "Unit": "mL/min" },
+
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "PropertyName": "InFlow",  "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart",   "PropertyName": "InFlow",  "Unit": "mL/min" },
+
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"},
+
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "BaroreceptorHeartRateScale",       "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "BaroreceptorHeartElastanceScale",  "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "BaroreceptorResistanceScale",      "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "BaroreceptorComplianceScale",      "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ChemoreceptorHeartRateScale",      "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ChemoreceptorHeartElastanceScale", "Unit": "unitless" }
+  ]
+}

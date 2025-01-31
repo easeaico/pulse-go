@@ -387,7 +387,6 @@ configure_file(${CMAKE_SOURCE_DIR}/bin/run.config.in "${CMAKE_INSTALL_PREFIX}/bi
 configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/full.doxy @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/report.doxy.in ${CMAKE_INSTALL_PREFIX}/bin/docs/report.doxy @ONLY)
 
-
 #-----------------------------------------------------------------------------
 # This variable controls the prefix used to generate the following files:
 #  PulseConfigVersion.cmake
@@ -411,6 +410,11 @@ else()
 endif()
 
 configure_file(cmake/PulseBuildInformation.cpp.in ${CMAKE_BINARY_DIR}/src/cpp/PulseBuildInformation.cpp)
+
+string(TIMESTAMP build_year "%Y")
+string(TIMESTAMP build_date "%Y-%m-%d")
+configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/footer.html.in ${CMAKE_INSTALL_PREFIX}/bin/docs/footer.html @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/footer_minimum.html.in ${CMAKE_INSTALL_PREFIX}/bin/docs/footer_minimum.html @ONLY)
 
 #------------------------------------------------------------------------------
 # Configure PulseConfigVersion.cmake common to build and install tree

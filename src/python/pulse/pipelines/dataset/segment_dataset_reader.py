@@ -3,6 +3,7 @@
 
 import sys
 import json
+import shutil
 import logging
 from enum import Enum
 from pathlib import Path
@@ -20,7 +21,13 @@ _pulse_logger = logging.getLogger('pulse')
 
 
 def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Path, name_only: bool = False) -> [str]:
-    _pulse_logger.info(f"Generating data from {xls_file}")
+    _pulse_logger.info(f"Generating scenarios and targets from {xls_file} to {output_dir}")
+    # Copy along any data request json files
+    xls_dir = xls_file.parent
+    dr_files = xls_dir.glob("*DataRequests.json")
+    for dr_file in dr_files:
+        _pulse_logger.info(f"Copying file {dr_file} to {output_dir}")
+        shutil.copy(dr_file, output_dir/dr_file.name)
 
     # Iterate through each sheet in the file, generating a scenario for each
     workbook = load_workbook(filename=xls_file, data_only=True)
@@ -218,7 +225,6 @@ def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenari
         segments.append(seg)
 
     scenario.get_data_request_manager().set_data_requests(drs)
-    full_results_dir = str(results_dir) + '/'
     full_results_filename = results_dir / f"{scenario_id}Results.csv"
     # Provide a directory to create a csv file with Results, but log files without
     scenario.get_data_request_manager().set_results_filename(full_results_filename.as_posix())
@@ -273,7 +279,12 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationSegme
     all_actions_str += ']}'
     all_actions = []
     if all_actions_str != '{"AnyAction": []}':
-        all_actions = json.loads(all_actions_str)["AnyAction"]
+        try:
+          all_actions = json.loads(all_actions_str)["AnyAction"]
+        except Exception as e:
+          _pulse_logger.error(f"Unable to parse actions:{e}\n{all_actions_str}")
+          # TODO 
+          return "Error"
 
     # Load conditions into dict
     all_conditions_str = '{"AnyCondition": ['
@@ -353,7 +364,7 @@ def write_scenario(scenario: SEScenario, segments: List[SESegmentValidationSegme
     return json.dumps(out_dict, indent=2)
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
     xls_file = None
@@ -370,3 +381,7 @@ if __name__ == "__main__":
             sys.exit(1)
 
     _ = gen_scenarios_and_targets(xls_file)
+
+
+if __name__ == "__main__":
+    main()

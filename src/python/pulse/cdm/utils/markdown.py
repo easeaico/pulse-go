@@ -103,7 +103,9 @@ def get_table_tag(word: str)->str:
     word = word[start:end + 1]
     return word
 
-def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=False, ancestors: Optional[Set[Path]]=None) -> None:
+
+def process_file(fpath: Path, ref_dir: Path, dest_dir: Path,
+                 replace_refs: bool = False, ancestors: Optional[Set[Path]] = None) -> None:
     """
     Prepares given file for doxygen. Inserts provided tables/references to other MD
     documents and optionally replaces references with Figure/Table numbers.
@@ -131,6 +133,7 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
                     ref_defs.append(ref_name)
 
             return ref_defs
+
         table_num = 1
         fig_num = 1
         eq_num = 1
@@ -164,6 +167,9 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
             for idx, word in enumerate(words):
                 if tag in word:
                     ref_name = get_table_tag(words[idx + 1])
+                    if ref_name not in ref_defs:
+                        _pulse_logger.fatal(f"Could not find {ref_name} in {ref_defs}")
+                        exit(0)
                     words[idx] = word.replace(tag, f"{replacement}")
                     words[idx+1] = words[idx + 1].replace(ref_name, f"{ref_defs[ref_name]}")
             words[:] = [word for word in words if word]
@@ -184,10 +190,13 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
                 line = _replace_refs(line, "@equationref", "Equation", eq_refs)
             lines[idx] = line
 
+
         return lines
 
     def _process_file(fpath: Path, ancestors: Set[Path]) -> List[str]:
         _pulse_logger.info(f"Processing file: {fpath}")
+        # if "Hemorrhage_Validation.md" in str(fpath):
+        #    print("Here")
         if fpath.resolve() in ancestors:
             raise RuntimeError(f"Circular insert involving {fpath} detected. Aborting.")
         ancestors.add(fpath.resolve())
@@ -207,18 +216,25 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
                 stripped_line = line.strip()
                 i_name = stripped_line[stripped_line.find(" "):].strip()
                 f = Path(i_name)
-                _pulse_logger.info(f"Inserting {i_name}")
                 if not f.exists():
-                    # Try to process this file so it is in the dst directory
+                    # Try to process this file assuming it is in the ref_dir
                     inserting = f.name
                     f = ref_dir.resolve() / inserting
-                    process_file(f, ref_dir, dest_dir, replace_refs=False, ancestors=ancestors.copy())
-                    i_out_fname = dest_dir.resolve() / f.stem
-                    i_out_fname = i_out_fname.with_suffix(i_out_fname.suffix+".md")
-                    with open(i_out_fname, "r") as i_out:
-                        i_lines = i_out.readlines()
-                        out_lines.extend(i_lines)
+                    if f.exists():
+                        _pulse_logger.warning(f"Performing @insert, could not find {i_name}, going to try to insert {f}")
+                        process_file(f, ref_dir, dest_dir, replace_refs=False, ancestors=ancestors.copy())
+                        i_out_fname = dest_dir.resolve() / f.stem
+                        i_out_fname = i_out_fname.with_suffix(i_out_fname.suffix+".md")
+                        with open(i_out_fname, "r") as i_out:
+                            i_lines = i_out.readlines()
+                            out_lines.extend(i_lines)
+                    else:
+                        # If you get here, you are probably doing validation on a xlsx with multiple md files
+                        # So that is fine, the validation pipeline should swing back again and properly insert files
+                        _pulse_logger.warning(f"Could not find {i_name} for insertion, leaving insert in place")
+                        out_lines.append(line)
                 else:
+                    _pulse_logger.info(f"Inserting {f}")
                     out_lines.extend(_process_file(f, ancestors.copy()))
             else:
                 out_lines.append(line)
@@ -230,10 +246,10 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path, replace_refs: bool=
 
     with open(out_fname, 'w') as out_file:
         out_file.writelines(out_lines)
-    _pulse_logger.info("Writing processed file as: "+ str(out_fname))
+    _pulse_logger.info("Writing processed file as: " + str(out_fname))
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
     try:
@@ -255,8 +271,12 @@ if __name__ == "__main__":
                 _pulse_logger.error(f"Cannot find source directory: {sys.argv[1]}")
         else:
             _pulse_logger.error(
-                "Command arguments are: <Directory to process> " \
+                "Command arguments are: <Directory to process> "
                 "<Directory to place processed files> [Directory where to find references for insert tags]"
         )
     except Exception as e:
         _pulse_logger.error(e)
+
+
+if __name__ == "__main__":
+    main()

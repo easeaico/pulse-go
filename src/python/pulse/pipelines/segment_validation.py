@@ -24,6 +24,7 @@ from pulse.engine.PulseScenarioExec import PulseScenarioExec
 
 _pulse_logger = logging.getLogger('pulse')
 
+
 class eExecOpt(Enum):
     GenerateOnly = 0
     SkipScenarioExecution = 1
@@ -45,24 +46,28 @@ class eExecOpt(Enum):
 #   Full = Steps 1,2,3,4,5
 
 
-def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_results: bool = False) -> None:
-
+def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_results: bool = False) -> bool:
+    if folder.is_dir():
+        xls_dir = folder
+    else:  # Must be inside the code base
+        xls_dir = Path(get_root_dir()) / "data/human/adult/validation/Scenarios" / folder
+    _pulse_logger.info(f"Processing {xls_dir}")
+    if not xls_dir.is_dir():
+        _pulse_logger.error("Could not find " + str(xls_dir))
+        _pulse_logger.error("Please provide a valid folder")
+        return False
+    xls_file = xls_dir / (xls_dir.name + ".xlsx")
     if not xls_file.is_file():
-        xls_file = Path(get_validation_dir()) / "Scenarios" / xls_file
-        if not xls_file.is_file():
-            _pulse_logger.error("Could not find " + str(xls_file))
-            _pulse_logger.error("Please provide a valid xls file")
-            sys.exit(1)
-
-    xls_dir = xls_file.parent
-    xls_basename = "".join(xls_file.name.rsplit("".join(xls_file.suffixes), 1))
+        _pulse_logger.error("Could not find " + str(xls_file))
+        _pulse_logger.error("Please provide a valid xls file")
+        return False
 
     # This is where we will generate scenarios
-    scenario_dir = Path("./validation/scenarios/"+xls_basename)
+    scenario_dir = Path("./validation/scenarios/"+xls_dir.name)
     # This is where we read the csv to validate
-    validate_dir = Path("./verification/scenarios/"+xls_basename)
+    validate_dir = Path("./verification/scenarios/"+xls_dir.name)
     # This is where the scenario should generate results
-    test_results_dir = Path("./test_results/scenarios/" + xls_basename)
+    test_results_dir = Path("./test_results/scenarios/" + xls_dir.name)
 
     scenario_dir.mkdir(parents=True, exist_ok=True)
     validate_dir.mkdir(parents=True, exist_ok=True)
@@ -74,11 +79,11 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         validate_dir = test_results_dir
     elif not validate_dir.is_dir():
         _pulse_logger.error(f"Results directory ({validate_dir}) does not exist. Aborting")
-        return
+        return False
 
     sce_ids = gen_scenarios_and_targets(xls_file, scenario_dir, test_results_dir)
     if exec_opt is eExecOpt.GenerateOnly:
-        return
+        return True
 
     # plots and md files are expected to be:
     # 1. In the same directory as the xlsx file
@@ -86,18 +91,22 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
     # It is assumed the json and md file names are the same, just different extension
 
     md_files = []
-    base_md = Path(xls_dir / f"{xls_basename}.md")
+    base_md = Path(xls_dir / f"{xls_dir.name}.md")
     if not base_md.is_file():
-        base_md = Path(get_root_dir()) / "docs" / "Validation" / f"{xls_basename}.md"
+        base_md = Path(get_root_dir()) / "docs" / "Validation" / f"{xls_dir.name}.md"
     if base_md.is_file():
         md_files.append(base_md)
-        # Find any other files that start with this name
+    # Look for any section md files
+    extra_mds = xls_dir.glob(f"{xls_dir.name}_*.md")
+    for extra_md in extra_mds:
+        md_files.append(extra_md)
+    # Find any other files that start with this name
     for sce_id in sce_ids:
-        md_file = Path(get_root_dir()) / "docs" / "Validation" / f"{xls_basename}-{sce_id}.md"
+        md_file = Path(get_root_dir()) / "docs" / "Validation" / f"{xls_dir.name}-{sce_id}.md"
         if not md_file.is_file():
             md_file = Path(get_root_dir()) / "docs" / "Validation" / f"{sce_id}.md"
             if not md_file.is_file():
-                md_file = Path(xls_dir / f"{xls_basename}-{sce_id}.md")
+                md_file = Path(xls_dir / f"{xls_dir.name}-{sce_id}.md")
                 if not md_file.is_file():
                     md_file = None
         if md_file is not None:
@@ -107,11 +116,13 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         _pulse_logger.error(f"Could not find md files, at least one should be in:")
         _pulse_logger.error(f"The same dir as the xlsx, or in your source/docs/Validation directory")
         sys.exit(1)
-    config_file = Path(xls_dir / f"{xls_basename}.json")
-    if not config_file.is_file():
-        config_file = Path(get_root_dir()) / "docs" / "Validation" / f"{xls_basename}.json"
+    config_file = Path(xls_dir / f"{xls_dir.name}.json")
     if not config_file.is_file():
         config_file = None
+        _pulse_logger.info("No config file found")
+    else:
+        _pulse_logger.info(f"Using config file {config_file}")
+
     # Is there a custom bib file
     bib_file = Path(xls_dir / "Sources.bib")
     if bib_file.is_file():
@@ -122,7 +133,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         for image in images:
             ext = [".jpg", ".png"]
             if image.endswith(tuple(ext)):
-                image_dir = Path(f"./docs/html/Images/{xls_basename}")
+                image_dir = Path(f"./docs/html/Images/{xls_dir.name}")
                 image_dir.mkdir(parents=True, exist_ok=True)
                 shutil.copy(image, str(image_dir))
 
@@ -134,8 +145,10 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         # Get list of all scenarios
         scenarios = [
             item.name for item in scenario_dir.glob("*.json")
-            if not item.is_dir() and "-ValidationTargets.json" not in item.name and \
-                "-ExecStatus.json" not in item.name
+            if not item.is_dir()
+            and "-ValidationTargets.json" not in item.name
+            and "-ExecStatus.json" not in item.name
+            and "DataRequests.json" not in item.name
         ]
 
         # Create exec statuses for each scenario
@@ -148,7 +161,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
             sce_list.append(sce_status)
 
         # Save statuses to file to send over to C++ for parallel execution
-        sce_exec_list_file = scenario_dir / f"{xls_basename}-ExecStatus.json"
+        sce_exec_list_file = scenario_dir / f"{xls_dir.name}-ExecStatus.json"
         serialize_scenario_exec_status_list_to_file(sce_list, sce_exec_list_file)
         sce_exec.set_scenario_exec_list_filename(sce_exec_list_file.as_posix())
         sce_exec.set_log_to_console(eSwitch.On)
@@ -173,7 +186,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
             _pulse_logger.error(f"Unable to locate segments for {abs_segments_filename}. Continuing without validating.")
             continue
 
-        table_dir = Path("./validation/tables/" + xls_basename + '/' + target_file.split('-')[0])
+        table_dir = Path("./validation/tables/" + xls_dir.name + '/' + target_file.split('-')[0])
         table_dir.mkdir(parents=True, exist_ok=True)
         validate(abs_targets_filename, abs_segments_filename, table_dir=table_dir)
 
@@ -182,7 +195,7 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
             if not table.write_table(
                 validate_dir=validate_dir,
                 in_dir=xls_dir,
-                out_dir=Path("./validation/tables") / xls_basename / table.get_scenario_name()
+                out_dir=Path("./validation/tables") / xls_dir.name / table.get_scenario_name()
             ):
                 _pulse_logger.error(f"Could not write {table.get_scenario_name()}/{table.get_table_name()}")
         if use_test_results:
@@ -199,18 +212,18 @@ def segment_validation_pipeline(xls_file: Path, exec_opt: eExecOpt, use_test_res
         )
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
     logging.getLogger('PIL').setLevel(logging.INFO)
     plt.set_loglevel("info")
 
     parser = argparse.ArgumentParser(description="Process the full pipeline for segment validation")
     parser.add_argument(
-        "xls_file",
+        "folder",
         nargs='?',
         type=Path,
         default=None,
-        help="xls file to process during this pipeline run"
+        help="validation folder to process during this pipeline run"
     )
     parser.add_argument(
         "-t", "--use-test-results",
@@ -241,16 +254,17 @@ if __name__ == "__main__":
 
     opts = parser.parse_args()
 
-    xls_files = []
-    if opts.xls_file is not None:
-        xls_files.append(opts.xls_file)
+    folders = []
+    if opts.folder is not None:
+        folders.append(opts.folder)
     else:
         # In the future, we will do all xlsx in the data/validation dir
         # But for now, we are just hard coding the automated xlsx files
-        xls_files.append("AirwayObstruction.xlsx")
-        xls_files.append("Dehydration.xlsx")
-        xls_files.append("MechanicalVentilator.xlsx")
-        xls_files.append("CSTARS.xlsx")
+        folders.append("Hemorrhage")
+        folders.append("AirwayObstruction")
+        folders.append("Dehydration")
+        folders.append("MechanicalVentilator")
+        folders.append("CSTARS")
 
     exec_opt = eExecOpt.Full
     if opts.generate_only:
@@ -260,9 +274,17 @@ if __name__ == "__main__":
     elif opts.markdown:
         exec_opt = eExecOpt.MarkdownOnly
 
-    for xls_file in xls_files:
+    # Clean out our results directory
+    mk_dir = "./validation/markdown"
+    if Path(mk_dir).exists():
+        shutil.rmtree(mk_dir)
+    for folder in folders:
         segment_validation_pipeline(
-            xls_file=Path(xls_file),
+            folder=Path(folder),
             exec_opt=exec_opt,
             use_test_results=opts.use_test_results
-    )
+        )
+
+
+if __name__ == "__main__":
+    main()

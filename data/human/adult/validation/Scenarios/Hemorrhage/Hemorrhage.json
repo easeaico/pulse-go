@@ -1,0 +1,641 @@
+{
+  "Plots" :
+  {
+    "PlotConfig": { "OutputPathOverride": "./docs/html/plots/Hemorrhage/" },
+    "Plotter" :
+    [
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhages - Severity",
+          "PlotConfig":
+          {
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage"
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/VaryingSeverityResults.csv" }
+          ],
+          "Series":
+          [
+            { "Title": "Varying Severity of Hemorrhage", "OutputFilename": "HemorrhageSeverity",
+            "YHeader": [ "TotalHemorrhageRate(mL/s)" ], "YLabel": "Hemorrhage Flow Rate",
+            "YBounds": { "LowerBound": 0, "UpperBound": 8 }
+            }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhages - Severity To Flow",
+          "PlotConfig":
+          {
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage"
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/SeverityToFlowToSeverityResults.csv" }
+          ],
+          "Series":
+          [
+            { "Title": "Severity to Flow Rate to Severity Hemorrhage", "OutputFilename": "HemorrhageSeverityToFlow",
+            "YHeader": [ "TotalHemorrhageRate(mL/s)" ], "YLabel": "Hemorrhage Flow Rate",
+            "YBounds": { "LowerBound": 0, "UpperBound": 8 }
+            }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Groups",
+          "PlotConfig":
+          {
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage", "PercentOfBaselineMode": "OnlyY"
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group1Results.csv", "Label": "Group 1" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group2Results.csv", "Label": "Group 2" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group3Results.csv", "Label": "Group 3" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group4Results.csv", "Label": "Group 4" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group5Results.csv", "Label": "Group 5" },
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Group6Results.csv", "Label": "Group 6" }
+          ],
+          "Series":
+          [
+            { "Title": "Cardiovascular Hemorrhage Groups", "OutputFilename": "HemorrhageGroups",
+                "YHeader": [ "MeanArterialPressure(mmHg)" ], "YLabel": "Mean Arterial Pressure Delta",
+                "YBounds": { "LowerBound": 0, "UpperBound": 105 } }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhages - To Shock",
+          "PlotConfig":
+          {
+            "ImageProperties": { "Height_inch": 7, "Width_inch": 11 }, "LegendMode": "NoLegends",
+            "OutputPathOverride": "./docs/html/plots/Hemorrhage/", "PlotActions": true, "PlotEvents": true
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/HemorrhageToShockResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "ToShock_BloodVolume", "Title": "", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "ToShock_Hb", "Title": "", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "ToShock_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                   "ImageProperties": { "DimensionMode": "Unbound" }, "PlotEvents": false } }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 1 from Femoral Artery)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class1FemoralResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class1Femoral_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class1Femoral_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class1Femoral_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class1Femoral_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class1Femoral_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class1Femoral_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class1Femoral_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class1Femoral_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class1Femoral_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class1Femoral_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 1 from Femoral Artery) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class1FemoralResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class1Femoral-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class1FemoralResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 from Brachial Artery)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2BrachialResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class2Brachial_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class2Brachial_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class2Brachial_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class2Brachial_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class2Brachial_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class2Brachial_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class2Brachial_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class2Brachial_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class2Brachial_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Brachial_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 from Brachial Artery) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2BrachialResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class2Brachial-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2BrachialResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 with Whole Blood)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2BloodResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class2Blood_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class2Blood_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class2Blood_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class2Blood_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class2Blood_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class2Blood_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class2Blood_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class2Blood_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class2Blood_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Blood_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 with Whole Blood) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2BloodResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class2Blood-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2BloodResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 with Saline)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2SalineResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class2Saline_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class2Saline_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class2Saline_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class2Saline_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class2Saline_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class2Saline_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class2Saline_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class2Saline_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class2Saline_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2Saline_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 with Saline) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2SalineResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class2Saline-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2SalineResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 Internally from Spleen)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2InternalSpleenResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class2InternalSpleen_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class2InternalSpleen_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class2InternalSpleen_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class2InternalSpleen_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class2InternalSpleen_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class2InternalSpleen_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class2InternalSpleen_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class2InternalSpleen_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class2InternalSpleen_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class2InternalSpleen_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 2 Internally from Spleen) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2InternalSpleenResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class2InternalSpleen-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2InternalSpleenResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 3 with No Fluids)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class3NoFluidResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class3NoFluid_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class3NoFluid_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class3NoFluid_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class3NoFluid_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class3NoFluid_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class3NoFluid_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class3NoFluid_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class3NoFluid_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class3NoFluid_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3NoFluid_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 3 with No Fluids) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class3NoFluidResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class3NoFluid-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class3NoFluidResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 3 with Packed Red Blood Cells)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class3PackedRedBloodCellsResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class3PackedRedBloodCells_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class3PackedRedBloodCells_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 3 with Packed Red Blood Cells) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class3PackedRedBloodCellsResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class3PackedRedBloodCells-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class3PackedRedBloodCellsResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 4 with No Fluid)",
+          "PlotConfig":
+          {
+            "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class4NoFluidResults.csv" }
+          ],
+          "Series":
+          [
+            { "OutputFilename": "Class4NoFluid_BloodVolume", "YHeader": [ "BloodVolume(L)" ] },
+            { "OutputFilename": "Class4NoFluid_TotalHemorrhageRate", "YHeader": [ "TotalHemorrhageRate(mL/s)" ] },
+            { "OutputFilename": "Class4NoFluid_HeartRate", "YHeader": [ "HeartRate(1/min)" ] },
+            { "OutputFilename": "Class4NoFluid_ArterialPressure", "YHeader": [ "ArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_MeanArterialPressure", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_CentralVenousPressure", "YHeader": [ "CentralVenousPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_SystolicArterialPressure", "YHeader": [ "SystolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_DiastolicArterialPressure", "YHeader": [ "DiastolicArterialPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_CardiacOutput", "YHeader": [ "CardiacOutput(L/min)" ] },
+            { "OutputFilename": "Class4NoFluid_HeartStrokeVolume", "YHeader": [ "HeartStrokeVolume(mL)" ] },
+            { "OutputFilename": "Class4NoFluid_HemoglobinContent", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "Class4NoFluid_BrainVasculature-Oxygen-PartialPressure", "YHeader": [ "BrainVasculature-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_RespirationRate", "YHeader": [ "RespirationRate(1/min)" ] },
+            { "OutputFilename": "Class4NoFluid_TidalVolume", "YHeader": [ "TidalVolume(mL)" ] },
+            { "OutputFilename": "Class4NoFluid_Aorta-Oxygen-PartialPressure", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_Aorta-CarbonDioxide-PartialPressure", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
+            { "OutputFilename": "Class4NoFluid_Legend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
+          ]
+        }
+      },
+      {
+        "MonitorPlotter":
+        {
+          "Comment": "Hemorrhage Validation (Class 4 with No Fluid) Monitor",
+          "PlotSource":
+          { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class4NoFluidResults.csv" },
+          "Vitals": true, "Ventilator": false, "OutputPrefix": "Class4NoFluid-",
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class4NoFluidResults-Segments.json"
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhages - Class 4 No Fluid",
+          "PlotConfig":
+          {
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage", "PercentOfBaselineMode": "All"
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class4NoFluidResults.csv" }
+          ],
+          "ValidationSource": { "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicCardiacOutputShockValidation.csv" },
+          "Series":
+          [
+            { "Title": "Cardiac Output - Response to Hemorrhage", "OutputFilename": "CardiacOutputShock",
+                "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss",
+                "XBounds": { "LowerBound": 0, "UpperBound": 50 }, "YHeader": [ "CardiacOutput(L/min)" ],
+                "YLabel": "Pulse Normalized Cardiac Output", "X2Header": "BloodVolumeLost(%)",
+                "Y2Header": [ "NormalizedCardiacOutput" ], "Y2Label": "Validation Normalized Cardiac Output" }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Hemorrhages - Class 4 No Fluid",
+          "PlotConfig":
+          {
+            "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Hemorrhage", "PercentOfBaselineMode": "All"
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class4NoFluidResults.csv" }
+          ],
+          "ValidationSource":
+          {
+            "CSVData": "$VALIDATION_DIR/Cardiovascular/HemorrhagicMeanArterialPressureShockValidation.csv"
+          },
+          "Series":
+          [
+            { "Title": "Mean Arterial Pressure - Response to Hemorrhage", "OutputFilename": "MeanArterialPressureShock",
+                "XHeader": "BloodVolume(L)", "XLabel": "Percent Of Blood Loss",
+                "XBounds": { "LowerBound": 0, "UpperBound": 50 }, "YHeader": [ "MeanArterialPressure(mmHg)" ],
+                "YLabel": "Pulse Normalized Mean Arterial Pressure", "X2Header": "BloodVolumeLost(%)",
+                "Y2Header": [ "NormalizedMeanArterialPressure" ],
+                "Y2Label": "Validation Normalized Mean Arterial Pressure" }
+          ]
+        }
+      }
+    ]
+  },
+  "Tables" :
+  {
+    "Table" :
+    [
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class1Femoral",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class1Femoral",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class2Brachial",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class2Brachial",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class2Blood",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class2Blood",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class2Saline",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class2Saline",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Class2Saline",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class2InternalSpleen",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class2InternalSpleen",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class3NoFluid",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class3NoFluid",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class3PackedRedBloodCells",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class3PackedRedBloodCells",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment3SegmentTable",
+        "ScenarioName": "Class3PackedRedBloodCells",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment1SegmentTable",
+        "ScenarioName": "Class4NoFluid",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      },
+      {
+        "TableName": "Segment2SegmentTable",
+        "ScenarioName": "Class4NoFluid",
+        "Segment": 1,
+        "DataRequestFile": ["HemorrhageTableDataRequests.json"],
+        "Header": []
+      }
+    ]
+  }
+}
