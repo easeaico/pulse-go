@@ -116,6 +116,11 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioEx
     scenarioDir = config->GetValue("scenario_dir");
     m_DataRequestFilesSearch.insert(scenarioDir);
   }
+  if (config->HasKey("validation_dir"))
+  {
+    std::string validationDir = config->GetValue("validation_dir");
+    m_DataRequestFilesSearch.insert(validationDir + "/Scenarios");
+  }
   delete config;
   std::string csvFilenamePostfix = "";
   if (sce.GetDataRequestManager().HasResultsFilename())

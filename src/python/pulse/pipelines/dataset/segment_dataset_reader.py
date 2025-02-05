@@ -22,13 +22,6 @@ _pulse_logger = logging.getLogger('pulse')
 
 def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Path, name_only: bool = False) -> [str]:
     _pulse_logger.info(f"Generating scenarios and targets from {xls_file} to {output_dir}")
-    # Copy along any data request json files
-    xls_dir = xls_file.parent
-    dr_files = xls_dir.glob("*DataRequests.json")
-    for dr_file in dr_files:
-        _pulse_logger.info(f"Copying file {dr_file} to {output_dir}")
-        shutil.copy(dr_file, output_dir/dr_file.name)
-
     # Iterate through each sheet in the file, generating a scenario for each
     workbook = load_workbook(filename=xls_file, data_only=True)
     scenario_ids = list()
@@ -113,7 +106,9 @@ def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenari
                 if "segment" in h2c:
                     seg.set_segment_id(int(r[h2c["segment"]]))
             if "segment" in h2c and int(r[h2c["segment"]]) != seg.get_segment_id():
-                _pulse_logger.warning(f'Ignoring change in segment ID without new header. Found {r[h2c["segment"]]} under segment {seg.get_segment_id()}')
+                _pulse_logger.warning(f'Ignoring change in segment ID without new header. '
+                                      f'Found {r[h2c["segment"]]} under segment {seg.get_segment_id()} '
+                                      f'in sheet {scenario_id}')
             seg.set_notes("\n".join([seg.get_notes(), r[h2c["narrative"]] if "narrative" in h2c and isinstance(r[h2c["narrative"]], str) else ""]).strip())
 
         elif stage == Stage.DataRequests:
@@ -157,7 +152,9 @@ def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenari
                 if "segment" in h2c:
                     seg.set_segment_id(int(r[h2c["segment"]]))
             if "segment" in h2c and int(r[h2c["segment"]]) != seg.get_segment_id():
-                _pulse_logger.warning(f'Ignoring change in segment ID without new header. Found {r[h2c["segment"]]} under segment {seg.get_segment_id()}')
+                _pulse_logger.warning(f'Ignoring change in segment ID without new header. '
+                                      f'Found {r[h2c["segment"]]} under segment {seg.get_segment_id()} '
+                                      f'in sheet {scenario_id}')
             # Append notes to existing segment notes, joined with new lines
             seg.set_notes("\n".join([seg.get_notes(), r[h2c["narrative"]] if "narrative" in h2c and isinstance(r[h2c["narrative"]], str) else ""]).strip())
             # Append any actions to this segment
