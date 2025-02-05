@@ -342,6 +342,9 @@ class SESegmentValidationSegmentTable:
         for header in self.get_headers():
             table_data.append(_get_engine_value(header))
 
+        # Table DataRequest file should either be in:
+        # 1. The same directory as the xlsx
+        # 2. In the source dir where we keep common data request files
         alt_locations = [in_dir, Path(get_scenario_dir())]
         for dr_file in self.get_data_request_files():
             dr_path = Path(dr_file)

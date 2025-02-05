@@ -284,6 +284,7 @@ bool FindFileInFilePath(const std::string& filepath, const std::string& find, st
     return false;
   }
 
+  // Traverse Up the path
   std::string path;
   SplitPath(filepathf, path);
 
@@ -300,6 +301,15 @@ bool FindFileInFilePath(const std::string& filepath, const std::string& find, st
     if (path.length() < 2 || (slash = path.find_last_of("/", path.length() - 2)) == std::string::npos)
       break;
     path = path.substr(0, ++slash);
+  }
+
+  // Traverse Down the path
+  std::vector<std::string> files;
+  ListFiles(filepathf, files, true, find);
+  if (files.size() > 0)
+  {
+    found = files[0];
+    return true;
   }
 
   return false;
