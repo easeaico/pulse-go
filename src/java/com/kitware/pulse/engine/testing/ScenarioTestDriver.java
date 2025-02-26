@@ -96,7 +96,10 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     job.execOpts.setLogToConsole(eSwitch.Off);
     job.execOpts.setScenarioContent(json);
     job.execOpts.setLogPrepend(job.name);
-    job.execOpts.getDataRequestFilesSearch().add(job.scenarioDirectory+"/"+job.name);
+    String fullSceDir = job.scenarioDirectory+"/"+job.name;
+    if(fullSceDir.endsWith(".json"))
+      fullSceDir = fullSceDir.substring(0,fullSceDir.lastIndexOf("/")+1);
+    job.execOpts.getDataRequestFilesSearch().add(fullSceDir);
     //System.out.println(json);
     job.execOpts.execute();
     Log.info("Completed running "+job.name);

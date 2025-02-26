@@ -194,6 +194,9 @@ bool IsRelativePath(const std::string& path)
 
 void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask, const std::string& exclusion)
 {
+  if(!std::filesystem::is_directory(dir))
+    return;
+
   std::string filename;
   if (recursive)
   {
