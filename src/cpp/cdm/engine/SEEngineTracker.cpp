@@ -68,7 +68,7 @@ SEEngineTracker::SEEngineTracker(SEPatient& p, SEActionManager& a, SESubstanceMa
   m_DataTrack = new DataTrack(logger);
   m_DataRequestMgr = new SEDataRequestManager(logger);
   m_ForceConnection = false;
-  m_LastPullTime_s = -1;
+  m_LastPullTime_s = SEScalar::dNaN();
 }
 
 SEEngineTracker::~SEEngineTracker()

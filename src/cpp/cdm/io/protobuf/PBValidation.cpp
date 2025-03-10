@@ -30,39 +30,11 @@ void PBValidation::Load(const CDM_BIND::SegmentValidationTargetData& src, SESegm
 void PBValidation::Serialize(const CDM_BIND::SegmentValidationTargetData& src, SESegmentValidationTarget& dst)
 {
   PBValidation::Serialize(src.validationtarget(), dst);
-  switch (src.Expected_case())
-  {
-  case CDM_BIND::SegmentValidationTargetData::kEqualToSegment:
-    dst.SetEqualToValue(src.equaltosegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kEqualToValue:
-    dst.SetEqualToValue(src.equaltovalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kGreaterThanSegment:
-    dst.SetGreaterThanSegment(src.greaterthansegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kGreaterThanValue:
-    dst.SetGreaterThanValue(src.greaterthanvalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kLessThanSegment:
-    dst.SetLessThanSegment(src.lessthansegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kLessThanValue:
-    dst.SetLessThanValue(src.lessthanvalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kTrendsToSegment:
-    dst.SetTrendsToSegment(src.trendstosegment());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kTrendsToValue:
-    dst.SetTrendsToValue(src.trendstovalue());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::kRange:
-    dst.SetRange(src.range().minimum(), src.range().maximum());
-    break;
-  case CDM_BIND::SegmentValidationTargetData::EXPECTED_NOT_SET:
-    dst.Warning("ValidationTarget expected not set");
-    break;
-  }
+  dst.SetComparisonFormula(src.comparisonformula());
+  if (src.has_goodpercenterror())
+    dst.SetGoodPercentError(src.goodpercenterror());
+  if (src.has_fairpercenterror())
+    dst.SetFairPercentError(src.fairpercenterror());
 }
 CDM_BIND::SegmentValidationTargetData* PBValidation::Unload(const SESegmentValidationTarget& src)
 {
@@ -73,39 +45,9 @@ CDM_BIND::SegmentValidationTargetData* PBValidation::Unload(const SESegmentValid
 void PBValidation::Serialize(const SESegmentValidationTarget& src, CDM_BIND::SegmentValidationTargetData& dst)
 {
   PBValidation::Serialize(src, *dst.mutable_validationtarget());
-
-  switch (src.m_ComparisonType)
-  {
-  case SESegmentValidationTarget::eComparisonType::EqualToSegment:
-    dst.set_equaltosegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::EqualToValue:
-    dst.set_equaltovalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::GreaterThanSegment:
-    dst.set_greaterthansegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::GreaterThanValue:
-    dst.set_greaterthanvalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::LessThanSegment:
-    dst.set_lessthansegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::LessThanValue:
-    dst.set_lessthanvalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::TrendsToSegment:
-    dst.set_trendstosegment((int)src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::TrendsToValue:
-    dst.set_trendstovalue(src.m_Target);
-    break;
-  case SESegmentValidationTarget::eComparisonType::Range:
-    dst.mutable_range()->set_minimum(src.m_TargetMinimum);
-    dst.mutable_range()->set_maximum(src.m_TargetMaximum);
-    break;
-  default: break;
-  }
+  dst.set_comparisonformula(src.GetComparisonFormula());
+  dst.set_goodpercenterror(src.GetGoodPercentError());
+  dst.set_fairpercenterror(src.GetFairPercentError());
 }
 void PBValidation::Load(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
 {

@@ -81,3 +81,4 @@ enum eDriverWaveform
   SigmoidalRise      = 8;/**<<  */
   SigmoidalFall      = 9;/**<<  */
 }
+

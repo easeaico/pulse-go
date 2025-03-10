@@ -27,9 +27,10 @@ _pulse_logger = logging.getLogger('pulse')
 
 class eExecOpt(Enum):
     GenerateOnly = 0
-    SkipScenarioExecution = 1
-    MarkdownOnly = 2
-    Full = 3
+    GenerateAndRun = 1
+    SkipScenarioExecution = 2
+    MarkdownOnly = 3
+    Full = 4
 
 # Pipeline Flow
 #   1. Read the xlsx and generate scenario and validation target files
@@ -41,6 +42,7 @@ class eExecOpt(Enum):
 #   5. Preprocess markdown file (inserts tables)
 # Exec Options:
 #   GenerateOnly = Step 1
+#   GenerateAndRun = Steps 1, 2
 #   SkipScenarioExecution = Steps 1,3,4,5
 #   MarkdownOnly = Steps 3,4,5
 #   Full = Steps 1,2,3,4,5
@@ -83,6 +85,43 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
 
     sce_ids = gen_scenarios_and_targets(xls_file, scenario_dir, test_results_dir)
     if exec_opt is eExecOpt.GenerateOnly:
+        return True
+
+    # Run scenarios if we are running full pipeline
+    if (exec_opt is eExecOpt.Full) or (exec_opt is eExecOpt.GenerateAndRun):
+        sce_exec = PulseScenarioExec()
+        sce_exec.set_log_to_console(eSwitch.On)
+
+        # Get list of all scenarios
+        scenarios = [
+            item.name for item in scenario_dir.glob("*.json")
+            if not item.is_dir()
+            and "-ValidationTargets.json" not in item.name
+            and "-ExecStatus.json" not in item.name
+            and "DataRequests.json" not in item.name
+        ]
+
+        # Create exec statuses for each scenario
+        sce_list = []
+        for scenario in scenarios:
+            scenario_file = scenario_dir / scenario
+
+            sce_status = SEScenarioExecStatus()
+            sce_status.set_scenario_filename(scenario_file.as_posix())
+            sce_list.append(sce_status)
+
+        # Save statuses to file to send over to C++ for parallel execution
+        sce_exec_list_file = scenario_dir / f"{xls_dir.name}-ExecStatus.json"
+        serialize_scenario_exec_status_list_to_file(sce_list, str(sce_exec_list_file))
+        sce_exec.set_scenario_exec_list_filename(sce_exec_list_file.as_posix())
+        sce_exec.set_log_to_console(eSwitch.On)
+        _pulse_logger.info("Executing scenarios")
+        if not sce_exec.execute_scenario():
+            _pulse_logger.warning(f"Scenarios not successfully run. Check {sce_exec_list_file} for details")
+        else:
+            _pulse_logger.info("Completed executing scenarios")
+
+    if exec_opt is eExecOpt.GenerateAndRun:
         return True
 
     # plots and md files are expected to be:
@@ -136,40 +175,6 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
                 image_dir = Path(f"./docs/html/Images/{xls_dir.name}")
                 image_dir.mkdir(parents=True, exist_ok=True)
                 shutil.copy(image, str(image_dir))
-
-    # Run scenarios if we are running full pipeline
-    if exec_opt is eExecOpt.Full:
-        sce_exec = PulseScenarioExec()
-        sce_exec.set_log_to_console(eSwitch.On)
-
-        # Get list of all scenarios
-        scenarios = [
-            item.name for item in scenario_dir.glob("*.json")
-            if not item.is_dir()
-            and "-ValidationTargets.json" not in item.name
-            and "-ExecStatus.json" not in item.name
-            and "DataRequests.json" not in item.name
-        ]
-
-        # Create exec statuses for each scenario
-        sce_list = []
-        for scenario in scenarios:
-            scenario_file = scenario_dir / scenario
-
-            sce_status = SEScenarioExecStatus()
-            sce_status.set_scenario_filename(scenario_file.as_posix())
-            sce_list.append(sce_status)
-
-        # Save statuses to file to send over to C++ for parallel execution
-        sce_exec_list_file = scenario_dir / f"{xls_dir.name}-ExecStatus.json"
-        serialize_scenario_exec_status_list_to_file(sce_list, sce_exec_list_file)
-        sce_exec.set_scenario_exec_list_filename(sce_exec_list_file.as_posix())
-        sce_exec.set_log_to_console(eSwitch.On)
-        _pulse_logger.info("Executing scenarios")
-        if not sce_exec.execute_scenario():
-            _pulse_logger.warning(f"Scenarios not successfully run. Check {sce_exec_list_file} for details")
-        else:
-            _pulse_logger.info("Completed executing scenarios")
 
     config = None
     if config_file is not None:
@@ -242,6 +247,11 @@ def main():
         help="do not run the scenarios, results are expected to be found"
     )
     run_group.add_argument(
+        "-r", "--run",
+        action='store_true',
+        help="Generate and run the scenarios"
+    )
+    run_group.add_argument(
         "-m", "--markdown",
         action='store_true',
         help="only validate and build markdown"
@@ -269,6 +279,8 @@ def main():
     exec_opt = eExecOpt.Full
     if opts.generate_only:
         exec_opt = eExecOpt.GenerateOnly
+    elif opts.run:
+        exec_opt = eExecOpt.GenerateAndRun
     elif opts.skip_exec:
         exec_opt = eExecOpt.SkipScenarioExecution
     elif opts.markdown:

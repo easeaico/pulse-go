@@ -45,8 +45,6 @@ class CDM_DECL SESegmentValidationTarget : public SEValidationTarget
 {
   friend class PBValidation;//friend the serialization class
 public:
-  enum class eComparisonType { None=0, EqualToValue, EqualToSegment, GreaterThanValue, GreaterThanSegment,
-                               LessThanValue, LessThanSegment, TrendsToValue, TrendsToSegment, Range };
   SESegmentValidationTarget();
   virtual ~SESegmentValidationTarget() = default;
 
@@ -56,23 +54,20 @@ public:
   static bool SerializeFromFile(const std::string& filename, std::vector<SESegmentValidationTarget*>& dst, Logger* logger);
 
   void Clear() override;
-  eComparisonType GetComparisonType() const { return m_ComparisonType; }
 
-  int    GetTargetSegment() const { return m_TargetSegment; }
+  std::string GetComparisonFormula() const { return m_ComparisonFormula; }
+  void SetComparisonFormula(const std::string& f) { m_ComparisonFormula = f; }
 
-  void   SetEqualToSegment(int segment);
-  void   SetEqualToValue(double d);
-  void   SetGreaterThanSegment(int segment);
-  void   SetGreaterThanValue(double d);
-  void   SetLessThanSegment(int segment);
-  void   SetLessThanValue(double d);
-  void   SetTrendsToSegment(int segment);
-  void   SetTrendsToValue(double d);
-  void   SetRange(double min, double max);
+  double GetGoodPercentError() const { return m_GoodPercentError; }
+  void SetGoodPercentError(double e) { m_GoodPercentError = e; }
+
+  double GetFairPercentError() const { return m_FairPercentError; }
+  void SetFairPercentError(double e) { m_FairPercentError = e; }
 
 protected:
-  eComparisonType                            m_ComparisonType;
-  int                                        m_TargetSegment;
+  std::string m_ComparisonFormula;
+  double      m_GoodPercentError;
+  double      m_FairPercentError;
 };
 
 class CDM_DECL SETimeSeriesValidationTarget : public SEValidationTarget

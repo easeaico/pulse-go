@@ -9,7 +9,6 @@ from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarArea, SEScalarFreq
 from pulse.cdm.engine import SEConditionManager
 
 
-
 class eSex(Enum):
     Male = 0
     Female = 1

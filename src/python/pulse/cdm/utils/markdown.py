@@ -190,7 +190,6 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path,
                 line = _replace_refs(line, "@equationref", "Equation", eq_refs)
             lines[idx] = line
 
-
         return lines
 
     def _process_file(fpath: Path, ancestors: Set[Path]) -> List[str]:

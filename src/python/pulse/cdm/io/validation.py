@@ -29,54 +29,29 @@ def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEVali
 
 def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, dst: SegmentValidationTargetData):
     serialize_validation_target_to_bind(src, dst.ValidationTarget)
-    if src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToSegment:
-        dst.EqualToSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.EqualToValue:
-        dst.EqualToValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanSegment:
-        dst.GreaterThanSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.GreaterThanValue:
-        dst.GreaterThanValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanSegment:
-        dst.LessThanSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.LessThanValue:
-        dst.LessThanValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToSegment:
-        dst.TrendsToSegment = src.get_target_segment()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.TrendsToValue:
-        dst.TrendsToValue = src.get_target()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.Range:
-        dst.Range.Minimum = src.get_target_minimum()
-        dst.Range.Maximum = src.get_target_maximum()
-    elif src.get_comparison_type() == SESegmentValidationTarget.eComparisonType.NotValidating:
-        pass
-    else:
-        raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
+    if src.get_comparison_formula():
+        dst.ComparisonFormula = src.get_comparison_formula()
+    if src.has_computed_value():
+        dst.ComputedValue = src.get_computed_value()
+    if src.has_error_value():
+        dst.Error = src.get_error_value()
+    if src.has_good_percent_error():
+        dst.GoodPercentError = src.get_good_percent_error()
+    if src.has_fair_percent_error():
+        dst.FairPercentError = src.get_fair_percent_error()
 def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetData, dst: SESegmentValidationTarget):
     dst.clear()
     serialize_validation_target_from_bind(src.ValidationTarget, dst)
-    if src.HasField("EqualToSegment"):
-        dst.set_equal_to_segment(src.EqualToSegment)
-    elif src.HasField("EqualToValue"):
-        dst.set_equal_to_value(src.EqualToValue)
-    elif src.HasField("GreaterThanSegment"):
-        dst.set_greater_than_segment(src.GreaterThanSegment)
-    elif src.HasField("GreaterThanValue"):
-        dst.set_greater_than_value(src.GreaterThanValue)
-    elif src.HasField("LessThanSegment"):
-        dst.set_less_than_segment(src.LessThanSegment)
-    elif src.HasField("LessThanValue"):
-        dst.set_less_than_value(src.LessThanValue)
-    elif src.HasField("TrendsToSegment"):
-        dst.set_trends_to_segment(src.TrendsToSegment)
-    elif src.HasField("TrendsToValue"):
-        dst.set_trends_to_value(src.TrendsTo)
-    elif src.HasField("Range"):
-        dst.set_range(src.Range.Minimum, src.Range.Maximum)
-    elif src.WhichOneof('Expected') is None:  # Not validating
-        pass
-    else:
-        raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
+    if src.ComparisonFormula:
+        dst.set_comparison_formula(src.ComparisonFormula)
+    if src.ComputedValue:
+        dst.set_computed_value(src.ComputedValue)
+    if src.Error:
+        dst.set_error_value(src.Error)
+    if src.GoodPercentError > 0:
+        dst.set_good_percent_error(src.GoodPercentError)
+    if src.FairPercentError > 0:
+        dst.set_fair_percent_error(src.FairPercentError)
 def serialize_segment_validation_segment_to_bind(src: SESegmentValidationSegment, dst: SegmentValidationSegmentData):
     dst.Segment = src.get_segment_id()
     dst.Notes = src.get_notes()

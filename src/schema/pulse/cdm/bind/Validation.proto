@@ -8,6 +8,7 @@ import "pulse/cdm/bind/Plots.proto";
 import "pulse/cdm/bind/Patient.proto";
 import "pulse/cdm/bind/Properties.proto";
 
+
 // This encapsulates a row from our System/Patient validation spreedsheet
 // It also encapsulates a segment property cell from a scenario validation spreedsheet
 
@@ -22,26 +23,16 @@ message ValidationTargetData
 
 message SegmentValidationTargetData
 {
-
   ValidationTargetData                                  ValidationTarget                = 1;
-  oneof Expected
-  {
-    double                                              EqualToValue                    = 2;
-    int32                                               EqualToSegment                  = 3;
-    double                                              GreaterThanValue                = 4;
-    int32                                               GreaterThanSegment              = 5;
-    double                                              LessThanValue                   = 6;
-    int32                                               LessThanSegment                 = 7;
-    double                                              TrendsToValue                   = 8;
-    int32                                               TrendsToSegment                 = 9;
-    RangeData                                           Range                           = 10;
-  }
-  optional double                                       ComputedValue                   = 11;
-  optional double                                       Error                           = 12;
+  string                                                ComparisonFormula               = 2;/**<< @brief a formula to solve, that can include values from other segment, to compute the target value */
+  optional double                                       ComputedValue                   = 3;
+  optional double                                       Error                           = 4;
+  optional double                                       GoodPercentError                = 5;/**<< @brief We meet Good validation if Error is <= this percent, typically 10% */
+  optional double                                       FairPercentError                = 6;/**<< @brief We meet Fair validation if Error is <= this percent, typically 30%, anything over is considered Poor validation */
+
 }
 message SegmentValidationSegmentData
 {
-
   int32                                                 Segment                         = 1;
   string                                                Notes                           = 2;
   repeated SegmentValidationTargetData                  SegmentValidationTarget         = 3;

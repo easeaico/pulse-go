@@ -31,8 +31,9 @@ SESegmentValidationTarget::SESegmentValidationTarget() : SEValidationTarget()
 void SESegmentValidationTarget::Clear()
 {
   SEValidationTarget::Clear();
-  m_ComparisonType = eComparisonType::None;
-  m_TargetSegment = 0;
+  m_ComparisonFormula = "";
+  m_GoodPercentError = 0;
+  m_FairPercentError = 0;
 }
 bool SESegmentValidationTarget::SerializeToString(const std::vector<const SESegmentValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
@@ -50,84 +51,13 @@ bool SESegmentValidationTarget::SerializeFromFile(const std::string& filename, s
 {
   return PBValidation::SerializeFromFile(filename, dst, logger);
 }
-void SESegmentValidationTarget::SetEqualToSegment(int s)
-{
-  m_ComparisonType = eComparisonType::EqualToSegment;
-  m_Target = SEScalar::dNaN();
-  m_TargetMaximum = SEScalar::dNaN();
-  m_TargetMinimum = SEScalar::dNaN();
-  m_TargetSegment = s;
-}
-void SESegmentValidationTarget::SetEqualToValue(double d)
-{
-  m_ComparisonType = eComparisonType::EqualToValue;
-  m_Target = d;
-  m_TargetMaximum = d;
-  m_TargetMinimum = d;
-  m_TargetSegment = 0;
-}
-void SESegmentValidationTarget::SetGreaterThanSegment(int s)
-{
-  m_ComparisonType = eComparisonType::GreaterThanSegment;
-  m_Target = SEScalar::dNaN();
-  m_TargetMaximum = SEScalar::dNaN();
-  m_TargetMinimum = SEScalar::dNaN();
-  m_TargetSegment = s;
-}
-void SESegmentValidationTarget::SetGreaterThanValue(double d)
-{
-  m_ComparisonType = eComparisonType::GreaterThanValue;
-  m_Target = d;
-  m_TargetMaximum = d;
-  m_TargetMinimum = d;
-  m_TargetSegment = 0;
-}
-void SESegmentValidationTarget::SetLessThanSegment(int s)
-{
-  m_ComparisonType = eComparisonType::LessThanSegment;
-  m_Target = SEScalar::dNaN();
-  m_TargetMaximum = SEScalar::dNaN();
-  m_TargetMinimum = SEScalar::dNaN();
-  m_TargetSegment = s;
-}
-void SESegmentValidationTarget::SetLessThanValue(double d)
-{
-  m_ComparisonType = eComparisonType::LessThanValue;
-  m_Target = d;
-  m_TargetMaximum = d;
-  m_TargetMinimum = d;
-  m_TargetSegment = 0;
-}
-void SESegmentValidationTarget::SetTrendsToSegment(int s)
-{
-  m_ComparisonType = eComparisonType::TrendsToSegment;
-  m_Target = SEScalar::dNaN();
-  m_TargetMaximum = SEScalar::dNaN();
-  m_TargetMinimum = SEScalar::dNaN();
-  m_TargetSegment = s;
-}
-void SESegmentValidationTarget::SetTrendsToValue(double d)
-{
-  m_ComparisonType = eComparisonType::TrendsToValue;
-  m_Target = d;
-  m_TargetMaximum = d;
-  m_TargetMinimum = d;
-  m_TargetSegment = 0;
-}
-void SESegmentValidationTarget::SetRange(double min, double max)
-{
-  m_ComparisonType = eComparisonType::Range;
-  m_Target = SEScalar::dNaN();
-  m_TargetMaximum = max;
-  m_TargetMinimum = min;
-  m_TargetSegment = 0;
-}
 
 SETimeSeriesValidationTarget::SETimeSeriesValidationTarget() : SEValidationTarget()
 {
-  m_TargetType = eTargetType::Mean;
   m_Error = 100;
   m_ComparisonValue = 0;
+  m_TargetType = eTargetType::Mean;
+  m_ComparisonType = eComparisonType::None;
 }
 void SETimeSeriesValidationTarget::Clear()
 {
