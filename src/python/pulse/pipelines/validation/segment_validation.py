@@ -82,13 +82,11 @@ def evaluate(seg_id: int,
              results: SEDataRequested,
              referenced_results: List[SEDataRequested]) -> List[str]:
     header = tgt.get_header()
+    _pulse_logger.info(f"Evaluating {header}")
 
     epsilon = 1E-9
     percent_precision = 1
     value_precision = 4
-    expected_str = ""
-    err_str = ""
-    change_str = ""
 
     result = results.get_segment(seg_id)
     if result is None:
@@ -133,7 +131,14 @@ def evaluate(seg_id: int,
     else:
         expressions = [formula]
 
+    formula_expected_str = ""
+    formula_error_str = ""
+    formula_change_str = ""
     for expression in expressions:
+        expression_expected_str = ""
+        expression_error_str = ""
+        expression_change_str = ""
+
         # First sub in all referenced segment values into the expression
 
         #   Find all local segment references
@@ -171,21 +176,42 @@ def evaluate(seg_id: int,
 
         compare_type = None
         if '>' in expression or '<' in expression:
-            if '>' in expression:
-                compare_type = "GreaterThan"
-            else:
-                compare_type = "LessThan"
+
             # TODO: Implement gradient?
             change = percent_change(expected_val, engine_val, epsilon)
             c = '"danger"'
-            if not np.isnan(change) and change < 0.0:
-                c = '"success"'
-            change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
+            if '>' in expression:
+                compare_type = "GreaterThan"
+                if '=' in expression:
+                    if not np.isnan(change) and change >= 0.0:
+                        c = '"success"'
+                else:
+                    if not np.isnan(change) and change > 0.0:
+                        c = '"success"'
+            else:
+                compare_type = "LessThan"
+                if '=' in expression:
+                    if not np.isnan(change) and change <= 0.0:
+                        c = '"success"'
+                else:
+                    if not np.isnan(change) and change < 0.0:
+                        c = '"success"'
+            expression_change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
+            expression_expected_str = f"({expected_val:.{value_precision}G})"
+
+        elif '=' in expression:
+            compare_type = "EqualTo"
+            err = percent_difference(expected_val, engine_val, epsilon)
+            # Close enough
+            if abs(err) < epsilon:
+                err = 0.
+            expression_error_str = generate_percentage_span(err, percent_precision)
+            expression_expected_str = f"({expected_val:.{value_precision}G})"
 
         elif '[' in expression and ']' in expression:
-            tgt_min = tgt.get_target_minimum()
-            tgt_max = tgt.get_target_maximum()
-            expected_str = f"[{tgt_min:.{value_precision}G},{tgt_max:.{value_precision}G}]"
+            values = expression.replace('[', '').replace(']', '').split(',')
+            tgt_min = float(values[0].strip())
+            tgt_max = float(values[1].strip())
             min_err = percent_difference(tgt_min, engine_val, epsilon)
             max_err = percent_difference(tgt_max, engine_val, epsilon)
 
@@ -202,20 +228,14 @@ def evaluate(seg_id: int,
             if abs(err) < epsilon:
                 err = 0.
 
-            err_str = generate_percentage_span(err, percent_precision)
-        elif '=' in expression:
-            compare_type = "EqualTo"
-            err = percent_difference(expected_val, engine_val, epsilon)
-            # Close enough
-            if abs(err) < epsilon:
-                err = 0.
-            err_str = generate_percentage_span(err, percent_precision)
+            expression_error_str = generate_percentage_span(err, percent_precision)
+            expression_expected_str = f"[{tgt_min:.{value_precision}G},{tgt_max:.{value_precision}G}]"
+
         else:
             # TODO empty formula means we are not validating this row
             # TODO Trends to/from a value
             _pulse_logger.error(f"Not sure how to handle expression: {expression}")
             continue
-        expected_str = f"({expected_val:.{value_precision}G})"
 
         # Add comparison type to beginning of expected string
         if len(referenced_segments) > 0:
@@ -223,30 +243,54 @@ def evaluate(seg_id: int,
             tgt_seg = referenced_segments[0].replace('{', '').replace('}', '')
             if ':' in tgt_seg:
                 ref = tgt_seg.split(':')
-                if '0' in tgt_seg:
-                    expected_str = f"{compare_type} {ref[0]} Baseline {expected_str}"
+                if '-1' in tgt_seg:
+                    expression_expected_str = f"{compare_type} {ref[0]} Healthy {expression_expected_str}"
+                elif '0' in tgt_seg:
+                    expression_expected_str = f"{compare_type} {ref[0]} Baseline {expression_expected_str}"
                 else:
-                    expected_str = f"{compare_type} {ref[0]} Segment {ref[1]} {expected_str}"
+                    expression_expected_str = f"{compare_type} {ref[0]} Segment {ref[1]} {expression_expected_str}"
             else:
-                if '0' in tgt_seg:
-                    expected_str = f"{compare_type} Baseline {expected_str}"
+                if '-1' in tgt_seg:
+                    expression_expected_str = f"{compare_type} Healthy {expression_expected_str}"
+                elif '0' in tgt_seg:
+                    expression_expected_str = f"{compare_type} Baseline {expression_expected_str}"
                 else:
-                    expected_str = f"{compare_type} Segment {tgt_seg} {expected_str}"
+                    expression_expected_str = f"{compare_type} Segment {tgt_seg} {expression_expected_str}"
+        elif compare_type:
+            expression_expected_str = f'{compare_type} {expression_expected_str}'
+
+        if logical_join:
+            if len(formula_expected_str) > 0:
+                formula_expected_str += logical_join + expression_expected_str
+            else:
+                formula_expected_str = expression_expected_str
+
+            if len(formula_error_str) > 0:
+                formula_error_str += logical_join + expression_error_str
+            else:
+                formula_error_str = expression_error_str
+
+            if len(formula_change_str) > 0:
+                formula_change_str += logical_join + expression_change_str
+            else:
+                formula_change_str = expression_change_str
         else:
-            expected_str = f'{compare_type} {expected_str}'
+            formula_expected_str = expression_expected_str
+            formula_error_str = expression_error_str
+            formula_change_str = expression_change_str
 
     if tgt.get_reference():
         references = [ref.strip() for ref in tgt.get_reference().replace("\n", "").split(",")]
         for ref in references:
             if not ref.startswith('['):
-                expected_str += f" @cite {ref}"
+                formula_expected_str += f" @cite {ref}"
 
     return [
         header,
-        expected_str if expected_str else "&nbsp;",
+        formula_expected_str if formula_expected_str else "&nbsp;",
         f"{engine_val:.{value_precision}G}",
-        err_str if err_str else "&nbsp;",
-        change_str if change_str else "&nbsp;",
+        formula_error_str if formula_error_str else "&nbsp;",
+        formula_change_str if formula_change_str else "&nbsp;",
         tgt.get_notes() if tgt.get_notes() else "&nbsp;"
         ]
 
@@ -280,4 +324,4 @@ def main():
 
 
 if __name__ == "__main__":
-   main()
+    main()

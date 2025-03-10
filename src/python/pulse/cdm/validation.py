@@ -109,8 +109,9 @@ class SESegmentValidationTarget(SEValidationTarget):
         self._fair_percent_error = None
 
     def __repr__(self):
-        return (f'SESegmentValidationTarget({super().__repr__()}, {self._target_segment_formula}, '
-                f'{self._comparison_type} {self._computed_value}, {self._error_value})')
+        return (f'SESegmentValidationTarget({super().__repr__()}, {self._comparison_formula}, '
+                f'{self._computed_value}, {self._error_value})'
+                f'{self._good_percent_error} , {self._fair_percent_error} ')
 
     def clear(self):
         self.__init__()
