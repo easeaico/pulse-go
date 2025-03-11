@@ -191,7 +191,8 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
             _pulse_logger.error(f"Unable to locate segments for {abs_segments_filename}. Continuing without validating.")
             continue
 
-        table_dir = Path("./validation/tables/" + xls_dir.name + '/' + target_file.split('-')[0])
+        sheet = target_file.split('-')[0]
+        table_dir = Path("./validation/tables/" + xls_dir.name + '/' + sheet)
         table_dir.mkdir(parents=True, exist_ok=True)
         validate(abs_targets_filename, abs_segments_filename, table_dir=table_dir)
 

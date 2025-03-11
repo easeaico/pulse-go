@@ -18,6 +18,9 @@ def evaluate_field(record, field_spec):
     """
     Evaluate a field of a record using the type of the field_spec as a guide.
     """
+    if field_spec >= len(record):
+        _pulse_logger.error(f"Missing record {record} for field_spec {field_spec}")
+        return "missing"
     if type(field_spec) is int:
         return str(record[field_spec])
     elif type(field_spec) is str:

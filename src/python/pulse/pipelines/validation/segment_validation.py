@@ -55,6 +55,7 @@ def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -
             continue
         # Get the result associated with this target
         seg_id = target.get_segment_id()
+        _pulse_logger.info(f"Processing segment {seg_id}")
 
         # Evaluate targets and create Markdown tables for each segment
         table_data = []
@@ -90,10 +91,12 @@ def evaluate(seg_id: int,
 
     result = results.get_segment(seg_id)
     if result is None:
-        raise ValueError(f"Could not find result for segment {seg_id}")
+        _pulse_logger.error(f"Could not find result for segment {seg_id}")
+        return []
     header_idx = results.get_header_index(header)
     if header_idx is None:
-        raise ValueError(f"Could not find results for {header} in segment {seg_id}")
+        _pulse_logger.error(f"Could not find results for {header} in segment {seg_id}")
+        return []
     engine_val = result.values[header_idx]
 
     def _convert_unit(_header: str, _val: float):
@@ -172,7 +175,15 @@ def evaluate(seg_id: int,
                                    .replace('>', '')
                                    .replace('<', '')
                                    .replace("{v}", '')).strip()
-        expected_val = eval(expected_val_expression)
+        try:
+            if "nan" in expected_val_expression:
+                expected_val = np.nan
+                _pulse_logger.error(f"Expected value is NaN, is this intentional?")
+            else:
+                expected_val = eval(expected_val_expression)
+        except NameError:
+            _pulse_logger.error(f"Unable to evaluate expression {expected_val_expression}")
+            return []
 
         compare_type = None
         if '>' in expression or '<' in expression:
