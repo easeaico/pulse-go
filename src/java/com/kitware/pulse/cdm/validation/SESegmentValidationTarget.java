@@ -7,8 +7,6 @@ import com.kitware.pulse.cdm.bind.Validation.SegmentValidationTargetData;
 public class SESegmentValidationTarget extends SEValidationTarget
 {
   protected String comparisonFormula;
-  protected double goodPercentError;
-  protected double fairPercentError;
   
   public SESegmentValidationTarget()
   {
@@ -25,8 +23,6 @@ public class SESegmentValidationTarget extends SEValidationTarget
   {
     SEValidationTarget.load(src.getValidationTarget(), dst);
     dst.comparisonFormula = src.getComparisonFormula();
-    dst.goodPercentError = src.getGoodPercentError();
-    dst.fairPercentError = src.getFairPercentError();
     
   }
   public static SegmentValidationTargetData unload(SESegmentValidationTarget src)
@@ -39,16 +35,8 @@ public class SESegmentValidationTarget extends SEValidationTarget
   {
     SEValidationTarget.unload(src,dst.getValidationTargetBuilder());
     dst.setComparisonFormula(src.comparisonFormula);
-    dst.setGoodPercentError(src.goodPercentError);
-    dst.setFairPercentError(src.fairPercentError);
   }
   
   public String getComparisonFormula() { return comparisonFormula; }
   public void setComparisonFormula(String f) { comparisonFormula = f; }
-  
-  public double getGoodPercentError() { return goodPercentError; }
-  public void setGoodPercentError(double d) { goodPercentError = d; }
-  
-  public double getFairPercentError() { return fairPercentError; }
-  public void setFairPercentError(double d) { fairPercentError = d; }
 }

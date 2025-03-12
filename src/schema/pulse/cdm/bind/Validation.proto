@@ -18,6 +18,11 @@ message ValidationTargetData
   string                                                Reference                       = 2;
   string                                                Notes                           = 3;
   string                                                TableFormatting                 = 4;/**<< @brief Specification string for floating point formatting of computed values in tables */
+  
+  optional double                                       ComputedValue                   = 5;
+  optional double                                       Error                           = 6;
+  optional double                                       GoodPercentError                = 7;/**<< @brief We meet Good validation if Error is <= this percent, typically 10% */
+  optional double                                       FairPercentError                = 8;/**<< @brief We meet Fair validation if Error is <= this percent, typically 30%, anything over is considered Poor validation */
 
 }
 
@@ -25,10 +30,6 @@ message SegmentValidationTargetData
 {
   ValidationTargetData                                  ValidationTarget                = 1;
   string                                                ComparisonFormula               = 2;/**<< @brief a formula to solve, that can include values from other segment, to compute the target value */
-  optional double                                       ComputedValue                   = 3;
-  optional double                                       Error                           = 4;
-  optional double                                       GoodPercentError                = 5;/**<< @brief We meet Good validation if Error is <= this percent, typically 10% */
-  optional double                                       FairPercentError                = 6;/**<< @brief We meet Fair validation if Error is <= this percent, typically 30%, anything over is considered Poor validation */
 
 }
 message SegmentValidationSegmentData
@@ -79,8 +80,6 @@ message TimeSeriesValidationTargetData
     RangeData                                           Range                           = 5;
   }
 
-  optional double                                       ComputedValue                   = 6;
-  optional double                                       Error                           = 7;
 }
 message TimeSeriesValidationTargetListData
 {

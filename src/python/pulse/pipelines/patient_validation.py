@@ -142,7 +142,7 @@ def bulk_timeseries_validation_pipeline(
     return all_tgts
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     logging.getLogger("pycel").setLevel(logging.WARNING)
 
@@ -223,7 +223,7 @@ if __name__ == "__main__":
 
     # Gather totals for each patient and create a table of validation statistics
     fields = [0, 1, 2, 3, 4]
-    headings = ["Category", "< 10%", "< 30%", "> 30%", "Total"]
+    headings = ["Category", "Good", "Fair", "Bad", "Total"]
     align = []
     for i in range(len(fields)):
         align.append(('^', '^'))
@@ -237,9 +237,11 @@ if __name__ == "__main__":
             yellow = 0
             red = 0
             for target in targets:
-                if target.get_error_value() < 10:
+                good_percent = 10 if not target.has_good_percent_error() else target.get_good_percent_error()
+                fair_percent = 30 if not target.has_fair_percent_error() else target.get_fair_percent_error()
+                if target.get_error_value() < good_percent:
                     green += 1
-                elif target.get_error_value() < 30:
+                elif target.get_error_value() < fair_percent:
                     yellow += 1
                 else:
                     red += 1
@@ -303,3 +305,7 @@ if __name__ == "__main__":
         f.write("</body>\n")
         f.write("</html>\n")
         f.close()
+
+
+if __name__ == "__main__":
+    main()

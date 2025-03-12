@@ -216,7 +216,9 @@ def evaluate(seg_id: int,
             # Close enough
             if abs(err) < epsilon:
                 err = 0.
-            expression_error_str = generate_percentage_span(err, percent_precision)
+            success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
+            warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
+            expression_error_str = generate_percentage_span(err, percent_precision, success, warning)
             expression_expected_str = f"({expected_val:.{value_precision}G})"
 
         elif '[' in expression and ']' in expression:
@@ -239,7 +241,9 @@ def evaluate(seg_id: int,
             if abs(err) < epsilon:
                 err = 0.
 
-            expression_error_str = generate_percentage_span(err, percent_precision)
+            success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
+            warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
+            expression_error_str = generate_percentage_span(err, percent_precision, success, warning)
             expression_expected_str = f"[{tgt_min:.{value_precision}G},{tgt_max:.{value_precision}G}]"
 
         else:

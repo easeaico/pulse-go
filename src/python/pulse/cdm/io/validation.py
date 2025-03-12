@@ -21,16 +21,6 @@ def serialize_validation_target_to_bind(src: SEValidationTarget, dst: Validation
     dst.Notes = src.get_notes()
     if src.has_table_formatting():
         dst.TableFormatting = src.get_table_formatting()
-def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEValidationTarget):
-    dst.clear()
-    dst.set_header(src.Header)
-    dst.set_reference(src.Reference)
-    dst.set_notes(src.Notes)
-
-def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, dst: SegmentValidationTargetData):
-    serialize_validation_target_to_bind(src, dst.ValidationTarget)
-    if src.get_comparison_formula():
-        dst.ComparisonFormula = src.get_comparison_formula()
     if src.has_computed_value():
         dst.ComputedValue = src.get_computed_value()
     if src.has_error_value():
@@ -39,19 +29,34 @@ def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, 
         dst.GoodPercentError = src.get_good_percent_error()
     if src.has_fair_percent_error():
         dst.FairPercentError = src.get_fair_percent_error()
-def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetData, dst: SESegmentValidationTarget):
+
+
+def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEValidationTarget):
     dst.clear()
-    serialize_validation_target_from_bind(src.ValidationTarget, dst)
-    if src.ComparisonFormula:
-        dst.set_comparison_formula(src.ComparisonFormula)
-    if src.ComputedValue:
+    dst.set_header(src.Header)
+    dst.set_reference(src.Reference)
+    dst.set_notes(src.Notes)
+
+    if src.HasField("ComputedValue"):
         dst.set_computed_value(src.ComputedValue)
-    if src.Error:
+    if src.HasField("Error"):
         dst.set_error_value(src.Error)
     if src.GoodPercentError > 0:
         dst.set_good_percent_error(src.GoodPercentError)
     if src.FairPercentError > 0:
         dst.set_fair_percent_error(src.FairPercentError)
+
+def serialize_segment_validation_target_to_bind(src: SESegmentValidationTarget, dst: SegmentValidationTargetData):
+    serialize_validation_target_to_bind(src, dst.ValidationTarget)
+    if src.get_comparison_formula():
+        dst.ComparisonFormula = src.get_comparison_formula()
+
+def serialize_segment_validation_target_from_bind(src: SegmentValidationTargetData, dst: SESegmentValidationTarget):
+    dst.clear()
+    serialize_validation_target_from_bind(src.ValidationTarget, dst)
+    if src.ComparisonFormula:
+        dst.set_comparison_formula(src.ComparisonFormula)
+
 def serialize_segment_validation_segment_to_bind(src: SESegmentValidationSegment, dst: SegmentValidationSegmentData):
     dst.Segment = src.get_segment_id()
     dst.Notes = src.get_notes()
@@ -225,10 +230,6 @@ def serialize_time_series_validation_target_to_bind(
     else:
         raise ValueError(f"Unknown comparison type: {src.get_comparison_type()}")
 
-    if src.has_computed_value():
-        dst.ComputedValue = src.get_computed_value()
-    if src.has_error_value():
-        dst.Error = src.get_error_value()
 
 def serialize_time_series_validation_target_from_bind(
     src: TimeSeriesValidationTargetData,
@@ -247,10 +248,6 @@ def serialize_time_series_validation_target_from_bind(
     else:
         raise ValueError(f"Unknown expected field: {src.WhichOneOf('Expected')}")
 
-    if src.HasField("ComputedValue"):
-        dst.set_computed_value(src.ComputedValue)
-    if src.HasField("Error"):
-        dst.set_error_value(src.Error)
 
 def serialize_time_series_validation_target_list_to_bind(
     src: List[SETimeSeriesValidationTarget],

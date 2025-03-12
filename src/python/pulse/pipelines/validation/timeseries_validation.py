@@ -305,11 +305,13 @@ def generate_validation_tables(
             if not tgt.is_evaluated():
                 continue
 
+            success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
+            warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
             table_data.append([
                 tgt.get_header(),
                 gen_expected_str(tgt),
                 gen_engine_val_str(tgt),
-                generate_percentage_span(tgt.get_error_value(), percent_precision),
+                generate_percentage_span(tgt.get_error_value(), percent_precision, success, warning),
                 notes if (notes := tgt.get_notes()) else "&nbsp;"
             ])
 

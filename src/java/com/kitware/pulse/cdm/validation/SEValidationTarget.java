@@ -6,12 +6,15 @@ import com.kitware.pulse.cdm.bind.Validation.ValidationTargetData;
 
 public class SEValidationTarget
 {
-  protected String          header;
-  protected String          reference;
-  protected String          notes;
-  protected double          target;
-  protected double          targetMaximum;
-  protected double          targetMinimum;
+  protected String header;
+  protected String reference;
+  protected String notes;
+  protected double target;
+  protected double targetMaximum;
+  protected double targetMinimum;
+
+  protected double goodPercentError;
+  protected double fairPercentError;
   
   public SEValidationTarget()
   {
@@ -33,6 +36,9 @@ public class SEValidationTarget
     dst.header = src.getHeader();
     dst.reference = src.getReference();
     dst.notes = src.getNotes();
+
+    dst.goodPercentError = src.getGoodPercentError();
+    dst.fairPercentError = src.getFairPercentError();
   }
   public static ValidationTargetData unload(SEValidationTarget src)
   {
@@ -45,6 +51,9 @@ public class SEValidationTarget
     dst.setHeader(src.header);
     dst.setReference(src.reference);
     dst.setNotes(src.notes);
+
+    dst.setGoodPercentError(src.goodPercentError);
+    dst.setFairPercentError(src.fairPercentError);
   }
   
   public String getHeader() { return header; }
@@ -59,4 +68,10 @@ public class SEValidationTarget
   public double getTargetMaximum() { return targetMaximum; }
   public double getTargetMinimum() { return targetMinimum; }
   public double getTarget() { return target; }
+  
+  public double getGoodPercentError() { return goodPercentError; }
+  public void setGoodPercentError(double d) { goodPercentError = d; }
+  
+  public double getFairPercentError() { return fairPercentError; }
+  public void setFairPercentError(double d) { fairPercentError = d; }
 }

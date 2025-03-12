@@ -42,9 +42,9 @@ Below is a summary of our system and compartment level validation.
 
 |	Key	|
 |	---	|
-|<span class="success"> Good agreement: correct trends or <10% deviation from expected </span>|
-|<span class="warning"> Some deviation: correct trend and/or <30% deviation from expected </span>|
-|<span class="danger"> Poor agreement: incorrect trends or >30% deviation from expected </span>|
+|<span class="success"> Good agreement: correct trends, generally <10% deviation from expected </span>|
+|<span class="warning"> Fair agreement / Some deviation: correct trend, generally <30% deviation from expected </span>|
+|<span class="danger"> Poor agreement: incorrect trends, generally >30% deviation from expected </span>|
 
 ##### Standard Male Validation Summary
 

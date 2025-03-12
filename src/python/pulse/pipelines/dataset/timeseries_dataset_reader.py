@@ -419,6 +419,7 @@ def generate_sheet_targets(
         VTB_REQUEST_TYPE = ws_headers.index('Request Type')
         VTB_TABLE_PRECISION = ws_headers.index('Table Precision')
         VTB_PATIENT_SPECIFIC = ws_headers.index('PatientSpecific')
+        VTB_VALIDATION_THRESHOLD = ws_headers.index('Thresholds')
     except ValueError as e:
         _pulse_logger.error(f"Missing required header {str(e)[:str(e).find(' is not in list')]}")
         return False
@@ -435,6 +436,7 @@ def generate_sheet_targets(
         notes: str
         table_precision: str
         patient_specific: bool
+        thresholds: str
 
     for row_num, r in enumerate(sheet.iter_rows(min_row=2, values_only=True)):
         vtb = ValidationTargetBuilder(
@@ -447,7 +449,8 @@ def generate_sheet_targets(
             references=r[VTB_REFS] if r[VTB_REFS] else "",
             notes=r[VTB_NOTES] if r[VTB_NOTES] else "",
             table_precision=f".{r[VTB_TABLE_PRECISION]}" if r[VTB_TABLE_PRECISION] else "",
-            patient_specific=True if r[VTB_PATIENT_SPECIFIC] and r[VTB_PATIENT_SPECIFIC].lower() == "y" else False
+            patient_specific=True if r[VTB_PATIENT_SPECIFIC] and r[VTB_PATIENT_SPECIFIC].lower() == "y" else False,
+            thresholds=r[VTB_VALIDATION_THRESHOLD] if r[VTB_VALIDATION_THRESHOLD] else ""
         )
         if not vtb.header:
             continue
@@ -500,6 +503,12 @@ def generate_sheet_targets(
         if "@" in vtb.request_type:
             tgt.set_assessment(vtb.request_type)
             vtb.request_type = "Physiology"
+        if vtb.thresholds:
+            for threshold in vtb.thresholds.split(","):
+                if "Good" in threshold:
+                    tgt.set_good_percent_error(float(threshold[threshold.find("Good") + 5:]))
+                elif "Fair" in threshold:
+                    tgt.set_fair_percent_error(float(threshold[threshold.find("Fair") + 5:]))
 
         dr = generate_data_request(
             request_type=vtb.request_type,

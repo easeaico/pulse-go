@@ -15,12 +15,20 @@ void PBValidation::Serialize(const CDM_BIND::ValidationTargetData& src, SEValida
   dst.m_Header = src.header();
   dst.m_Reference = src.reference();
   dst.m_Notes = src.notes();
+
+  if (src.has_goodpercenterror())
+    dst.SetGoodPercentError(src.goodpercenterror());
+  if (src.has_fairpercenterror())
+    dst.SetFairPercentError(src.fairpercenterror());
 }
 void PBValidation::Serialize(const SEValidationTarget& src, CDM_BIND::ValidationTargetData& dst)
 {
   dst.set_header(src.m_Header);
   dst.set_reference(src.m_Reference);
   dst.set_notes(src.m_Notes);
+
+  dst.set_goodpercenterror(src.GetGoodPercentError());
+  dst.set_fairpercenterror(src.GetFairPercentError());
 }
 void PBValidation::Load(const CDM_BIND::SegmentValidationTargetData& src, SESegmentValidationTarget& dst)
 {
@@ -31,10 +39,6 @@ void PBValidation::Serialize(const CDM_BIND::SegmentValidationTargetData& src, S
 {
   PBValidation::Serialize(src.validationtarget(), dst);
   dst.SetComparisonFormula(src.comparisonformula());
-  if (src.has_goodpercenterror())
-    dst.SetGoodPercentError(src.goodpercenterror());
-  if (src.has_fairpercenterror())
-    dst.SetFairPercentError(src.fairpercenterror());
 }
 CDM_BIND::SegmentValidationTargetData* PBValidation::Unload(const SESegmentValidationTarget& src)
 {
@@ -46,8 +50,6 @@ void PBValidation::Serialize(const SESegmentValidationTarget& src, CDM_BIND::Seg
 {
   PBValidation::Serialize(src, *dst.mutable_validationtarget());
   dst.set_comparisonformula(src.GetComparisonFormula());
-  dst.set_goodpercenterror(src.GetGoodPercentError());
-  dst.set_fairpercenterror(src.GetFairPercentError());
 }
 void PBValidation::Load(const CDM_BIND::SegmentValidationSegmentData& src, std::vector<SESegmentValidationTarget*>& dst)
 {

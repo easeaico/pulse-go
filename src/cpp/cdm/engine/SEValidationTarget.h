@@ -31,6 +31,14 @@ public:
   double GetTargetMinimum() const { return m_TargetMinimum; }
   double GetTarget() const { return m_Target; }
 
+  double GetError() const { return m_Error; }
+
+  double GetGoodPercentError() const { return m_GoodPercentError; }
+  void SetGoodPercentError(double e) { m_GoodPercentError = e; }
+
+  double GetFairPercentError() const { return m_FairPercentError; }
+  void SetFairPercentError(double e) { m_FairPercentError = e; }
+
 protected:
   std::string                                m_Header;
   std::string                                m_Reference;
@@ -39,6 +47,10 @@ protected:
   double                                     m_Target;
   double                                     m_TargetMaximum;
   double                                     m_TargetMinimum;
+  
+  double                                     m_Error;
+  double                                     m_GoodPercentError;
+  double                                     m_FairPercentError;
 };
 
 class CDM_DECL SESegmentValidationTarget : public SEValidationTarget
@@ -58,16 +70,8 @@ public:
   std::string GetComparisonFormula() const { return m_ComparisonFormula; }
   void SetComparisonFormula(const std::string& f) { m_ComparisonFormula = f; }
 
-  double GetGoodPercentError() const { return m_GoodPercentError; }
-  void SetGoodPercentError(double e) { m_GoodPercentError = e; }
-
-  double GetFairPercentError() const { return m_FairPercentError; }
-  void SetFairPercentError(double e) { m_FairPercentError = e; }
-
 protected:
   std::string m_ComparisonFormula;
-  double      m_GoodPercentError;
-  double      m_FairPercentError;
 };
 
 class CDM_DECL SETimeSeriesValidationTarget : public SEValidationTarget
@@ -96,7 +100,6 @@ public:
   // Maybe we want a different class to do the comparision
   // For now, I just put it in line here for the CircuitOptimizer
   bool ComputeError();
-  double GetError() const { return m_Error; }
   double GetDataValue() const { return m_ComparisonValue; }
   std::vector<double>& GetData() { return m_Data; }
 
@@ -105,7 +108,6 @@ protected:
   eComparisonType                            m_ComparisonType;
 
   // Not serializing
-  double                                     m_Error;
   std::vector<double>                        m_Data;
   double                                     m_ComparisonValue;
 };

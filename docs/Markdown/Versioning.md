@@ -19,6 +19,11 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Fix the need for duplicate data request files
     - Support multiple md files for a validation xlsx
     - Change argument from xlsx filename to the directory
+    - Changed enum based comparisons to a formula based comparision
+    - Custom validation bounds per property (default Good=10%, Fair=30%)
+    - Support referencing other sheet segments (within the same workbook) as an expected value
+    - Support defining patients in validation workbooks
+    - Support configuration json in validation workbooks
 
 - Physiology Model Improvements
     - Moved hemorrrhage model validation to an automated validation module
