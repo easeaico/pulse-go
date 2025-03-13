@@ -38,7 +38,7 @@ def process_patient_sheet(sheet: Worksheet, output_dir: Path) -> bool:
                 continue
 
             if field == "Sex":
-                if cell.value.lower == "female":
+                if cell.value.lower() == "female":
                     patient.set_sex(eSex.Female)
                 continue
 
