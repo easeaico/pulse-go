@@ -288,10 +288,14 @@ public class SETestConfiguration
 
       if(this.patientFiles!=null)
       {
-        // Need to copy all the jobs and speficy a particular patient file
+        // Need to copy all the jobs and specify a particular patient file
         List<String> patientFileNames;
 
         if(patientFiles.equalsIgnoreCase("all"))
+          // By default, let's not do all patient files recursively
+          // Validation spreadsheets will generate patient files in directories here
+          patientFileNames = FileUtils.findFiles("./patients", sce_ext, false);
+        else if(patientFiles.equalsIgnoreCase("all-recursive"))
           patientFileNames = FileUtils.findFiles("./patients", sce_ext, true);
         else
         {
