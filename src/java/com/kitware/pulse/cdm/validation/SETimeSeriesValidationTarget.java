@@ -17,8 +17,8 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   {
     EqualToValue, Range
   }
-  protected eComparisonType m_ComparisonType;
-  protected eType m_TargetType;
+  protected eComparisonType comparisonType;
+  protected eType targetType;
   
   public SETimeSeriesValidationTarget()
   {
@@ -29,8 +29,8 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   public void clear()
   {
     super.clear();
-    m_TargetType = eType.Mean;
-    m_ComparisonType = eComparisonType.EqualToValue;
+    targetType = eType.Mean;
+    comparisonType = eComparisonType.EqualToValue;
   }
   
   public static List<SETimeSeriesValidationTarget> readFile(String fileName) throws InvalidProtocolBufferException
@@ -85,7 +85,7 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
         break;
     }
 
-    dst.m_TargetType = src.getType();
+    dst.targetType = src.getType();
   }
   public static TimeSeriesValidationTargetData unload(SETimeSeriesValidationTarget src)
   {
@@ -96,38 +96,38 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   protected static void unload(SETimeSeriesValidationTarget src, TimeSeriesValidationTargetData.Builder dst)
   {
     SEValidationTarget.unload(src,dst.getValidationTargetBuilder());
-    dst.setType(src.m_TargetType);
-    switch(src.m_ComparisonType)
+    dst.setType(src.targetType);
+    switch(src.comparisonType)
     {
       case EqualToValue:
-        dst.setEqualToValue(src.m_Target);
+        dst.setEqualToValue(src.target);
         break;
       case Range:
-        dst.getRangeBuilder().setMinimum(src.m_TargetMinimum);
-        dst.getRangeBuilder().setMaximum(src.m_TargetMaximum);
+        dst.getRangeBuilder().setMinimum(src.targetMinimum);
+        dst.getRangeBuilder().setMaximum(src.targetMaximum);
         dst.getRangeBuilder().build();
         break;
     }
   }
 
-  public eType getTargetType() { return m_TargetType; }
+  public eType getTargetType() { return targetType; }
   
   public void setEqualToValue(double d, eType t)
   {
-    m_Target = d;
-    m_TargetMaximum = d;
-    m_TargetMinimum = d;
-    m_TargetType = t;
-    m_ComparisonType = eComparisonType.EqualToValue;
+    target = d;
+    targetMaximum = d;
+    targetMinimum = d;
+    targetType = t;
+    comparisonType = eComparisonType.EqualToValue;
   }
   public void setRange(double min, double max, eType t)
   {
-    m_Target = Double.NaN;
-    m_TargetMaximum = max;
-    m_TargetMinimum = min;
-    m_TargetType = t;
-    m_ComparisonType = eComparisonType.Range;
+    target = Double.NaN;
+    targetMaximum = max;
+    targetMinimum = min;
+    targetType = t;
+    comparisonType = eComparisonType.Range;
   }
 
-  public eComparisonType getComparisonType() { return m_ComparisonType; }
+  public eComparisonType getComparisonType() { return comparisonType; }
 }

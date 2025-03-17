@@ -105,4 +105,4 @@ def generate_percentage_span(percentage, precision, success=10, warning=30):
     else:
         c = '"danger"'
 
-    return f'<span class={c}>{percentage:.{precision}f}%</span>'
+    return f'<span class={c}>{percentage:.{precision}G}%</span>'

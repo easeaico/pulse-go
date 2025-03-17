@@ -1603,9 +1603,9 @@ public abstract class ValidationTool
       TimeSeriesValidationTargetData.Builder pvd = vtList.addTimeSeriesValidationTargetBuilder();
       ValidationTargetData.Builder vtd = pvd.getValidationTargetBuilder();
       vtd.setHeader(vRow.header+"-"+vRow.dType.toString());
+      vtd.setComputedValue(vRow.result);
+      vtd.setError(vRow.resultError);
       pvd.setEqualToValue(vRow.refValue);
-      pvd.setComputedValue(vRow.result);
-      pvd.setError(vRow.resultError);
       pvd.setPatientSpecific(vRow.patientSpecific);
       
     }

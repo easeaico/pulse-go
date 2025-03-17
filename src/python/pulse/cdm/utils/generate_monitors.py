@@ -44,7 +44,7 @@ def generate_monitors(monitor_plotter: SEMonitorPlotter, benchmark: bool=False):
             return
         results = serialize_data_requested_result_from_file(adjust_filepath(monitor_plotter.get_data_requested_file()))
         for segment in results.get_segments():
-            if segment.id == 0:  # Don't generate monitors for segment 0
+            if segment.id <= 0:  # Don't generate monitors for segments < 0
                 continue
             times_s.append(segment.time_s)
     else:

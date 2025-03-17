@@ -20,16 +20,34 @@ _pulse_logger = logging.getLogger('pulse')
 
 class SEValidationTarget:
     __slots__ = ["_header", "_reference", "_notes", "_table_formatting",
-                 "_target", "_target_min", "_target_max", "_target_enum", "_assessment"]
+                 "_target", "_target_min", "_target_max", "_target_enum", "_assessment",
+                 "_computed_value", "_error_value",
+                 "_good_percent_error", "_fair_percent_error"
+                 ]
 
     def __init__(self):
-        self.clear()
+        self._header = ""
+        self._reference = ""
+        self._notes = ""
+        self._table_formatting = None
+        self._target = np.nan
+        self._target_enum = None
+        self._target_min = np.nan
+        self._target_max = np.nan
+        self._assessment = None
+
+        self._computed_value = None
+        self._error_value = None
+        self._good_percent_error = None
+        self._fair_percent_error = None
 
     def __repr__(self) -> str:
         return f'SEValidationTarget({self._header}, {self._reference}, {self._notes}, ' \
                f'{self._table_formatting}, ' \
                f'{self._target_enum if self._target_enum is not None else self._target}, ' \
-               f'{self._target_min}, {self._target_max})'
+               f'{self._target_min}, {self._target_max}), ' \
+               f'{self._computed_value}, {self._error_value}), ' \
+               f'{self._good_percent_error} , {self._fair_percent_error}'
 
     def __str__(self) -> str:
         return f'SEValidationTarget:' \
@@ -46,15 +64,7 @@ class SEValidationTarget:
         return True
 
     def clear(self) -> None:
-        self._header = ""
-        self._reference = ""
-        self._notes = ""
-        self._table_formatting = None
-        self._target = np.nan
-        self._target_enum = None
-        self._target_min = np.nan
-        self._target_max = np.nan
-        self._assessment = None
+        self.__init__()
 
     def get_header(self) -> str:
         return self._header
@@ -94,114 +104,76 @@ class SEValidationTarget:
     def set_assessment(self, s: str):
         self._assessment = s
 
-
-class SESegmentValidationTarget(SEValidationTarget):
-    __slots__ = ["_comparison_type", "_target_segment", "_computed_value", "_error_value"]
-
-    class eComparisonType(Enum):
-        NotValidating = 0
-        EqualToValue = 1
-        EqualToSegment = 2
-        GreaterThanValue = 3
-        GreaterThanSegment = 4
-        LessThanValue = 5
-        LessThanSegment = 6
-        TrendsToValue = 7
-        TrendsToSegment = 8
-        Range = 9
-
-    def __init__(self):
-        super().__init__()
-        self.clear()
-
-    def __repr__(self):
-        return f'SESegmentValidationTarget({super().__repr__()}, {self._segment}, {self._comparison_type}' \
-               f'{self._computed_value}, {self._error_value})'
-
-    def clear(self):
-        super().clear()
-        self._comparison_type = self.eComparisonType.NotValidating
-        self._target_segment = np.nan
-        self._computed_value = None
-        self._error_value = None
-
-    def get_comparison_type(self) -> eComparisonType:
-        return self._comparison_type
-    def get_target_segment(self) -> int:
-        return self._target_segment
-
-    def set_equal_to_segment(self, segment: int):
-        self._comparison_type = self.eComparisonType.EqualToSegment
-        self._target = np.nan
-        self._target_max = np.nan
-        self._target_min = np.nan
-        self._target_segment = segment
-    def set_equal_to_value(self, d: float):
-        self._comparison_type = self.eComparisonType.EqualToValue
-        self._target = d
-        self._target_max = d
-        self._target_min = d
-        self._target_segment = 0
-    def set_greater_than_segment(self, segment: int):
-        self._comparison_type = self.eComparisonType.GreaterThanSegment
-        self._target = np.nan
-        self._target_max = np.nan
-        self._target_min = np.nan
-        self._target_segment = segment
-    def set_greater_than_value(self, d: float):
-        self._comparison_type = self.eComparisonType.GreaterThanValue
-        self._target = d
-        self._target_max = d
-        self._target_min = d
-        self._target_segment = 0
-    def set_less_than_segment(self, segment: int):
-        self._comparison_type = self.eComparisonType.LessThanSegment
-        self._target = np.nan
-        self._target_max = np.nan
-        self._target_min = np.nan
-        self._target_segment = segment
-    def set_less_than_value(self, d: float):
-        self._comparison_type = self.eComparisonType.LessThanValue
-        self._target = d
-        self._target_max = d
-        self._target_min = d
-        self._target_segment = 0
-    def set_trends_to_segment(self, segment: int):
-        self._comparison_type = self.eComparisonType.TrendsToSegment
-        self._target = np.nan
-        self._target_max = np.nan
-        self._target_min = np.nan
-        self._target_segment = segment
-    def set_trends_to_value(self, d: float):
-        self._comparison_type = self.eComparisonType.TrendsToValue
-        self._target = d
-        self._target_max = d
-        self._target_min = d
-        self._target_segment = 0
-    def set_range(self, min: float, max: float):
-        self._comparison_type = self.eComparisonType.Range
-        self._target = np.nan
-        self._target_max = max
-        self._target_min = min
-        self._target_segment = 0
-
     def has_computed_value(self) -> bool:
         return self._computed_value is not None
+
     def get_computed_value(self) -> Optional[float]:
         return self._computed_value
+
     def set_computed_value(self, val: float) -> None:
         self._computed_value = val
+
     def invalidate_computed_value(self) -> None:
         self._computed_value = None
 
     def has_error_value(self) -> bool:
         return self._error_value is not None
+
     def get_error_value(self) -> Optional[float]:
         return self._error_value
+
     def set_error_value(self, err: float) -> None:
         self._error_value = err
+
     def invalidate_error_value(self) -> None:
         self._error_value = None
+
+    def has_good_percent_error(self) -> bool:
+        return self._good_percent_error is not None
+
+    def get_good_percent_error(self) -> Optional[float]:
+        return self._good_percent_error
+
+    def set_good_percent_error(self, val: float) -> None:
+        self._good_percent_error = val
+
+    def invalidate_good_percent_error(self) -> None:
+        self._good_percent_error = None
+
+    def has_fair_percent_error(self) -> bool:
+        return self._fair_percent_error is not None
+
+    def get_fair_percent_error(self) -> Optional[float]:
+        return self._fair_percent_error
+
+    def set_fair_percent_error(self, val: float) -> None:
+        self._fair_percent_error = val
+
+    def invalidate_fair_percent_error(self) -> None:
+        self._fair_percent_error = None
+
+
+class SESegmentValidationTarget(SEValidationTarget):
+    __slots__ = ["_comparison_formula",
+                 "_computed_value", "_error_value",
+                 "_good_percent_error", "_fair_percent_error"]
+
+    def __init__(self):
+        super().__init__()
+        self._comparison_formula = None
+
+    def __repr__(self):
+        return f'SESegmentValidationTarget({super().__repr__()}, {self._comparison_formula}'
+
+    def clear(self):
+        self.__init__()
+
+    def has_comparison_formula(self) -> bool:
+        return self._comparison_formula is not None
+    def get_comparison_formula(self) -> str:
+        return self._comparison_formula
+    def set_comparison_formula(self, formula: str):
+        self._comparison_formula = formula
 
 
 class SESegmentValidationSegment:
@@ -254,6 +226,7 @@ class SESegmentValidationSegment:
         self._actions = actions
     def invalidate_actions(self) -> None:
         self._actions = []
+
 
 class SESegmentValidationSegmentTable:
     __slots__ = ["_table_name", "_scenario_name", "_segment", "_headers", "_dr_files"]
@@ -416,8 +389,7 @@ class SESegmentValidationPipelineConfig:
 
 
 class SETimeSeriesValidationTarget(SEValidationTarget):
-    __slots__ = ["_target_type", "_comparison_type", "_patient_specific",
-                 "_computed_value", "_error_value"]
+    __slots__ = ["_target_type", "_comparison_type", "_patient_specific"]
 
     class eComparisonType(Enum):
         NotValidating = 0
@@ -437,15 +409,12 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
 
     def __init__(self):
         super().__init__()
-        self.clear()
-
-    def clear(self):
-        super().clear()
         self._comparison_type = self.eComparisonType.NotValidating
         self._target_type = SETimeSeriesValidationTarget.eTargetType.Mean
-        self._computed_value = None
-        self._error_value = None
         self._patient_specific = None
+
+    def clear(self):
+        self.__init__()
 
     def is_evaluated(self) -> bool:
         return self.has_computed_value() and self.has_error_value()
@@ -479,24 +448,6 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
         self._target = np.nan
         self._target_max = max
         self._target_min = min
-
-    def has_computed_value(self) -> bool:
-        return self._computed_value is not None
-    def get_computed_value(self) -> Optional[float]:
-        return self._computed_value
-    def set_computed_value(self, val: float) -> None:
-        self._computed_value = val
-    def invalidate_computed_value(self) -> None:
-        self._computed_value = None
-
-    def has_error_value(self) -> bool:
-        return self._error_value is not None
-    def get_error_value(self) -> Optional[float]:
-        return self._error_value
-    def set_error_value(self, err: float) -> None:
-        self._error_value = err
-    def invalidate_error_value(self) -> None:
-        self._error_value = None
 
     def has_patient_specific_setting(self) -> bool:
         return self._patient_specific is not None

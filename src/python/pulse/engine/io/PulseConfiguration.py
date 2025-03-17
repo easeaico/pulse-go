@@ -23,7 +23,7 @@ def serialize_pulse_configuration_to_file(src: PulseConfiguration, filename: str
 
 def serialize_pulse_configuration_from_string(string: str, dst: PulseConfiguration, fmt: eSerializationFormat) -> None:
     src = ConfigurationData()
-    json_format.parse(string, src)
+    json_format.Parse(string, src)
     serialize_pulse_configuration_from_bind(src, dst)
 
 

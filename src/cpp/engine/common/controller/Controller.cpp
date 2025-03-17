@@ -400,6 +400,8 @@ namespace pulse
     SEEventHandler* event_handler = m_EventManager->GetEventHandler();
     m_EventManager->ForwardEvents(nullptr);
 
+    GetEngineTracker().SetupRequests();
+
     if (!Stabilize(patient_configuration))
     {
       Error("Pulse needs stabilization criteria, none provided in configuration file");
@@ -518,6 +520,11 @@ namespace pulse
 
     // Copy any changes to the current patient to the initial patient
     m_InitialPatient->Copy(*m_CurrentPatient);
+
+    // Cache the healthy requested values before we apply any conditions
+    // Note, this should not cost much, but we could make this happen if a config v&v flag is enabled
+    GetEngineTracker().PullData(-1);
+    m_DataRequested->PullDataRequested(-1, -1, GetDataTrack());
 
     // Apply conditions and anything else to the physiology
     // now that it's steady with provided patient, environment, and feedback

@@ -3,7 +3,6 @@
 
 import sys
 import json
-import shutil
 import logging
 from enum import Enum
 from pathlib import Path
@@ -11,11 +10,15 @@ from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from typing import Dict, List, Tuple
 
-from pulse.cdm.validation import SESegmentValidationTarget, SESegmentValidationSegment
+from pulse.pipelines.dataset.utils import generate_data_request
+from pulse.pipelines.dataset.patient_sheet_reader import process_patient_sheet
+from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.scenario import SEScenario
 from pulse.cdm.utils.file_utils import get_validation_dir
+from pulse.cdm.validation import SESegmentValidationTarget, SESegmentValidationSegment
 from pulse.cdm.io.validation import serialize_segment_validation_segment_list_to_file
-from pulse.pipelines.dataset.utils import generate_data_request
+from pulse.engine.PulseConfiguration import PulseConfiguration
+from pulse.engine.io.PulseConfiguration import serialize_pulse_configuration_from_string
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -29,13 +32,18 @@ def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Pat
         for s in workbook.sheetnames:
             if s == "Notes":
                 continue
-            if not process_sheet(workbook[s], output_dir, results_dir, scenario_ids):
+            if s == "Patients":
+                if not process_patient_sheet(workbook[s], Path(f"./patients/{xls_file.stem}")):
+                    _pulse_logger.error(f"Unable to read patient sheet")
+            elif not process_sheet(workbook[s], output_dir, results_dir, scenario_ids):
                 _pulse_logger.error(f"Unable to read {s} sheet")
     return scenario_ids
 
 
 # Read xlsx sheet and generate corresponding scenario file and validation target files
 def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenario_ids: List) -> bool:
+    _pulse_logger.info(f"Processing sheet: {sheet.title}")
+
     class Stage(Enum):
         IDScenario = 0
         InitialSegment = 1
@@ -129,6 +137,12 @@ def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenari
 
             if "data request files" in h2c and isinstance(r[h2c["data request files"]], str):
                 scenario.get_data_request_files().append(r[h2c["data request files"]].strip() + ".json")
+
+            if "configuration" in h2c and isinstance(r[h2c["configuration"]], str):
+                print("Reading configuration")
+                #config = PulseConfiguration()
+                #serialize_pulse_configuration_from_string(r[h2c["configuration"]], config, eSerializationFormat.JSON)
+
         # Segment ID, note, and actions
         elif stage == Stage.Segment:
             # Header row
@@ -172,7 +186,7 @@ def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenari
                 stage = Stage.Segment
                 continue
 
-            if "request type" in h2c and r[h2c["request type"]] is not None:
+            if "request type" in h2c and r[h2c["request type"]] is not None and r[h2c["request type"]] != "Assessment":
                 dr = generate_data_request(
                     request_type=r[h2c["request type"]] if "request type" in h2c and isinstance(r[h2c["request type"]], str) else "",
                     property_name=r[h2c["property name"]] if "property name" in h2c and isinstance(r[h2c["property name"]], str) else "",
@@ -183,34 +197,15 @@ def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenari
                 val_tgt.set_header(dr.to_string())
                 if isinstance(r[h2c["reference"]], str):
                     val_tgt.set_reference(r[h2c["reference"]])
-                type_str = r[h2c["comparison type"]].strip().lower()
-                comparison_str = r[h2c["comparison segment/value"]]
-                if type_str == "equaltosegment":
-                    val_tgt.set_equal_to_segment(int(comparison_str))
-                elif type_str == "equaltovalue":
-                    val_tgt.set_equal_to_value(float(comparison_str))
-                elif type_str == "greaterthansegment":
-                    val_tgt.set_greater_than_segment(int(comparison_str))
-                elif type_str == "greaterthanvalue":
-                    val_tgt.set_greater_than_value(float(comparison_str))
-                elif type_str == "lessthansegment":
-                    val_tgt.set_less_than_segment(int(comparison_str))
-                elif type_str == "lessthanvalue":
-                    val_tgt.set_less_than_value(float(comparison_str))
-                elif type_str == "trendstosegment":
-                    val_tgt.set_trends_to_segment(int(comparison_str))
-                elif type_str == "trendstovalue":
-                    val_tgt.set_trends_to_value(float(comparison_str))
-                elif type_str == "range":
-                    range_list = [float(val.strip()) for val in comparison_str[1:-1].split(",")]
-                    val_tgt.set_range(range_list[0], range_list[1])
-                elif type_str == "notvalidating":
-                    pass
-                elif type_str == "tbd":
-                    _pulse_logger.warning("Found tbd target")
-                else:
-                    raise ValueError(f"Unable to identify comparison type: {type_str}")
-
+                if isinstance(r[h2c["comparison formula"]], str):
+                    val_tgt.set_comparison_formula(r[h2c["comparison formula"]].strip().lower())
+                threshold_str = r[h2c["threshold"]]
+                if threshold_str:
+                    for threshold in threshold_str.split(","):
+                        if "Good" in threshold:
+                            val_tgt.set_good_percent_error(float(threshold[threshold.find("Good") + 5:]))
+                        elif "Fair" in threshold:
+                            val_tgt.set_fair_percent_error(float(threshold[threshold.find("Fair") + 5:]))
                 if "narrative" in h2c:
                     val_tgt.set_notes(r[h2c["narrative"]] if isinstance(r[h2c["narrative"]], str) else "")
 

@@ -6,12 +6,15 @@ import com.kitware.pulse.cdm.bind.Validation.ValidationTargetData;
 
 public class SEValidationTarget
 {
-  protected String          m_Header;
-  protected String          m_Reference;
-  protected String          m_Notes;
-  protected double          m_Target;
-  protected double          m_TargetMaximum;
-  protected double          m_TargetMinimum;
+  protected String header;
+  protected String reference;
+  protected String notes;
+  protected double target;
+  protected double targetMaximum;
+  protected double targetMinimum;
+
+  protected double goodPercentError;
+  protected double fairPercentError;
   
   public SEValidationTarget()
   {
@@ -20,19 +23,22 @@ public class SEValidationTarget
   
   public void clear()
   {
-    m_Header = "";
-    m_Reference = "";
-    m_Notes = "";
-    m_Target         = Double.NaN;
-    m_TargetMaximum  = Double.NaN;
-    m_TargetMinimum  = Double.NaN;
+    header = "";
+    reference = "";
+    notes = "";
+    target         = Double.NaN;
+    targetMaximum  = Double.NaN;
+    targetMinimum  = Double.NaN;
   }
   
   public static void load(ValidationTargetData src, SEValidationTarget dst)
   {
-    dst.m_Header = src.getHeader();
-    dst.m_Reference = src.getReference();
-    dst.m_Notes = src.getNotes();
+    dst.header = src.getHeader();
+    dst.reference = src.getReference();
+    dst.notes = src.getNotes();
+
+    dst.goodPercentError = src.getGoodPercentError();
+    dst.fairPercentError = src.getFairPercentError();
   }
   public static ValidationTargetData unload(SEValidationTarget src)
   {
@@ -42,21 +48,30 @@ public class SEValidationTarget
   }
   protected static void unload(SEValidationTarget src, ValidationTargetData.Builder dst)
   {
-    dst.setHeader(src.m_Header);
-    dst.setReference(src.m_Reference);
-    dst.setNotes(src.m_Notes);
+    dst.setHeader(src.header);
+    dst.setReference(src.reference);
+    dst.setNotes(src.notes);
+
+    dst.setGoodPercentError(src.goodPercentError);
+    dst.setFairPercentError(src.fairPercentError);
   }
   
-  public String getHeader() { return m_Header; }
-  public void setHeader(String h) { m_Header = h; }
+  public String getHeader() { return header; }
+  public void setHeader(String h) { header = h; }
 
-  public String getReference() { return m_Reference; }
-  public void setReference(String c) { m_Reference = c; }
+  public String getReference() { return reference; }
+  public void setReference(String c) { reference = c; }
 
-  public String getNotes() { return m_Notes; }
-  public void setNotes(String n) { m_Notes = n; }
+  public String getNotes() { return notes; }
+  public void setNotes(String n) { notes = n; }
 
-  public double getTargetMaximum() { return m_TargetMaximum; }
-  public double getTargetMinimum() { return m_TargetMinimum; }
-  public double getTarget() { return m_Target; }
+  public double getTargetMaximum() { return targetMaximum; }
+  public double getTargetMinimum() { return targetMinimum; }
+  public double getTarget() { return target; }
+  
+  public double getGoodPercentError() { return goodPercentError; }
+  public void setGoodPercentError(double d) { goodPercentError = d; }
+  
+  public double getFairPercentError() { return fairPercentError; }
+  public void setFairPercentError(double d) { fairPercentError = d; }
 }

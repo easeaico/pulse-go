@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import re
 import sys
 import logging
 import numpy as np
@@ -21,8 +22,29 @@ _pulse_logger = logging.getLogger('pulse')
 def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -> None:
     # Get all validation targets and segment results from files
     _pulse_logger.info(f"Validating {segments_filename} against {targets_filename}")
-    targets = serialize_segment_validation_segment_list_from_file(targets_filename)
-    results = serialize_data_requested_result_from_file(segments_filename)
+    # Get the sheet name from the filename
+    this_sheet_name = segments_filename.stem[:segments_filename.stem.find("Results")]
+    targets = serialize_segment_validation_segment_list_from_file(str(targets_filename))
+    referenced_results = {}
+    # Look through the targets and find all the sheets this test case references
+    for target in targets:
+        for property_target in target.get_validation_targets():
+            if property_target.has_comparison_formula():
+                #  Does this formula reference another workbook/sheet?
+                formula = property_target.get_comparison_formula()
+                #  Note: If we want to also allow referencing other workbook books, maybe add another [a-zA-Z]+:
+                sheet_references = re.findall(r"\{[a-zA-Z]+:[0-9]+\}", formula, re.DOTALL)
+                for sheet_reference in sheet_references:
+                    sheet_name = re.findall(r"[a-zA-Z]+", sheet_reference, re.DOTALL)[0]
+                    if sheet_name not in referenced_results:
+                        referenced_segments_filename = Path(str(segments_filename).replace(this_sheet_name, sheet_name))
+                        if not referenced_segments_filename.exists():
+                            _pulse_logger.error(f"Cannot find referenced sheet: {referenced_segments_filename}")
+                        else:
+                            referenced_results[sheet_name] = (
+                                serialize_data_requested_result_from_file(str(referenced_segments_filename)))
+    # Load the results for this test case
+    results = serialize_data_requested_result_from_file(str(segments_filename))
 
     headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
     fields = list(range(len(headers)))
@@ -33,12 +55,12 @@ def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -
             continue
         # Get the result associated with this target
         seg_id = target.get_segment_id()
+        _pulse_logger.info(f"Processing segment {seg_id}")
 
-
-        # Evaluate targets and create markdown tables for each segment
+        # Evaluate targets and create Markdown tables for each segment
         table_data = []
         for tgt in target.get_validation_targets():
-            table_data.append(evaluate(seg_id, tgt, results))
+            table_data.append(evaluate(seg_id, tgt, results, referenced_results))
 
         # Write our table
         md_filename = table_dir / f"Segment{seg_id}ValidationTable.md"
@@ -50,197 +72,246 @@ def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -
                 lines.append("\n\n")
             table_name = table_dir.as_posix()
             table_name = table_name[table_name.rindex('/') + 1:]
-            lines.append(f"<center>\n<i>@tabledef {{{table_name}Segment{seg_id}}}. Data request validation results for Segment {seg_id}.</i>\n</center>\n\n")
+            lines.append(f"<center>\n<i>@tabledef {{{table_name}Segment{seg_id}}}. "
+                         f"Data request validation results for Segment {seg_id}.</i>\n</center>\n\n")
             md_file.writelines(lines)
             table(md_file, table_data, fields, headers, align)
 
 
-def evaluate(seg_id: int, tgt: SESegmentValidationTarget, results: SEDataRequested) -> List[str]:
+def evaluate(seg_id: int,
+             tgt: SESegmentValidationTarget,
+             results: SEDataRequested,
+             referenced_results: List[SEDataRequested]) -> List[str]:
     header = tgt.get_header()
-    compare_type = tgt.get_comparison_type()
+    _pulse_logger.info(f"Evaluating {header}")
 
     epsilon = 1E-9
     percent_precision = 1
     value_precision = 4
-    expected_str = ""
-    err_str = ""
-    change_str = ""
 
     result = results.get_segment(seg_id)
     if result is None:
-        raise ValueError(f"Could not find result for segment {seg_id}")
+        _pulse_logger.error(f"Could not find result for segment {seg_id}")
+        return []
     header_idx = results.get_header_index(header)
     if header_idx is None:
-        raise ValueError(f"Could not find results for {header} in segment {seg_id}")
+        _pulse_logger.error(f"Could not find results for {header} in segment {seg_id}")
+        return []
     engine_val = result.values[header_idx]
 
-    def _convert_unit(header: str, val: float):
-        paren_idx = header.find("(")
+    def _convert_unit(_header: str, _val: float):
+        paren_idx = _header.find("(")
         if paren_idx != -1:
-            requested_unit = header[paren_idx+1:-1].replace("_", " ")
-            engine_full_header = results.get_headers()[results.get_header_index(header)]
+            requested_unit = _header[paren_idx+1:-1].replace("_", " ")
+            engine_full_header = results.get_headers()[results.get_header_index(_header)]
             engine_paren_idx = engine_full_header.find("(")
             if engine_paren_idx == -1:
-                raise ValueError(f"Cannot convert between {requested_unit} and unitless for {header}")
+                raise ValueError(f"Cannot convert between {requested_unit} and unitless for {_header}")
             curr_unit = engine_full_header[engine_paren_idx+1:-1].replace("_", " ")
             if curr_unit != requested_unit:
-                val = PyPulse.convert(val, curr_unit, requested_unit)
+                _val = PyPulse.convert(_val, curr_unit, requested_unit)
 
-        return val
+        return _val
 
     # Convert to validation unit if needed
     engine_val = _convert_unit(header, engine_val)
-
-    if compare_type == SESegmentValidationTarget.eComparisonType.EqualToSegment or \
-       compare_type == SESegmentValidationTarget.eComparisonType.EqualToValue:
-
-        if compare_type == SESegmentValidationTarget.eComparisonType.EqualToSegment:
-            tgt_result = results.get_segment(tgt.get_target_segment())
-            if tgt_result is None:
-                raise Exception("Could not find result for segment " + str(seg_id))
-            expected_val = tgt_result.values[results.get_header_index(header)]
-            expected_val = _convert_unit(header, expected_val)
-            expected_str = f"({expected_val:.{value_precision}G})"
-        else:
-            expected_val = tgt.get_target()
-            expected_str = f"{expected_val:.{value_precision}G}"
-        err = percent_difference(expected_val, engine_val, epsilon)
-
-        # Close enough
-        if abs(err) < epsilon:
-            err = 0.
-
-        err_str = generate_percentage_span(err, percent_precision)
-    elif compare_type == SESegmentValidationTarget.eComparisonType.GreaterThanSegment or \
-         compare_type == SESegmentValidationTarget.eComparisonType.GreaterThanValue:
-
-        if compare_type == SESegmentValidationTarget.eComparisonType.GreaterThanSegment:
-            tgt_result = results.get_segment(tgt.get_target_segment())
-            if tgt_result is None:
-                raise Exception("Could not find result for segment " + str(seg_id))
-            expected_val = tgt_result.values[results.get_header_index(header)]
-            expected_val = _convert_unit(header, expected_val)
-            expected_str = f"({expected_val:.{value_precision}G})"
-        else:
-            expected_val = tgt.get_target()
-            expected_str = f"{expected_val:.{value_precision}G}"
-
-        # TODO: Implement gradient for greater than?
-        change = percent_change(expected_val, engine_val, epsilon)
-        c = '"danger"'
-        if not np.isnan(change) and change > 0.0:
-            c='"success"'
-        change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
-    elif compare_type == SESegmentValidationTarget.eComparisonType.LessThanSegment or \
-         compare_type == SESegmentValidationTarget.eComparisonType.LessThanValue:
-
-        if compare_type == SESegmentValidationTarget.eComparisonType.LessThanSegment:
-            tgt_result = results.get_segment(tgt.get_target_segment())
-            if tgt_result is None:
-                raise Exception("Could not find result for segment " + str(seg_id))
-            expected_val = tgt_result.values[results.get_header_index(header)]
-            expected_val = _convert_unit(header, expected_val)
-            expected_str = f"({expected_val:.{value_precision}G})"
-        else:
-            expected_val = tgt.get_target()
-            expected_str = f"{expected_val:.{value_precision}G}"
-
-        # TODO: Implement gradient for less than?
-        change = percent_change(expected_val, engine_val, epsilon)
-        c = '"danger"'
-        if not np.isnan(change) and change < 0.0:
-            c='"success"'
-        change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
-    elif compare_type == SESegmentValidationTarget.eComparisonType.TrendsToSegment or \
-         compare_type == SESegmentValidationTarget.eComparisonType.TrendsToValue:
-
-        if compare_type == SESegmentValidationTarget.eComparisonType.TrendsToSegment:
-            tgt_result = results.get_segment(tgt.get_target_segment())
-            if tgt_result is None:
-                raise Exception("Could not find result for segment " + str(seg_id))
-            expected_val = tgt_result.values[results.get_header_index(header)]
-            expected_val = _convert_unit(header, expected_val)
-            expected_str = f"({expected_val:.{value_precision}G})"
-        else:
-            expected_val = tgt.get_target()
-            expected_str = f"{expected_val:.{value_precision}G}"
-
-        # Get engine values at beginning (end of last) and end of current segment
-        prev_seg_id = seg_id - 1
-        if prev_seg_id not in results or header not in results[prev_seg_id]:
-            raise Exception(f"Unable to find segment {seg_id} initial value for trends towards comparison for {header}.")
-        init_val = results[prev_seg_id][header]
-
-        init_change = percent_change(expected_val, init_val, epsilon)
-        end_change = percent_change(expected_val, engine_val, epsilon)
-
-        # TODO: gradient for trends to?
-        c = '"danger"'
-        # Check that difference between expected and engine decreased and both
-        # percentages are the same sign
-        if not np.isnan(init_change) and not np.isnan(end_change) and \
-             abs(end_change) < abs(init_change) and init_change * end_change > 0.0:
-            c='"success"'
-        # TODO: what percent change value is valuable to display?
-        change = percent_change(init_val, engine_val, epsilon)
-        change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
-    elif compare_type == SESegmentValidationTarget.eComparisonType.Range:
-        tgt_min = tgt.get_target_minimum()
-        tgt_max = tgt.get_target_maximum()
-        expected_str = f"[{tgt_min:.{value_precision}G},{tgt_max:.{value_precision}G}]"
-        min_err = percent_difference(tgt_min, engine_val, epsilon)
-        max_err = percent_difference(tgt_max, engine_val, epsilon)
-
-        # No error if we are in range
-        if engine_val >= tgt_min and engine_val <= tgt_max:
-            err = 0.
-        elif engine_val > tgt_max:
-            err = max_err
-        elif engine_val < tgt_min:
-            err = min_err
-
-        # Close enough
-        if abs(err) < epsilon:
-            err = 0.
-
-        err_str = generate_percentage_span(err, percent_precision)
-    elif compare_type == SESegmentValidationTarget.eComparisonType.NotValidating:
-        pass
+    # Check for multiple expressions
+    # Not currently supporting a mix of 'and' and 'or', or parens at this point
+    # The problem is splitting out the %diff and %change for each expression and getting them into the table
+    # It's probably not that bad, we can revisit if needed
+    logical_join = None
+    formula = tgt.get_comparison_formula().lower().replace("healthy", "-1").replace("baseline", "0")
+    if ("and" in formula and "or" in formula) or '(' in formula:
+        _pulse_logger.error(f"We currently don't support this complex of a formula: {formula}")
+        return []
+    # Split out multiple expressions
+    if "and" in formula:
+        logical_join = " and "
+        expressions = formula.split("and")
+    elif "or" in formula:
+        logical_join = " or "
+        expressions = formula.split("or")
     else:
-        raise ValueError(f"Unknown compare type: {compare_type}")
+        expressions = [formula]
+
+    formula_expected_str = ""
+    formula_error_str = ""
+    formula_change_str = ""
+    for expression in expressions:
+        expression_expected_str = ""
+        expression_error_str = ""
+        expression_change_str = ""
+
+        # First sub in all referenced segment values into the expression
+
+        #   Find all local segment references
+        local_references = set(re.findall(r"\{-?[0-9]+\}", expression, re.DOTALL))
+        for local_reference in local_references:
+            segment = int(local_reference.replace('{', '').replace('}', ''))
+            tgt_result = results.get_segment(segment)
+            if tgt_result is None:
+                raise Exception("Could not find result for segment " + local_reference)
+            segment_val = tgt_result.values[results.get_header_index(header)]
+            segment_val = _convert_unit(header, segment_val)
+            # Replace the reference with the value
+            expression = expression.replace(local_reference, str(segment_val))
+        #   Find all external segment references
+        sheet_references = set(re.findall(r"\{[a-zA-Z]+:-?[0-9]+\}", expression, re.DOTALL))
+        for sheet_reference in sheet_references:
+            sheet_info = sheet_reference.replace('{', '').replace('}', '').split(':')
+            tgt_result = referenced_results[sheet_info[0]].get_segment(int(sheet_info[1]))
+            if tgt_result is None:
+                raise Exception("Could not find result for segment " + sheet_reference)
+            segment_val = tgt_result.values[referenced_results[sheet_info[0]].get_header_index(header)]
+            segment_val = _convert_unit(header, segment_val)
+            # Replace the reference with the value
+            expression = expression.replace(sheet_reference, str(segment_val))
+
+        referenced_segments = list(local_references) + list(sheet_references)
+        if len(referenced_segments) > 1:
+            _pulse_logger.warning(f"Multiple segments referenced in an expression...not sure table will make sense")
+
+        expected_val_expression = (expression.replace('=', '')
+                                   .replace('>', '')
+                                   .replace('<', '')
+                                   .replace("{v}", '')).strip()
+        try:
+            if "nan" in expected_val_expression:
+                expected_val = np.nan
+                _pulse_logger.error(f"Expected value is NaN, is this intentional?")
+            else:
+                expected_val = eval(expected_val_expression)
+        except NameError:
+            _pulse_logger.error(f"Unable to evaluate expression {expected_val_expression}")
+            return []
+
+        compare_type = None
+        if '>' in expression or '<' in expression:
+
+            # TODO: Implement gradient?
+            change = percent_change(expected_val, engine_val, epsilon)
+            c = '"danger"'
+            if '>' in expression:
+                compare_type = "GreaterThan"
+                if '=' in expression:
+                    if not np.isnan(change) and change >= 0.0:
+                        c = '"success"'
+                else:
+                    if not np.isnan(change) and change > 0.0:
+                        c = '"success"'
+            else:
+                compare_type = "LessThan"
+                if '=' in expression:
+                    if not np.isnan(change) and change <= 0.0:
+                        c = '"success"'
+                else:
+                    if not np.isnan(change) and change < 0.0:
+                        c = '"success"'
+            expression_change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
+            expression_expected_str = f"({expected_val:.{value_precision}G})"
+
+        elif '=' in expression:
+            compare_type = "EqualTo"
+            err = percent_difference(expected_val, engine_val, epsilon)
+            # Close enough
+            if abs(err) < epsilon:
+                err = 0.
+            success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
+            warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
+            expression_error_str = generate_percentage_span(err, percent_precision, success, warning)
+            expression_expected_str = f"({expected_val:.{value_precision}G})"
+
+        elif '[' in expression and ']' in expression:
+            values = expression.replace('[', '').replace(']', '').split(',')
+            tgt_min = float(values[0].strip())
+            tgt_max = float(values[1].strip())
+            min_err = percent_difference(tgt_min, engine_val, epsilon)
+            max_err = percent_difference(tgt_max, engine_val, epsilon)
+
+            err = np.inf
+            # No error if we are in range
+            if tgt_min <= engine_val <= tgt_max:
+                err = 0.
+            elif engine_val > tgt_max:
+                err = max_err
+            elif engine_val < tgt_min:
+                err = min_err
+
+            # Close enough
+            if abs(err) < epsilon:
+                err = 0.
+
+            success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
+            warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
+            expression_error_str = generate_percentage_span(err, percent_precision, success, warning)
+            expression_expected_str = f"[{tgt_min:.{value_precision}G},{tgt_max:.{value_precision}G}]"
+
+        else:
+            # TODO empty formula means we are not validating this row
+            # TODO Trends to/from a value
+            _pulse_logger.error(f"Not sure how to handle expression: {expression}")
+            continue
+
+        # Add comparison type to beginning of expected string
+        if len(referenced_segments) > 0:
+            # TODO Not supporting multiple segment references in 1 expression
+            tgt_seg = referenced_segments[0].replace('{', '').replace('}', '')
+            if ':' in tgt_seg:
+                ref = tgt_seg.split(':')
+                if '-1' in tgt_seg:
+                    expression_expected_str = f"{compare_type} {ref[0]} Healthy {expression_expected_str}"
+                elif '0' in tgt_seg:
+                    expression_expected_str = f"{compare_type} {ref[0]} Baseline {expression_expected_str}"
+                else:
+                    expression_expected_str = f"{compare_type} {ref[0]} Segment {ref[1]} {expression_expected_str}"
+            else:
+                if '-1' in tgt_seg:
+                    expression_expected_str = f"{compare_type} Healthy {expression_expected_str}"
+                elif '0' in tgt_seg:
+                    expression_expected_str = f"{compare_type} Baseline {expression_expected_str}"
+                else:
+                    expression_expected_str = f"{compare_type} Segment {tgt_seg} {expression_expected_str}"
+        elif compare_type:
+            expression_expected_str = f'{compare_type} {expression_expected_str}'
+
+        if logical_join:
+            if len(formula_expected_str) > 0:
+                formula_expected_str += logical_join + expression_expected_str
+            else:
+                formula_expected_str = expression_expected_str
+
+            if len(formula_error_str) > 0:
+                formula_error_str += logical_join + expression_error_str
+            else:
+                formula_error_str = expression_error_str
+
+            if len(formula_change_str) > 0:
+                formula_change_str += logical_join + expression_change_str
+            else:
+                formula_change_str = expression_change_str
+        else:
+            formula_expected_str = expression_expected_str
+            formula_error_str = expression_error_str
+            formula_change_str = expression_change_str
 
     if tgt.get_reference():
         references = [ref.strip() for ref in tgt.get_reference().replace("\n", "").split(",")]
         for ref in references:
             if not ref.startswith('['):
-                expected_str += f" @cite {ref}"
-
-    # Add comparison type to beginning of expected string
-    if "Segment" in compare_type.name:
-        compare_str = compare_type.name.replace("Segment", "")
-        tgt_seg = tgt.get_target_segment()
-        if tgt_seg == 0:
-            expected_str = f'{compare_str} Baseline {expected_str}'
-        else:
-            expected_str = f'{compare_str} Segment {tgt_seg} {expected_str}'
-    elif "Value" in compare_type.name:
-        expected_str = f'{compare_type.name.replace("Value", "")} {expected_str}'
+                formula_expected_str += f" @cite {ref}"
 
     return [
         header,
-        expected_str if expected_str else "&nbsp;",
+        formula_expected_str if formula_expected_str else "&nbsp;",
         f"{engine_val:.{value_precision}G}",
-        err_str if err_str else "&nbsp;",
-        change_str if change_str else "&nbsp;",
+        formula_error_str if formula_error_str else "&nbsp;",
+        formula_change_str if formula_change_str else "&nbsp;",
         tgt.get_notes() if tgt.get_notes() else "&nbsp;"
         ]
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
-
-    targets_dir = None
-    results_dir = None
 
     if len(sys.argv) < 3:
         _pulse_logger.error("Expected inputs : <validation targets directory> <results directory> [markdown directory]")
@@ -264,5 +335,8 @@ if __name__ == "__main__":
             _pulse_logger.error("Please provide a valid markdown directory")
             sys.exit(1)
 
-
     validate(targets_dir, results_dir, markdown_dir)
+
+
+if __name__ == "__main__":
+    main()
