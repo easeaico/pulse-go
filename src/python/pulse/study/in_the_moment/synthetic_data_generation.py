@@ -50,7 +50,6 @@ def SyntheticDataGeneration(populationSize, statisticsFileName, syntheticDataFil
 
     #Alternative Age Distribution
     ageGroups = ['Under25', '26To30','31To35','36To40','41Plus']
-    ageCounts = [191975,103628,70783,52055,43215]
     ageWeights = [41.6, 22.4, 15.3, 11.3, 9.4]
 
     #Create bins of ages
@@ -60,12 +59,26 @@ def SyntheticDataGeneration(populationSize, statisticsFileName, syntheticDataFil
     #Assume normal distribution for each bin
     ageBinNumber = ageBinData.value_counts("AgeBins")
 
-    under25List = np.random.normal(loc=21.5, scale=2, size=ageBinNumber['Under25'])
-    bin26To30List = np.random.normal(loc=28, scale=1, size=ageBinNumber['26To30'])
-    bin31To35List = np.random.normal(loc=33, scale=1, size=ageBinNumber['31To35'])
-    bin36To40List = np.random.normal(loc=38, scale=1, size=ageBinNumber['36To40'])
-    over41List = np.random.normal(loc=48, scale=3, size=ageBinNumber['41Plus'])
+    under25List = []
+    for i in range(ageBinNumber['Under25']):
+        under25List.append(np.random.randint(18, 25))
 
+    bin26To30List = []
+    for i in range(ageBinNumber['26To30']):
+        bin26To30List.append(np.random.randint(26, 30))
+
+    bin31To35List = []
+    for i in range(ageBinNumber['31To35']):
+        bin31To35List.append(np.random.randint(31, 35))
+
+    bin36To40List = []
+    for i in range(ageBinNumber['36To40']):
+        bin36To40List.append(np.random.randint(36, 40))
+
+    over41List = []
+    for i in range(ageBinNumber['41Plus']):
+        over41List.append(np.random.randint(41, 55))       
+    
     ageList = []
     under25Count = 0
     bin26To30Count = 0
@@ -192,6 +205,7 @@ def ValidateSyntheticPopulationData(synetheticDataFile, statsFileName):
     fig, axes = plt.subplots(1, 2, figsize=(10, 5)) 
     #axes[0].hist(ageList, bins=ageBins, density=True, color='skyblue', edgecolor='black')
     axes[0].hist(ageBins[:-1], ageBins, weights=normalized_counts, color='skyblue', edgecolor='black')
+    axes[0].set_ylim(0,0.45)
     axes[0].set_title('Normalized Synthetic Age Data')
     axes[0].set_xlabel('Age')
     axes[0].set_ylabel('Normalized Frequency')
@@ -201,6 +215,7 @@ def ValidateSyntheticPopulationData(synetheticDataFile, statsFileName):
     normalizedAgeCounts = [x / totalPopulation for x in actualAgeCounts]
     
     axes[1].hist(ageBins[:-1], ageBins, weights=normalizedAgeCounts, color='green', edgecolor='black')
+    axes[1].set_ylim(0,0.45)
     axes[1].set_title('Normalized Actual Age Data')
     axes[1].set_xlabel('Age')
     axes[1].set_ylabel('Normalized Frequency')
@@ -455,7 +470,7 @@ def ValidateSyntheticInjuryData(syntheticDataFile):
     print(injuryLocationValidationTable)
     injuryLocationValidationTable.to_csv(syntheticDataFile + '_InjuryValidationTable.csv', index=False)
     injuryLocationValidationTable.to_html(syntheticDataFile + '_InjuryValidationTable.html', index=False)
-    
+
 
 #Total population size
 populationSize = 3000
