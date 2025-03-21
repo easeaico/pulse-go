@@ -23,6 +23,16 @@ public:
   virtual SEScalarMassPerVolume& GetBloodDensity();                                                   /**< @copydoc DOXY_CDM_GET */
   virtual double GetBloodDensity(const MassPerVolumeUnit& unit) const;                                /**< @copydoc DOXY_CDM_GET_VALUE *///@}
 
+  /** @name ApparentShuntFraction
+ *  @brief @copybrief Physiology_BloodChemistrySystemData_ApparentShuntFraction
+ *  @{*/
+ /// %Test if member has been allocated
+  virtual bool HasApparentShuntFraction() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalar0To1& GetApparentShuntFraction();
+  virtual double GetApparentShuntFraction() const;
+  //@}
+
   /** @name BaseExcess
   *  @brief @copybrief Physiology_BloodChemistrySystemData_BaseExcess
   *  @{*/
@@ -302,6 +312,7 @@ public:
 
 
 protected:
+  SEScalar0To1*                   m_ApparentShuntFraction;
   SEScalarAmountPerVolume*        m_BaseExcess;
   SEScalarMassPerVolume*          m_BloodDensity;
   SEScalar*                       m_BloodPH;

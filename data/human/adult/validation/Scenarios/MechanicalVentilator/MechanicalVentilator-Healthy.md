@@ -49,11 +49,11 @@
     <td><a href="./plots/MechanicalVentilator/Healthy_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/Healthy_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/Healthy_ShuntFraction.jpg"><img src="./plots/MechanicalVentilator/Healthy_ShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Healthy_ApparentShuntFraction.jpg"><img src="./plots/MechanicalVentilator/Healthy_ApparentShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/Healthy_AlveolarDeadSpace.jpg"><img src="./plots/MechanicalVentilator/Healthy_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/Healthy_PhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/Healthy_PhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Healthy_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/Healthy_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/Healthy_VentilationPerfusionRatio.jpg"><img src="./plots/MechanicalVentilator/Healthy_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>

@@ -32,6 +32,8 @@ void PBPhysiology::Load(const CDM_BIND::BloodChemistrySystemData& src, SEBloodCh
 }
 void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
+  if (src.has_apparentshuntfraction())
+    PBProperty::Load(src.apparentshuntfraction(), dst.GetApparentShuntFraction());
   if (src.has_baseexcess())
     PBProperty::Load(src.baseexcess(), dst.GetBaseExcess());
   if (src.has_blooddensity())
@@ -99,6 +101,8 @@ CDM_BIND::BloodChemistrySystemData* PBPhysiology::Unload(const SEBloodChemistryS
 }
 void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodChemistrySystemData& dst)
 {
+  if (src.HasApparentShuntFraction())
+    dst.set_allocated_apparentshuntfraction(PBProperty::Unload(*src.m_ApparentShuntFraction));
   if (src.HasBaseExcess())
     dst.set_allocated_baseexcess(PBProperty::Unload(*src.m_BaseExcess));
   if (src.HasBloodDensity())
@@ -1190,6 +1194,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.alveolardeadspace(), dst.GetAlveolarDeadSpace());
   if (src.has_anatomicdeadspace())
     PBProperty::Load(src.anatomicdeadspace(), dst.GetAnatomicDeadSpace());
+  if (src.has_apparentphysiologicdeadspacetidalvolumeratio())
+    PBProperty::Load(src.apparentphysiologicdeadspacetidalvolumeratio(), dst.GetApparentPhysiologicDeadSpaceTidalVolumeRatio());
   if (src.has_horowitzindex())
     PBProperty::Load(src.horowitzindex(), dst.GetHorowitzIndex());
   if (src.has_chestwallcompliance())
@@ -1325,6 +1331,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_alveolardeadspace(PBProperty::Unload(*src.m_AlveolarDeadSpace));
   if (src.HasAnatomicDeadSpace())
     dst.set_allocated_anatomicdeadspace(PBProperty::Unload(*src.m_AnatomicDeadSpace));
+  if (src.HasApparentPhysiologicDeadSpaceTidalVolumeRatio())
+    dst.set_allocated_apparentphysiologicdeadspacetidalvolumeratio(PBProperty::Unload(*src.m_ApparentPhysiologicDeadSpaceTidalVolumeRatio));
   if (src.HasHorowitzIndex())
     dst.set_allocated_horowitzindex(PBProperty::Unload(*src.m_HorowitzIndex));
   if (src.HasChestWallCompliance())

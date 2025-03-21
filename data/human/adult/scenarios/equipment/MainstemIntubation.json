@@ -5,7 +5,8 @@
   "DataRequestFile": [
     "StandardDataRequests.json",
     "RespiratoryDataRequests.json",
-    "EquipmentDataRequests.json"
+    "EquipmentDataRequests.json",
+    "MechanicalVentilatorDataRequests.json"
   ],
   "AnyAction": [{
     "AdvanceTime": {
@@ -18,17 +19,70 @@
     }
   }, {
     "PatientAction": {
-      "SubstanceBolus": {
-        "Substance": "Succinylcholine",
-        "Concentration": {
-          "ScalarMassPerVolume": {
-            "Value": 4820.0,
-            "Unit": "ug/mL"
+      "Dyspnea": {
+        "RespirationRateSeverity": {
+          "Scalar0To1": {
+            "Value": 1.0
           }
         },
-        "Dose": {
+        "TidalVolumeSeverity": {
+          "Scalar0To1": {
+            "Value": 1.0
+          }
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "Tracheal"
+      }
+    }
+  }, {
+    "EquipmentAction": {
+      "MechanicalVentilatorVolumeControl": {
+        "MechanicalVentilatorMode": {
+          "MechanicalVentilatorAction": {
+            "EquipmentAction": {
+              "Action": {}
+            }
+          },
+          "Connection": "On"
+        },
+        "Mode": "ContinuousMandatoryVentilation",
+        "InspirationWaveform": "Square",
+        "Flow": {
+          "ScalarVolumePerTime": {
+            "Value": 30,
+            "Unit": "L/min"
+          }
+        },
+        "FractionInspiredOxygen": {
+          "Scalar0To1": {
+            "Value": 0.21
+          }
+        },
+        "InspiratoryPeriod": {
+          "ScalarTime": {
+            "Value": 1.5,
+            "Unit": "s"
+          }
+        },
+        "PositiveEndExpiratoryPressure": {
+          "ScalarPressure": {
+            "Value": 5,
+            "Unit": "cmH2O"
+          }
+        },
+        "RespirationRate": {
+          "ScalarFrequency": {
+            "Value": 12,
+            "Unit": "1/min"
+          }
+        },
+        "TidalVolume": {
           "ScalarVolume": {
-            "Value": 30.0,
+            "Value": 550,
             "Unit": "mL"
           }
         }
@@ -38,80 +92,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Intubation": {
-        "Type": "RightMainstem"
-      }
-    }
-  }, {
-    "EquipmentAction": {
-      "AnesthesiaMachineConfiguration": {
-        "Configuration": {
-          "Connection": "On",
-          "InletFlow": {
-            "ScalarVolumePerTime": {
-              "Value": 5.0,
-              "Unit": "L/min"
-            }
-          },
-          "InspiratoryExpiratoryRatio": {
-            "Value": 0.5
-          },
-          "OxygenFraction": {
-            "Scalar0To1": {
-              "Value": 0.23
-            }
-          },
-          "OxygenSource": "Wall",
-          "PositiveEndExpiratoryPressure": {
-            "ScalarPressure": {
-              "Value": 8.0,
-              "Unit": "cmH2O"
-            }
-          },
-          "PrimaryGas": "Nitrogen",
-          "RespiratoryRate": {
-            "ScalarFrequency": {
-              "Value": 16.0,
-              "Unit": "1/min"
-            }
-          },
-          "PeakInspiratoryPressure": {
-            "ScalarPressure": {
-              "Value": 18,
-              "Unit": "cmH2O"
-            }
-          },
-          "OxygenBottleOne": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          },
-          "OxygenBottleTwo": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -131,7 +112,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -151,7 +132,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -171,7 +152,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -191,7 +172,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -211,7 +192,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -231,7 +212,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -251,7 +232,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -271,7 +252,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -291,7 +272,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -311,7 +292,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }
@@ -326,7 +307,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 60.0,
           "Unit": "s"
         }
       }

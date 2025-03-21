@@ -75,5 +75,6 @@ namespace pulse
     SELiquidCompartment*       m_VenaCava;
     SELiquidSubstanceQuantity* m_VenaCavaO2;
     SELiquidSubstanceQuantity* m_VenaCavaCO2;
+    SEGasCompartment*          m_Alveoli;
   };
 END_NAMESPACE

@@ -15,6 +15,7 @@
 
 SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger)
 {
+  m_ApparentShuntFraction = nullptr;
   m_BaseExcess = nullptr;
   m_BloodDensity = nullptr;
   m_BloodPH = nullptr;
@@ -50,6 +51,7 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
 
 SEBloodChemistrySystem::~SEBloodChemistrySystem()
 {
+  SAFE_DELETE(m_ApparentShuntFraction);
   SAFE_DELETE(m_BaseExcess);
   SAFE_DELETE(m_BloodDensity);
   SAFE_DELETE(m_BloodPH);
@@ -85,6 +87,7 @@ SEBloodChemistrySystem::~SEBloodChemistrySystem()
 
 void SEBloodChemistrySystem::Clear()
 {
+  INVALIDATE_PROPERTY(m_ApparentShuntFraction);
   INVALIDATE_PROPERTY(m_BaseExcess);
   INVALIDATE_PROPERTY(m_BloodDensity);
   INVALIDATE_PROPERTY(m_BloodPH);
@@ -120,6 +123,8 @@ void SEBloodChemistrySystem::Clear()
 
 const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
 {
+  if (name.compare("ApparentShuntFraction") == 0)
+    return &GetApparentShuntFraction();
   if (name.compare("BaseExcess") == 0)
     return &GetBaseExcess();
   if (name.compare("BloodDensity") == 0)
@@ -153,7 +158,7 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
   if (name.compare("RedBloodCellCount") == 0)
     return &GetRedBloodCellCount();
   if (name.compare("ShuntFraction") == 0)
-    return &GetShuntFraction();  
+    return &GetShuntFraction();
   if (name.compare("StrongIonDifference") == 0)
     return &GetStrongIonDifference();
   if (name.compare("TotalProteinConcentration") == 0)
@@ -182,6 +187,23 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
     return &GetVenousOxygenPressure();
 
   return nullptr;
+}
+
+bool SEBloodChemistrySystem::HasApparentShuntFraction() const
+{
+  return m_ApparentShuntFraction == nullptr ? false : m_ApparentShuntFraction->IsValid();
+}
+SEScalar0To1& SEBloodChemistrySystem::GetApparentShuntFraction()
+{
+  if (m_ApparentShuntFraction == nullptr)
+    m_ApparentShuntFraction = new SEScalar0To1();
+  return *m_ApparentShuntFraction;
+}
+double SEBloodChemistrySystem::GetApparentShuntFraction() const
+{
+  if (m_ApparentShuntFraction == nullptr)
+    return SEScalar::dNaN();
+  return m_ApparentShuntFraction->GetValue();
 }
 
 bool SEBloodChemistrySystem::HasBaseExcess() const
