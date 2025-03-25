@@ -400,8 +400,6 @@ namespace pulse
     SEEventHandler* event_handler = m_EventManager->GetEventHandler();
     m_EventManager->ForwardEvents(nullptr);
 
-    GetEngineTracker().SetupRequests();
-
     if (!Stabilize(patient_configuration))
     {
       Error("Pulse needs stabilization criteria, none provided in configuration file");
@@ -523,6 +521,7 @@ namespace pulse
 
     // Cache the healthy requested values before we apply any conditions
     // Note, this should not cost much, but we could make this happen if a config v&v flag is enabled
+    GetEngineTracker().SetupRequests();
     GetEngineTracker().PullData(-1);
     m_DataRequested->PullDataRequested(-1, -1, GetDataTrack());
 
