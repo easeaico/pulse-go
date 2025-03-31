@@ -4561,9 +4561,9 @@ namespace pulse
       std::vector<std::pair<double, double>> interpolatorPoints =
       {
         {0.0, 1.0}, //None
-        {0.3, 0.100}, //Mild (likely the only one hit instead of the recruitment factor)
-        {0.6, 0.200}, //Moderate
-        {0.9, 0.150}, //Severe
+        {0.3, 0.400}, //Mild
+        {0.6, 0.300}, //Moderate
+        {0.9, 0.200}, //Severe
         {1.0, 0.100}  //Max
       };
       double damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity);
@@ -4571,13 +4571,13 @@ namespace pulse
       interpolatorPoints =
       {
         {0.0, 1.0}, //None
-        {0.1, 0.300},
-        {0.2, 0.200},
-        {0.3, 0.100},
-        {0.4, 0.080},
-        {0.5, 0.060},
-        {0.6, 0.055},
-        {0.7, 0.050},
+        {0.1, 0.400},
+        {0.2, 0.300},
+        {0.3, 0.200},
+        {0.4, 0.100},
+        {0.5, 0.080},
+        {0.6, 0.070},
+        {0.7, 0.060},
         {0.8, 0.045},
         {0.9, 0.040},
         {1.0, 0.035} //Max
@@ -4604,10 +4604,10 @@ namespace pulse
         interpolatorPoints =
         {
           {0.0, 1.0},   //None
-          {0.3, 0.280}, //Mild
-          {0.6, 0.181}, //Moderate
-          {0.9, 0.220}, //Severe
-          {1.0, 0.100}  //Max
+          {0.3, 0.450}, //Mild
+          {0.6, 0.450}, //Moderate
+          {0.9, 0.450}, //Severe
+          {1.0, 0.200}  //Max
 
         };
         double scalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity);
