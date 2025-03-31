@@ -1,408 +1,366 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import dataframe_image as dfi
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import random as rand
+import sys
 
 from pathlib import Path
+from pulse.cdm.utils.markdown import table
 
 _log = logging.getLogger("pulse")
 
+army_population_distributions = {
+    "heart_rate": {"mean": 72, "std": 11},
+    "sex": {
+              "male": {"height": {"mean": 177, "std": 7.1}, "bmi": {"mean": 26.4, "std": 3.4}},
+              "female": {"percent": 15.4, "height": {"mean": 163.5, "std": 7.7}, "bmi": {"mean": 24.7, "std": 2.8}}
+            },
+    "age": {"bins": [18, 25, 30, 35, 40, 55],
+            "percents": [41.6, 22.4, 15.3, 11.3, 9.4],
+            "counts": [191975, 103628, 70783, 52055, 43215]}
+}
+
+army_injury_distributions = {  # Location -> Type -> Severity mean/std or explicit value/percent
+    "head_and_neck": {"percent": 36.2, "mean": 2.69, "types": {
+        "tbi": {"percent": 22, "severity": {"mean": 3.5, "std": 0.25}},
+        "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.25}},
+        "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}}
+    }},
+    "thorax": {"percent": 8.6, "mean": 2.85, "types": {
+        "pneumothorax": {"percent": 51.8, "severity": {"mean": 2.85, "std": 0.25}},
+        "pulmonary_contusion": {"percent": 50.2, "severity": {"mean": 2.85, "std": 0.25}},
+        "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.25}},
+        "hemothorax": {"percent": 30, "severity": {"mean": 2.85, "std": 0.25}},
+        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
+        "spinal": {"percent": 14.6, "severity": {"mean": 2.85, "std": 0.25}}
+    }},
+    "abdomen": {"percent": 6.9, "mean": 2.85, "types": {
+        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
+        "laceration_contusion": {"percent": 65.4, "severity": {"mean": 2.85, "std": 0.25}}
+    }},
+    "extremity": {"percent": 49.4, "mean": 2.05, "types": {
+        "hemorrhage": {"percent": 52, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
+        "fracture_dislocation": {"percent": 22, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
+        "contusion_sprain_strain": {"percent": 20, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
+        "burn_nerve": {"percent": 5, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
+    }}
+}
+
 
 def main():
-    # Total population size
+
     population_size = 3000
-    stats_file_name = Path("./ArmyDemographicStats.csv")
-    synthetic_data_file = Path(f"./SyntheticArmyInjuryPopulation_{population_size}samples.csv")
-    synthetic_data_generation(population_size, stats_file_name, synthetic_data_file)
-    validate_synthetic_population_data(synthetic_data_file, stats_file_name)
-    validate_synthetic_injury_data(synthetic_data_file)
+    #army_population = synthetic_data_generation(population_size, army_population_distributions)
+    #army_population_error = calculate_synthetic_population_error(army_population, army_population_distributions)
+    #plot_population_error(army_population_error, f"./results/army_population_of_{population_size}")
+
+    army_injuries = generate_synthetic_injuries(population_size, army_injury_distributions)
+    army_injury_error = calculate_synthetic_injury_error(army_injuries, army_injury_distributions)
 
 
-def synthetic_data_generation(population_size: int, statistics_file: Path, synthetic_data_file: Path):
-    _log.info(f"Generate data with {population_size} samples")
+def synthetic_data_generation(size: int, distributions: dict) -> dict:
+    _log.info(f"Generate data with {size} samples")
 
-    statistics_data = pd.read_csv(statistics_file, index_col="Parameters")
+    population_data = {}
     
-    # Gender
-    gender = ["female", "male"]
-    female_frequency = statistics_data.loc["GenderSplit", "Gender"]
-    gender_split = [female_frequency, 100-female_frequency]
-    gender_list = rand.choices(gender, weights=gender_split, k=population_size)
-    population_data = pd.DataFrame({"Gender": gender_list})
+    # Sex
+    male_distributions = distributions["sex"]["male"]
+    female_distributions = distributions["sex"]["female"]
+    if "percent" in female_distributions:
+        sex_percent = [100 - female_distributions["percent"], female_distributions["percent"]]
+    elif "percent" in male_distributions:
+        sex_percent = [male_distributions["percent"], 100-male_distributions["percent"]]
+    else:
+        _log.error("Must provide the percent percentage of either male's or female's")
+        return population_data
+    sexes = rand.choices(["male", "female"], weights=sex_percent, k=size)
+    num_females = sexes.count("female")
+    num_males = sexes.count("male")
 
-    # Height and BMI
-    number_gender = population_data.value_counts("Gender")
-    number_female = number_gender["female"]
+    # Height
+    female_heights = np.random.normal(loc=female_distributions["height"]["mean"],
+                                      scale=female_distributions["height"]["std"],
+                                      size=num_females)
+    male_heights = np.random.normal(loc=male_distributions["height"]["mean"],
+                                    scale=male_distributions["height"]["std"],
+                                    size=num_males)
 
-    height_female_list = np.random.normal(loc=statistics_data.loc["mean", "FemaleHeight"],
-                                          scale=statistics_data.loc["std", "FemaleHeight"],
-                                          size=number_female)
-    height_male_list = np.random.normal(loc=statistics_data.loc["mean", "MaleHeight"],
-                                        scale=statistics_data.loc["std", "MaleHeight"],
-                                        size=population_size - number_female)
+    # BMI
+    female_bmi = np.random.normal(loc=female_distributions["bmi"]["mean"],
+                                  scale=female_distributions["bmi"]["std"],
+                                  size=num_females)
+    male_bmi = np.random.normal(loc=male_distributions["bmi"]["mean"],
+                                scale=male_distributions["bmi"]["std"],
+                                size=num_males)
 
-    bmi_female_list = np.random.normal(loc=statistics_data.loc["mean", "FemaleBMI"],
-                                       scale=statistics_data.loc["std", "FemaleBMI"],
-                                       size=number_female)
-    bmi_male_list = np.random.normal(loc=statistics_data.loc["mean", "MaleBMI"],
-                                     scale=statistics_data.loc["std", "MaleBMI"],
-                                     size=population_size - number_female)
-
-    female_count = 0
-    male_count = 0
-    height_list = []
-    bmi_list = []
-    for index, value in population_data["Gender"].items():
-        if value == "female":
-            height_list.append(height_female_list[female_count])
-            bmi_list.append(bmi_female_list[female_count])
-            female_count = female_count+1
+    bmi = []
+    heights = []
+    female_idx = 0
+    male_idx = 0
+    for sex in sexes:
+        if sex == "female":
+            heights.append(female_heights[female_idx])
+            bmi.append(female_bmi[female_idx])
+            female_idx += 1
         else:
-            height_list.append(height_male_list[male_count])
-            bmi_list.append(bmi_male_list[male_count])
-            male_count = male_count+1
+            heights.append(male_heights[male_idx])
+            bmi.append(male_bmi[male_idx])
+            male_idx += 1
 
     # Heart Rate
-    hr_list = np.random.normal(loc=statistics_data.loc["mean", "HeartRate"],
-                               scale=statistics_data.loc["std", "HeartRate"],
-                               size=population_size)
-
-    # Alternative Age Distribution
-    age_groups = ["Under25", "26To30", "31To35", "36To40", "41Plus"]
-    age_weights = [41.6, 22.4, 15.3, 11.3, 9.4]
-
-    # Create bins of ages
-    age_bin_list = rand.choices(age_groups, weights=age_weights, k=population_size)
-    age_bin_data = pd.DataFrame({"AgeBins": age_bin_list})
-
-    # Assume normal distribution for each bin
-    age_bin_number = age_bin_data.value_counts("AgeBins")
-
-    under25_list = []
-    for i in range(age_bin_number["Under25"]):
-        under25_list.append(np.random.randint(18, 25))
-
-    bin26_to30_list = []
-    for i in range(age_bin_number["26To30"]):
-        bin26_to30_list.append(np.random.randint(26, 30))
-
-    bin31_to35_list = []
-    for i in range(age_bin_number["31To35"]):
-        bin31_to35_list.append(np.random.randint(31, 35))
-
-    bin36_to40_list = []
-    for i in range(age_bin_number["36To40"]):
-        bin36_to40_list.append(np.random.randint(36, 40))
-
-    over41_list = []
-    for i in range(age_bin_number["41Plus"]):
-        over41_list.append(np.random.randint(41, 55))
-    
-    age_list = []
-    under25_count = 0
-    bin26_to30_count = 0
-    bin31_to35_count = 0
-    bin36_to40_count = 0
-    over41_count = 0
-    for index, value in age_bin_data["AgeBins"].items():
-        if value == "Under25":
-            age_list.append(under25_list[under25_count])
-            under25_count = under25_count + 1
-        elif value == "26To30":
-            age_list.append(bin26_to30_list[bin26_to30_count])
-            bin26_to30_count = bin26_to30_count + 1
-        elif value == "31To35":
-            age_list.append(bin31_to35_list[bin31_to35_count])
-            bin31_to35_count = bin31_to35_count + 1
-        elif value == "36To40":
-            age_list.append(bin36_to40_list[bin36_to40_count])
-            bin36_to40_count = bin36_to40_count + 1
-        elif value == "41Plus":
-            age_list.append(over41_list[over41_count])
-            over41_count = over41_count + 1
-        else:
-            print("Unknown Age Range: " + value)
-
-    population_data["Age"] = age_list
-    population_data["Height"] = height_list
-    population_data["BMI"] = bmi_list
-    population_data["Heart Rate"] = hr_list
-
-    population_data.head()
-    population_data.describe()
-
-    # Apply Injuries
-    injury_data = generate_synthetic_injuries(population_size)
-
-    population_injury_data = pd.concat([population_data, injury_data], axis=1)
-   
-    population_injury_data.to_csv(synthetic_data_file, index=False)
-
-
-def validate_synthetic_population_data(synthetic_data_file: Path, stats_file_name: Path):
-    _log.info(f"Validating data in {synthetic_data_file}")
-    
-    # Load synthetic data
-    population_data = pd.read_csv(synthetic_data_file)
-
-    # Load statistics file
-    statistics_data = pd.read_csv(stats_file_name, index_col="Parameters")
-
-    # Gender Split
-    number_gender = population_data.value_counts("Gender")
-    number_female = number_gender["female"]
-    number_male = number_gender["male"]
-    percent_female = 100 * number_female / (number_female+number_male)
-    actual_percent_female = statistics_data.loc["GenderSplit", "Gender"]
-    gender_split_error = percent_female - actual_percent_female
-
-    # Need a list of means, stds, errors
-    means = []
-    actual_means = []
-    stds = []
-    actual_stds = []
-    errors = []
-
-    # Height and BMI
-    female_height_list = []
-    male_height_list = []
-    female_bmi_list = []
-    male_bmi_list = []
-    for index, value in population_data["Gender"].items():
-        if value == "female":
-            female_height_list.append(population_data.loc[index, "Height"])
-            female_bmi_list.append(population_data.loc[index, "BMI"])
-        else:
-            male_height_list.append(population_data.loc[index, "Height"])
-            male_bmi_list.append(population_data.loc[index, "BMI"])
-
-    female_height = np.array(female_height_list)
-    male_height = np.array(male_height_list)
-    female_bmi = np.array(female_bmi_list)
-    male_bmi = np.array(male_bmi_list)
-    
-    means.append(np.mean(female_height))
-    stds.append(np.std(female_height))
-    means.append(np.mean(female_bmi))
-    stds.append(np.std(female_bmi))
-
-    means.append(np.mean(male_height))
-    stds.append(np.std(male_height))
-    means.append(np.mean(male_bmi))
-    stds.append(np.std(male_bmi))
-
-    actual_means.append(statistics_data.loc["mean", "FemaleHeight"])
-    actual_stds.append(statistics_data.loc["std", "FemaleHeight"])
-    actual_means.append(statistics_data.loc["mean", "FemaleBMI"])
-    actual_stds.append(statistics_data.loc["std", "FemaleBMI"])
-    
-    actual_means.append(statistics_data.loc["mean", "MaleHeight"])
-    actual_stds.append(statistics_data.loc["std", "MaleHeight"])
-    actual_means.append(statistics_data.loc["mean", "MaleBMI"])
-    actual_stds.append(statistics_data.loc["std", "MaleBMI"])
-
-    # Heart Rate
-    means.append(population_data["Heart Rate"].mean())
-    stds.append(population_data["Heart Rate"].std())
-
-    actual_means.append(statistics_data.loc["mean", "HeartRate"])
-    actual_stds.append(statistics_data.loc["std", "HeartRate"])
-
-    # Calculate Error
-    mean_error = []
-    std_error = []
-    for i in range(len(means)):
-        mean_error.append(means[i] - actual_means[i])
-        std_error.append(stds[i] - actual_stds[i])
+    heart_rates = np.random.normal(loc=distributions["heart_rate"]["mean"],
+                                   scale=distributions["heart_rate"]["std"],
+                                   size=size)
 
     # Age
-    age_list = population_data["Age"]
-    age_bins = [18, 25, 31, 35, 41, 55]
-    counts, bins = np.histogram(age_list, bins=age_bins)
-    normalized_counts = counts / counts.sum()
+    num_bins = len(distributions["age"]["bins"])
+    num_percents = len(distributions["age"]["percents"])
+    if num_bins != num_percents+1:
+        _log.error("Age bins must be 1 more that the percents length")
+        _log.error(f"Provided {len(distributions['age']['bins'])} bins")
+        _log.error(f"Provided {len(distributions['age']['percents'])} percents")
+        return population_data
 
-    fig, axes = plt.subplots(1, 2, figsize=(10, 5)) 
-    #axes[0].hist(age_list, bins=age_bins, density=True, color="skyblue", edgecolor="black")
-    axes[0].hist(age_bins[:-1], age_bins, weights=normalized_counts, color="skyblue", edgecolor="black")
+    age_bins = []
+    for i in range(num_percents):
+        age_min = distributions["age"]["bins"][i]
+        age_max = distributions["age"]["bins"][i+1]
+        if i > 0:
+            age_min += 1
+        age_bins.append(f"{age_min}-{age_max}")
+
+    ages = []
+    age_groups = rand.choices(age_bins, weights=distributions["age"]["percents"], k=size)
+    for age_group in age_groups:
+        idx = age_bins.index(age_group)
+        low = distributions["age"]["bins"][idx]
+        high = distributions["age"]["bins"][idx+1]
+        if idx > 0:
+            low += 1
+        ages.append(np.random.randint(low, high))
+
+    population_data["sex"] = sexes
+    population_data["age"] = ages
+    population_data["height"] = heights
+    population_data["bmi"] = bmi
+    population_data["heart_rate"] = heart_rates
+
+    return population_data
+
+
+def calculate_synthetic_population_error(population: dict, distributions: dict) -> dict:
+    error = {}
+
+    # Sex
+    female_count = {}
+    male_count = {}
+    if "percent" in distributions["sex"]["female"]:
+        female_count["actual"] = distributions["sex"]["female"]["percent"]
+        male_count["actual"] = 100 - female_count["actual"]
+    elif "percent" in distributions["sex"]["male"]:
+        male_count["actual"] = distributions["sex"]["male"]["percent"]
+        female_count["actual"] = 100 - male_count["actual"]
+    else:
+        _log.error("Must provide the percent percentage of either male's or female's")
+        return {}
+    female_count["synthetic"] = 100 * population["sex"].count("female") / len(population["sex"])
+    female_count["error"] = female_count["synthetic"] - female_count["actual"]
+    male_count["synthetic"] = 100 * population["sex"].count("male") / len(population["sex"])
+    male_count["error"] = male_count["synthetic"] - male_count["actual"]
+
+    # Height and BMI
+    female_heights = []
+    male_heights = []
+    female_bmis = []
+    male_bmis = []
+    for i, sex in enumerate(population["sex"]):
+        if sex == "female":
+            female_heights.append(population["height"][i])
+            female_bmis.append(population["bmi"][i])
+        else:
+            male_heights.append(population["height"][i])
+            male_bmis.append(population["bmi"][i])
+
+    female_height = {"synthetic_mean": np.mean(female_heights),
+                     "actual_mean": distributions["sex"]["female"]["height"]["mean"],
+                     "synthetic_std": np.std(female_heights),
+                     "actual_std": distributions["sex"]["female"]["height"]["std"]}
+    female_height["mean_error"] = female_height["synthetic_mean"] - female_height["actual_mean"]
+    female_height["std_error"] = female_height["synthetic_std"] - female_height["actual_std"]
+
+    male_height = {"synthetic_mean": np.mean(male_heights),
+                   "actual_mean": distributions["sex"]["male"]["height"]["mean"],
+                   "synthetic_std": np.std(male_heights),
+                   "actual_std": distributions["sex"]["male"]["height"]["std"]}
+    male_height["mean_error"] = male_height["synthetic_mean"] - male_height["actual_mean"]
+    male_height["std_error"] = male_height["synthetic_std"] - male_height["actual_std"]
+
+    female_bmi = {"synthetic_mean": np.mean(female_bmis),
+                  "actual_mean": distributions["sex"]["female"]["bmi"]["mean"],
+                  "synthetic_std": np.std(female_bmis),
+                  "actual_std": distributions["sex"]["female"]["bmi"]["std"]}
+    female_bmi["mean_error"] = female_bmi["synthetic_mean"] - female_bmi["actual_mean"]
+    female_bmi["std_error"] = female_bmi["synthetic_std"] - female_bmi["actual_std"]
+
+    male_bmi = {"synthetic_mean": np.mean(male_bmis),
+                "actual_mean": distributions["sex"]["male"]["bmi"]["mean"],
+                "synthetic_std": np.std(male_bmis),
+                "actual_std": distributions["sex"]["male"]["bmi"]["std"]}
+    male_bmi["mean_error"] = male_bmi["synthetic_mean"] - male_bmi["actual_mean"]
+    male_bmi["std_error"] = male_bmi["synthetic_std"] - male_bmi["actual_std"]
+
+    error["sex"] = {"female": {"count": female_count, "height": female_height, "bmi": female_bmi},
+                    "male": {"count": male_count, "height": male_height, "bmi": male_bmi}}
+
+    # Heart Rate
+    error["heart_rate"] = {"synthetic_mean": np.mean(population["heart_rate"]),
+                           "actual_mean": distributions["heart_rate"]["mean"],
+                           "synthetic_std": np.std(population["heart_rate"]),
+                           "actual_std": distributions["heart_rate"]["std"]}
+    error["heart_rate"]["mean_error"] = error["heart_rate"]["synthetic_mean"] - error["heart_rate"]["actual_mean"]
+    error["heart_rate"]["std_error"] = error["heart_rate"]["synthetic_std"] - error["heart_rate"]["actual_std"]
+
+    # Age
+    age_bins = distributions["age"]["bins"]
+    actual_age_counts = distributions["age"]["counts"]
+    synthetic_age_counts, bins = np.histogram(population["age"], bins=age_bins)
+    error["age"] = {"bins": age_bins,
+                    "synthetic_counts": synthetic_age_counts / synthetic_age_counts.sum(),
+                    "actual_counts": [x / sum(actual_age_counts) for x in actual_age_counts]}
+
+    return error
+
+
+def plot_population_error(population_error: dict, results_stem: str):
+    out_dir = Path(results_stem).parent
+    out_dir.mkdir(exist_ok=True)
+
+    # Age
+    age_bins = population_error["age"]["bins"]
+    actual_age_counts = population_error["age"]["actual_counts"]
+    synthetic_age_counts = population_error["age"]["synthetic_counts"]
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+    axes[0].hist(age_bins[:-1], age_bins, weights=synthetic_age_counts, color="skyblue", edgecolor="black")
     axes[0].set_ylim(0, 0.45)
     axes[0].set_title("Normalized Synthetic Age Data")
     axes[0].set_xlabel("Age")
     axes[0].set_ylabel("Normalized Frequency")
-
-    actual_age_counts = [191975, 103628, 70783, 52055, 43215]
-    total_population = sum(actual_age_counts)
-    normalized_age_counts = [x / total_population for x in actual_age_counts]
-    
-    axes[1].hist(age_bins[:-1], age_bins, weights=normalized_age_counts, color="green", edgecolor="black")
+    axes[1].hist(age_bins[:-1], age_bins, weights=actual_age_counts, color="green", edgecolor="black")
     axes[1].set_ylim(0, 0.45)
     axes[1].set_title("Normalized Actual Age Data")
     axes[1].set_xlabel("Age")
     axes[1].set_ylabel("Normalized Frequency")
-    
-    plt.savefig(synthetic_data_file.stem + "_AgeHistogram.jpg", format="jpeg")  # Saves as JPEG
+    plt.savefig(f"{results_stem}_age_histogram.jpg", format="jpeg")
 
-    # Gender Comparison Table
-    gender_split_table = pd.DataFrame({"Synthetic Gender Split": [percent_female],
-                                       "Actual Gender Split": [actual_percent_female],
-                                       "Error": gender_split_error})
-    print(gender_split_table)
-    gender_split_table.to_csv(synthetic_data_file.stem + "_GenderSplitTable.csv", index=False)
-    gender_split_table.to_html(synthetic_data_file.stem + "_GenderSplitTable.html", index=False)
+    # Error Table
+    def _error_row(name: str, error: dict):
+        return (name,
+                f"{error['synthetic_mean']:.1f}",
+                f"{error['actual_mean']:.1f}",
+                f"{error['mean_error']:.1f}",
+                f"{error['synthetic_std']:.3f}",
+                f"{error['actual_std']:.3f}",
+                f"{error['std_error']:.3f}")
+    data = []
+    headings = ["Descriptor",
+                "Synthetic Mean", "Actual Mean", "Mean Error",
+                "Synthetic SD", "Actual SD", "SD Error"]
+    fields = [0, 1, 2, 3, 4, 5, 6]  # All headings
+    data.append(_error_row("Female Height", population_error["sex"]["female"]["height"]))
+    data.append(_error_row("Female BMI", population_error["sex"]["female"]["bmi"]))
+    data.append(_error_row("Male Height", population_error["sex"]["male"]["height"]))
+    data.append(_error_row("Male BMI", population_error["sex"]["male"]["bmi"]))
+    data.append(_error_row("Heart Rate", population_error["heart_rate"]))
+    _create_report(f"{results_stem}_statistics", data, fields, headings)
 
-    # Other parameter comparison
-    descriptors = ["Female Height", "Female BMI", "Male Height", "Male BMI", "Heart Rate"]
-    statistics_validation_table = pd.DataFrame({"Demographic Descriptor": descriptors,
-                                                "Synthetic Mean": means, "Actual Mean": actual_means,
-                                                "Mean Error": mean_error,
-                                                "Synthetic Standard Deviation": stds,
-                                                "Actual Standard Deviation": actual_stds,
-                                                "Std Error": std_error})
-    print(statistics_validation_table)
-    statistics_validation_table.to_csv(synthetic_data_file.stem + "_SyntheticPopulationValidationTable.csv", index=False)
-    statistics_validation_table.to_html(synthetic_data_file.stem + "_SyntheticPopulationValidationTable.html", index=False)
+    # Sex Count Table
+    def _count_row(name: str, error: dict):
+        return (name,
+                f"{error['synthetic']:.1f}%",
+                f"{error['actual']:.1f}%",
+                f"{error['error']:.1f}")
+    data = []
+    headings = ["Sex",
+                "Synthetic", "Actual", "Error"]
+    fields = [0, 1, 2, 3]  # All headings
+    data.append(_count_row("Female", population_error["sex"]["female"]["count"]))
+    data.append(_count_row("Male", population_error["sex"]["male"]["count"]))
+    _create_report(f"{results_stem}_sex", data, fields, headings)
 
 
-def generate_synthetic_injuries(population_size: int):
+def generate_synthetic_injuries(population_size: int, distributions: dict) -> dict:
+    injury_data = {}
 
-    # Number and Location of Injuries
-    injury_location = ["HeadAndNeck", "Thorax", "Abdomen", "Extremity"]
-    injury_location_weights = [36.2, 8.6, 6.9, 49.4]
-    injury_location_count_mean = 1.011  # going to assume 1 location
+    injury_locations = rand.choices(list(distributions.keys()),
+                                    weights=[value["percent"] for value in distributions.values()],
+                                    k=population_size)
 
-    injury_location_list = rand.choices(injury_location, weights=injury_location_weights, k=population_size)
+    # Generate severities for each injury subtype
+    type_distributions = {}
+    for location, injury in distributions.items():
+        types = injury["types"]
+        type_distributions[location] = {"index": 0,
+                                        "choices": rand.choices(list(types.keys()),
+                                                                weights=[types[t]["percent"] for t in types],
+                                                                k=injury_locations.count(location)),
+                                        "subtypes": {}}
+        choices = type_distributions[location]["choices"]
+        subtypes = type_distributions[location]["subtypes"]
+        value_subtypes = {"name": [], "value": [], "percent": []}
+        for subtype, dist in types.items():
+            severity = dist["severity"]
+            if "mean" in severity:
+                subtypes[subtype] = {"index": 0,
+                                     "choices": np.random.normal(loc=severity["mean"],
+                                                                 scale=severity["std"],
+                                                                 size=choices.count(subtype))}
+            elif "values" in severity:
+                subtypes[subtype] = {"index": 0,
+                                     "choices": rand.choices(severity["values"],
+                                                             weights=severity["percents"],
+                                                             k=choices.count(subtype))}
 
-    injury_data = pd.DataFrame({"Injury Location": injury_location_list})
+    # Map the types and severities back to the injury locations
+    injury_types = []
+    injury_severities = []
+    for location in injury_locations:
+        injury_type = type_distributions[location]
+        choice = injury_type["choices"][injury_type["index"]]
+        injury_type["index"] += 1
+        injury_types.append(choice)
+        injury_severity = injury_type["subtypes"][choice]
+        severity = injury_severity["choices"][injury_severity["index"]]
+        injury_severity["index"] += 1
+        injury_severities.append(severity)
 
-    # Type and Number of Injuries in a location
-    injury_head_neck_type = ["TBI", "Airway Obstruction", "Superficial Injuries"]
-    injury_head_neck_weights = [22, 18, 60]
-    injury_head_neck_number_mean = 1.0
-    injury_thorax_type = ["Pneumothorax", "Pulmonary Contusion", "Fractures", "Hemothorax", "Hemorrhage", "Spinal Injury"]
-    injury_thorax_weights = [51.8, 50.2, 51.2, 30, 34.6, 14.6]
-    injury_thorax_number_mean = 2.3
-    injury_abdomen_type = ["Hemorrhage", "Lacerations/Contusions"]
-    injury_abdomen_weights = [34.6, 65.4]
-    injury_abdomen_number_mean = 1.0
-    injury_extremity_type = ["Hemorrhage", "Fractures/Dislocations", "Contusions/Sprains/Strains", "Burns/Nerves"]
-    injury_extremity_weight = [52, 22, 20, 5]
-    injury_extremity_number_mean = 1.0
-
-    # count types of injuries for the loop below
-    number_injury_locations = injury_data.value_counts("Injury Location")
-
-    head_neck_injury_list = rand.choices(injury_head_neck_type,
-                                         weights=injury_head_neck_weights,
-                                         k=number_injury_locations["HeadAndNeck"])
-    thorax_injury_list = rand.choices(injury_thorax_type,
-                                      weights=injury_thorax_weights,
-                                      k=number_injury_locations["Thorax"])
-    abdomen_injury_list = rand.choices(injury_abdomen_type,
-                                       weights=injury_abdomen_weights,
-                                       k=number_injury_locations["Abdomen"])
-    extremity_injury_list = rand.choices(injury_extremity_type,
-                                         weights=injury_extremity_weight,
-                                         k=number_injury_locations["Extremity"])
-
-    injury_type_list = []
-    head_neck_count = 0
-    thorax_count = 0
-    abdomen_count = 0
-    extremity_count = 0
-    for i in range(len(injury_location_list)):
-        loc = injury_location_list[i]
-        if loc == "HeadAndNeck":
-            injury_type_list.append(head_neck_injury_list[head_neck_count])
-            head_neck_count = head_neck_count + 1
-        elif loc == "Thorax":
-            injury_type_list.append(thorax_injury_list[thorax_count])
-            thorax_count = thorax_count + 1
-        elif loc == "Abdomen":
-            number_injuries = 1
-            injury_type_list.append(abdomen_injury_list[abdomen_count])
-            abdomen_count = abdomen_count + 1
-        elif loc == "Extremity":
-            number_injuries = 1
-            injury_type_list.append(extremity_injury_list[extremity_count])
-            extremity_count = extremity_count + 1
-        else:
-            print("Unknown Injury Location: " + loc)
-
-    injury_data["Injury Type"] = injury_type_list
-    
-    # Apply Severities
-    number_injury_types = injury_data.value_counts("Injury Type")
-    
-    mean_tbi_severity = 3.5
-    std_severity = 0.25
-    mean_airway_severity = 4.0
-    mean_thorax_abdomen_severity = 2.85
-    severity_extremity_value = [1, 2.5, 3.5, 4.5]
-    severity_extremity_weight = [56, 23, 17, 7]
-    tbi_severity_list = np.random.normal(loc=mean_tbi_severity,
-                                         scale=std_severity,
-                                         size=number_injury_types["TBI"])
-    airway_severity_list = np.random.normal(loc=mean_airway_severity,
-                                            scale=std_severity,
-                                            size=number_injury_types["Airway Obstruction"])
-    thorax_and_abdomen_severity_list = np.random.normal(loc=mean_thorax_abdomen_severity,
-                                                        scale=std_severity,
-                                                        size=number_injury_locations["Thorax"]+number_injury_locations["Abdomen"])
-    extremity_severity_list = rand.choices(severity_extremity_value,
-                                           severity_extremity_weight,
-                                           k=number_injury_locations["Extremity"])
-
-    injury_severity_list = []
-    tbi_count = 0
-    airway_count = 0
-    thorax_abdomen_count = 0
-    extremity_count = 0
-    for i in range(len(injury_location_list)):
-        loc = injury_location_list[i]
-        if loc == "HeadAndNeck":
-            loc2 = injury_type_list[i]
-            if loc2 == "TBI":
-                injury_severity_list.append(tbi_severity_list[tbi_count])
-                tbi_count = tbi_count + 1
-            elif loc2 == "Airway Obstruction":
-                injury_severity_list.append(airway_severity_list[airway_count])
-                airway_count = airway_count + 1
-            elif loc2 == "Superficial Injuries":
-                injury_severity_list.append(1.0)
-            else:
-                print("Unknown Injury Type: " + loc2)
-        elif loc == "Abdomen" or loc == "Thorax":
-            injury_severity_list.append(thorax_and_abdomen_severity_list[thorax_abdomen_count])
-            thorax_abdomen_count = thorax_abdomen_count + 1
-        elif loc == "Extremity":
-            injury_severity_list.append(extremity_severity_list[extremity_count])
-            extremity_count = extremity_count + 1
-        else :
-            print("Unknown Injury Location: " + loc)
-
-    injury_data["Injury Severity"] =  injury_severity_list
+    injury_data["locations"] = injury_locations
+    injury_data["types"] = injury_types
+    injury_data["severities"] = injury_severities
 
     return injury_data
 
 
-def validate_synthetic_injury_data(synthetic_data_file):
-    
-    # Load synthetic data
-    population_data = pd.read_csv(synthetic_data_file)
+def calculate_synthetic_injury_error(injuries: dict, distributions: dict) -> dict:
+    error = {}
+    num_injuries = len(injuries["locations"])
 
-    actual_injury_location_percents = [36.2, 8.6, 6.9, 49.4]
+    error_location = {}
+    for location, location_distributions in distributions.items():
+        error_location["synthetic_severity_mean"] += injuries
+        error_location["synthetic_distribution"] = 100 * injuries["locations"].count(location) / num_injuries
+        error_location["actual_distribution"] = location_distributions["mean"]
+        error_location["distribution_error"] = error_location["synthetic_distribution"] - error_location["actual_distribution"]
 
-    injury_head_neck_type = ["TBI", "Airway Obstruction", "Superficial Injuries"]
-    injury_thorax_type = ["Pneumothorax", "Pulmonary Contusion", "Fractures", "Hemothorax", "Hemorrhage", "Spinal Injury"]
-    injury_abdomen_type = ["Hemorrhage", "Lacerations/Contusions"]
-    injury_extremity_type = ["Hemorrhage", "Fractures/Dislocations", "Contusions/Sprains/Strains", "Burns/Nerves"]
-    actual_injury_head_neck_percents = [22, 18, 60]
-    actual_injury_thorax_percents = [51.8, 50.2, 51.2, 30, 34.6, 14.6]
-    actual_injury_abdomen_percents = [34.6, 65.4]
-    actual_injury_extremity_percents = [52, 22, 20, 5]
+        for injury, injury_distributions in location_distributions.items():
+            error_injury = {}
+            error_injury["actual_mean"] = injury_distributions
+
+
     actual_severity_mean = [2.69, 2.85, 2.85, 2.05]
 
     # Location of Injury
@@ -533,6 +491,32 @@ def validate_synthetic_injury_data(synthetic_data_file):
     print(injury_location_validation_table)
     injury_location_validation_table.to_csv(synthetic_data_file.stem + "_InjuryValidationTable.csv", index=False)
     injury_location_validation_table.to_html(synthetic_data_file.stem + "_InjuryValidationTable.html", index=False)
+
+
+def _create_report(basename: str, data, fields, headings, widths=list):
+    align = []
+    for i in range(len(fields)):
+        align.append(('^', '^'))
+    f = open(str(basename) + ".md", "w")
+    table(f, data, fields, headings, align)
+    f.close()
+
+    # Write out table as png
+    wrapped_headers = headings  # ["<br>".join(textwrap.wrap(h, width=20)) for h in headings]
+    df = pd.DataFrame(data, columns=wrapped_headers)
+    df.style.format(escape="html")  # Actually wrap column names
+    df_styler = df.style.hide(axis="index") \
+        .set_properties(subset=wrapped_headers[1:], **{'text-align': 'center'}) \
+        .set_properties(subset=[wrapped_headers[0]], **{'text-align': 'left'}) \
+        .set_properties(**{'border': '1px black solid'})
+    for i, width in enumerate(widths):
+        df_styler = df_styler.set_properties(subset=wrapped_headers[i], **{'width': width})
+    df_styler.set_table_styles(table_styles=[
+        {'selector': 'th.col_heading', 'props': 'text-align: center; border: 1px black solid;'},
+    ], overwrite=False)
+    img_filename = str(basename) + ".png"
+    _log.info(f"Writing {img_filename}")
+    dfi.export(df_styler, img_filename, table_conversion='playwright', dpi=600)
 
 
 if __name__ == "__main__":
