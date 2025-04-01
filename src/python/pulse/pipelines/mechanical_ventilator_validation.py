@@ -4,18 +4,18 @@
 import logging
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.csv_utils import compute_means
-from pulse.cdm.utils.math_utils import generate_percent_difference_span
+from pulse.cdm.validation import generate_percent_difference_span
 
 _pulse_logger = logging.getLogger('pulse')
 
 
 def write_patient_table(patient_map):
-    for patient,values in patient_map.items():
+    for patient, values in patient_map.items():
         headings = ["Patient Setting", "Value"]
 
         data = []
-        for header,value in values.items():
-            data.append( [header+" ("+value[1]+")", value[0]] )
+        for header, value in values.items():
+            data.append([header+" ("+value[1]+")", value[0]])
 
         fields = [0, 1]
 
@@ -72,7 +72,7 @@ def write_validation_table(validation_map):
         f.close()
 
 
-def data():
+def baseline():
     return \
         {
             "patientSettings": {
@@ -206,7 +206,7 @@ def data():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-    baseline = data()
-    write_patient_table(baseline["patientSettings"])
-    write_ventilator_settings_table(baseline["ventilatorSettings"])
-    write_validation_table(baseline["validationData"])
+    b = baseline()
+    write_patient_table(b["patientSettings"])
+    write_ventilator_settings_table(b["ventilatorSettings"])
+    write_validation_table(b["validationData"])

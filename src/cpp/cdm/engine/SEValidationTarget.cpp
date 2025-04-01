@@ -12,15 +12,17 @@ void SEValidationTarget::Clear()
   m_Header = "";
   m_Reference = "";
   m_Notes = "";
+  m_TableFormatting = "";
 
-  m_Target = SEScalar::dNaN();
-  m_TargetMaximum = SEScalar::dNaN();
-  m_TargetMinimum = SEScalar::dNaN();
+  m_ComputedEnum = "";
+  m_ComputedValue = SEScalar::dNaN();
+
+  m_Error = SEScalar::dNaN();
+  m_GoodPercentError = SEScalar::dNaN();
+  m_FairPercentError = SEScalar::dNaN();
 }
 bool SEValidationTarget::IsValid()
 {
-  if (std::isnan(m_Target) && std::isnan(m_TargetMaximum))
-    return false;
   return true;
 }
 
@@ -54,23 +56,23 @@ bool SESegmentValidationTarget::SerializeFromFile(const std::string& filename, s
 
 SETimeSeriesValidationTarget::SETimeSeriesValidationTarget() : SEValidationTarget()
 {
-  m_Error = 100;
-  m_ComparisonValue = 0;
-  m_TargetType = eTargetType::Mean;
-  m_ComparisonType = eComparisonType::None;
+  Clear();
 }
 void SETimeSeriesValidationTarget::Clear()
 {
   SEValidationTarget::Clear();
   m_ComparisonType = eComparisonType::None;
   m_TargetType = eTargetType::Mean;
-  m_Target = SEScalar::dNaN();
+
+  m_Assessment = "";
+  m_PatientSpecific = false;
+
+  m_TargetEnum = "";
+  m_TargetValue = SEScalar::dNaN();
   m_TargetMaximum = SEScalar::dNaN();
   m_TargetMinimum = SEScalar::dNaN();
 
-  m_Error = SEScalar::dNaN();
   m_Data.clear();
-  m_ComparisonValue = SEScalar::dNaN();
 }
 bool SETimeSeriesValidationTarget::SerializeToString(const std::vector<const SETimeSeriesValidationTarget*>& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
@@ -88,19 +90,30 @@ bool SETimeSeriesValidationTarget::SerializeFromFile(const std::string& filename
 {
   return PBValidation::SerializeFromFile(filename, dst, logger);
 }
-void SETimeSeriesValidationTarget::SetEqualTo(double d, eTargetType t)
+void SETimeSeriesValidationTarget::SetTargetEnum(const std::string& s)
 {
-  m_ComparisonType = eComparisonType::EqualToValue;
+  m_ComparisonType = eComparisonType::TargetValue;
+  m_TargetType = eTargetType::Enumeration;
+  m_TargetEnum = s;
+  m_TargetValue = SEScalar::dNaN();
+  m_TargetMaximum = SEScalar::dNaN();
+  m_TargetMinimum = SEScalar::dNaN();
+}
+void SETimeSeriesValidationTarget::SetTargetValue(double d, eTargetType t)
+{
+  m_ComparisonType = eComparisonType::TargetValue;
   m_TargetType = t;
-  m_Target = d;
+  m_TargetEnum = "";
+  m_TargetValue = d;
   m_TargetMaximum = d;
   m_TargetMinimum = d;
 }
-void SETimeSeriesValidationTarget::SetRange(double min, double max, eTargetType t)
+void SETimeSeriesValidationTarget::SetTargetRange(double min, double max, eTargetType t)
 {
-  m_ComparisonType = eComparisonType::Range;
+  m_ComparisonType = eComparisonType::TargetRange;
   m_TargetType = t;
-  m_Target = SEScalar::dNaN();
+  m_TargetEnum = "";
+  m_TargetValue = SEScalar::dNaN();
   m_TargetMaximum = max;
   m_TargetMinimum = min;
 }
@@ -110,17 +123,17 @@ bool SETimeSeriesValidationTarget::ComputeError()
   {
   case eTargetType::Minimum:
   {
-    m_ComparisonValue = *std::min_element(m_Data.begin(), m_Data.end());
+    m_ComputedValue = *std::min_element(m_Data.begin(), m_Data.end());
     break;
   }
   case eTargetType::Maximum:
   {
-    m_ComparisonValue = *std::max_element(m_Data.begin(), m_Data.end());
+    m_ComputedValue = *std::max_element(m_Data.begin(), m_Data.end());
     break;
   }
   case eTargetType::Mean:
   {
-    m_ComparisonValue = (double)(std::accumulate(m_Data.begin(), m_Data.end(),0) / m_Data.size());
+    m_ComputedValue = (double)(std::accumulate(m_Data.begin(), m_Data.end(),0) / m_Data.size());
     break;
   }
   default:
@@ -129,17 +142,17 @@ bool SETimeSeriesValidationTarget::ComputeError()
   }
   }
   // NOTE: We could use PercentTolerance too
-  double minError = GeneralMath::PercentTolerance(m_TargetMinimum, m_ComparisonValue, 1e-9);
-  double maxError = GeneralMath::PercentTolerance(m_TargetMaximum, m_ComparisonValue, 1e-9);
+  double minError = GeneralMath::PercentTolerance(m_TargetMinimum, m_ComputedValue, 1e-9);
+  double maxError = GeneralMath::PercentTolerance(m_TargetMaximum, m_ComputedValue, 1e-9);
   // No error if we are in range
-  if (m_ComparisonValue >= m_TargetMinimum && m_ComparisonValue <= m_TargetMaximum)
+  if (m_ComputedValue >= m_TargetMinimum && m_ComputedValue <= m_TargetMaximum)
   {
     m_Error = 0;
     return true;
   }
-  else if (m_ComparisonValue > m_TargetMaximum)
+  else if (m_ComputedValue > m_TargetMaximum)
     m_Error = maxError;
-  else if (m_ComparisonValue < m_TargetMinimum)
+  else if (m_ComputedValue < m_TargetMinimum)
     m_Error = minError;
 
   if (std::abs(m_Error) < 1e-15)

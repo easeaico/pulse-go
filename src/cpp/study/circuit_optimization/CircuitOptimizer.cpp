@@ -100,7 +100,7 @@ namespace pulse::study::circuit_optimization
           converged = false;
           Info(check + vt->GetHeader() +
                " [" + pulse::cdm::to_string(vt->GetTargetMinimum()) + ", " + pulse::cdm::to_string(vt->GetTargetMaximum()) + "] " +
-               pulse::cdm::to_string(vt->GetDataValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
+               pulse::cdm::to_string(vt->GetComputedValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
         }
         errorNorm += vt->GetError() * vt->GetError();
       }
@@ -158,7 +158,7 @@ namespace pulse::study::circuit_optimization
       }
       Info(check + vt->GetHeader() +
            " [" + pulse::cdm::to_string(vt->GetTargetMinimum()) + ", " + pulse::cdm::to_string(vt->GetTargetMaximum()) + "] " +
-           pulse::cdm::to_string(vt->GetDataValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
+           pulse::cdm::to_string(vt->GetComputedValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
       errorNorm += vt->GetError() * vt->GetError();
     }
     Info("Final total error norm (l2): " + std::to_string(errorNorm) +

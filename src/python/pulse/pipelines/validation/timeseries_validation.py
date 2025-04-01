@@ -11,10 +11,12 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import PyPulse
-from pulse.cdm.validation import SETimeSeriesValidationTarget, SEPatientTimeSeriesValidation
+from pulse.cdm.validation import SEPatientTimeSeriesValidation, generate_percentage_span
 from pulse.cdm.utils.csv_utils import read_csv_into_df
+from pulse.cdm.utils.math_utils import format_float
 from pulse.cdm.utils.markdown import table
-from pulse.cdm.utils.math_utils import generate_percentage_span, percent_tolerance
+from pulse.cdm.utils.math_utils import percent_tolerance
+from pulse.cdm.validation import SETimeSeriesValidationTarget
 from pulse.cdm.io.validation import serialize_patient_time_series_validation_to_file
 
 
@@ -33,7 +35,7 @@ def validate(
     :param patient_validation: Validation targets to validate. Will
         be modified with results.
     :param csv_filename: Path to csv results file.
-    :param assessment_files: List of Paths to assesment json files.
+    :param assessment_files: List of Paths to assessment json files.
     :param output_file: (Optional) If provided, serialize
         results to this location.
     """
@@ -181,14 +183,15 @@ def evaluate(tgt: SETimeSeriesValidationTarget, results: pd.DataFrame, assessmen
                 raise ValueError(f"Unknown target type: {target_type}")
 
     error = None
-    tgt.set_computed_value(comparison_value)
+
     if isinstance(comparison_value, str):
+        tgt.set_computed_enum(comparison_value)
         if tgt.get_target() != comparison_value:
             error = np.nan
         else:
             error = 0.
-
     else:
+        tgt.set_computed_value(comparison_value)
         if np.isnan(comparison_value):
             _pulse_logger.error(f"Comparison value for {tgt_header} is nan")
 
@@ -227,11 +230,12 @@ def gen_expected_str(tgt: SETimeSeriesValidationTarget) -> str:
     :returns: Expected value string.
     """
     compare_type = tgt.get_comparison_type()
-    value_precision = tgt.get_table_formatting()
+    formatting = tgt.get_table_formatting()
     if compare_type == SETimeSeriesValidationTarget.eComparisonType.EqualToValue:
-        expected_str = f"{tgt.get_target():{value_precision}}"
+        expected_str = f"{format_float(tgt.get_target(), formatting)}"
     elif compare_type == SETimeSeriesValidationTarget.eComparisonType.Range:
-        expected_str = f"[{tgt.get_target_minimum():{value_precision}},{tgt.get_target_maximum():{value_precision}}]"
+        expected_str = (f"[{format_float(tgt.get_target_minimum(), formatting)},"
+                        f" {format_float(tgt.get_target_maximum(), formatting)}]")
     elif compare_type == SETimeSeriesValidationTarget.eComparisonType.EqualToEnum:
         expected_str = f"{tgt.get_target()}"
     else:
@@ -259,26 +263,28 @@ def gen_engine_val_str(tgt: SETimeSeriesValidationTarget) -> str:
     :returns: Engine value string.
     """
     target_type = tgt.get_target_type()
-    value_precision = tgt.get_table_formatting()
-    engine_val_str = f"{target_type.name.replace('_kg', '(kg)')} of " \
-                     f"{tgt.get_computed_value():{value_precision}}"
+    if target_type == SETimeSeriesValidationTarget.eTargetType.Enumeration:
+        engine_val_str = tgt.get_computed_enum()
+    else:
+        formatting = tgt.get_table_formatting()
+        engine_val_str = f"{target_type.name.replace('_kg', '(kg)')} of " \
+                         f"{format_float(tgt.get_computed_value(), formatting)}"
 
     if not engine_val_str:
         return "&nbsp;"
 
     return engine_val_str
 
+
 def generate_validation_tables(
     target_map: SEPatientTimeSeriesValidation,
-    table_dir: Path,
-    percent_precision: int=1
+    table_dir: Path
 ) -> None:
     """
     Generates validation tables for given target map.
 
     :param target_map: Validation targets.
     :param table_dir: Tables will be saved to this directory.
-    :param percent_precision: Error percentages will be displayed with this precision.
 
     :raises ValueError: Unknown comparison type
     :raises ValueError: Unknown patient (patient has no name so table file cannot be named)
@@ -311,7 +317,7 @@ def generate_validation_tables(
                 tgt.get_header(),
                 gen_expected_str(tgt),
                 gen_engine_val_str(tgt),
-                generate_percentage_span(tgt.get_error_value(), percent_precision, success, warning),
+                generate_percentage_span(tgt.get_error_value(), success, warning),
                 notes if (notes := tgt.get_notes()) else "&nbsp;"
             ])
 

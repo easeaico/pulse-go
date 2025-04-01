@@ -23,6 +23,8 @@ def serialize_validation_target_to_bind(src: SEValidationTarget, dst: Validation
         dst.TableFormatting = src.get_table_formatting()
     if src.has_computed_value():
         dst.ComputedValue = src.get_computed_value()
+    elif src.has_computed_enum():
+        dst.ComputedEnum = src.get_computed_enum()
     if src.has_error_value():
         dst.Error = src.get_error_value()
     if src.has_good_percent_error():
@@ -39,6 +41,8 @@ def serialize_validation_target_from_bind(src: ValidationTargetData, dst: SEVali
 
     if src.HasField("ComputedValue"):
         dst.set_computed_value(src.ComputedValue)
+    elif src.HasField("ComputedEnum"):
+        dst.set_computed_enum(src.ComputedEnum)
     if src.HasField("Error"):
         dst.set_error_value(src.Error)
     if src.GoodPercentError > 0:
@@ -216,15 +220,19 @@ def serialize_time_series_validation_target_to_bind(
     dst: TimeSeriesValidationTargetData
 ) -> None:
     serialize_validation_target_to_bind(src, dst.ValidationTarget)
-    dst.Type = src.get_target_type().value
+    if src.has_assessment():
+        dst.Assessment = src.get_assessment()
     if src.has_patient_specific_setting():
         dst.PatientSpecific = src.is_patient_specific()
+    dst.Type = src.get_target_type().value
 
     if src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.EqualToValue:
-        dst.EqualToValue = src.get_target()
+        dst.TargetValue = src.get_target()
     elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.Range:
-        dst.Range.Minimum = src.get_target_minimum()
-        dst.Range.Maximum = src.get_target_maximum()
+        dst.TargetRange.Minimum = src.get_target_minimum()
+        dst.TargetRange.Maximum = src.get_target_maximum()
+    elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.EqualToEnum:
+        dst.TargetEnum = src.get_target()
     elif src.get_comparison_type() == SETimeSeriesValidationTarget.eComparisonType.NotValidating:
         pass
     else:
@@ -238,11 +246,14 @@ def serialize_time_series_validation_target_from_bind(
     dst.clear()
     serialize_validation_target_from_bind(src.ValidationTarget, dst)
     dst.set_patient_specific_setting(src.PatientSpecific)
+    dst.set_assessment(src.Assessment)
 
-    if src.HasField("EqualToValue"):
-        dst.set_equal_to(src.EqualToValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
-    elif src.HasField("Range"):
-        dst.set_range(src.Range.Minimum, src.Range.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    if src.HasField("TargetValue"):
+        dst.set_target_value(src.TargetValue, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    elif src.HasField("TargetRange"):
+        dst.set_target_range(src.TargetRange.Minimum, src.TargetRange.Maximum, SETimeSeriesValidationTarget.eTargetType(src.Type))
+    if src.HasField("TargetEnum"):
+        dst.set_target_enum(src.TargetEnum, SETimeSeriesValidationTarget.eTargetType(src.Type))
     elif src.WhichOneof('Expected') is None:  # Not validating
         pass
     else:

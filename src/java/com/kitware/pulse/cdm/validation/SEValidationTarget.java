@@ -9,10 +9,12 @@ public class SEValidationTarget
   protected String header;
   protected String reference;
   protected String notes;
-  protected double target;
-  protected double targetMaximum;
-  protected double targetMinimum;
+  protected String tableFormatting;
+  
+  protected String computedEnum;
+  protected double computedValue;
 
+  protected double error;
   protected double goodPercentError;
   protected double fairPercentError;
   
@@ -23,12 +25,17 @@ public class SEValidationTarget
   
   public void clear()
   {
-    header = "";
-    reference = "";
-    notes = "";
-    target         = Double.NaN;
-    targetMaximum  = Double.NaN;
-    targetMinimum  = Double.NaN;
+    header           = "";
+    reference        = "";
+    notes            = "";
+    tableFormatting  = "";
+    
+    computedEnum     = "";
+    computedValue    = Double.NaN;
+    
+    error            = Double.NaN;
+    goodPercentError = Double.NaN;
+    fairPercentError = Double.NaN;
   }
   
   public static void load(ValidationTargetData src, SEValidationTarget dst)
@@ -36,7 +43,12 @@ public class SEValidationTarget
     dst.header = src.getHeader();
     dst.reference = src.getReference();
     dst.notes = src.getNotes();
-
+    dst.tableFormatting = src.getTableFormatting();
+    
+    dst.error = src.getError();
+    dst.computedEnum = src.getComputedEnum();
+    dst.computedValue = src.getComputedValue();
+    
     dst.goodPercentError = src.getGoodPercentError();
     dst.fairPercentError = src.getFairPercentError();
   }
@@ -51,7 +63,12 @@ public class SEValidationTarget
     dst.setHeader(src.header);
     dst.setReference(src.reference);
     dst.setNotes(src.notes);
+    dst.setTableFormatting(src.tableFormatting);
+    
+    dst.setComputedEnum(src.computedEnum);
+    dst.setComputedValue(src.computedValue);
 
+    dst.setError(src.error);
     dst.setGoodPercentError(src.goodPercentError);
     dst.setFairPercentError(src.fairPercentError);
   }
@@ -64,10 +81,18 @@ public class SEValidationTarget
 
   public String getNotes() { return notes; }
   public void setNotes(String n) { notes = n; }
+  
+  public String getTableFormatting() { return tableFormatting; }
+  public void setTableFormatting(String n) { tableFormatting = n; }
+  
+  public String getComputedEnum() { return computedEnum; }
+  public void setComputedEnum(String s) { computedEnum = s; }
 
-  public double getTargetMaximum() { return targetMaximum; }
-  public double getTargetMinimum() { return targetMinimum; }
-  public double getTarget() { return target; }
+  public double getComputedValue() { return computedValue; }
+  public void setComputedValue(double v) { computedValue = v; }
+  
+  public double getError() { return error; }
+  public void setError(double v) { error = v; }
   
   public double getGoodPercentError() { return goodPercentError; }
   public void setGoodPercentError(double d) { goodPercentError = d; }

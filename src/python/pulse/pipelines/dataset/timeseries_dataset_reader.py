@@ -147,7 +147,7 @@ def gen_patient_targets(
             scalar = getattr(p, f"get{patient_attr}")()
             ref_val = scalar.get_value(units=get_unit(unit)) if unit else scalar.get_value()
 
-            tgt.set_equal_to(ref_val, algo)
+            tgt.set_target_value(ref_val, algo)
             tgts.append(tgt)
 
     # Pull all the system validation targets from our spreadsheet
@@ -533,19 +533,19 @@ def generate_sheet_targets(
         # TODO: Support other comparison types?
         if isinstance(ref_val, str):
             if algo == SETimeSeriesValidationTarget.eTargetType.Enumeration:
-                tgt.set_equal_to_enum(ref_val, algo)
+                tgt.set_target_enum(ref_val)
             else:
                 s_vals = ref_val.strip()
                 s_vals = s_vals.replace('[', ' ')
                 s_vals = s_vals.replace(']', ' ')
                 vals = [float(s) for s in s_vals.split(',')]
-                tgt.set_range(min(vals), max(vals), algo)
+                tgt.set_target_range(min(vals), max(vals), algo)
         elif isinstance(ref_val, numbers.Number):
             val = float(ref_val)
-            tgt.set_equal_to(val, algo)
+            tgt.set_target_value(val, algo)
         else:
             _pulse_logger.warning(f"Unknown reference value type {ref_val}")
-            tgt.set_range(np.nan, np.nan)
+            tgt.set_target_range(np.nan, np.nan)
 
         vts.append(tgt)
 

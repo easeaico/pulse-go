@@ -1605,7 +1605,7 @@ public abstract class ValidationTool
       vtd.setHeader(vRow.header+"-"+vRow.dType.toString());
       vtd.setComputedValue(vRow.result);
       vtd.setError(vRow.resultError);
-      pvd.setEqualToValue(vRow.refValue);
+      pvd.setTargetValue(vRow.refValue);
       pvd.setPatientSpecific(vRow.patientSpecific);
       
     }

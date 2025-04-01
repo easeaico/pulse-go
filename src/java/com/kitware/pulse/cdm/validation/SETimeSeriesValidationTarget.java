@@ -13,12 +13,22 @@ import com.kitware.pulse.utilities.FileUtils;
 
 public class SETimeSeriesValidationTarget extends SEValidationTarget
 {
+  
   public enum eComparisonType
   {
-    EqualToValue, Range
+    TargetEnum, TargetValue, TargetRange
   }
   protected eComparisonType comparisonType;
-  protected eType targetType;
+  protected eType   targetType;
+  
+  protected String  assessment;
+  protected Boolean patientSpecific;
+  
+  protected String  targetEnum;
+  protected double  targetValue;
+  protected double  targetMaximum;
+  protected double  targetMinimum;
+  
   
   public SETimeSeriesValidationTarget()
   {
@@ -30,7 +40,15 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   {
     super.clear();
     targetType = eType.Mean;
-    comparisonType = eComparisonType.EqualToValue;
+    comparisonType = eComparisonType.TargetValue;
+    
+    assessment = "";
+    patientSpecific = false;
+    
+    targetEnum     = "";
+    targetValue    = Double.NaN;
+    targetMaximum  = Double.NaN;
+    targetMinimum  = Double.NaN;
   }
   
   public static List<SETimeSeriesValidationTarget> readFile(String fileName) throws InvalidProtocolBufferException
@@ -70,15 +88,21 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   public static void load(TimeSeriesValidationTargetData src, SETimeSeriesValidationTarget dst)
   {
     SEValidationTarget.load(src.getValidationTarget(), dst);
+    dst.assessment = src.getAssessment();
+    dst.patientSpecific = src.getPatientSpecific();
+    
     switch(src.getExpectedCase())
     {
-      case EQUALTOVALUE:
-        dst.setEqualToValue(src.getEqualToValue(), src.getType());
+      case TARGETENUM:
+        dst.setTargetEnum(src.getTargetEnum());
         break;
-      case RANGE:
-        dst.setRange(
-            src.getRange().getMinimum(),
-            src.getRange().getMaximum(),
+      case TARGETVALUE:
+        dst.setTargetValue(src.getTargetValue(), src.getType());
+        break;
+      case TARGETRANGE:
+        dst.setTargetRange(
+            src.getTargetRange().getMinimum(),
+            src.getTargetRange().getMaximum(),
             src.getType());
         break;
       default:
@@ -97,37 +121,65 @@ public class SETimeSeriesValidationTarget extends SEValidationTarget
   {
     SEValidationTarget.unload(src,dst.getValidationTargetBuilder());
     dst.setType(src.targetType);
+    dst.setAssessment(src.assessment);
+    dst.setPatientSpecific(src.patientSpecific);
     switch(src.comparisonType)
     {
-      case EqualToValue:
-        dst.setEqualToValue(src.target);
+      case TargetEnum:
+        dst.setTargetEnum(src.targetEnum);
         break;
-      case Range:
-        dst.getRangeBuilder().setMinimum(src.targetMinimum);
-        dst.getRangeBuilder().setMaximum(src.targetMaximum);
-        dst.getRangeBuilder().build();
+      case TargetValue:
+        dst.setTargetValue(src.targetValue);
+        break;
+      case TargetRange:
+        dst.getTargetRangeBuilder().setMinimum(src.targetMinimum);
+        dst.getTargetRangeBuilder().setMaximum(src.targetMaximum);
+        dst.getTargetRangeBuilder().build();
         break;
     }
   }
 
   public eType getTargetType() { return targetType; }
   
-  public void setEqualToValue(double d, eType t)
+  public void setAssessment(String s) { assessment = s;}
+  public String getAssessment() { return assessment; }
+  
+  public void setPatientSpecific(Boolean b) { patientSpecific = b;}
+  public Boolean getPatientSpecific() { return patientSpecific; }
+  
+  public void setTargetEnum(String s)
   {
-    target = d;
+    targetEnum = s;
+    targetValue = Double.NaN;
+    targetMaximum = Double.NaN;
+    targetMinimum = Double.NaN;
+    targetType = eType.Enumeration;
+    comparisonType = eComparisonType.TargetEnum;
+  }
+  public String getTargetEnum() { return targetEnum; }
+  
+  public void setTargetValue(double d, eType t)
+  {
+    targetEnum = "";
+    targetValue = d;
     targetMaximum = d;
     targetMinimum = d;
     targetType = t;
-    comparisonType = eComparisonType.EqualToValue;
+    comparisonType = eComparisonType.TargetValue;
   }
-  public void setRange(double min, double max, eType t)
+  public double getTargetValue() { return targetValue; }
+  
+  public void setTargetRange(double min, double max, eType t)
   {
-    target = Double.NaN;
+    targetEnum = "";
+    targetValue = Double.NaN;
     targetMaximum = max;
     targetMinimum = min;
     targetType = t;
-    comparisonType = eComparisonType.Range;
+    comparisonType = eComparisonType.TargetRange;
   }
+  public double getTargetMaximum() { return targetMaximum; }
+  public double getTargetMinimum() { return targetMinimum; }
 
   public eComparisonType getComparisonType() { return comparisonType; }
 }

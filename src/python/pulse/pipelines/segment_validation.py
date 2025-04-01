@@ -16,7 +16,8 @@ from pulse.cdm.io.scenario import serialize_scenario_exec_status_list_to_file
 from pulse.cdm.validation import SESegmentValidationPipelineConfig
 from pulse.cdm.io.validation import serialize_segment_validation_pipeline_config_from_file
 from pulse.cdm.utils.markdown import process_file
-from pulse.cdm.utils.file_utils import get_root_dir, get_validation_dir
+from pulse.cdm.utils.file_utils import get_root_dir
+from pulse.cdm.utils.math_utils import format_float
 from pulse.cdm.utils.plotter import create_plots, plot_with_test_results
 from pulse.pipelines.dataset.segment_dataset_reader import gen_scenarios_and_targets
 from pulse.pipelines.validation.segment_validation import validate

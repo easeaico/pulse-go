@@ -6,14 +6,14 @@ import sys
 import logging
 import numpy as np
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import List
 
 import PyPulse
 
 from pulse.cdm.engine import SEDataRequested
-from pulse.cdm.validation import SESegmentValidationTarget
+from pulse.cdm.validation import SESegmentValidationTarget, generate_percentage_span, format_float
 from pulse.cdm.utils.markdown import table
-from pulse.cdm.utils.math_utils import generate_percentage_span, percent_change, percent_difference
+from pulse.cdm.utils.math_utils import percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
 from pulse.cdm.io.validation import serialize_segment_validation_segment_list_from_file
 _pulse_logger = logging.getLogger('pulse')
@@ -86,8 +86,6 @@ def evaluate(seg_id: int,
     _pulse_logger.info(f"Evaluating {header}")
 
     epsilon = 1E-9
-    percent_precision = 1
-    value_precision = 4
 
     result = results.get_segment(seg_id)
     if result is None:
@@ -207,8 +205,8 @@ def evaluate(seg_id: int,
                 else:
                     if not np.isnan(change) and change < 0.0:
                         c = '"success"'
-            expression_change_str = f'<span class={c}>{change:.{percent_precision}f}%</span>'
-            expression_expected_str = f"({expected_val:.{value_precision}G})"
+            expression_change_str = f'<span class={c}>{format_float(change)}%</span>'
+            expression_expected_str = f"({format_float(expected_val)})"
 
         elif '=' in expression:
             compare_type = "EqualTo"
@@ -218,8 +216,8 @@ def evaluate(seg_id: int,
                 err = 0.
             success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
             warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
-            expression_error_str = generate_percentage_span(err, percent_precision, success, warning)
-            expression_expected_str = f"({expected_val:.{value_precision}G})"
+            expression_error_str = generate_percentage_span(err, success, warning)
+            expression_expected_str = f"({format_float(expected_val)})"
 
         elif '[' in expression and ']' in expression:
             values = expression.replace('[', '').replace(']', '').split(',')
@@ -241,10 +239,10 @@ def evaluate(seg_id: int,
             if abs(err) < epsilon:
                 err = 0.
 
-            success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
-            warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
-            expression_error_str = generate_percentage_span(err, percent_precision, success, warning)
-            expression_expected_str = f"[{tgt_min:.{value_precision}G},{tgt_max:.{value_precision}G}]"
+            success = 0 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
+            warning = 10 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
+            expression_error_str = generate_percentage_span(err, success, warning)
+            expression_expected_str = f"[{format_float(tgt_min)},{format_float(tgt_max)}]"
 
         else:
             # TODO empty formula means we are not validating this row
@@ -303,7 +301,7 @@ def evaluate(seg_id: int,
     return [
         header,
         formula_expected_str if formula_expected_str else "&nbsp;",
-        f"{engine_val:.{value_precision}G}",
+        f"{format_float(engine_val)}",
         formula_error_str if formula_error_str else "&nbsp;",
         formula_change_str if formula_change_str else "&nbsp;",
         tgt.get_notes() if tgt.get_notes() else "&nbsp;"
