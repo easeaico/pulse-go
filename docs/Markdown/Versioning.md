@@ -24,6 +24,8 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Support referencing other sheet segments (within the same workbook) as an expected value
     - Support defining patients in validation workbooks
     - Support configuration json in validation workbooks
+    - Include comparison formula in expected value column of segment validation tables
+    - Shifting default to 3 significant digits for values in validation tables
 
 - Physiology Model Improvements
     - Moved hemorrrhage model validation to an automated validation module

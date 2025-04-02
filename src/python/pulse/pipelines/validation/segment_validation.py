@@ -139,9 +139,8 @@ def evaluate(seg_id: int,
         expression_expected_str = ""
         expression_error_str = ""
         expression_change_str = ""
-
-        # First sub in all referenced segment values into the expression
-
+        # Grab the formula, so we can use it in the table, so we know how we got the expected value
+        compare_type = expression.replace("{v}", "").strip()
         #   Find all local segment references
         local_references = set(re.findall(r"\{-?[0-9]+\}", expression, re.DOTALL))
         for local_reference in local_references:
@@ -183,33 +182,33 @@ def evaluate(seg_id: int,
             _pulse_logger.error(f"Unable to evaluate expression {expected_val_expression}")
             return []
 
-        compare_type = None
         if '>' in expression or '<' in expression:
-
             # TODO: Implement gradient?
             change = percent_change(expected_val, engine_val, epsilon)
             c = '"danger"'
             if '>' in expression:
-                compare_type = "GreaterThan"
                 if '=' in expression:
+                    compare_type = compare_type.replace(">=", "GreaterThanEqualTo")
                     if not np.isnan(change) and change >= 0.0:
                         c = '"success"'
                 else:
+                    compare_type = compare_type.replace(">", "GreaterThan")
                     if not np.isnan(change) and change > 0.0:
                         c = '"success"'
             else:
-                compare_type = "LessThan"
                 if '=' in expression:
+                    compare_type = compare_type.replace("<=", "LessThanEqualTo")
                     if not np.isnan(change) and change <= 0.0:
                         c = '"success"'
                 else:
+                    compare_type = compare_type.replace("<", "LessThan")
                     if not np.isnan(change) and change < 0.0:
                         c = '"success"'
             expression_change_str = f'<span class={c}>{format_float(change)}%</span>'
-            expression_expected_str = f"({format_float(expected_val)})"
+            expression_expected_str = f"{format_float(expected_val)}"
 
         elif '=' in expression:
-            compare_type = "EqualTo"
+            compare_type = compare_type.replace("=", "EqualTo")
             err = percent_difference(expected_val, engine_val, epsilon)
             # Close enough
             if abs(err) < epsilon:
@@ -217,9 +216,10 @@ def evaluate(seg_id: int,
             success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
             warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
             expression_error_str = generate_percentage_span(err, success, warning)
-            expression_expected_str = f"({format_float(expected_val)})"
+            expression_expected_str = f"{format_float(expected_val)}"
 
         elif '[' in expression and ']' in expression:
+            compare_type = None
             values = expression.replace('[', '').replace(']', '').split(',')
             tgt_min = float(values[0].strip())
             tgt_max = float(values[1].strip())
@@ -257,20 +257,22 @@ def evaluate(seg_id: int,
             if ':' in tgt_seg:
                 ref = tgt_seg.split(':')
                 if '-1' in tgt_seg:
-                    expression_expected_str = f"{compare_type} {ref[0]} Healthy {expression_expected_str}"
+                    seg = f"{ref[0]} Healthy"
                 elif '0' in tgt_seg:
-                    expression_expected_str = f"{compare_type} {ref[0]} Baseline {expression_expected_str}"
+                    seg = f"{ref[0]} Baseline"
                 else:
-                    expression_expected_str = f"{compare_type} {ref[0]} Segment {ref[1]} {expression_expected_str}"
+                    seg = f"Segment {ref[1]}"
             else:
                 if '-1' in tgt_seg:
-                    expression_expected_str = f"{compare_type} Healthy {expression_expected_str}"
+                    seg = "Healthy"
                 elif '0' in tgt_seg:
-                    expression_expected_str = f"{compare_type} Baseline {expression_expected_str}"
+                    seg = "Baseline"
                 else:
-                    expression_expected_str = f"{compare_type} Segment {tgt_seg} {expression_expected_str}"
+                    seg = f"Segment {tgt_seg}"
+            compare_type = compare_type.replace(referenced_segments[0], seg)
+            expression_expected_str = f"{compare_type} ({expression_expected_str})"
         elif compare_type:
-            expression_expected_str = f'{compare_type} {expression_expected_str}'
+            expression_expected_str = compare_type
 
         if logical_join:
             if len(formula_expected_str) > 0:
