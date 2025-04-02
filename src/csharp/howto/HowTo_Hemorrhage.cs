@@ -31,6 +31,8 @@ namespace HowTo_Hemorrhage
         SEDataRequest.CreatePhysiologyDataRequest("OxygenSaturation"),
         SEDataRequest.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit.mL_Per_min),
         SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
+        SEDataRequest.CreatePhysiologyDataRequest("TotalHemorrhageRate", VolumePerTimeUnit.mL_Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("TotalHemorrhagedVolume", VolumeUnit.mL),
         SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLeg", "FlowRate", VolumePerTimeUnit.mL_Per_min),
         SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLeg", "TotalBloodLost", VolumeUnit.mL)
       };
