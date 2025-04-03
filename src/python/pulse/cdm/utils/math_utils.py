@@ -8,14 +8,32 @@ import numpy as np
 _pulse_logger = logging.getLogger('pulse')
 
 
-def percent_tolerance(expected: float, calculated: float, epsilon: float, verbose: bool=True):
+def format_float(f: float, fmt: str = "") -> str:
+    abs_p = abs(f)
+    #  https://docs.python.org/2/library/string.html#formatstrings
+    #  https://stackoverflow.com/questions/15238120/keep-trailing-zeroes-in-python
+
+    if abs_p == 0:
+        s = "0.00"
+    elif len(fmt) == 0:
+        s = f"{f:#.3g}"
+    else:
+        s = f"{f:{fmt}}"
+
+    if s[-1] == '.':
+        s = s[0:-1]
+    return s
+
+
+def percent_tolerance(expected: float, calculated: float, epsilon: float, verbose: bool = True):
     # Check for 'invalid' numbers
     if np.isnan(expected) or np.isnan(calculated) or np.isinf(expected) or np.isinf(calculated):
         if verbose:
-            _pulse_logger.warning(f"While finding percent tolerance from values 'expected' = {expected} and " \
-                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+            _pulse_logger.warning(f"While finding percent tolerance from values "
+                                  f"'expected' = {expected} and 'calculated' = {calculated}, "
+                                  f"invalid values (NaN or Infinity) were found. Unexpected results may occur.")
         if (np.isnan(expected) and np.isnan(calculated)) or (np.isinf(expected) and np.isinf(calculated)):
-           return 0.0
+            return 0.0
         return np.nan
 
     # Special cases
@@ -35,20 +53,15 @@ def percent_tolerance(expected: float, calculated: float, epsilon: float, verbos
         return abs(calculated - expected) / expected * 100.0
 
 
-def generate_percent_tolerance_span(expected: float, calculated: float, epsilon: float, precision: int = 1):
-    percent = percent_tolerance(expected, calculated, epsilon)
-
-    return generate_percent_span(percent, precision)
-
-
-def percent_difference(expected: float, calculated: float, epsilon: float, verbose: bool=True):
+def percent_difference(expected: float, calculated: float, epsilon: float, verbose: bool = True):
     # Check for 'invalid' numbers
     if np.isnan(expected) or np.isnan(calculated) or np.isinf(expected) or np.isinf(calculated):
         if verbose:
-            _pulse_logger.warning(f"While finding percent difference from values 'expected' = {expected} and " \
-                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+            _pulse_logger.warning(f"While finding percent difference from values "
+                                  f"'expected' = {expected} and 'calculated' = {calculated}, "
+                                  f"invalid values (NaN or Infinity) were found. Unexpected results may occur.")
         if (np.isnan(expected) and np.isnan(calculated)) or (np.isinf(expected) and np.isinf(calculated)):
-           return 0.0
+            return 0.0
         return np.nan
 
     # Special cases
@@ -69,20 +82,15 @@ def percent_difference(expected: float, calculated: float, epsilon: float, verbo
         return abs(difference / average) * 100.0
 
 
-def generate_percent_difference_span(expected: float, calculated: float, epsilon: float, precision: int = 1):
-    percent = percent_difference(expected, calculated, epsilon)
-
-    return generate_percentage_span(percent, precision)
-
-
-def percent_change(expected: float, calculated: float, epsilon: float, verbose: bool=True):
+def percent_change(expected: float, calculated: float, epsilon: float, verbose: bool = True):
     # Check for 'invalid' numbers
     if np.isnan(expected) or np.isnan(calculated) or np.isinf(expected) or np.isinf(calculated):
         if verbose:
-            _pulse_logger.warning(f"While finding percent change from values 'expected' = {expected} and " \
-                f"'calculated' = {calculated}, invalid values (NaN or Infinity) were found. Unexpected results may occur.")
+            _pulse_logger.warning(f"While finding percent change from values "
+                                  f"'expected' = {expected} and 'calculated' = {calculated}, "
+                                  f"invalid values (NaN or Infinity) were found. Unexpected results may occur.")
         if (np.isnan(expected) and np.isnan(calculated)) or (np.isinf(expected) and np.isinf(calculated)):
-           return 0.0
+            return 0.0
         return np.nan
 
     # Special cases
@@ -95,14 +103,3 @@ def percent_change(expected: float, calculated: float, epsilon: float, verbose: 
             return float('inf')
 
     return (calculated - expected) / abs(expected) * 100.0
-
-
-def generate_percentage_span(percentage, precision, success=10, warning=30):
-    if abs(percentage) <= success:
-        c = '"success"'
-    elif abs(percentage) <= warning:
-        c = '"warning"'
-    else:
-        c = '"danger"'
-
-    return f'<span class={c}>{percentage:.{precision}G}%</span>'

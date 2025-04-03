@@ -11,6 +11,7 @@ import PyPulse
 from pulse.cdm.patient import SEPatient
 from pulse.cdm.plots import SEPlotter
 from pulse.cdm.utils.file_utils import get_scenario_dir
+from pulse.cdm.utils.math_utils import percent_difference, format_float
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.io.engine import serialize_data_request_list_from_file, serialize_data_requested_result_from_file
 
@@ -18,11 +19,29 @@ from pulse.cdm.io.engine import serialize_data_request_list_from_file, serialize
 _pulse_logger = logging.getLogger('pulse')
 
 
+def span_class(percentage: float, success: float = 10, warning: float = 30):
+    abs_p = abs(percentage)
+    if abs_p <= success:
+        return '"success"'
+    elif abs_p <= warning:
+        return '"warning"'
+    else:
+        return '"danger"'
+
+
+def generate_percentage_span(percentage: float, success: float = 10, warning: float = 30):
+    return f"<span class={span_class(percentage, success, warning)}>{format_float(percentage)}%</span>"
+
+
+def generate_percent_difference_span(expected: float, calculated: float, epsilon: float, precision: int = 1):
+    percent = percent_difference(expected, calculated, epsilon)
+    return generate_percentage_span(percent, precision)
+
+
 class SEValidationTarget:
     __slots__ = ["_header", "_reference", "_notes", "_table_formatting",
-                 "_target", "_target_min", "_target_max", "_target_enum", "_assessment",
-                 "_computed_value", "_error_value",
-                 "_good_percent_error", "_fair_percent_error"
+                 "_computed_value", "_computed_enum",
+                 "_error_value", "_good_percent_error", "_fair_percent_error"
                  ]
 
     def __init__(self):
@@ -30,12 +49,8 @@ class SEValidationTarget:
         self._reference = ""
         self._notes = ""
         self._table_formatting = None
-        self._target = np.nan
-        self._target_enum = None
-        self._target_min = np.nan
-        self._target_max = np.nan
-        self._assessment = None
 
+        self._computed_enum = None
         self._computed_value = None
         self._error_value = None
         self._good_percent_error = None
@@ -44,24 +59,15 @@ class SEValidationTarget:
     def __repr__(self) -> str:
         return f'SEValidationTarget({self._header}, {self._reference}, {self._notes}, ' \
                f'{self._table_formatting}, ' \
-               f'{self._target_enum if self._target_enum is not None else self._target}, ' \
-               f'{self._target_min}, {self._target_max}), ' \
-               f'{self._computed_value}, {self._error_value}), ' \
-               f'{self._good_percent_error} , {self._fair_percent_error}'
+               f'{self._computed_value}, {self._computed_enum}, ' \
+               f'{self._error_value}, {self._good_percent_error} , {self._fair_percent_error})'
 
     def __str__(self) -> str:
         return f'SEValidationTarget:' \
                 f'\n\tHeader: {self._header}' \
                 f'\n\tReference: {self._reference}' \
                 f'\n\tNotes: {self._notes}' \
-                f'\n\tTable Formatting: {self._table_formatting}' \
-                f'\n\tTarget: {(self._target_enum if self._target_enum is not None else self._target)}' \
-                f'\n\tTarget Range: [{self._target_min}, {self._target_max}]'
-
-    def is_valid(self) -> bool:
-        if np.isnan(self._target) and np.isnan(self._target_max) and self._target_enum is not None:
-            return False
-        return True
+                f'\n\tTable Formatting: {self._table_formatting}]'
 
     def clear(self) -> None:
         self.__init__()
@@ -92,18 +98,6 @@ class SEValidationTarget:
     def invalidate_table_formatting(self) -> None:
         self._table_formatting = None
 
-    def get_target_maximum(self) -> float:
-        return self._target_max
-    def get_target_minimum(self) -> float:
-        return self._target_min
-    def get_target(self):
-        return self._target_enum if self._target_enum is not None else self._target
-
-    def get_assessment(self) -> str:
-        return self._assessment
-    def set_assessment(self, s: str):
-        self._assessment = s
-
     def has_computed_value(self) -> bool:
         return self._computed_value is not None
 
@@ -115,6 +109,18 @@ class SEValidationTarget:
 
     def invalidate_computed_value(self) -> None:
         self._computed_value = None
+
+    def has_computed_enum(self) -> bool:
+        return self._computed_enum is not None
+
+    def get_computed_enum(self) -> Optional[str]:
+        return self._computed_enum
+
+    def set_computed_enum(self, val: str) -> None:
+        self._computed_enum = val
+
+    def invalidate_computed_enum(self) -> None:
+        self._computed_enum = None
 
     def has_error_value(self) -> bool:
         return self._error_value is not None
@@ -154,9 +160,7 @@ class SEValidationTarget:
 
 
 class SESegmentValidationTarget(SEValidationTarget):
-    __slots__ = ["_comparison_formula",
-                 "_computed_value", "_error_value",
-                 "_good_percent_error", "_fair_percent_error"]
+    __slots__ = ["_comparison_formula"]
 
     def __init__(self):
         super().__init__()
@@ -308,7 +312,7 @@ class SESegmentValidationSegmentTable:
 
             return [
                 dr_header,
-                f"{engine_val:.{precision}G}" if engine_val != "NaN" else "NaN"
+                f"{format_float(engine_val)}" if engine_val != "NaN" else "NaN"
             ]
 
         table_data = list()
@@ -389,7 +393,8 @@ class SESegmentValidationPipelineConfig:
 
 
 class SETimeSeriesValidationTarget(SEValidationTarget):
-    __slots__ = ["_target_type", "_comparison_type", "_patient_specific"]
+    __slots__ = ["_target_type", "_comparison_type", "_patient_specific",
+                 "_target_value", "_target_min", "_target_max", "_target_enum", "_assessment",]
 
     class eComparisonType(Enum):
         NotValidating = 0
@@ -406,15 +411,25 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
         MaxPerIdealWeight_kg = 5
         Enumeration = 6
 
-
     def __init__(self):
         super().__init__()
         self._comparison_type = self.eComparisonType.NotValidating
         self._target_type = SETimeSeriesValidationTarget.eTargetType.Mean
+        self._assessment = None
         self._patient_specific = None
+
+        self._target_value = np.nan
+        self._target_enum = None
+        self._target_min = np.nan
+        self._target_max = np.nan
 
     def clear(self):
         self.__init__()
+
+    def is_valid(self) -> bool:
+        if np.isnan(self._target_value) and np.isnan(self._target_max) and self._target_enum is not None:
+            return False
+        return True
 
     def is_evaluated(self) -> bool:
         return self.has_computed_value() and self.has_error_value()
@@ -425,29 +440,45 @@ class SETimeSeriesValidationTarget(SEValidationTarget):
     def get_target_type(self) -> eTargetType:
         return self._target_type
 
-    def set_equal_to(self, d: float, t: eTargetType):
+    def set_target_value(self, d: float, t: eTargetType):
         self._comparison_type = self.eComparisonType.EqualToValue
         self._target_type = t
         self._target_enum = None
-        self._target = d
+        self._target_value = d
         self._target_max = d
         self._target_min = d
 
-    def set_equal_to_enum(self, e: str, t: eTargetType):
+    def set_target_enum(self, e: str):
         self._comparison_type = self.eComparisonType.EqualToEnum
-        self._target_type = t
+        self._target_type = self.eTargetType.Enumeration
         self._target_enum = e
-        self._target = np.nan
+        self._target_value = np.nan
         self._target_max = np.nan
         self._target_min = np.nan
 
-    def set_range(self, min: float, max: float, t: eTargetType):
+    def set_target_range(self, min_value: float, max_value: float, t: eTargetType):
         self._comparison_type = self.eComparisonType.Range
         self._target_type = t
         self._target_enum = None
-        self._target = np.nan
-        self._target_max = max
-        self._target_min = min
+        self._target_value = np.nan
+        self._target_max = max_value
+        self._target_min = min_value
+
+    def get_target_maximum(self) -> float:
+        return self._target_max
+    def get_target_minimum(self) -> float:
+        return self._target_min
+    def get_target(self):
+        return self._target_enum if self._target_enum is not None else self._target_value
+
+    def has_assessment(self) -> bool:
+        return self._assessment is not None
+    def get_assessment(self) -> str:
+        return self._assessment
+    def set_assessment(self, s: str):
+        self._assessment = s
+    def invalidate_assessment(self, s: str):
+        self._assessment = None
 
     def has_patient_specific_setting(self) -> bool:
         return self._patient_specific is not None

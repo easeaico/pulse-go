@@ -27,11 +27,17 @@ public:
   std::string GetNotes() const { return m_Notes; }
   void SetNotes(const std::string& n) { m_Notes = n; }
 
-  double GetTargetMaximum() const { return m_TargetMaximum; }
-  double GetTargetMinimum() const { return m_TargetMinimum; }
-  double GetTarget() const { return m_Target; }
+  std::string GetTableFormatting() const { return m_TableFormatting; }
+  void SetTableFormatting(const std::string& f) { m_TableFormatting = f; }
+
+  std::string GetComputedEnum() const { return m_ComputedEnum; }
+  void SetComputedEnum(const std::string& e) { m_ComputedEnum = e; }
+
+  double GetComputedValue() const { return m_ComputedValue; }
+  void SetComputedValue(double d) { m_ComputedValue = d; }
 
   double GetError() const { return m_Error; }
+  void SetError(double d) { m_Error = d; }
 
   double GetGoodPercentError() const { return m_GoodPercentError; }
   void SetGoodPercentError(double e) { m_GoodPercentError = e; }
@@ -43,10 +49,10 @@ protected:
   std::string                                m_Header;
   std::string                                m_Reference;
   std::string                                m_Notes;
+  std::string                                m_TableFormatting;
 
-  double                                     m_Target;
-  double                                     m_TargetMaximum;
-  double                                     m_TargetMinimum;
+  std::string                                m_ComputedEnum;
+  double                                     m_ComputedValue;
   
   double                                     m_Error;
   double                                     m_GoodPercentError;
@@ -78,9 +84,9 @@ class CDM_DECL SETimeSeriesValidationTarget : public SEValidationTarget
 {
   friend class PBValidation;//friend the serialization class
 public:
-  enum class eComparisonType { None=0, EqualToValue, Range };
+  enum class eComparisonType { None=0, TargetEnum, TargetValue, TargetRange };
   enum class eTargetType { Mean=0, Minimum, Maximum,
-    MeanPerIdealWeight_kg, MaxPerIdealWeight_kg, MinPerIdealWeight_kg };
+    MeanPerIdealWeight_kg, MaxPerIdealWeight_kg, MinPerIdealWeight_kg, Enumeration };
   SETimeSeriesValidationTarget();
   virtual ~SETimeSeriesValidationTarget() = default;
 
@@ -94,20 +100,39 @@ public:
   eTargetType GetTargetType() const { return m_TargetType; }
   eComparisonType GetComparisonType() const { return m_ComparisonType; }
 
-  void   SetEqualTo(double d, eTargetType t);
-  void   SetRange(double min, double max, eTargetType t);
+  void SetAssessment(const std::string& a) { m_Assessment = a; }
+  std::string GetAssessment() const { return m_Assessment; }
+
+  void SetPatientSpecific(bool b) { m_PatientSpecific = b; }
+  bool GetPatientSpecific() const { return m_PatientSpecific; }
+
+  void SetTargetEnum(const std::string& s);
+  std::string GetTargetEnum() const { return m_TargetEnum; }
+
+  void   SetTargetValue(double d, eTargetType t);
+  double GetTargetValue() const { return m_TargetValue; }
+
+  void   SetTargetRange(double min, double max, eTargetType t);
+  double GetTargetMaximum() const { return m_TargetMaximum; }
+  double GetTargetMinimum() const { return m_TargetMinimum; }
 
   // Maybe we want a different class to do the comparision
   // For now, I just put it in line here for the CircuitOptimizer
   bool ComputeError();
-  double GetDataValue() const { return m_ComparisonValue; }
   std::vector<double>& GetData() { return m_Data; }
 
 protected:
-  eTargetType                                m_TargetType;
   eComparisonType                            m_ComparisonType;
+  eTargetType                                m_TargetType;
+
+  std::string                                m_Assessment;
+  bool                                       m_PatientSpecific;
+
+  std::string                                m_TargetEnum;
+  double                                     m_TargetValue;
+  double                                     m_TargetMaximum;
+  double                                     m_TargetMinimum;
 
   // Not serializing
   std::vector<double>                        m_Data;
-  double                                     m_ComparisonValue;
 };

@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from pulse.cdm.utils.markdown import table
+from pulse.cdm.utils.math_utils import format_float
 from pulse.cdm.engine import eEngineInitializationState
 from pulse.cdm.scenario import eScenarioExecutionState, SEScenarioExecStatus
 from pulse.cdm.validation import SEPatientTimeSeriesValidation
@@ -182,6 +183,8 @@ def main():
     filename_base_paths = []
     out_file = opts.output_file
     table_dir = opts.table_dir
+    if table_dir is None:
+        table_dir = Path("./test_results/tables")
     serialize_per_file = opts.serialize_per_file
     if 'verification' == opts.input or 'test_results' == opts.input:
         mode = opts.input
@@ -190,8 +193,6 @@ def main():
         files = search.glob('*.log')
         for file in files:
             filename_base_paths.append(Path(str(file.parent)+'/'+file.stem))
-        if table_dir is None:
-            table_dir = Path("./test_results/tables")
     elif '.json' in opts.input:
         statuses = list()
         serialize_scenario_exec_status_list_from_file(opts.input, statuses)
@@ -210,9 +211,10 @@ def main():
         if out_file is None:
             out_file = Path(opts.input).parent / f"{Path(opts.input).stem}Targets.json"
     else:
-        filename_base_paths.append(opts.input)
+        base_path = Path(opts.input)
+        filename_base_paths.append(base_path)
         if out_file is None:
-            out_file = opts.input.parent / f"{opts.input.stem}Targets.json"
+            out_file = base_path.parent / f"{base_path.stem}Targets.json"
 
     all_validation = bulk_timeseries_validation_pipeline(
         filename_base_paths=filename_base_paths,
@@ -264,12 +266,13 @@ def main():
         table(f, data, fields, headings, align)
 
     # Only write a html file for test results
-    if opts.input == "test_results":
-        # Push Standard patients to the front
-        all_validation.insert(0, all_validation.pop(
-            [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardFemale"][0]))
-        all_validation.insert(0, all_validation.pop(
-            [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardMale"][0]))
+    if opts.input != "verification" and ".json" not in opts.input:
+        if "test_results" == opts.input:
+            # Push Standard patients to the front
+            all_validation.insert(0, all_validation.pop(
+                [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardFemale"][0]))
+            all_validation.insert(0, all_validation.pop(
+                [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardMale"][0]))
         html_file = "./test_results/PatientValidation.html"
         _pulse_logger.info(f"Writing {html_file}")
         f = open(html_file, "w")
@@ -299,7 +302,7 @@ def main():
                     f.write("<td>" + tgt.get_header() + "</td>")
                     f.write("<td>" + gen_expected_str(tgt) + "</td>")
                     f.write("<td>" + gen_engine_val_str(tgt) + "</td>")
-                    f.write(f"<td>{tgt.get_error_value():{tgt.get_table_formatting()}}</td>")
+                    f.write(f"<td>{format_float(tgt.get_error_value())}%</td>")
                     f.write("<td>" + tgt.get_notes() + "</td></tr>\n")
                 f.write("</table><br>\n")
         f.write("</body>\n")

@@ -19,10 +19,11 @@ message ValidationTargetData
   string                                                Notes                           = 3;
   string                                                TableFormatting                 = 4;/**<< @brief Specification string for floating point formatting of computed values in tables */
   
-  optional double                                       ComputedValue                   = 5;
-  optional double                                       Error                           = 6;
-  optional double                                       GoodPercentError                = 7;/**<< @brief We meet Good validation if Error is <= this percent, typically 10% */
-  optional double                                       FairPercentError                = 8;/**<< @brief We meet Fair validation if Error is <= this percent, typically 30%, anything over is considered Poor validation */
+  optional string                                       ComputedEnum                    = 5;
+  optional double                                       ComputedValue                   = 6;
+  optional double                                       Error                           = 7;
+  optional double                                       GoodPercentError                = 8;/**<< @brief We meet Good validation if Error is <= this percent, typically 10% */
+  optional double                                       FairPercentError                = 9;/**<< @brief We meet Fair validation if Error is <= this percent, typically 30%, anything over is considered Poor validation */
 
 }
 
@@ -70,14 +71,18 @@ message TimeSeriesValidationTargetData
     MeanPerIdealWeight_kg = 3;
     MinPerIdealWeight_kg = 4;
     MaxPerIdealWeight_kg = 5;
+    Enumeration = 6;
   }
   ValidationTargetData                                  ValidationTarget                = 1;
-  bool                                                  PatientSpecific                 = 2;/**<< @brief Should the target value change due to patient properties, if false, the expected value is only valid for standard patients. */
-  eType                                                 Type                            = 3;
+  string                                                Assessment                      = 2;
+  bool                                                  PatientSpecific                 = 3;/**<< @brief Should the target value change due to patient properties, if false, the expected value is only valid for standard patients. */
+  eType                                                 Type                            = 4;
+  
   oneof Expected
   {
-    double                                              EqualToValue                    = 4;
-    RangeData                                           Range                           = 5;
+    string                                              TargetEnum                      = 5;
+    double                                              TargetValue                     = 6;
+    RangeData                                           TargetRange                     = 7;
   }
 
 }

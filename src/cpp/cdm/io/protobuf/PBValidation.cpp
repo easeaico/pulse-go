@@ -15,7 +15,15 @@ void PBValidation::Serialize(const CDM_BIND::ValidationTargetData& src, SEValida
   dst.m_Header = src.header();
   dst.m_Reference = src.reference();
   dst.m_Notes = src.notes();
+  dst.m_TableFormatting = src.tableformatting();
 
+  if (src.has_computedenum())
+    dst.SetComputedEnum(src.computedenum());
+  if (src.has_computedvalue())
+    dst.SetComputedValue(src.computedvalue());
+
+  if (src.has_error())
+    dst.SetError(src.error());
   if (src.has_goodpercenterror())
     dst.SetGoodPercentError(src.goodpercenterror());
   if (src.has_fairpercenterror())
@@ -26,7 +34,12 @@ void PBValidation::Serialize(const SEValidationTarget& src, CDM_BIND::Validation
   dst.set_header(src.m_Header);
   dst.set_reference(src.m_Reference);
   dst.set_notes(src.m_Notes);
+  dst.set_tableformatting(src.m_TableFormatting);
 
+  dst.set_computedenum(src.GetComputedEnum());
+  dst.set_computedvalue(src.GetComputedValue());
+
+  dst.set_error(src.GetError());
   dst.set_goodpercenterror(src.GetGoodPercentError());
   dst.set_fairpercenterror(src.GetFairPercentError());
 }
@@ -119,13 +132,20 @@ void PBValidation::Load(const CDM_BIND::TimeSeriesValidationTargetData& src, SET
 void PBValidation::Serialize(const CDM_BIND::TimeSeriesValidationTargetData& src, SETimeSeriesValidationTarget& dst)
 {
   PBValidation::Serialize(src.validationtarget(), dst);
+
+  dst.SetAssessment(src.assessment());
+  dst.SetPatientSpecific(src.patientspecific());
+
   switch (src.Expected_case())
   {
-  case CDM_BIND::TimeSeriesValidationTargetData::kEqualToValue:
-    dst.SetEqualTo(src.equaltovalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
+  case CDM_BIND::TimeSeriesValidationTargetData::kTargetEnum:
+    dst.SetTargetEnum(src.targetenum());
     break;
-  case CDM_BIND::TimeSeriesValidationTargetData::kRange:
-    dst.SetRange(src.range().minimum(), src.range().maximum(), (SETimeSeriesValidationTarget::eTargetType)src.type());
+  case CDM_BIND::TimeSeriesValidationTargetData::kTargetValue:
+    dst.SetTargetValue(src.targetvalue(), (SETimeSeriesValidationTarget::eTargetType)src.type());
+    break;
+  case CDM_BIND::TimeSeriesValidationTargetData::kTargetRange:
+    dst.SetTargetRange(src.targetrange().minimum(), src.targetrange().maximum(), (SETimeSeriesValidationTarget::eTargetType)src.type());
     break;
   default: break;
   }
@@ -140,14 +160,21 @@ void PBValidation::Serialize(const SETimeSeriesValidationTarget& src, CDM_BIND::
 {
   PBValidation::Serialize(src, *dst.mutable_validationtarget());
   dst.set_type((CDM_BIND::TimeSeriesValidationTargetData_eType)src.m_TargetType);
+
+  dst.set_assessment(src.m_Assessment);
+  dst.set_patientspecific(src.m_PatientSpecific);
+
   switch (src.m_ComparisonType)
   {
-  case SETimeSeriesValidationTarget::eComparisonType::EqualToValue:
-    dst.set_equaltovalue(src.m_Target);
+  case SETimeSeriesValidationTarget::eComparisonType::TargetEnum:
+    dst.set_targetenum(src.m_TargetEnum);
     break;
-  case SETimeSeriesValidationTarget::eComparisonType::Range:
-    dst.mutable_range()->set_minimum(src.m_TargetMinimum);
-    dst.mutable_range()->set_maximum(src.m_TargetMaximum);
+  case SETimeSeriesValidationTarget::eComparisonType::TargetValue:
+    dst.set_targetvalue(src.m_TargetValue);
+    break;
+  case SETimeSeriesValidationTarget::eComparisonType::TargetRange:
+    dst.mutable_targetrange()->set_minimum(src.m_TargetMinimum);
+    dst.mutable_targetrange()->set_maximum(src.m_TargetMaximum);
     break;
   case SETimeSeriesValidationTarget::eComparisonType::None:
     src.Warning("TimeSeriesValidationTarget "+src.GetHeader()+" does not have a comparision type");
