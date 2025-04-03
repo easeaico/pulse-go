@@ -54,13 +54,14 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
 
 def main():
 
-    population_size = 3000
-    #army_population = synthetic_data_generation(population_size, army_population_distributions)
-    #army_population_error = calculate_synthetic_population_error(army_population, army_population_distributions)
+    population_size = 4000
+    #army_patients = synthetic_data_generation(population_size, army_population_distributions)
+    #army_population_error = calculate_synthetic_population_error(army_patients, army_population_distributions)
     #plot_population_error(army_population_error, f"./results/army_population_of_{population_size}")
 
-    army_injuries = generate_synthetic_injuries(population_size, army_injury_distributions)
-    army_injury_error = calculate_synthetic_injury_error(army_injuries, army_injury_distributions)
+    army_patient_injuries = generate_synthetic_injuries(population_size, army_injury_distributions)
+    army_injury_error = calculate_synthetic_injury_error(army_patient_injuries, army_injury_distributions)
+    plot_injury_error(army_injury_error, f"./results/army_injuries_of_population_of_{population_size}")
 
 
 def synthetic_data_generation(size: int, distributions: dict) -> dict:
@@ -293,207 +294,181 @@ def plot_population_error(population_error: dict, results_stem: str):
     _create_report(f"{results_stem}_sex", data, fields, headings)
 
 
-def generate_synthetic_injuries(population_size: int, distributions: dict) -> dict:
-    injury_data = {}
+class Injury:
+    __slots__ = ["location", "type", "severity"]
 
+    def __init__(self, location: str, type: str, severity: float):
+        self.location = location
+        self.type = type
+        self.severity = severity
+
+
+def generate_synthetic_injuries(population_size: int, distributions: dict) -> list:
+    # Array or arrays
+    # An array of injuries for each patient
+    patient_injuries = []
+
+    # TODO Assuming only 1 injury for each patient
     injury_locations = rand.choices(list(distributions.keys()),
                                     weights=[value["percent"] for value in distributions.values()],
                                     k=population_size)
 
-    # Generate severities for each injury subtype
-    type_distributions = {}
-    for location, injury in distributions.items():
-        types = injury["types"]
-        type_distributions[location] = {"index": 0,
-                                        "choices": rand.choices(list(types.keys()),
-                                                                weights=[types[t]["percent"] for t in types],
-                                                                k=injury_locations.count(location)),
-                                        "subtypes": {}}
-        choices = type_distributions[location]["choices"]
-        subtypes = type_distributions[location]["subtypes"]
-        value_subtypes = {"name": [], "value": [], "percent": []}
-        for subtype, dist in types.items():
-            severity = dist["severity"]
-            if "mean" in severity:
-                subtypes[subtype] = {"index": 0,
-                                     "choices": np.random.normal(loc=severity["mean"],
-                                                                 scale=severity["std"],
-                                                                 size=choices.count(subtype))}
-            elif "values" in severity:
-                subtypes[subtype] = {"index": 0,
-                                     "choices": rand.choices(severity["values"],
-                                                             weights=severity["percents"],
-                                                             k=choices.count(subtype))}
+    # Generate severities for each injury type
+    ledger = {}
+    for location, injury_distributions in distributions.items():
+        injury_types = injury_distributions["types"]
+        # Generate a single injury type based on each supported location
+        ledger[location] = {"index": 0,
+                            "injuries": rand.choices(list(injury_types.keys()),
+                                                     weights=[injury_types[t]["percent"] for t in injury_types],
+                                                     k=injury_locations.count(location)),
+                            "injury_severities": {}}
+        injuries = ledger[location]["injuries"]
+        injury_severities = ledger[location]["injury_severities"]
+        for injury, dist in injury_types.items():
+            severity_dist = dist["severity"]
+            if "mean" in severity_dist:
+                injury_severities[injury] = {"index": 0,
+                                             "severities": np.random.normal(loc=severity_dist["mean"],
+                                                                            scale=severity_dist["std"],
+                                                                            size=injuries.count(injury))}
+            elif "values" in severity_dist:
+                injury_severities[injury] = {"index": 0,
+                                             "severities": rand.choices(severity_dist["values"],
+                                                                        weights=severity_dist["percents"],
+                                                                        k=injuries.count(injury))}
 
     # Map the types and severities back to the injury locations
     injury_types = []
     injury_severities = []
     for location in injury_locations:
-        injury_type = type_distributions[location]
-        choice = injury_type["choices"][injury_type["index"]]
-        injury_type["index"] += 1
-        injury_types.append(choice)
-        injury_severity = injury_type["subtypes"][choice]
-        severity = injury_severity["choices"][injury_severity["index"]]
-        injury_severity["index"] += 1
+        injury_ledger = ledger[location]
+        injury = injury_ledger["injuries"][injury_ledger["index"]]
+        injury_ledger["index"] += 1
+        injury_types.append(injury)
+        severity_ledger = injury_ledger["injury_severities"][injury]
+        severity = severity_ledger["severities"][severity_ledger["index"]]
+        severity_ledger["index"] += 1
         injury_severities.append(severity)
 
-    injury_data["locations"] = injury_locations
-    injury_data["types"] = injury_types
-    injury_data["severities"] = injury_severities
+    # TODO still assuming 1 injury per patient
+    for i in range(len(injury_locations)):
+        patient_injuries.append([Injury(
+            injury_locations[i],
+            injury_types[i],
+            injury_severities[i])])
 
-    return injury_data
+    return patient_injuries
 
 
-def calculate_synthetic_injury_error(injuries: dict, distributions: dict) -> dict:
+def calculate_synthetic_injury_error(patients_injuries: list, injury_distributions: dict) -> dict:
     error = {}
-    num_injuries = len(injuries["locations"])
 
-    error_location = {}
-    for location, location_distributions in distributions.items():
-        error_location["synthetic_severity_mean"] += injuries
-        error_location["synthetic_distribution"] = 100 * injuries["locations"].count(location) / num_injuries
-        error_location["actual_distribution"] = location_distributions["mean"]
-        error_location["distribution_error"] = error_location["synthetic_distribution"] - error_location["actual_distribution"]
+    # Count everything up, and gather all our severities
+    num_injuries = 0
+    for patient_injuries in patients_injuries:
+        num_injuries += len(patient_injuries)
+        for patient_injury in patient_injuries:
+            if patient_injury.location not in error:
+                error[patient_injury.location] = {"count": 0, "injuries": {}}
+            injury_location = error[patient_injury.location]
+            injury_location["count"] += 1
+            location_injuries = injury_location["injuries"]
+            if patient_injury.type not in location_injuries:
+                location_injuries[patient_injury.type] = {"count": 0, "severities": []}
+            injury = location_injuries[patient_injury.type]
+            injury["count"] += 1
+            injury["severities"].append(patient_injury.severity)
 
-        for injury, injury_distributions in location_distributions.items():
-            error_injury = {}
-            error_injury["actual_mean"] = injury_distributions
+    # Calculate the stats
+    for location, location_distributions in injury_distributions.items():
+        # Injury Location Distributions
+        location_error = error[location]
+        location_error["synthetic_distribution"] = 100 * location_error["count"] / num_injuries
+        location_error["actual_distribution"] = location_distributions["percent"]
+        location_error["distribution_error"] = (location_error["synthetic_distribution"] -
+                                                location_error["actual_distribution"])
+        # Injury Type Distributions
+        location_severities = []
+        injury_distributions = location_distributions["types"]
+        for injury, injury_error in location_error["injuries"].items():
+            injury_error["synthetic_distribution"] = 100 * injury_error["count"] / location_error["count"]
+            injury_error["actual_distribution"] = injury_distributions[injury]["percent"]
+            injury_error["distribution_error"] = (injury_error["synthetic_distribution"] -
+                                                  injury_error["actual_distribution"])
+
+            location_severities.extend(injury_error["severities"])
+            injury_severity = injury_distributions[injury]["severity"]
+
+            if "mean" in injury_severity:
+                injury_error["synthetic_severity_mean"] = np.mean(injury_error["severities"])
+                injury_error["actual_severity_mean"] = injury_severity["mean"]
+                injury_error["severity_mean_error"] = (injury_error["synthetic_severity_mean"] -
+                                                       injury_error["actual_severity_mean"])
+
+            if "std" in injury_severity:
+                injury_error["synthetic_severity_std"] = np.std(injury_error["severities"])
+                injury_error["actual_severity_std"] = injury_severity["std"]
+                injury_error["severity_std_error"] = (injury_error["synthetic_severity_std"] -
+                                                      injury_error["actual_severity_std"])
+
+        if "mean" in location_distributions:
+            location_error["synthetic_severity_mean"] = np.mean(location_severities)
+            location_error["actual_severity_mean"] = location_distributions["mean"]
+            location_error["severity_mean_error"] = (location_error["synthetic_severity_mean"] -
+                                                     location_error["actual_severity_mean"])
+
+        if "std" in location_distributions:
+            location_error["synthetic_severity_std"] = np.std(location_severities)
+            location_error["actual_severity_std"] = location_distributions["std"]
+            location_error["severity_std_error"] = (location_error["synthetic_severity_std"] -
+                                                    location_error["actual_severity_std"])
+
+    return error
 
 
-    actual_severity_mean = [2.69, 2.85, 2.85, 2.05]
+def plot_injury_error(injury_error: dict, results_stem: str):
+    out_dir = Path(results_stem).parent
+    out_dir.mkdir(exist_ok=True)
 
-    # Location of Injury
-    count_injury_locations = population_data.value_counts("Injury Location")
-    injury_location_counts = [count_injury_locations["HeadAndNeck"],
-                              count_injury_locations["Abdomen"],
-                              count_injury_locations["Thorax"],
-                              count_injury_locations["Extremity"]]
-    
-    number_injuries = len(population_data)
-    severity = population_data["Injury Severity"]
+    def _dict_field_value(d: dict, f: str, fmt: str):
+        if f in d:
+            return f"{d[f]:{fmt}}"
+        return ""
 
-    percent_injury_locations = []
-    error_percent_injury_locations = []
-    for i in range(len(injury_location_counts)):
-        percent_injury_locations.append(100*injury_location_counts[i]/number_injuries)
-        error_percent_injury_locations.append(percent_injury_locations[i] - actual_injury_location_percents[i])
-
-    count_injury_types = population_data.value_counts("Injury Type")
-    
-    abdomen_hemorrhage = 0
-    thorax_hemorrhage = 0
-    extremity_hemorrhage = 0
-    head_neck_severity = 0
-    thorax_severity = 0
-    abdomen_severity = 0
-    extremity_severity = 0
-    injury_type = population_data["Injury Type"]
-    injury_location = population_data["Injury Location"]
-    for i in range(len(injury_type)):
-        i_type = injury_type[i]
-        i_loc = injury_location[i]
-        if i_loc == "Abdomen":
-            abdomen_severity = abdomen_severity + severity[i]
-            if i_type == "Hemorrhage":
-                abdomen_hemorrhage = abdomen_hemorrhage + 1
-        elif i_loc == "Thorax":
-            thorax_severity = thorax_severity + severity[i]
-            if i_type == "Hemorrhage":
-                thorax_hemorrhage = thorax_hemorrhage + 1
-        elif i_loc == "Extremity":
-            extremity_severity = extremity_severity + severity[i]
-            if i_type == "Hemorrhage":
-                extremity_hemorrhage = extremity_hemorrhage + 1
-        elif i_loc == "HeadAndNeck":
-            head_neck_severity = head_neck_severity + severity[i]
+    # Error Table
+    def _error_row(name: str, error: dict, b: bool):
+        if b:
+            injury_location = name
+            injury_type = ""
         else:
-            print("Unknown injury location " + i_loc)
-
-    injury_head_neck_type_counts = [count_injury_types["TBI"],
-                                    count_injury_types["Airway Obstruction"],
-                                    count_injury_types["Superficial Injuries"]]
-    head_neck_injury_total = sum(injury_head_neck_type_counts)
-    injury_abdomen_type_counts = [abdomen_hemorrhage,
-                                  count_injury_types["Lacerations/Contusions"]]
-    abdomen_injury_total = sum(injury_abdomen_type_counts)
-    injury_thorax_type_counts = [count_injury_types["Pneumothorax"],
-                                 count_injury_types["Pulmonary Contusion"],
-                                 count_injury_types["Fractures"],
-                                 count_injury_types["Hemothorax"],
-                                 thorax_hemorrhage,
-                                 count_injury_types["Spinal Injury"]]
-    thorax_injury_total = sum(injury_thorax_type_counts)
-    injury_extremity_type_counts = [extremity_hemorrhage,
-                                    count_injury_types["Fractures/Dislocations"],
-                                    count_injury_types["Contusions/Sprains/Strains"],
-                                    count_injury_types["Burns/Nerves"]]
-    extremity_injury_total = sum(injury_extremity_type_counts)
-
-    severity_mean = [head_neck_severity/head_neck_injury_total,
-                     thorax_severity/thorax_injury_total,
-                     abdomen_severity/abdomen_injury_total,
-                     extremity_severity/extremity_injury_total]
-    severity_mean_error = []
-    for i in range(len(severity_mean)):
-        severity_mean_error.append(severity_mean[i] - actual_severity_mean[i])
-
-    percent_injuries = []
-    error_percent_injuries = []
-    actual_percent_injuries = []
-    # start with head neck injuries
-    percent_injuries.append(percent_injury_locations[0])
-    error_percent_injuries.append(error_percent_injury_locations[0])
-    actual_percent_injuries.append(actual_injury_location_percents[0])
-    for i in range(len(injury_head_neck_type_counts)):
-        val = 100*injury_head_neck_type_counts[i]/head_neck_injury_total
-        percent_injuries.append(val)
-        error_percent_injuries.append(val - actual_injury_head_neck_percents[i])
-        actual_percent_injuries.append(actual_injury_head_neck_percents[i])
-
-    # Add Thorax Injuries
-    percent_injuries.append(percent_injury_locations[1])
-    error_percent_injuries.append(error_percent_injury_locations[1])
-    actual_percent_injuries.append(actual_injury_location_percents[1])
-    for i in range(len(injury_thorax_type_counts)):
-        val = 100*injury_thorax_type_counts[i]/thorax_injury_total
-        percent_injuries.append(val)
-        error_percent_injuries.append(val - actual_injury_thorax_percents[i])
-        actual_percent_injuries.append(actual_injury_thorax_percents[i])
-
-    # Add Abdomen Injuries
-    percent_injuries.append(percent_injury_locations[2])
-    error_percent_injuries.append(error_percent_injury_locations[2])
-    actual_percent_injuries.append(actual_injury_location_percents[2])
-    for i in range(len(injury_abdomen_type_counts)):
-        val = 100*injury_abdomen_type_counts[i]/abdomen_injury_total
-        percent_injuries.append(val)
-        error_percent_injuries.append(val - actual_injury_abdomen_percents[i])
-        actual_percent_injuries.append(actual_injury_abdomen_percents[i])
-
-    # Add Extremity Injuries
-    percent_injuries.append(percent_injury_locations[3])
-    error_percent_injuries.append(error_percent_injury_locations[3])
-    actual_percent_injuries.append(actual_injury_location_percents[3])
-    for i in range(len(injury_extremity_type_counts)):
-        val = 100*injury_extremity_type_counts[i]/extremity_injury_total
-        percent_injuries.append(val)
-        error_percent_injuries.append(val - actual_injury_extremity_percents[i])
-        actual_percent_injuries.append(actual_injury_extremity_percents[i])
-
-    # Create table for validation
-    location_descriptors = ["Head and Neck", "", "", "", "Thorax", "", "", "", "", "", "", "Abdomen", "", "", "Extremity", "", "", "", ""]
-    severity_mean_list = [severity_mean[0], "", "", "", severity_mean[1], "", "", "", "", "", "", severity_mean[2], "", "", severity_mean[3], "", "", "", ""]
-    actual_severity_mean_list = [actual_severity_mean[0], "", "", "", actual_severity_mean[1], "", "", "", "", "", "", actual_severity_mean[2], "", "", actual_severity_mean[3], "", "", "", ""]
-    severity_error_list = [severity_mean_error[0], "", "", "", severity_mean_error[1], "", "", "", "", "", "", severity_mean_error[2], "", "", severity_mean_error[3], "", "", "", ""]
-    type_descriptors = ["", "TBI", "Airway Obstruction", "Superficial Injuries", "", "Pneumothorax", "Pulmonary Contusion", "Fractures", "Hemothorax", "Hemorrhage", "Spinal Injury","", "Hemorrhage", "Lacerations/Contusions", "", "Hemorrhage", "Fractures/Dislocations", "Contusions/Sprains/Strains", "Burns/Nerves"]
-    injury_location_validation_table = pd.DataFrame({"Injury Locations": location_descriptors, "Mean Injury Severity": severity_mean_list, "Actual Severity Mean": actual_severity_mean_list, "Severity Error": severity_error_list,"Injury Types": type_descriptors, "Synthetic Injury Distribution (%)": percent_injuries, "Actual Injury Distribution (%)": actual_percent_injuries, "Distribution Error": error_percent_injuries})
-    print(injury_location_validation_table)
-    injury_location_validation_table.to_csv(synthetic_data_file.stem + "_InjuryValidationTable.csv", index=False)
-    injury_location_validation_table.to_html(synthetic_data_file.stem + "_InjuryValidationTable.html", index=False)
+            injury_location = ""
+            injury_type = name
+        return (injury_location, injury_type,
+                _dict_field_value(error, "synthetic_distribution", ".1f"),
+                _dict_field_value(error, "actual_distribution", ".1f"),
+                _dict_field_value(error, "distribution_error", ".1f"),
+                _dict_field_value(error, "synthetic_severity_mean", ".3f"),
+                _dict_field_value(error, "actual_severity_mean", ".3f"),
+                _dict_field_value(error, "severity_mean_error", ".3f"),
+                _dict_field_value(error, "synthetic_severity_std", ".3f"),
+                _dict_field_value(error, "actual_severity_std", ".3f"),
+                _dict_field_value(error, "severity_std_error", ".3f"))
+    data = []
+    headings = ["Injury Location", "Injury Type",
+                "Synthetic Distribution %", "Actual Distribution %", "Distribution % Error",
+                "Synthetic Severity Mean", "Actual Severity Mean", "Severity Mean Error",
+                "Synthetic Severity SD", "Actual Severity SD", "Severity SD Error"]
+    fields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # All headings
+    for location in sorted(injury_error.keys()):
+        data.append(_error_row(location, injury_error[location], True))
+        injuries = injury_error[location]["injuries"]
+        for injury in sorted(injuries.keys()):
+            data.append(_error_row(injury, injuries[injury], False))
+    _create_report(f"{results_stem}_statistics", data, fields, headings)
 
 
-def _create_report(basename: str, data, fields, headings, widths=list):
+def _create_report(basename: str, data, fields, headings, widths=None):
     align = []
     for i in range(len(fields)):
         align.append(('^', '^'))
@@ -509,8 +484,9 @@ def _create_report(basename: str, data, fields, headings, widths=list):
         .set_properties(subset=wrapped_headers[1:], **{'text-align': 'center'}) \
         .set_properties(subset=[wrapped_headers[0]], **{'text-align': 'left'}) \
         .set_properties(**{'border': '1px black solid'})
-    for i, width in enumerate(widths):
-        df_styler = df_styler.set_properties(subset=wrapped_headers[i], **{'width': width})
+    if widths:
+        for i, width in enumerate(widths):
+            df_styler = df_styler.set_properties(subset=wrapped_headers[i], **{'width': width})
     df_styler.set_table_styles(table_styles=[
         {'selector': 'th.col_heading', 'props': 'text-align: center; border: 1px black solid;'},
     ], overwrite=False)
