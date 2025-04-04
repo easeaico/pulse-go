@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import random as rand
-import sys
+import statistics
 
 from pathlib import Path
 from pulse.cdm.utils.markdown import table
@@ -53,15 +53,29 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-    population_size = 4000
-    #army_patients = synthetic_data_generation(population_size, army_population_distributions)
-    #army_population_error = calculate_synthetic_population_error(army_patients, army_population_distributions)
-    #plot_population_error(army_population_error, f"./results/army_population_of_{population_size}")
+    # Run a measurement study
+    if True:
+        # Measure error for various population sizes
+        for p in range(1000, 10001, 1000):
+            i = 10
+            _log.info(f"Measuring error for a population size of {p} using {i} iterations")
+            measure_error(iterations=i, population_size=p,
+                          population_distributions=army_population_distributions,
+                          injury_distributions=army_injury_distributions,
+                          results_stem=f"./results/measurements/{p}")
 
-    army_patient_injuries = generate_synthetic_injuries(population_size, army_injury_distributions)
-    army_injury_error = calculate_synthetic_injury_error(army_patient_injuries, army_injury_distributions)
-    plot_injury_error(army_injury_error, f"./results/army_injuries_of_population_of_{population_size}")
+    # Generate a data set
+    if False:
+        population_size = 4000
+        army_patients = synthetic_data_generation(population_size, army_population_distributions)
+        army_population_error = calculate_synthetic_population_error(army_patients, army_population_distributions)
+        plot_population_error(army_population_error, f"./results/army_population_of_{population_size}")
+
+        army_patient_injuries = generate_synthetic_injuries(population_size, army_injury_distributions)
+        army_injury_error = calculate_synthetic_injury_error(army_patient_injuries, army_injury_distributions)
+        plot_injury_error(army_injury_error, f"./results/army_injuries_of_population_of_{population_size}")
 
 
 def synthetic_data_generation(size: int, distributions: dict) -> dict:
@@ -79,7 +93,7 @@ def synthetic_data_generation(size: int, distributions: dict) -> dict:
     else:
         _log.error("Must provide the percent percentage of either male's or female's")
         return population_data
-    sexes = rand.choices(["male", "female"], weights=sex_percent, k=size)
+    sexes = _weighted_random_choices(choices=["male", "female"], percents=sex_percent, size=size)
     num_females = sexes.count("female")
     num_males = sexes.count("male")
 
@@ -136,7 +150,7 @@ def synthetic_data_generation(size: int, distributions: dict) -> dict:
         age_bins.append(f"{age_min}-{age_max}")
 
     ages = []
-    age_groups = rand.choices(age_bins, weights=distributions["age"]["percents"], k=size)
+    age_groups = _weighted_random_choices(choices=age_bins, percents=distributions["age"]["percents"], size=size)
     for age_group in age_groups:
         idx = age_bins.index(age_group)
         low = distributions["age"]["bins"][idx]
@@ -309,9 +323,10 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
     patient_injuries = []
 
     # TODO Assuming only 1 injury for each patient
-    injury_locations = rand.choices(list(distributions.keys()),
-                                    weights=[value["percent"] for value in distributions.values()],
-                                    k=population_size)
+    injury_locations = _weighted_random_choices(
+        choices=list(distributions.keys()),
+        percents=[value["percent"] for value in distributions.values()],
+        size=population_size)
 
     # Generate severities for each injury type
     ledger = {}
@@ -319,9 +334,10 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
         injury_types = injury_distributions["types"]
         # Generate a single injury type based on each supported location
         ledger[location] = {"index": 0,
-                            "injuries": rand.choices(list(injury_types.keys()),
-                                                     weights=[injury_types[t]["percent"] for t in injury_types],
-                                                     k=injury_locations.count(location)),
+                            "injuries": _weighted_random_choices(
+                                choices=list(injury_types.keys()),
+                                percents=[injury_types[t]["percent"] for t in injury_types],
+                                size=injury_locations.count(location)),
                             "injury_severities": {}}
         injuries = ledger[location]["injuries"]
         injury_severities = ledger[location]["injury_severities"]
@@ -334,9 +350,10 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
                                                                             size=injuries.count(injury))}
             elif "values" in severity_dist:
                 injury_severities[injury] = {"index": 0,
-                                             "severities": rand.choices(severity_dist["values"],
-                                                                        weights=severity_dist["percents"],
-                                                                        k=injuries.count(injury))}
+                                             "severities": _weighted_random_choices(
+                                                 choices=severity_dist["values"],
+                                                 percents=severity_dist["percents"],
+                                                 size=injuries.count(injury))}
 
     # Map the types and severities back to the injury locations
     injury_types = []
@@ -468,6 +485,162 @@ def plot_injury_error(injury_error: dict, results_stem: str):
     _create_report(f"{results_stem}_statistics", data, fields, headings)
 
 
+def measure_error(iterations: int, population_size: int,
+                  population_distributions: dict,  injury_distributions: dict,
+                  results_stem: str) -> dict:
+    out_dir = Path(results_stem).parent
+    out_dir.mkdir(exist_ok=True)
+
+    error = {
+        "demographics": {"female_distribution": {"min": None, "max": None, "mean": None, "errors": []},
+                         "female_height_mean": {"min": None, "max": None, "mean": None, "errors": []},
+                         "female_height_std": {"min": None, "max": None, "mean": None, "errors": []},
+                         "female_bmi_mean": {"min": None, "max": None, "mean": None, "errors": []},
+                         "female_bmi_std": {"min": None, "max": None, "mean": None, "errors": []},
+                         "male_distribution": {"min": None, "max": None, "mean": None, "errors": []},
+                         "male_height_mean": {"min": None, "max": None, "mean": None, "errors": []},
+                         "male_height_std": {"min": None, "max": None, "mean": None, "errors": []},
+                         "male_bmi_mean": {"min": None, "max": None, "mean": None, "errors": []},
+                         "male_bmi_std": {"min": None, "max": None, "mean": None, "errors": []},
+                         "heart_rate_mean": {"min": None, "max": None, "mean": None, "errors": []},
+                         "heart_rate_std": {"min": None, "max": None, "mean": None, "errors": []}},
+        "injuries": {}
+    }
+
+    demographics = error["demographics"]
+    injuries = error["injuries"]
+    for i in range(iterations):
+        patients = synthetic_data_generation(population_size, population_distributions)
+        population_error = calculate_synthetic_population_error(patients, population_distributions)
+
+        demographics["female_distribution"]["errors"].append(population_error["sex"]["female"]["count"]["error"])
+        demographics["female_height_mean"]["errors"].append(population_error["sex"]["female"]["height"]["mean_error"])
+        demographics["female_height_std"]["errors"].append(population_error["sex"]["female"]["height"]["std_error"])
+        demographics["female_bmi_mean"]["errors"].append(population_error["sex"]["female"]["bmi"]["mean_error"])
+        demographics["female_bmi_std"]["errors"].append(population_error["sex"]["female"]["bmi"]["std_error"])
+        demographics["male_distribution"]["errors"].append(population_error["sex"]["female"]["count"]["error"])
+        demographics["male_height_mean"]["errors"].append(population_error["sex"]["female"]["height"]["mean_error"])
+        demographics["male_height_std"]["errors"].append(population_error["sex"]["female"]["height"]["std_error"])
+        demographics["male_bmi_mean"]["errors"].append(population_error["sex"]["female"]["bmi"]["mean_error"])
+        demographics["male_bmi_std"]["errors"].append(population_error["sex"]["female"]["bmi"]["std_error"])
+        demographics["heart_rate_mean"]["errors"].append(population_error["heart_rate"]["mean_error"])
+        demographics["heart_rate_std"]["errors"].append(population_error["heart_rate"]["std_error"])
+
+        patient_injuries = generate_synthetic_injuries(population_size, injury_distributions)
+        injury_error = calculate_synthetic_injury_error(patient_injuries, injury_distributions)
+
+        for location, location_stats in injury_error.items():
+            if location not in injuries:
+                injuries[location] = {"types": {},
+                                      "distribution": {"min": None, "max": None, "mean": None, "errors": []},
+                                      "severity_mean": {"min": None, "max": None, "mean": None, "errors": []},
+                                      "severity_std": {"min": None, "max": None, "mean": None, "errors": []}}
+            location_measurements = injuries[location]
+            if "distribution_error" in location_stats:
+                location_measurements["distribution"]["errors"].append(location_stats["distribution_error"])
+            if "severity_mean_error" in location_stats:
+                location_measurements["severity_mean"]["errors"].append(location_stats["severity_mean_error"])
+            if "severity_std_error" in location_stats:
+                location_measurements["severity_std"]["errors"].append(location_stats["severity_std_error"])
+
+            injury_types = location_measurements["types"]
+            for injury, injury_stats in location_stats["injuries"].items():
+                if injury not in injury_types:
+                    injury_types[injury] = {"distribution": {"min": None, "max": None, "mean": None, "errors": []},
+                                            "severity_mean": {"min": None, "max": None, "mean": None, "errors": []},
+                                            "severity_std": {"min": None, "max": None, "mean": None, "errors": []}}
+                injury_measurements = injury_types[injury]
+                if "distribution_error" in injury_stats:
+                    injury_measurements["distribution"]["errors"].append(injury_stats["distribution_error"])
+                if "severity_mean_error" in injury_stats:
+                    injury_measurements["severity_mean"]["errors"].append(injury_stats["severity_mean_error"])
+                if "severity_std_error" in injury_stats:
+                    injury_measurements["severity_std"]["errors"].append(injury_stats["severity_std_error"])
+
+    def accumulate(measurements: dict):
+        errors = measurements["errors"]
+        if len(errors) > 0:
+            measurements["min"] = min(errors, key=abs)
+            measurements["max"] = max(errors, key=abs)
+            measurements["mean"] = statistics.mean(errors)
+
+    accumulate(demographics["female_distribution"])
+    accumulate(demographics["female_height_mean"])
+    accumulate(demographics["female_height_std"])
+    accumulate(demographics["female_bmi_mean"])
+    accumulate(demographics["female_bmi_std"])
+    accumulate(demographics["male_distribution"])
+    accumulate(demographics["male_height_mean"])
+    accumulate(demographics["male_height_std"])
+    accumulate(demographics["male_bmi_mean"])
+    accumulate(demographics["male_bmi_std"])
+    accumulate(demographics["heart_rate_mean"])
+    accumulate(demographics["heart_rate_std"])
+
+    for location_measurements in injuries.values():
+        accumulate(location_measurements["distribution"])
+        accumulate(location_measurements["severity_mean"])
+        accumulate(location_measurements["severity_std"])
+
+        for injury_measurements in location_measurements["types"].values():
+            accumulate(injury_measurements["distribution"])
+            accumulate(injury_measurements["severity_mean"])
+            accumulate(injury_measurements["severity_std"])
+
+    demographic_rows = []
+    demographic_headings = ["Descriptor",
+                            "Min", "Max", "Mean",]
+    demographic_fields = [0, 1, 2, 3]  # All headings
+    for descriptor, stats in demographics.items():
+        fmt = ".1f" if "distribution" in descriptor else ".3f"
+        demographic_rows.append((descriptor,
+                                 f"{stats['min']:{fmt}}",
+                                 f"{stats['max']:{fmt}}",
+                                 f"{stats['mean']:{fmt}}"))
+    _log.info(f"\tGenerating demographic reports...")
+    _create_report(f"{results_stem}_demographics", demographic_rows, demographic_fields, demographic_headings)
+
+    def _injury_dict_field_value(d: dict, f1: str, f2: str, fmt: str):
+        if f1 in d and d[f1][f2]:
+            return f"{d[f1][f2]:{fmt}}"
+        return ""
+
+    # Error Table
+    def _injury_row(name: str, m: dict, b: bool):
+        if b:
+            injury_location = name
+            injury_type = ""
+        else:
+            injury_location = ""
+            injury_type = name
+        return (injury_location, injury_type,
+                _injury_dict_field_value(m, "distribution", "min", ".1f"),
+                _injury_dict_field_value(m, "distribution", "max", ".1f"),
+                _injury_dict_field_value(m, "distribution", "mean", ".1f"),
+                _injury_dict_field_value(m, "severity_mean", "min", ".3f"),
+                _injury_dict_field_value(m, "severity_mean", "max", ".3f"),
+                _injury_dict_field_value(m, "severity_mean", "mean", ".3f"),
+                _injury_dict_field_value(m, "severity_std", "min", ".3f"),
+                _injury_dict_field_value(m, "severity_std", "max", ".3f"),
+                _injury_dict_field_value(m, "severity_std", "mean", ".3f"))
+
+    injury_rows = []
+    injury_headings = ["Injury Location", "Injury Type",
+                       "Min Distribution %", "Max Distribution %", "Mean Distribution %",
+                       "Min Severity Mean", "Max Severity Mean", "Mean Severity Mean",
+                       "Min Severity SD", "Max Severity SD", "Mean Severity SD"]
+    injury_fields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # All headings
+    for location in sorted(injuries.keys()):
+        injury_rows.append(_injury_row(location, injuries[location], True))
+        types = injuries[location]["types"]
+        for type_ in sorted(types.keys()):
+            injury_rows.append(_injury_row(type_, types[type_], False))
+    _log.info(f"\tGenerating injury reports...")
+    _create_report(f"{results_stem}_injuries", injury_rows, injury_fields, injury_headings)
+
+    return error
+
+
 def _create_report(basename: str, data, fields, headings, widths=None):
     align = []
     for i in range(len(fields)):
@@ -493,6 +666,36 @@ def _create_report(basename: str, data, fields, headings, widths=None):
     img_filename = str(basename) + ".png"
     _log.info(f"Writing {img_filename}")
     dfi.export(df_styler, img_filename, table_conversion='playwright', dpi=600)
+
+
+def _weighted_random_choices(choices: list, size: int, percents: list, algo: int = 0) -> list:
+
+    def _normalize_list(data: list):
+        if len(data) == 1:
+            return [1.0]
+
+        min_val = min(data)
+        max_val = max(data)
+
+        if min_val == max_val:
+            return [0.0] * len(data)
+
+        total = sum(data)
+        normalized_data = [x / total for x in data]
+        return normalized_data
+
+    if algo == 0:
+        try:
+            result = list(np.random.choice(choices, size=size, p=_normalize_list(percents)))
+            return result
+        except ValueError as e:
+            _log.warning(f"{e}")
+    elif algo == 1:
+        result = rand.choices(choices, weights=percents, k=size)
+        return result
+
+    _log.error("Unknown algo for _weighted_randomness")
+    return [0.0] * size
 
 
 if __name__ == "__main__":
