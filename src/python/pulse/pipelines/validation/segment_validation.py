@@ -261,14 +261,14 @@ def evaluate(seg_id: int,
                 elif '0' in tgt_seg:
                     seg = f"{ref[0]} Baseline"
                 else:
-                    seg = f"Segment {ref[1]}"
+                    seg = f"Segment{ref[1]}"
             else:
                 if '-1' in tgt_seg:
                     seg = "Healthy"
                 elif '0' in tgt_seg:
                     seg = "Baseline"
                 else:
-                    seg = f"Segment {tgt_seg}"
+                    seg = f"Segment{tgt_seg}"
             compare_type = compare_type.replace(referenced_segments[0], seg)
             expression_expected_str = f"{compare_type} ({expression_expected_str})"
         elif compare_type:

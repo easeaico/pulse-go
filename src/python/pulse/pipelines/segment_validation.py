@@ -214,7 +214,7 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
         process_file(
             fpath=md_file,
             ref_dir=Path("./validation/tables"),
-            dest_dir=Path("./validation/markdown"),
+            dest_dir=Path(f"./validation/markdown/{xls_dir.name}"),
             replace_refs=False
         )
 
@@ -288,10 +288,6 @@ def main():
     elif opts.markdown:
         exec_opt = eExecOpt.MarkdownOnly
 
-    # Clean out our results directory
-    mk_dir = "./validation/markdown"
-    if Path(mk_dir).exists():
-        shutil.rmtree(mk_dir)
     for folder in folders:
         segment_validation_pipeline(
             folder=Path(folder),
