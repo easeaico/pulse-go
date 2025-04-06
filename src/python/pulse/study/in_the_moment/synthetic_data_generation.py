@@ -1,14 +1,17 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+import copy
 
 import dataframe_image as dfi
 import logging
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import random as rand
 import statistics
 
+from itertools import combinations
 from pathlib import Path
 from pulse.cdm.utils.markdown import table
 
@@ -31,7 +34,7 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
         "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.25}},
         "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}}
     }},
-    "thorax": {"percent": 8.6, "mean": 2.85, "types": {
+    "thorax": {"percent": 8.6, "mean": 2.85, "polytrauma": 2.3, "types": {
         "pneumothorax": {"percent": 51.8, "severity": {"mean": 2.85, "std": 0.25}},
         "pulmonary_contusion": {"percent": 50.2, "severity": {"mean": 2.85, "std": 0.25}},
         "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.25}},
@@ -55,8 +58,10 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
+    test_polytrauma()
+
     # Run a measurement study
-    if True:
+    if False:
         # Measure error for various population sizes
         for p in range(1000, 10001, 1000):
             i = 10
@@ -334,46 +339,60 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
         injury_types = injury_distributions["types"]
         # Generate a single injury type based on each supported location
         ledger[location] = {"index": 0,
-                            "injuries": _weighted_random_choices(
-                                choices=list(injury_types.keys()),
-                                percents=[injury_types[t]["percent"] for t in injury_types],
-                                size=injury_locations.count(location)),
                             "injury_severities": {}}
+        if "polytrauma" in injury_distributions:
+            choices, percents = generate_combinations(injury_types,
+                                                      injury_distributions["polytrauma"],
+                                                      injury_locations.count(location))
+            ledger[location]["injuries"] = _weighted_random_choices(choices=choices,
+                                                                    percents=percents,
+                                                                    size=injury_locations.count(location))
+        else:
+            ledger[location]["injuries"] = _weighted_random_choices(
+                                                            choices=list(injury_types.keys()),
+                                                            percents=[injury_types[t]["percent"] for t in injury_types],
+                                                            size=injury_locations.count(location))
         injuries = ledger[location]["injuries"]
         injury_severities = ledger[location]["injury_severities"]
-        for injury, dist in injury_types.items():
+        for injury_type, dist in injury_types.items():
             severity_dist = dist["severity"]
             if "mean" in severity_dist:
-                injury_severities[injury] = {"index": 0,
+                injury_severities[injury_type] = {"index": 0,
                                              "severities": np.random.normal(loc=severity_dist["mean"],
                                                                             scale=severity_dist["std"],
-                                                                            size=injuries.count(injury))}
+                                                                            size=_count(injuries, injury_type))}
             elif "values" in severity_dist:
-                injury_severities[injury] = {"index": 0,
+                injury_severities[injury_type] = {"index": 0,
                                              "severities": _weighted_random_choices(
                                                  choices=severity_dist["values"],
                                                  percents=severity_dist["percents"],
-                                                 size=injuries.count(injury))}
+                                                 size=_count(injuries, injury_type))}
 
     # Map the types and severities back to the injury locations
-    injury_types = []
-    injury_severities = []
     for location in injury_locations:
-        injury_ledger = ledger[location]
-        injury = injury_ledger["injuries"][injury_ledger["index"]]
-        injury_ledger["index"] += 1
-        injury_types.append(injury)
-        severity_ledger = injury_ledger["injury_severities"][injury]
-        severity = severity_ledger["severities"][severity_ledger["index"]]
-        severity_ledger["index"] += 1
-        injury_severities.append(severity)
+        type_ledger = ledger[location]
+        injury_type = type_ledger["injuries"][type_ledger["index"]]
+        type_ledger["index"] += 1
+        if isinstance(injury_type, str):
+            severity_ledger = type_ledger["injury_severities"][injury_type]
+            injury_severity = severity_ledger["severities"][severity_ledger["index"]]
+            severity_ledger["index"] += 1
 
-    # TODO still assuming 1 injury per patient
-    for i in range(len(injury_locations)):
-        patient_injuries.append([Injury(
-            injury_locations[i],
-            injury_types[i],
-            injury_severities[i])])
+            patient_injuries.append([Injury(
+                location,
+                injury_type,
+                injury_severity)])
+        else:
+            patient_injuries.append([])
+            for injury_type_str in injury_type:
+                severity_ledger = type_ledger["injury_severities"][injury_type_str]
+                injury_severity = severity_ledger["severities"][severity_ledger["index"]]
+                severity_ledger["index"] += 1
+
+                patient_injuries[-1].append(Injury(
+                    location,
+                    injury_type_str,
+                    injury_severity))
 
     return patient_injuries
 
@@ -670,32 +689,129 @@ def _create_report(basename: str, data, fields, headings, widths=None):
 
 def _weighted_random_choices(choices: list, size: int, percents: list, algo: int = 0) -> list:
 
-    def _normalize_list(data: list):
-        if len(data) == 1:
-            return [1.0]
+    # Check to see if this list has any tuples
+    # Remove the tuples. np.random does not like tuples in the choice list
+    has_tuple = False
+    for idx, item in enumerate(choices):
+        if isinstance(item, tuple):
+            has_tuple = True
+            if isinstance(item, tuple):
+                choices[idx] = ";".join(item)
 
-        min_val = min(data)
-        max_val = max(data)
-
-        if min_val == max_val:
-            return [0.0] * len(data)
-
-        total = sum(data)
-        normalized_data = [x / total for x in data]
-        return normalized_data
-
+    result = None
     if algo == 0:
         try:
             result = list(np.random.choice(choices, size=size, p=_normalize_list(percents)))
-            return result
         except ValueError as e:
             _log.warning(f"{e}")
     elif algo == 1:
         result = rand.choices(choices, weights=percents, k=size)
+
+    if result:
+        if has_tuple:  # Turn choices and results back into tuples
+            for idx, item in enumerate(choices):
+                if ';' in item:
+                    choices[idx] = tuple(item.split(";"))
+            for idx, item in enumerate(result):
+                if ';' in item:
+                    result[idx] = tuple(item.split(";"))
         return result
 
     _log.error("Unknown algo for _weighted_randomness")
     return [0.0] * size
+
+
+def generate_combinations(choices: list, max_in_a_choice: int) -> list:
+
+    selections = copy.deepcopy(choices)
+    for i in range(2, max_in_a_choice+1, 1):
+        _log.info(f"Creating sets of {i} injuries")
+        selections.extend(list(combinations(choices, i)))
+
+    return selections
+
+
+def _normalize_list(data: list):
+    if len(data) == 1:
+        return [1.0]
+
+    min_val = min(data)
+    max_val = max(data)
+
+    if min_val == max_val:
+        return [0.0] * len(data)
+
+    total = sum(data)
+    normalized_data = [x / total for x in data]
+    return normalized_data
+
+
+def _count(list_: list, find: str = None):
+    # if find is None, we count all items
+    count = 0
+    for i in list_:
+        if isinstance(i, tuple):
+            for t in i:
+                if not find or t == find:
+                    count += 1
+        else:
+            if not find or i == find:
+                count += 1
+    return count
+
+
+def test_polytrauma():
+    injury_distributions = army_injury_distributions["thorax"]
+    injury_types = injury_distributions["types"]
+    num_patients_with_thorax_injuries = 500
+    max_polytrauma_injuries = int(math.ceil(injury_distributions["polytrauma"]))
+
+    thorax_polytrauma = generate_combinations(list(injury_types.keys()),
+                                              max_polytrauma_injuries)
+
+    thorax_polytrauma_percents = []
+    polytrauma_counts = [0] * max_polytrauma_injuries
+    for i in thorax_polytrauma:
+        if isinstance(i, str):
+            polytrauma_counts[0] += 1
+        else:
+            polytrauma_counts[len(i)-1] += 1
+    # if we don't care what injury types are in the poly trauma
+    for i in thorax_polytrauma:
+        if isinstance(i, str):
+            thorax_polytrauma_percents.append(0.125 / polytrauma_counts[0])  # 1/8
+            # thorax_polytrauma_percents[-1] *= (injury_types[i]["percent"] * 0.01)
+        else:
+            if len(i) == 2:
+                thorax_polytrauma_percents.append(0.5 / polytrauma_counts[1])  # 1/2
+            else:
+                thorax_polytrauma_percents.append(0.375 / polytrauma_counts[2])  # 3/8
+            # for ii in i:
+            #     thorax_polytrauma_percents[-1] *= (injury_types[ii]["percent"] * 0.01)
+    thorax_injuries = _weighted_random_choices(choices=thorax_polytrauma,
+                                               percents=thorax_polytrauma_percents,
+                                               size=num_patients_with_thorax_injuries)
+
+    num_thorax_injuries = _count(thorax_injuries)
+    _log.info(f"Total number of injuries for all patient: {num_thorax_injuries}")
+    polytrauma_patients = [0] * max_polytrauma_injuries
+    for i in thorax_injuries:
+        if isinstance(i, str):
+            polytrauma_patients[0] += 1
+        else:
+            polytrauma_patients[len(i)-1] += 1
+    for i, c in enumerate(polytrauma_patients):
+        _log.info(f"  There are {c} patients with {i+1} injuries")
+    _log.info(f"Mean number of injuries per patient: {num_thorax_injuries/num_patients_with_thorax_injuries}")
+
+    for injury_type, distribution in injury_types.items():
+        num_injuries = _count(thorax_injuries, injury_type)
+        _log.info(f"There are {num_injuries} {injury_type} injuries")
+        synthetic_distribution = 100 * num_injuries/num_thorax_injuries
+        _log.info(f" Synthetic distribution: {synthetic_distribution}%")
+        actual_distribution = injury_types[injury_type]['percent']
+        _log.info(f" Actual distribution: {actual_distribution}%")
+        _log.info(f" Distribution Error: {synthetic_distribution - actual_distribution}%")
 
 
 if __name__ == "__main__":
