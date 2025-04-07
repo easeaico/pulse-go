@@ -34,7 +34,7 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
         "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.25}},
         "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}}
     }},
-    "thorax": {"percent": 8.6, "mean": 2.85, "polytrauma": 2.3, "types": {
+    "thorax": {"percent": 8.6, "mean": 2.85, "polytrauma": {"max": 4, "distribution": (1/2.3)}, "types": {
         "pneumothorax": {"percent": 51.8, "severity": {"mean": 2.85, "std": 0.25}},
         "pulmonary_contusion": {"percent": 50.2, "severity": {"mean": 2.85, "std": 0.25}},
         "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.25}},
@@ -58,7 +58,7 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-    test_polytrauma()
+    #  test_polytrauma()
 
     # Run a measurement study
     if False:
@@ -72,7 +72,7 @@ def main():
                           results_stem=f"./results/measurements/{p}")
 
     # Generate a data set
-    if False:
+    if True:
         population_size = 4000
         army_patients = synthetic_data_generation(population_size, army_population_distributions)
         army_population_error = calculate_synthetic_population_error(army_patients, army_population_distributions)
@@ -340,33 +340,63 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
         # Generate a single injury type based on each supported location
         ledger[location] = {"index": 0,
                             "injury_severities": {}}
+        num_injured = injury_locations.count(location)
         if "polytrauma" in injury_distributions:
-            choices, percents = generate_combinations(injury_types,
-                                                      injury_distributions["polytrauma"],
-                                                      injury_locations.count(location))
-            ledger[location]["injuries"] = _weighted_random_choices(choices=choices,
-                                                                    percents=percents,
-                                                                    size=injury_locations.count(location))
+            # Generate a list of injury counts for each patient
+            max_injuries_per_patient = injury_distributions["polytrauma"]["max"]
+            polytrauma_distribution = injury_distributions["polytrauma"]["distribution"]
+            num_patient_injuries = np.random.binomial(max_injuries_per_patient-1,
+                                                      polytrauma_distribution,
+                                                      num_injured).round().astype(int)
+            num_patient_injuries = [x + 1 for x in num_patient_injuries]
+            location_injuries = _weighted_random_choices(choices=list(injury_types.keys()),
+                                                         percents=[injury_types[t]["percent"] for t in injury_types],
+                                                         size=sum(num_patient_injuries))
+
+            _log.info(f"There are {num_injured} patients injuries")
+            _log.info(f"Mean number of injuries per patient: {sum(num_patient_injuries) / num_injured}")
+            for injury_type, distribution in injury_types.items():
+                num_injuries = location_injuries.count(injury_type)
+                _log.info(f"There are {num_injuries} {injury_type} injuries")
+                synthetic_distribution = 100 * num_injuries / num_injured
+                _log.info(f" Synthetic distribution: {synthetic_distribution}%")
+                actual_distribution = injury_types[injury_type]['percent']
+                _log.info(f" Actual distribution: {actual_distribution}%")
+                _log.info(f" Distribution Error: {synthetic_distribution - actual_distribution}%")
+
+            # Group multiple injuries into tuples
+            idx = 0
+            grouped_location_injuries = []
+            for num_injuries in num_patient_injuries:
+                if num_injuries == 1:
+                    grouped_location_injuries.append(location_injuries[idx])
+                else:
+                    t = tuple(location_injuries[idx:idx+num_injuries])
+                    if (num_injuries - len(set(t))) > 2:
+                        _log.fatal("Generated a patient with more than 2 of the same injury")
+                    grouped_location_injuries.append(t)
+                idx += num_injuries
+            ledger[location]["injuries"] = grouped_location_injuries
         else:
             ledger[location]["injuries"] = _weighted_random_choices(
                                                             choices=list(injury_types.keys()),
                                                             percents=[injury_types[t]["percent"] for t in injury_types],
-                                                            size=injury_locations.count(location))
+                                                            size=num_injured)
         injuries = ledger[location]["injuries"]
         injury_severities = ledger[location]["injury_severities"]
         for injury_type, dist in injury_types.items():
             severity_dist = dist["severity"]
             if "mean" in severity_dist:
                 injury_severities[injury_type] = {"index": 0,
-                                             "severities": np.random.normal(loc=severity_dist["mean"],
-                                                                            scale=severity_dist["std"],
-                                                                            size=_count(injuries, injury_type))}
+                                                  "severities": np.random.normal(loc=severity_dist["mean"],
+                                                                                 scale=severity_dist["std"],
+                                                                                 size=_count(injuries, injury_type))}
             elif "values" in severity_dist:
                 injury_severities[injury_type] = {"index": 0,
-                                             "severities": _weighted_random_choices(
-                                                 choices=severity_dist["values"],
-                                                 percents=severity_dist["percents"],
-                                                 size=_count(injuries, injury_type))}
+                                                  "severities": _weighted_random_choices(
+                                                      choices=severity_dist["values"],
+                                                      percents=severity_dist["percents"],
+                                                      size=_count(injuries, injury_type))}
 
     # Map the types and severities back to the injury locations
     for location in injury_locations:
@@ -404,23 +434,27 @@ def calculate_synthetic_injury_error(patients_injuries: list, injury_distributio
     num_injuries = 0
     for patient_injuries in patients_injuries:
         num_injuries += len(patient_injuries)
+        locations = set()
         for patient_injury in patient_injuries:
+            locations.add(patient_injury.location)
             if patient_injury.location not in error:
                 error[patient_injury.location] = {"count": 0, "injuries": {}}
             injury_location = error[patient_injury.location]
-            injury_location["count"] += 1
             location_injuries = injury_location["injuries"]
             if patient_injury.type not in location_injuries:
                 location_injuries[patient_injury.type] = {"count": 0, "severities": []}
             injury = location_injuries[patient_injury.type]
             injury["count"] += 1
             injury["severities"].append(patient_injury.severity)
+        for location in locations:
+            injury_location = error[location]
+            injury_location["count"] += 1
 
     # Calculate the stats
     for location, location_distributions in injury_distributions.items():
         # Injury Location Distributions
         location_error = error[location]
-        location_error["synthetic_distribution"] = 100 * location_error["count"] / num_injuries
+        location_error["synthetic_distribution"] = 100 * location_error["count"] / len(patients_injuries)
         location_error["actual_distribution"] = location_distributions["percent"]
         location_error["distribution_error"] = (location_error["synthetic_distribution"] -
                                                 location_error["actual_distribution"])
@@ -764,50 +798,29 @@ def test_polytrauma():
     injury_distributions = army_injury_distributions["thorax"]
     injury_types = injury_distributions["types"]
     num_patients_with_thorax_injuries = 500
-    max_polytrauma_injuries = int(math.ceil(injury_distributions["polytrauma"]))
+    polytrauma = injury_distributions["polytrauma"]
 
-    thorax_polytrauma = generate_combinations(list(injury_types.keys()),
-                                              max_polytrauma_injuries)
+    num_patient_injuries = np.random.binomial(polytrauma["max"]-1,
+                                              polytrauma["distribution"],
+                                              num_patients_with_thorax_injuries).round().astype(int)
+    num_patient_injuries = [x + 1 for x in num_patient_injuries]
+    num_thorax_injuries = sum(num_patient_injuries)
 
-    thorax_polytrauma_percents = []
-    polytrauma_counts = [0] * max_polytrauma_injuries
-    for i in thorax_polytrauma:
-        if isinstance(i, str):
-            polytrauma_counts[0] += 1
-        else:
-            polytrauma_counts[len(i)-1] += 1
-    # if we don't care what injury types are in the poly trauma
-    for i in thorax_polytrauma:
-        if isinstance(i, str):
-            thorax_polytrauma_percents.append(0.125 / polytrauma_counts[0])  # 1/8
-            # thorax_polytrauma_percents[-1] *= (injury_types[i]["percent"] * 0.01)
-        else:
-            if len(i) == 2:
-                thorax_polytrauma_percents.append(0.5 / polytrauma_counts[1])  # 1/2
-            else:
-                thorax_polytrauma_percents.append(0.375 / polytrauma_counts[2])  # 3/8
-            # for ii in i:
-            #     thorax_polytrauma_percents[-1] *= (injury_types[ii]["percent"] * 0.01)
-    thorax_injuries = _weighted_random_choices(choices=thorax_polytrauma,
-                                               percents=thorax_polytrauma_percents,
-                                               size=num_patients_with_thorax_injuries)
+    thorax_injuries = _weighted_random_choices(choices=list(injury_types.keys()),
+                                               percents=[t["percent"] for t in injury_types.values()],
+                                               size=num_thorax_injuries)
 
-    num_thorax_injuries = _count(thorax_injuries)
-    _log.info(f"Total number of injuries for all patient: {num_thorax_injuries}")
-    polytrauma_patients = [0] * max_polytrauma_injuries
-    for i in thorax_injuries:
-        if isinstance(i, str):
-            polytrauma_patients[0] += 1
-        else:
-            polytrauma_patients[len(i)-1] += 1
+    polytrauma_patients = [0] * polytrauma["max"]
+    for i in num_patient_injuries:
+        polytrauma_patients[i-1] += 1
     for i, c in enumerate(polytrauma_patients):
-        _log.info(f"  There are {c} patients with {i+1} injuries")
-    _log.info(f"Mean number of injuries per patient: {num_thorax_injuries/num_patients_with_thorax_injuries}")
-
+        _log.info(f"  There are {c} patients with {i + 1} injuries")
+    _log.info(f"Mean number of injuries per patient: {num_thorax_injuries / num_patients_with_thorax_injuries}")
+    _log.info(f"Total number of injuries for all patient: {num_thorax_injuries}")
     for injury_type, distribution in injury_types.items():
-        num_injuries = _count(thorax_injuries, injury_type)
+        num_injuries = thorax_injuries.count(injury_type)
         _log.info(f"There are {num_injuries} {injury_type} injuries")
-        synthetic_distribution = 100 * num_injuries/num_thorax_injuries
+        synthetic_distribution = 100 * num_injuries/num_patients_with_thorax_injuries
         _log.info(f" Synthetic distribution: {synthetic_distribution}%")
         actual_distribution = injury_types[injury_type]['percent']
         _log.info(f" Actual distribution: {actual_distribution}%")
