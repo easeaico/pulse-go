@@ -4,16 +4,17 @@ import copy
 
 import dataframe_image as dfi
 import logging
-import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import random as rand
+import random
 import statistics
+
 
 from itertools import combinations
 from pathlib import Path
 from pulse.cdm.utils.markdown import table
+from scipy.stats import truncnorm
 
 _log = logging.getLogger("pulse")
 
@@ -29,12 +30,12 @@ army_population_distributions = {
 }
 
 army_injury_distributions = {  # Location -> Type -> Severity mean/std or explicit value/percent
-    "head_and_neck": {"percent": 36.2, "mean": 2.69, "types": {
+    "head_and_neck": {"percent": 36.2, "severity_mean": 2.69, "types": {
         "tbi": {"percent": 22, "severity": {"mean": 3.5, "std": 0.25}},
         "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.25}},
         "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}}
     }},
-    "thorax": {"percent": 8.6, "mean": 2.85, "polytrauma": {"max": 4, "distribution": (1/2.3)}, "types": {
+    "thorax": {"percent": 8.6, "severity_mean": 2.85, "polytrauma": {"max": 4, "mean": 2.3}, "types": {
         "pneumothorax": {"percent": 51.8, "severity": {"mean": 2.85, "std": 0.25}},
         "pulmonary_contusion": {"percent": 50.2, "severity": {"mean": 2.85, "std": 0.25}},
         "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.25}},
@@ -42,11 +43,11 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
         "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
         "spinal": {"percent": 14.6, "severity": {"mean": 2.85, "std": 0.25}}
     }},
-    "abdomen": {"percent": 6.9, "mean": 2.85, "types": {
+    "abdomen": {"percent": 6.9, "severity_mean": 2.85, "types": {
         "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
         "laceration_contusion": {"percent": 65.4, "severity": {"mean": 2.85, "std": 0.25}}
     }},
-    "extremity": {"percent": 49.4, "mean": 2.05, "types": {
+    "extremity": {"percent": 49.4, "severity_mean": 2.05, "types": {
         "hemorrhage": {"percent": 52, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
         "fracture_dislocation": {"percent": 22, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
         "contusion_sprain_strain": {"percent": 20, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
@@ -58,13 +59,27 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-    #  test_polytrauma()
+    # Test specific injury
+    if False:
+        test_injury(injury_distributions=army_injury_distributions["thorax"],
+                    num_patients_injured=1000,
+                    log=True)
+    if False:
+        for p in range(100, 10001, 100):
+            max_error = 0
+            for i in range(50):
+                err = test_injury(injury_distributions=army_injury_distributions["abdomen"],
+                                  num_patients_injured=p,
+                                  log=False)
+                if err > max_error:
+                    max_error = err
+            _log.info(f"Max Error of {max_error} for {p} patients")
 
     # Run a measurement study
     if False:
         # Measure error for various population sizes
-        for p in range(1000, 10001, 1000):
-            i = 10
+        for p in range(500, 5001, 500):
+            i = 25
             _log.info(f"Measuring error for a population size of {p} using {i} iterations")
             measure_error(iterations=i, population_size=p,
                           population_distributions=army_population_distributions,
@@ -73,17 +88,17 @@ def main():
 
     # Generate a data set
     if True:
-        population_size = 4000
-        army_patients = synthetic_data_generation(population_size, army_population_distributions)
-        army_population_error = calculate_synthetic_population_error(army_patients, army_population_distributions)
+        population_size = 1000
+        army_patients = synthetic_population_generation(population_size, army_population_distributions)
+        army_population_error = calculate_population_error(army_patients, army_population_distributions)
         plot_population_error(army_population_error, f"./results/army_population_of_{population_size}")
 
-        army_patient_injuries = generate_synthetic_injuries(population_size, army_injury_distributions)
-        army_injury_error = calculate_synthetic_injury_error(army_patient_injuries, army_injury_distributions)
+        army_patient_injuries = synthetic_injury_generation(population_size, army_injury_distributions)
+        army_injury_error = calculate_injury_error(army_patient_injuries, army_injury_distributions)
         plot_injury_error(army_injury_error, f"./results/army_injuries_of_population_of_{population_size}")
 
 
-def synthetic_data_generation(size: int, distributions: dict) -> dict:
+def synthetic_population_generation(size: int, distributions: dict) -> dict:
     _log.info(f"Generate data with {size} samples")
 
     population_data = {}
@@ -92,13 +107,14 @@ def synthetic_data_generation(size: int, distributions: dict) -> dict:
     male_distributions = distributions["sex"]["male"]
     female_distributions = distributions["sex"]["female"]
     if "percent" in female_distributions:
-        sex_percent = [100 - female_distributions["percent"], female_distributions["percent"]]
+        r = np.random.binomial(n=1, p=female_distributions["percent"] * 0.01, size=size)
+        sexes = ["female" if s == 1 else "male" for s in r]
     elif "percent" in male_distributions:
-        sex_percent = [male_distributions["percent"], 100-male_distributions["percent"]]
+        r = np.random.binomial(n=1, p=male_distributions["percent"] * 0.01, size=size)
+        sexes = ["male" if s == 1 else "female" for s in r]
     else:
         _log.error("Must provide the percent percentage of either male's or female's")
         return population_data
-    sexes = _weighted_random_choices(choices=["male", "female"], percents=sex_percent, size=size)
     num_females = sexes.count("female")
     num_males = sexes.count("male")
 
@@ -155,7 +171,7 @@ def synthetic_data_generation(size: int, distributions: dict) -> dict:
         age_bins.append(f"{age_min}-{age_max}")
 
     ages = []
-    age_groups = _weighted_random_choices(choices=age_bins, percents=distributions["age"]["percents"], size=size)
+    age_groups = _weighted_choices(choices=age_bins, percents=distributions["age"]["percents"], size=size)
     for age_group in age_groups:
         idx = age_bins.index(age_group)
         low = distributions["age"]["bins"][idx]
@@ -173,7 +189,7 @@ def synthetic_data_generation(size: int, distributions: dict) -> dict:
     return population_data
 
 
-def calculate_synthetic_population_error(population: dict, distributions: dict) -> dict:
+def calculate_population_error(population: dict, distributions: dict) -> dict:
     error = {}
 
     # Sex
@@ -322,13 +338,13 @@ class Injury:
         self.severity = severity
 
 
-def generate_synthetic_injuries(population_size: int, distributions: dict) -> list:
+def synthetic_injury_generation(population_size: int, distributions: dict) -> list:
     # Array or arrays
     # An array of injuries for each patient
     patient_injuries = []
 
     # TODO Assuming only 1 injury for each patient
-    injury_locations = _weighted_random_choices(
+    injury_locations = _weighted_choices(
         choices=list(distributions.keys()),
         percents=[value["percent"] for value in distributions.values()],
         size=population_size)
@@ -343,42 +359,27 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
         num_injured = injury_locations.count(location)
         if "polytrauma" in injury_distributions:
             # Generate a list of injury counts for each patient
-            max_injuries_per_patient = injury_distributions["polytrauma"]["max"]
-            polytrauma_distribution = injury_distributions["polytrauma"]["distribution"]
-            num_patient_injuries = np.random.binomial(max_injuries_per_patient-1,
-                                                      polytrauma_distribution,
-                                                      num_injured).round().astype(int)
-            num_patient_injuries = [x + 1 for x in num_patient_injuries]
-            location_injuries = _weighted_random_choices(choices=list(injury_types.keys()),
-                                                         percents=[injury_types[t]["percent"] for t in injury_types],
-                                                         size=sum(num_patient_injuries))
+            polytrauma = injury_distributions["polytrauma"]
+            num_polytrauma_injuries = _bounded_random_choices(mean=polytrauma["mean"], sd=0.5,
+                                                           low=1, upp=polytrauma["max"],
+                                                           size=num_injured)
+            num_polytrauma_injuries = [round(x) for x in num_polytrauma_injuries]
+            polytraumas = _weighted_choices(choices=list(injury_types.keys()),
+                                            percents=[injury_types[t]["percent"] for t in injury_types],
+                                            size=sum(num_polytrauma_injuries))
+            ledger[location]["injuries"] = _random_grouping(polytraumas,
+                                                            num_polytrauma_injuries,
+                                                            list(injury_types.keys()))
 
-            _log.info(f"There are {num_injured} patients injuries")
-            _log.info(f"Mean number of injuries per patient: {sum(num_patient_injuries) / num_injured}")
-            for injury_type, distribution in injury_types.items():
-                num_injuries = location_injuries.count(injury_type)
-                _log.info(f"There are {num_injuries} {injury_type} injuries")
-                synthetic_distribution = 100 * num_injuries / num_injured
-                _log.info(f" Synthetic distribution: {synthetic_distribution}%")
-                actual_distribution = injury_types[injury_type]['percent']
-                _log.info(f" Actual distribution: {actual_distribution}%")
-                _log.info(f" Distribution Error: {synthetic_distribution - actual_distribution}%")
-
-            # Group multiple injuries into tuples
-            idx = 0
-            grouped_location_injuries = []
-            for num_injuries in num_patient_injuries:
-                if num_injuries == 1:
-                    grouped_location_injuries.append(location_injuries[idx])
-                else:
-                    t = tuple(location_injuries[idx:idx+num_injuries])
-                    if (num_injuries - len(set(t))) > 2:
-                        _log.fatal("Generated a patient with more than 2 of the same injury")
-                    grouped_location_injuries.append(t)
-                idx += num_injuries
-            ledger[location]["injuries"] = grouped_location_injuries
+            # Check that our tuples don't have more than 2 of any 1 injury
+            for injury in injuries:
+                if isinstance(injury, tuple) and len(injury) > 2:
+                    unique = set(injury)
+                    for u in unique:
+                        if list(injury).count(u) >= 3:
+                            _log.fatal(f"Is this a good injury mix {injury}")
         else:
-            ledger[location]["injuries"] = _weighted_random_choices(
+            ledger[location]["injuries"] = _weighted_choices(
                                                             choices=list(injury_types.keys()),
                                                             percents=[injury_types[t]["percent"] for t in injury_types],
                                                             size=num_injured)
@@ -393,7 +394,7 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
                                                                                  size=_count(injuries, injury_type))}
             elif "values" in severity_dist:
                 injury_severities[injury_type] = {"index": 0,
-                                                  "severities": _weighted_random_choices(
+                                                  "severities": _weighted_choices(
                                                       choices=severity_dist["values"],
                                                       percents=severity_dist["percents"],
                                                       size=_count(injuries, injury_type))}
@@ -427,7 +428,7 @@ def generate_synthetic_injuries(population_size: int, distributions: dict) -> li
     return patient_injuries
 
 
-def calculate_synthetic_injury_error(patients_injuries: list, injury_distributions: dict) -> dict:
+def calculate_injury_error(patients_injuries: list, injury_distributions: dict) -> dict:
     error = {}
 
     # Count everything up, and gather all our severities
@@ -515,6 +516,7 @@ def plot_injury_error(injury_error: dict, results_stem: str):
             injury_location = ""
             injury_type = name
         return (injury_location, injury_type,
+                _dict_field_value(error, "count", "d"),
                 _dict_field_value(error, "synthetic_distribution", ".1f"),
                 _dict_field_value(error, "actual_distribution", ".1f"),
                 _dict_field_value(error, "distribution_error", ".1f"),
@@ -525,11 +527,11 @@ def plot_injury_error(injury_error: dict, results_stem: str):
                 _dict_field_value(error, "actual_severity_std", ".3f"),
                 _dict_field_value(error, "severity_std_error", ".3f"))
     data = []
-    headings = ["Injury Location", "Injury Type",
+    headings = ["Injury Location", "Injury Type", "Count",
                 "Synthetic Distribution %", "Actual Distribution %", "Distribution % Error",
                 "Synthetic Severity Mean", "Actual Severity Mean", "Severity Mean Error",
                 "Synthetic Severity SD", "Actual Severity SD", "Severity SD Error"]
-    fields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # All headings
+    fields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  # All headings
     for location in sorted(injury_error.keys()):
         data.append(_error_row(location, injury_error[location], True))
         injuries = injury_error[location]["injuries"]
@@ -563,24 +565,24 @@ def measure_error(iterations: int, population_size: int,
     demographics = error["demographics"]
     injuries = error["injuries"]
     for i in range(iterations):
-        patients = synthetic_data_generation(population_size, population_distributions)
-        population_error = calculate_synthetic_population_error(patients, population_distributions)
+        patients = synthetic_population_generation(population_size, population_distributions)
+        population_error = calculate_population_error(patients, population_distributions)
 
         demographics["female_distribution"]["errors"].append(population_error["sex"]["female"]["count"]["error"])
         demographics["female_height_mean"]["errors"].append(population_error["sex"]["female"]["height"]["mean_error"])
         demographics["female_height_std"]["errors"].append(population_error["sex"]["female"]["height"]["std_error"])
         demographics["female_bmi_mean"]["errors"].append(population_error["sex"]["female"]["bmi"]["mean_error"])
         demographics["female_bmi_std"]["errors"].append(population_error["sex"]["female"]["bmi"]["std_error"])
-        demographics["male_distribution"]["errors"].append(population_error["sex"]["female"]["count"]["error"])
-        demographics["male_height_mean"]["errors"].append(population_error["sex"]["female"]["height"]["mean_error"])
-        demographics["male_height_std"]["errors"].append(population_error["sex"]["female"]["height"]["std_error"])
-        demographics["male_bmi_mean"]["errors"].append(population_error["sex"]["female"]["bmi"]["mean_error"])
-        demographics["male_bmi_std"]["errors"].append(population_error["sex"]["female"]["bmi"]["std_error"])
+        demographics["male_distribution"]["errors"].append(population_error["sex"]["male"]["count"]["error"])
+        demographics["male_height_mean"]["errors"].append(population_error["sex"]["male"]["height"]["mean_error"])
+        demographics["male_height_std"]["errors"].append(population_error["sex"]["male"]["height"]["std_error"])
+        demographics["male_bmi_mean"]["errors"].append(population_error["sex"]["male"]["bmi"]["mean_error"])
+        demographics["male_bmi_std"]["errors"].append(population_error["sex"]["male"]["bmi"]["std_error"])
         demographics["heart_rate_mean"]["errors"].append(population_error["heart_rate"]["mean_error"])
         demographics["heart_rate_std"]["errors"].append(population_error["heart_rate"]["std_error"])
 
-        patient_injuries = generate_synthetic_injuries(population_size, injury_distributions)
-        injury_error = calculate_synthetic_injury_error(patient_injuries, injury_distributions)
+        patient_injuries = synthetic_injury_generation(population_size, injury_distributions)
+        injury_error = calculate_injury_error(patient_injuries, injury_distributions)
 
         for location, location_stats in injury_error.items():
             if location not in injuries:
@@ -721,7 +723,58 @@ def _create_report(basename: str, data, fields, headings, widths=None):
     dfi.export(df_styler, img_filename, table_conversion='playwright', dpi=600)
 
 
-def _weighted_random_choices(choices: list, size: int, percents: list, algo: int = 0) -> list:
+def _random_grouping(pool: list, groups: list, choices: list) -> list:
+    seed = random.Random()
+    grouped_list = []
+    for group in groups:
+        if group == 1:
+            # Just pick something random from the pool
+            pick = seed.choice(pool)
+            # And remove it from the pool
+            pool.remove(pick)
+            # That's all in this group
+            grouped_list.append(pick)
+        else:
+            # Count up how many of each choice we have
+            counts = [(c, pool.count(c)) for c in choices]
+            # Remove any counts of choices no longer in the pool
+            i = 0
+            while i < len(counts):
+                if counts[i][1] == 0:
+                    counts.remove(counts[i])
+                else:
+                    i += 1
+
+            # Which choice do we have the most of?
+            sorted_counts = sorted(counts, key=lambda x: x[1], reverse=True)
+            # Add that choice to this group
+            g = [sorted_counts[0][0]]
+            # Take one of those choices out of the pool
+            pool.remove(g[0])
+            # If this was the last of this choice in the pool, remove it from our counts
+            if sorted_counts[0][1] == 1:
+                sorted_counts.remove(sorted_counts[0])
+            for _ in range(group-1):
+                if len(sorted_counts) == 0:
+                    _log.error("We are all out of choices...")  # We shouldn't ever get here....
+                # Pick a random choice from our counts
+                i = random.randint(0, len(sorted_counts)-1)
+                # Add it to this group
+                g.append(sorted_counts[i][0])
+                try:
+                    # Remove an instance of this choice from the pool
+                    pool.remove(g[-1])
+                except ValueError as e:
+                    _log.error(f"Nuts {e}")
+                # Now remove this choice from our counts, so we don't pick it again
+                del sorted_counts[i]
+            # Add this group to our list
+            grouped_list.append(tuple(g))
+
+    return grouped_list
+
+
+def _weighted_choices(choices: list, size: int, percents: list, algo: int = 2) -> list:
 
     # Check to see if this list has any tuples
     # Remove the tuples. np.random does not like tuples in the choice list
@@ -739,7 +792,23 @@ def _weighted_random_choices(choices: list, size: int, percents: list, algo: int
         except ValueError as e:
             _log.warning(f"{e}")
     elif algo == 1:
-        result = rand.choices(choices, weights=percents, k=size)
+        result = random.choices(choices, weights=percents, k=size)
+    elif algo == 2:
+        result = []
+        p = _normalize_list(percents)
+        for i, choice in enumerate(choices):
+            result.extend([choice] * round(size*p[i]))
+
+        if len(result) < size:
+            to_add = size - len(result)
+            if to_add > 1:
+                _log.info(f"Generated too few choices, adding {to_add}")
+            result.extend(list(np.random.choice(choices, size=to_add, p=p)))
+        elif len(result) > size:
+            to_take_away = len(result)-size
+            if to_take_away > 1:
+                _log.info(f"Generated too many choices, removing {to_take_away}")
+            result = result[:-to_take_away]
 
     if result:
         if has_tuple:  # Turn choices and results back into tuples
@@ -753,6 +822,11 @@ def _weighted_random_choices(choices: list, size: int, percents: list, algo: int
 
     _log.error("Unknown algo for _weighted_randomness")
     return [0.0] * size
+
+
+def _bounded_random_choices(mean: float, sd: float, low: int, upp: int, size: int):
+    return truncnorm(
+        (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd).rvs(size)
 
 
 def generate_combinations(choices: list, max_in_a_choice: int) -> list:
@@ -794,37 +868,59 @@ def _count(list_: list, find: str = None):
     return count
 
 
-def test_polytrauma():
-    injury_distributions = army_injury_distributions["thorax"]
+def test_injury(injury_distributions: dict, num_patients_injured: int, log: bool = True):
     injury_types = injury_distributions["types"]
-    num_patients_with_thorax_injuries = 500
-    polytrauma = injury_distributions["polytrauma"]
+    if log:
+        _log.info(f"Total number of patients: {num_patients_injured}")
 
-    num_patient_injuries = np.random.binomial(polytrauma["max"]-1,
-                                              polytrauma["distribution"],
-                                              num_patients_with_thorax_injuries).round().astype(int)
-    num_patient_injuries = [x + 1 for x in num_patient_injuries]
-    num_thorax_injuries = sum(num_patient_injuries)
+    if "polytrauma" in injury_distributions:
+        polytrauma = injury_distributions["polytrauma"]
+        num_patient_injuries = _bounded_random_choices(mean=polytrauma["mean"], sd=0.5,
+                                                       low=1, upp=polytrauma["max"],
+                                                       size=num_patients_injured)
+        num_patient_injuries = [round(x) for x in num_patient_injuries]
+        num_location_injuries = sum(num_patient_injuries)
+        injuries = _weighted_choices(choices=list(injury_types.keys()),
+                                     percents=[t["percent"] for t in injury_types.values()],
+                                     size=num_location_injuries)
+        injuries = _random_grouping(injuries, num_patient_injuries, list(injury_types.keys()))
 
-    thorax_injuries = _weighted_random_choices(choices=list(injury_types.keys()),
-                                               percents=[t["percent"] for t in injury_types.values()],
-                                               size=num_thorax_injuries)
+        polytrauma_patients = [0] * polytrauma["max"]
+        if log:
+            for i in num_patient_injuries:
+                polytrauma_patients[i - 1] += 1
+            for i, c in enumerate(polytrauma_patients):
+                _log.info(f"  There are {c} patients with {i + 1} injuries")
+            _log.info(f"Mean number of injuries per patient: {num_location_injuries / num_patients_injured}")
+            _log.info(f"Total number of injuries for all patient: {num_location_injuries}")
 
-    polytrauma_patients = [0] * polytrauma["max"]
-    for i in num_patient_injuries:
-        polytrauma_patients[i-1] += 1
-    for i, c in enumerate(polytrauma_patients):
-        _log.info(f"  There are {c} patients with {i + 1} injuries")
-    _log.info(f"Mean number of injuries per patient: {num_thorax_injuries / num_patients_with_thorax_injuries}")
-    _log.info(f"Total number of injuries for all patient: {num_thorax_injuries}")
+        # Check that our tuples don't have more than 2 of any 1 injury
+        for injury in injuries:
+            if isinstance(injury, tuple) and len(injury) > 2:
+                unique = set(injury)
+                for u in unique:
+                    if list(injury).count(u) >= 3:
+                        _log.fatal(f"Is this a good injury mix {injury}")
+
+    else:
+        injuries = _weighted_choices(choices=list(injury_types.keys()),
+                                     percents=[injury_types[t]["percent"] for t in injury_types],
+                                     size=num_patients_injured)
+
+    max_error = 0
     for injury_type, distribution in injury_types.items():
-        num_injuries = thorax_injuries.count(injury_type)
-        _log.info(f"There are {num_injuries} {injury_type} injuries")
-        synthetic_distribution = 100 * num_injuries/num_patients_with_thorax_injuries
-        _log.info(f" Synthetic distribution: {synthetic_distribution}%")
+        num_injuries = _count(injuries, injury_type)
+        synthetic_distribution = 100 * num_injuries/num_patients_injured
         actual_distribution = injury_types[injury_type]['percent']
-        _log.info(f" Actual distribution: {actual_distribution}%")
-        _log.info(f" Distribution Error: {synthetic_distribution - actual_distribution}%")
+        if abs(synthetic_distribution - actual_distribution) > max_error:
+            max_error = abs(synthetic_distribution - actual_distribution)
+        if log:
+            _log.info(f"There are {num_injuries} {injury_type} injuries")
+            _log.info(f" Synthetic distribution: {synthetic_distribution}%")
+            _log.info(f" Actual distribution: {actual_distribution}%")
+            _log.info(f" Distribution Error: {synthetic_distribution - actual_distribution}%")
+
+    return max_error
 
 
 if __name__ == "__main__":
