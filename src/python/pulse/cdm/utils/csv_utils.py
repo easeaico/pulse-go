@@ -1,11 +1,16 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pathlib import Path
-import pandas as pd
+import logging
 import numpy as np
+import pandas as pd
+from pathlib import Path
 
-def read_csv_into_df(csv_filename: Path, replace_slashes: bool=False, **kwargs):
+
+_log = logging.getLogger("pulse")
+
+
+def read_csv_into_df(csv_filename: Path, replace_slashes: bool = False, **kwargs):
     df = pd.read_csv(csv_filename, **kwargs)
     for column in df.columns[1:]:
         # Convert any strings to NaN
@@ -15,6 +20,44 @@ def read_csv_into_df(csv_filename: Path, replace_slashes: bool=False, **kwargs):
             df.rename(columns={column: column.replace("/", "_Per_")}, inplace=True)
 
     return df
+
+
+def concat_csv_into_df(earlier: Path, later: Path, replace_slashes: bool = False, **kwargs):
+    df1 = read_csv_into_df(earlier, replace_slashes)
+    df2 = read_csv_into_df(later, replace_slashes)
+
+    # Make sure these csv file have close overlap
+    def overlap(start1, end1, start2, end2):
+        if start2 == end1:  # Edge overlap is ok
+            return False
+        if start1 <= start2 < end1:
+            return True
+        if start1 <= end2 <= end1:
+            return True
+        return not (end1 <= start2 or end2 <= start1)
+
+    df1_start = df1["Time(s)"].iloc[0]
+    df1_end = df1["Time(s)"].iloc[-1]
+    df2_start = df2["Time(s)"].iloc[0]
+    df2_end = df2["Time(s)"].iloc[-1]
+    if df2_start < df1_start:  # Well, maybe user gave it to us in the wrong order...
+        if overlap(df2_start, df2_end, df1_start, df1_end):
+            _log.error("CSV files overlap, returning empty dataframe")
+            return pd.DataFrame()
+        if df2_end == df1_start:
+            # Remove the last row
+            df2 = df2.drop(df2.index[-1])
+        # Concatenate the DataFrames
+        return pd.concat([df2, df1], ignore_index=True)
+
+    if overlap(df1_start, df1_end, df2_start, df2_end):
+        _log.error("CSV files overlap, returning empty dataframe")
+        return pd.DataFrame()
+    if df1_end == df2_start:
+        # Remove the last row
+        df1 = df1.drop(df1.index[-1])
+    # Concatenate the DataFrames
+    return pd.concat([df1, df2], ignore_index=True)
 
 
 def compute_means(csv_filename: Path, headers: [str], start_row=0, end_row=-1):

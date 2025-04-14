@@ -113,7 +113,7 @@ def HowTo_UseEngine():
 
     # There are several ways to initialize an engine to a patient
     start_type = eStartType.State
-    if start_type is eStartType.State: # The engine is ready instantaneously
+    if start_type is eStartType.State:  # The engine is ready instantaneously
         if not pulse.serialize_from_file("./states/StandardMale@0s.json", data_req_mgr):
             print("Unable to load initial state file")
             return

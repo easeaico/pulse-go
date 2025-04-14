@@ -79,10 +79,12 @@ int main(int argc, char* argv[])
       // Read 2 lines
       getline(fs, line);
       getline(fs, line);
-      if(line.find("ScenarioExecStatus")==std::string::npos)
-        opts.SetScenarioFilename(input);
-      else
+      if (line.find("ScenarioExecStatus") != std::string::npos)
         opts.SetScenarioExecListFilename(input);
+      else if (line.find("ScenarioExec") != std::string::npos)
+        opts.SerializeFromFile(input);
+      else
+        opts.SetScenarioFilename(input);
     }
   }
 

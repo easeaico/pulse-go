@@ -126,6 +126,12 @@ namespace pulse
     PBScenario::Serialize(src, data);
     return PBUtils::SerializeToString(data, output, m, logger);
   }
+  bool PBScenario::SerializeToFile(const PulseScenarioExec& src, const std::string& filename)
+  {
+    PULSE_BIND::ScenarioExecData data;
+    PBScenario::Serialize(src, data);
+    return PBUtils::SerializeToFile(data, filename, src.GetLogger());
+  }
   bool PBScenario::SerializeFromString(const std::string& src, PulseScenarioExec& dst, eSerializationFormat m, Logger* logger)
   {
     PULSE_BIND::ScenarioExecData data;
@@ -133,5 +139,15 @@ namespace pulse
       return false;
     PBScenario::Load(data, dst);
     return true;
+  }
+  bool PBScenario::SerializeFromFile(const std::string& filename, PulseScenarioExec& dst)
+  {
+    PULSE_BIND::ScenarioExecData data;
+    if (PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
+    {
+      PBScenario::Load(data, dst);
+      return true;
+    }
+    return ::PBScenario::SerializeFromFile(filename, dst);
   }
 }

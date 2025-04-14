@@ -33,9 +33,17 @@ bool PulseScenarioExec::SerializeToString(std::string& output, eSerializationFor
 {
   return pulse::PBScenario::SerializeToString(*this, output, m, logger);
 }
+bool PulseScenarioExec::SerializeToFile(const std::string& filename) const
+{
+  return pulse::PBScenario::SerializeToFile(*this, filename);
+}
 bool PulseScenarioExec::SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger)
 {
   return pulse::PBScenario::SerializeFromString(src, *this, m, logger);
+}
+bool PulseScenarioExec::SerializeFromFile(const std::string& filename)
+{
+  return pulse::PBScenario::SerializeFromFile(filename, *this);
 }
 
 bool PulseScenarioExec::Execute()

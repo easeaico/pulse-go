@@ -32,6 +32,8 @@ namespace pulse
     static void Serialize(const PulseScenarioExec& src, PULSE_BIND::ScenarioExecData& dst);
 
     static bool SerializeToString(const PulseScenarioExec& src, std::string& output, eSerializationFormat m, Logger* logger);
+    static bool SerializeToFile(const PulseScenarioExec& src, const std::string& filename);
     static bool SerializeFromString(const std::string& src, PulseScenarioExec& dst, eSerializationFormat m, Logger* logger);
+    static bool SerializeFromFile(const std::string& filename, PulseScenarioExec& dst);
   };
 }

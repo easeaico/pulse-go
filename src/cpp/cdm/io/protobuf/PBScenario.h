@@ -28,7 +28,9 @@ public:
   static void Serialize(const SEScenarioExec& src, CDM_BIND::ScenarioExecData& dst);
 
   static bool SerializeToString(const SEScenarioExec& src, std::string& output, eSerializationFormat m, Logger* logger);
+  static bool SerializeToFile(const SEScenarioExec& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEScenarioExec& dst, eSerializationFormat m, Logger* logger);
+  static bool SerializeFromFile(const std::string& filename, SEScenarioExec& dst);
 
   static void Load(const CDM_BIND::ScenarioExecStatusData& src, SEScenarioExecStatus& dst);
   static CDM_BIND::ScenarioExecStatusData* Unload(const SEScenarioExecStatus& src);

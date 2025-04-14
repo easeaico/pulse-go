@@ -4,6 +4,7 @@
 from google.protobuf import json_format
 from typing import List
 
+from pulse.cdm.io.engine import serialize_action_to_bind
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.scenario import SEScenario, SEScenarioExec, SEScenarioExecStatus, eScenarioExecutionState
 from pulse.cdm.bind.Scenario_pb2 import ScenarioData, ScenarioExecData, ScenarioExecStatusData, \
@@ -57,9 +58,9 @@ def serialize_scenario_to_bind(src: SEScenario, dst: ScenarioData):
 
     dst.DataRequestFile.extend(src.get_data_request_files())
 
-    actionListData = ActionListData()
-    serialize_actions_to_bind(src.get_actions(), actionListData)
-    dst.AnyAction = actionListData.AnyAction
+    for action in src.get_actions():
+        dst.AnyAction.append(serialize_action_to_bind(action))
+
 
 def serialize_scenario_from_bind(src: ScenarioData, dst: SEScenario):
     raise Exception("serialize_scenario_from_bind not implemented")
@@ -155,7 +156,7 @@ def serialize_scenario_exec_status_from_string(
     fmt: eSerializationFormat
 ) -> None:
     src = ScenarioExecStatusData()
-    json_format.parse(string, src)
+    json_format.Parse(string, src)
     serialize_scenario_exec_status_from_bind(src, dst)
 
 def serialize_scenario_exec_status_from_file(filename: str, dst: SEScenarioExecStatus) -> None:

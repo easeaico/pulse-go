@@ -161,245 +161,224 @@ def serialize_condition_manager_to_bind(condition_manager: SEConditionManager, d
                                                            any_condition.EnvironmentCondition.InitialEnvironmentalConditions)
         dst.AnyCondition.append(any_condition)
 
-def serialize_actions_to_bind(src: [], dst: ActionListData):
 
+def serialize_action_to_bind(src: SEAction) -> AnyActionData:
+    any_action = AnyActionData()
+    if isinstance(src, SEAdvanceTime):
+        serialize_advance_time_to_bind(src, any_action.AdvanceTime)
+        return any_action
+    if isinstance(src, SEAdvanceUntilStable):
+        serialize_advance_until_stable_to_bind(src, any_action.AdvanceUntilStable)
+        return any_action
+    if isinstance(src, SESerializeRequested):
+        serialize_serialize_requested_to_bind(src, any_action.SerializeRequested)
+        return any_action
+    if isinstance(src, SESerializeState):
+        serialize_serialize_state_to_bind(src, any_action.SerializeState)
+        return any_action
+    if isinstance(src, SEPatientAction):
+        if isinstance(src, SEAcuteRespiratoryDistressSyndromeExacerbation):
+            serialize_acute_respiratory_distress_syndrome_exacerbation_to_bind(
+                src,
+                any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
+            return any_action
+        if isinstance(src, SEAcuteStress):
+            serialize_acute_stress_to_bind(src, any_action.PatientAction.AcuteStress)
+            return any_action
+        if isinstance(src, SEAirwayObstruction):
+            serialize_airway_obstruction_to_bind(src, any_action.PatientAction.AirwayObstruction)
+            return any_action
+        if isinstance(src, SEArrhythmia):
+            serialize_arrhythmia_to_bind(src, any_action.PatientAction.Arrhythmia)
+            return any_action
+        if isinstance(src, SEArrhythmia):
+            serialize_arrhythmia_to_bind(src, any_action.PatientAction.Arrhythmia)
+            return any_action
+        if isinstance(src, SEAsthmaAttack):
+            serialize_asthma_attack_to_bind(src, any_action.PatientAction.AsthmaAttack)
+            return any_action
+        if isinstance(src, SEBrainInjury):
+            serialize_brain_injury_to_bind(src, any_action.PatientAction.BrainInjury)
+            return any_action
+        if isinstance(src, SEBronchoconstriction):
+            serialize_bronchoconstriction_to_bind(src, any_action.PatientAction.Bronchoconstriction)
+            return any_action
+        if isinstance(src, SECardiovascularMechanicsModification):
+            serialize_cardiovascular_mechanics_modification_to_bind(
+                src,
+                any_action.PatientAction.CardiovascularMechanicsModification)
+            return any_action
+        if isinstance(src, SEChestCompression):
+            serialize_chest_compression_to_bind(src, any_action.PatientAction.ChestCompression)
+            return any_action
+        if isinstance(src, SEChestCompressionInstantaneous):
+            serialize_chest_compression_instantaneous_to_bind(
+                src,
+                any_action.PatientAction.ChestCompressionInstantaneous)
+            return any_action
+        if isinstance(src, SEChestCompressionAutomated):
+            serialize_chest_compression_automated_to_bind(src, any_action.PatientAction.ChestCompressionAutomated)
+            return any_action
+        if isinstance(src, SEChestOcclusiveDressing):
+            serialize_chest_occlusive_dressing_to_bind(src, any_action.PatientAction.ChestOcclusiveDressing)
+            return any_action
+        if isinstance(src, SEChronicObstructivePulmonaryDiseaseExacerbation):
+            serialize_chronic_obstructive_pulmonary_disease_exacerbation_to_bind(
+                src,
+                any_action.PatientAction.ChronicObstructivePulmonaryDiseaseExacerbation)
+            return any_action
+        if isinstance(src, SEConsciousRespiration):
+            serialize_conscious_respiration_to_bind(src, any_action.PatientAction.ConsciousRespiration)
+            return any_action
+        if isinstance(src, SEConsumeNutrients):
+            serialize_consume_nutrients_to_bind(src, any_action.PatientAction.ConsumeNutrients)
+            return any_action
+        if isinstance(src, SEDyspnea):
+            serialize_dsypnea_to_bind(src, any_action.PatientAction.Dyspnea)
+            return any_action
+        if isinstance(src, SEExercise):
+            serialize_exercise_to_bind(src, any_action.PatientAction.Exercise)
+            return any_action
+        if isinstance(src, SEHemorrhage):
+            serialize_hemorrhage_to_bind(src, any_action.PatientAction.Hemorrhage)
+            return any_action
+        if isinstance(src, SEHemothorax):
+            serialize_hemothorax_to_bind(src, any_action.PatientAction.Hemothorax)
+            return any_action
+        if isinstance(src, SEImpairedAlveolarExchangeExacerbation):
+            serialize_impaired_alveolar_exchange_exacerbation_to_bind(
+                src,
+                any_action.PatientAction.ImpairedAlveolarExchangeExacerbation)
+            return any_action
+        if isinstance(src, SEIntubation):
+            serialize_intubation_to_bind(src, any_action.PatientAction.Intubation)
+            return any_action
+        if isinstance(src, SEPneumoniaExacerbation):
+            serialize_pneumonia_exacerbation_to_bind(src, any_action.PatientAction.PneumoniaExacerbation)
+            return any_action
+        if isinstance(src, SEMechanicalVentilation):
+            serialize_mechanical_ventilation_to_bind(src, any_action.PatientAction.MechanicalVentilation)
+            return any_action
+        if isinstance(src, SENeedleDecompression):
+            serialize_needle_decompression_to_bind(src, any_action.PatientAction.NeedleDecompression)
+            return any_action
+        if isinstance(src, SEPericardialEffusion):
+            serialize_pericardial_effusion_to_bind(src, any_action.PatientAction.PericardialEffusion)
+            return any_action
+        if isinstance(src, SEPulmonaryShuntExacerbation):
+            serialize_pulmonary_shunt_exacerbation_to_bind(src, any_action.PatientAction.PulmonaryShuntExacerbation)
+            return any_action
+        if isinstance(src, SERespiratoryFatigue):
+            serialize_respiratory_fatigue_to_bind(src, any_action.PatientAction.RespiratoryFatigue)
+            return any_action
+        if isinstance(src, SERespiratoryMechanicsConfiguration):
+            serialize_respiratory_mechanics_configuration_to_bind(
+                src,
+                any_action.PatientAction.RespiratoryMechanicsConfiguration)
+            return any_action
+        if isinstance(src, SERespiratoryMechanicsModification):
+            serialize_respiratory_mechanics_modification_to_bind(
+                src,
+                any_action.PatientAction.RespiratoryMechanicsModification)
+            return any_action
+        if isinstance(src, SESubstanceBolus):
+            serialize_substance_bolus_to_bind(src, any_action.PatientAction.SubstanceBolus)
+            return any_action
+        if isinstance(src, SESubstanceInfusion):
+            serialize_substance_infusion_to_bind(src, any_action.PatientAction.SubstanceInfusion)
+            return any_action
+        if isinstance(src, SESubstanceCompoundInfusion):
+            serialize_substance_compound_infusion_to_bind(src, any_action.PatientAction.SubstanceCompoundInfusion)
+            return any_action
+        if isinstance(src, SESupplementalOxygen):
+            serialize_supplemental_oxygen_to_bind(src, any_action.PatientAction.SupplementalOxygen)
+            return any_action
+        if isinstance(src, SETensionPneumothorax):
+            serialize_tension_pneumothorax_to_bind(src, any_action.PatientAction.TensionPneumothorax)
+            return any_action
+        if isinstance(src, SETubeThoracostomy):
+            serialize_tube_thoracostomy_to_bind(src, any_action.PatientAction.TubeThoracostomy)
+            return any_action
+        if isinstance(src, SEUrinate):
+            serialize_urinate_to_bind(src, any_action.PatientAction.Urinate)
+            return any_action
+        print("Unknown Patient Action")
+        return None
+
+    if isinstance(src, SEEnvironmentAction):
+        if isinstance(src, SEChangeEnvironmentalConditions):
+            serialize_change_environmental_conditions_to_bind(
+                src,
+                any_action.EnvironmentAction.ChangeEnvironmentalConditions)
+            return any_action
+        if isinstance(src, SEThermalApplication):
+            serialize_thermal_application_to_bind(src, any_action.EnvironmentAction.ThermalApplication)
+            return any_action
+        print("Unknown Environment Action")
+        return None
+
+    if isinstance(src, SEEquipmentAction):
+        if isinstance(src, SEBagValveMaskConfiguration):
+            serialize_bag_valve_mask_configuration_to_bind(src, any_action.EquipmentAction.BagValveMaskConfiguration)
+            return any_action
+        if isinstance(src, SEBagValveMaskAutomated):
+            serialize_bag_valve_mask_automated_to_bind(src, any_action.EquipmentAction.BagValveMaskAutomated)
+            return any_action
+        if isinstance(src, SEBagValveMaskInstantaneous):
+            serialize_bag_valve_mask_instantaneous_to_bind(src, any_action.EquipmentAction.BagValveMaskInstantaneous)
+            return any_action
+        if isinstance(src, SEBagValveMaskSqueeze):
+            serialize_bag_valve_mask_squeeze_to_bind(src, any_action.EquipmentAction.BagValveMaskSqueeze)
+            return any_action
+
+        if isinstance(src, SEECMOConfiguration):
+            serialize_ecmo_configuration_to_bind(src, any_action.EquipmentAction.ECMOConfiguration)
+            return any_action
+
+        #if isinstance(src, SEInhalerConfiguration):
+        #    serialize_inhaler_configuration_to_bind(src, any_action.EquipmentAction.InhalerConfiguration)
+        #    return any_action
+
+        if isinstance(src, SEMechanicalVentilatorConfiguration):
+            serialize_mechanical_ventilator_configuration_to_bind(
+                src,
+                any_action.EquipmentAction.MechanicalVentilatorConfiguration)
+            return any_action
+        if isinstance(src, SEMechanicalVentilatorHold):
+            serialize_mechanical_ventilator_hold_to_bind(src, any_action.EquipmentAction.MechanicalVentilatorHold)
+            return any_action
+        if isinstance(src, SEMechanicalVentilatorLeak):
+            serialize_mechanical_ventilator_leak_to_bind(src, any_action.EquipmentAction.MechanicalVentilatorLeak)
+            return any_action
+        if isinstance(src, SEMechanicalVentilatorContinuousPositiveAirwayPressure):
+            serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(
+                src,
+                any_action.EquipmentAction.MechanicalVentilatorContinuousPositiveAirwayPressure)
+            return any_action
+        if isinstance(src, SEMechanicalVentilatorPressureControl):
+            serialize_mechanical_ventilator_pressure_control_to_bind(
+                src,
+                any_action.EquipmentAction.MechanicalVentilatorPressureControl)
+            return any_action
+        if isinstance(src, SEMechanicalVentilatorVolumeControl):
+            serialize_mechanical_ventilator_volume_control_to_bind(
+                src,
+                any_action.EquipmentAction.MechanicalVentilatorVolumeControl)
+            return any_action
+        print("Unknown Equipment Action")
+        return None
+    print("Unknown Action")
+    return None
+
+
+def serialize_actions_to_bind(src: [], dst: ActionListData):
     for action in src:
         if not action.is_valid():
             print("Skipping invalid action")
             continue
-        #print(action)
-        any_action = AnyActionData()
-        if isinstance(action, SEAdvanceTime):
-            serialize_advance_time_to_bind(action, any_action.AdvanceTime)
-            dst.AnyAction.append(any_action)
-            continue
-        if isinstance(action, SEAdvanceUntilStable):
-            serialize_advance_until_stable_to_bind(action, any_action.AdvanceUntilStable)
-            dst.AnyAction.append(any_action)
-            continue
-        if isinstance(action, SESerializeRequested):
-            serialize_serialize_requested_to_bind(action, any_action.SerializeRequested)
-            dst.AnyAction.append(any_action)
-            continue
-        if isinstance(action, SESerializeState):
-            serialize_serialize_state_to_bind(action, any_action.SerializeState)
-            dst.AnyAction.append(any_action)
-            continue
-        if isinstance(action, SEPatientAction):
-            if isinstance(action, SEAcuteRespiratoryDistressSyndromeExacerbation):
-                serialize_acute_respiratory_distress_syndrome_exacerbation_to_bind(action, any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEAcuteStress):
-                serialize_acute_stress_to_bind(action, any_action.PatientAction.AcuteStress)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEAirwayObstruction):
-                serialize_airway_obstruction_to_bind(action, any_action.PatientAction.AirwayObstruction)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEArrhythmia):
-                serialize_arrhythmia_to_bind(action, any_action.PatientAction.Arrhythmia)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEArrhythmia):
-                serialize_arrhythmia_to_bind(action, any_action.PatientAction.Arrhythmia)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEAsthmaAttack):
-                serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEBrainInjury):
-                serialize_brain_injury_to_bind(action, any_action.PatientAction.BrainInjury)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEBronchoconstriction):
-                serialize_bronchoconstriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SECardiovascularMechanicsModification):
-                serialize_cardiovascular_mechanics_modification_to_bind(action, any_action.PatientAction.CardiovascularMechanicsModification)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEChestCompression):
-                serialize_chest_compression_to_bind(action, any_action.PatientAction.ChestCompression)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEChestCompressionInstantaneous):
-                serialize_chest_compression_instantaneous_to_bind(action, any_action.PatientAction.ChestCompressionInstantaneous)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEChestCompressionAutomated):
-                serialize_chest_compression_automated_to_bind(action, any_action.PatientAction.ChestCompressionAutomated)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEChestOcclusiveDressing):
-                serialize_chest_occlusive_dressing_to_bind(action, any_action.PatientAction.ChestOcclusiveDressing)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEChronicObstructivePulmonaryDiseaseExacerbation):
-                serialize_chronic_obstructive_pulmonary_disease_exacerbation_to_bind(action, any_action.PatientAction.ChronicObstructivePulmonaryDiseaseExacerbation)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEConsciousRespiration):
-                serialize_conscious_respiration_to_bind(action, any_action.PatientAction.ConsciousRespiration)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEConsumeNutrients):
-                serialize_consume_nutrients_to_bind(action, any_action.PatientAction.ConsumeNutrients)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEDyspnea):
-                serialize_dsypnea_to_bind(action, any_action.PatientAction.Dyspnea)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEExercise):
-                serialize_exercise_to_bind(action, any_action.PatientAction.Exercise)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEHemorrhage):
-                serialize_hemorrhage_to_bind(action, any_action.PatientAction.Hemorrhage)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEHemothorax):
-                serialize_hemothorax_to_bind(action, any_action.PatientAction.Hemothorax)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEImpairedAlveolarExchangeExacerbation):
-                serialize_impaired_alveolar_exchange_exacerbation_to_bind(action, any_action.PatientAction.ImpairedAlveolarExchangeExacerbation)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEIntubation):
-                serialize_intubation_to_bind(action, any_action.PatientAction.Intubation)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEPneumoniaExacerbation):
-                serialize_pneumonia_exacerbation_to_bind(action, any_action.PatientAction.PneumoniaExacerbation)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilation):
-                serialize_mechanical_ventilation_to_bind(action, any_action.PatientAction.MechanicalVentilation)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SENeedleDecompression):
-                serialize_needle_decompression_to_bind(action, any_action.PatientAction.NeedleDecompression)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEPericardialEffusion):
-                serialize_pericardial_effusion_to_bind(action, any_action.PatientAction.PericardialEffusion)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEPulmonaryShuntExacerbation):
-                serialize_pulmonary_shunt_exacerbation_to_bind(action, any_action.PatientAction.PulmonaryShuntExacerbation)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SERespiratoryFatigue):
-                serialize_respiratory_fatigue_to_bind(action, any_action.PatientAction.RespiratoryFatigue)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SERespiratoryMechanicsConfiguration):
-                serialize_respiratory_mechanics_configuration_to_bind(action, any_action.PatientAction.RespiratoryMechanicsConfiguration)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SERespiratoryMechanicsModification):
-                serialize_respiratory_mechanics_modification_to_bind(action, any_action.PatientAction.RespiratoryMechanicsModification)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SESubstanceBolus):
-                serialize_substance_bolus_to_bind(action, any_action.PatientAction.SubstanceBolus)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SESubstanceInfusion):
-                serialize_substance_infusion_to_bind(action, any_action.PatientAction.SubstanceInfusion)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SESubstanceCompoundInfusion):
-                serialize_substance_compound_infusion_to_bind(action, any_action.PatientAction.SubstanceCompoundInfusion)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SESupplementalOxygen):
-                serialize_supplemental_oxygen_to_bind(action, any_action.PatientAction.SupplementalOxygen)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SETensionPneumothorax):
-                serialize_tension_pneumothorax_to_bind(action, any_action.PatientAction.TensionPneumothorax)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SETubeThoracostomy):
-                serialize_tube_thoracostomy_to_bind(action, any_action.PatientAction.TubeThoracostomy)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEUrinate):
-                serialize_urinate_to_bind(action, any_action.PatientAction.Urinate)
-                dst.AnyAction.append(any_action)
-                continue
-            print("Unknown Patient Action")
+        #  print(action)
+        dst.append(serialize_action_to_bind(action))
 
-        if isinstance(action, SEEnvironmentAction):
-            if isinstance(action, SEChangeEnvironmentalConditions):
-                serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEThermalApplication):
-                serialize_thermal_application_to_bind(action, any_action.EnvironmentAction.ThermalApplication)
-                dst.AnyAction.append(any_action)
-                continue
-            print("Unknown Environment Action")
-
-        if isinstance(action, SEEquipmentAction):
-            if isinstance(action, SEBagValveMaskConfiguration):
-                serialize_bag_valve_mask_configuration_to_bind(action, any_action.EquipmentAction.BagValveMaskConfiguration)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEBagValveMaskAutomated):
-                serialize_bag_valve_mask_automated_to_bind(action, any_action.EquipmentAction.BagValveMaskAutomated)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEBagValveMaskInstantaneous):
-                serialize_bag_valve_mask_instantaneous_to_bind(action, any_action.EquipmentAction.BagValveMaskInstantaneous)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEBagValveMaskSqueeze):
-                serialize_bag_valve_mask_squeeze_to_bind(action, any_action.EquipmentAction.BagValveMaskSqueeze)
-                dst.AnyAction.append(any_action)
-                continue
-
-            if isinstance(action, SEECMOConfiguration):
-                serialize_ecmo_configuration_to_bind(action, any_action.EquipmentAction.ECMOConfiguration)
-                dst.AnyAction.append(any_action)
-                continue
-
-#            if isinstance(action, SEInhalerConfiguration):
-#                serialize_inhaler_configuration_to_bind(action, any_action.EquipmentAction.InhalerConfiguration)
-#                dst.AnyAction.append(any_action)
-#                continue
-
-            if isinstance(action, SEMechanicalVentilatorConfiguration):
-                serialize_mechanical_ventilator_configuration_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorConfiguration)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorHold):
-                serialize_mechanical_ventilator_hold_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorHold)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorLeak):
-                serialize_mechanical_ventilator_leak_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorLeak)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorContinuousPositiveAirwayPressure):
-                serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorContinuousPositiveAirwayPressure)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorPressureControl):
-                serialize_mechanical_ventilator_pressure_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorPressureControl)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SEMechanicalVentilatorVolumeControl):
-                serialize_mechanical_ventilator_volume_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorVolumeControl)
-                dst.AnyAction.append(any_action)
-                continue
-            print("Unknown Equipment Action")
 
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
     action_list = ActionListData()

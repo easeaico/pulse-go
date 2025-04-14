@@ -26,6 +26,8 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Support configuration json in validation workbooks
     - Include comparison formula in expected value column of segment validation tables
     - Shifting default to 3 significant digits for values in validation tables
+  - Improved Batch Study Support
+    - Created Python based HowTo for running/analyzing large amounts of patients and insult/intervention combinations
 
 - Physiology Model Improvements
     - Moved hemorrrhage model validation to an automated validation module

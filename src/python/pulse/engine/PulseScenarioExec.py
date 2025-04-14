@@ -15,6 +15,7 @@ class PulseScenarioExec(SEScenarioExec):
 
     def __init__(self):
         super().__init__()
+        self._model_type = eModelType.HumanAdultWholeBody
 
     def clear(self) -> None:
         super().clear()
@@ -22,6 +23,7 @@ class PulseScenarioExec(SEScenarioExec):
 
     def get_model_type(self) -> eModelType:
         return self._model_type
+
     def set_model_type(self, t: eModelType) -> None:
         self._model_type = t
 

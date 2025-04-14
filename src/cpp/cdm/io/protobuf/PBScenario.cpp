@@ -242,6 +242,12 @@ bool PBScenario::SerializeToString(const SEScenarioExec& src, std::string& outpu
   PBScenario::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, logger);
 }
+bool PBScenario::SerializeToFile(const SEScenarioExec& src, const std::string& filename)
+{
+  CDM_BIND::ScenarioExecData data;
+  PBScenario::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
+}
 bool PBScenario::SerializeFromString(const std::string& src, SEScenarioExec& dst, eSerializationFormat m, Logger* logger)
 {
   CDM_BIND::ScenarioExecData data;
@@ -250,7 +256,14 @@ bool PBScenario::SerializeFromString(const std::string& src, SEScenarioExec& dst
   PBScenario::Load(data, dst);
   return true;
 }
-
+bool PBScenario::SerializeFromFile(const std::string& filename, SEScenarioExec& dst)
+{
+  CDM_BIND::ScenarioExecData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
+    return false;
+  PBScenario::Load(data, dst);
+  return true;
+}
 
 void PBScenario::Load(const CDM_BIND::ScenarioExecStatusData& src, SEScenarioExecStatus& dst)
 {

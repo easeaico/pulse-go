@@ -24,7 +24,9 @@ public:
   void SetModelType(eModelType mt) { m_ModelType = mt; }
 
   bool SerializeToString(std::string& output, eSerializationFormat m, Logger* logger = nullptr) const;
+  bool SerializeToFile(const std::string& filename) const; 
   bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger = nullptr);
+  bool SerializeFromFile(const std::string& filename);
 
   bool Execute();
 
