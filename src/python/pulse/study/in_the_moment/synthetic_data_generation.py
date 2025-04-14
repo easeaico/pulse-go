@@ -60,7 +60,7 @@ def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
     # Test specific injury
-    if False:
+    if True:
         test_injury(injury_distributions=army_injury_distributions["thorax"],
                     num_patients_injured=1000,
                     log=True)
@@ -895,12 +895,19 @@ def test_injury(injury_distributions: dict, num_patients_injured: int, log: bool
             _log.info(f"Total number of injuries for all patient: {num_location_injuries}")
 
         # Check that our tuples don't have more than 2 of any 1 injury
+        max_polytrauma_counts = {}  # Curious to see which injuries are doubled in a polytrauma
         for injury in injuries:
-            if isinstance(injury, tuple) and len(injury) > 2:
-                unique = set(injury)
-                for u in unique:
-                    if list(injury).count(u) >= 3:
-                        _log.fatal(f"Is this a good injury mix {injury}")
+            if isinstance(injury, tuple):
+                # How many of each type do we have?
+                for t in injury_types.keys():
+                    num = list(injury).count(t)
+                    if t not in max_polytrauma_counts:
+                        max_polytrauma_counts[t] = 0
+                    if num > max_polytrauma_counts[t]:
+                        max_polytrauma_counts[t] = num
+                    if num >= 3:
+                        _log.fatal(f"This polytrauma has more than 2 {t}s")
+        _log.info(f"Max number in a polytrauma: {max_polytrauma_counts}")
 
     else:
         injuries = _weighted_choices(choices=list(injury_types.keys()),
