@@ -96,6 +96,13 @@ namespace pulse
     GetShuntFraction().SetValue(0);
     GetApparentShuntFraction().SetValue(0);
 
+    GetArterialOxygenContent().SetValue(0);
+    GetMixedVenousOxygenContent().SetValue(0);
+    GetArteriovenousOxygenDifference().SetValue(0);
+    GetOxygenDelivery().SetValue(0, VolumePerTimeUnit::mL_Per_min);
+    GetApparentOxygenConsumption().SetValue(0, VolumePerTimeUnit::mL_Per_min);
+    GetOxygenDeliveryToOxygenConsumptionRatio().SetValue(0);
+
     m_ArterialOxygen_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
     m_ArterialCarbonDioxide_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
 
@@ -204,8 +211,8 @@ namespace pulse
     if (m_RightArmCO != nullptr)
       totalHBCO_g = (m_data.GetSubstances().GetSubstanceMass(m_data.GetSubstances().GetHbCO(), m_data.GetCompartments().GetVascularLeafCompartments(), MassUnit::g) / m_data.GetSubstances().GetHbCO().GetMolarMass(MassPerAmountUnit::g_Per_mol)) * m_data.GetSubstances().GetHb().GetMolarMass(MassPerAmountUnit::g_Per_mol);
 
-    double totalHemoglobinO2Hemoglobin_g = totalHb_g + totalHbO2_g + totalHbCO2_g + totalHBO2CO2_g + totalHBCO_g;
-    GetHemoglobinContent().SetValue(totalHemoglobinO2Hemoglobin_g, MassUnit::g);
+    double totalHemoglobin_g = totalHb_g + totalHbO2_g + totalHbCO2_g + totalHBO2CO2_g + totalHBCO_g;
+    GetHemoglobinContent().SetValue(totalHemoglobin_g, MassUnit::g);
 
     // Calculate Blood Cell Counts
     double RedBloodCellCount_ct = GetHemoglobinContent(MassUnit::ug) / m_HbPerRedBloodCell_ug_Per_ct;
@@ -250,29 +257,6 @@ namespace pulse
     shunt = MIN(shunt, 1.0);
     GetShuntFraction().SetValue(shunt);
 
-    // Calculate the Apparent Shunt Fraction (Qs/Qt) based on the difference between the ideal pulmonary capillary oxygen content and the arterial oxygen content
-    // Extract arterial and venous oxygen partial pressures
-    double aortaPO2_mmHg = m_AortaO2->GetPartialPressure(PressureUnit::mmHg);
-    double venaCavaPO2_mmHg = m_VenaCavaO2->GetPartialPressure(PressureUnit::mmHg);
-    // Extract oxygen saturation (SxO2)
-    double aortaOxygenSaturation = m_AortaO2->GetSaturation().GetValue();
-    double venaCavaOxygenSaturation = m_VenaCavaO2->GetSaturation().GetValue();
-    // Extract total hemoglobin concentration (g/dL)
-    double hemoglobinContent_g_Per_dL = totalHemoglobinO2Hemoglobin_g / (TotalBloodVolume_mL / 100.0);
-    // Compute Arterial Oxygen Content (CaO2)
-    double aortaOxygenContent_mL_Per_dL = (1.34 * hemoglobinContent_g_Per_dL * aortaOxygenSaturation) + (0.0031 * aortaPO2_mmHg);
-    // Compute Venous Oxygen Content (CvO2)
-    double venaCavaOxygenContent_mL_Per_dL = (1.34 * hemoglobinContent_g_Per_dL * venaCavaOxygenSaturation) + (0.0031 * venaCavaPO2_mmHg);
-    // Extract Alveolar Oxygen Partial Pressure (PAO2)
-    double alveolarOxygenPartialPressure_mmHg = m_Alveoli->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure(PressureUnit::mmHg);
-    // Compute Ideal Pulmonary Capillary Oxygen Content (CcO2)
-    // Assumes 100% saturation in ideal capillaries
-    double idealPulmonaryCapillaryOxygenContent_mL_Per_dL = (1.34 * hemoglobinContent_g_Per_dL * 1.0) + (0.0031 * alveolarOxygenPartialPressure_mmHg);
-    // Compute Apparent Shunt Fraction (Qs/Qt)
-    double apparentShuntFraction = (idealPulmonaryCapillaryOxygenContent_mL_Per_dL - aortaOxygenContent_mL_Per_dL) /
-      (idealPulmonaryCapillaryOxygenContent_mL_Per_dL - venaCavaOxygenContent_mL_Per_dL);
-    GetApparentShuntFraction().SetValue(apparentShuntFraction);
-
     CheckBloodSubstanceLevels();
 
     // Total up all active substances
@@ -291,7 +275,7 @@ namespace pulse
     GetBloodUreaNitrogenConcentration().SetValue(m_data.GetSubstances().GetUrea().GetBloodConcentration(MassPerVolumeUnit::ug_Per_mL) / 2.14, MassPerVolumeUnit::ug_Per_mL);
     double albuminConcentration_ug_Per_mL = m_data.GetSubstances().GetAlbumin().GetBloodConcentration(MassPerVolumeUnit::ug_Per_mL);
     m_data.GetSubstances().GetGlobulin().GetBloodConcentration().SetValue(albuminConcentration_ug_Per_mL * 1.6 - albuminConcentration_ug_Per_mL, MassPerVolumeUnit::ug_Per_mL);
-    double HemoglobinConcentration = totalHemoglobinO2Hemoglobin_g / TotalBloodVolume_mL;
+    double HemoglobinConcentration = totalHemoglobin_g / TotalBloodVolume_mL;
     m_data.GetSubstances().GetHb().GetBloodConcentration().SetValue(HemoglobinConcentration, MassPerVolumeUnit::g_Per_mL);
     GetTotalProteinConcentration().SetValue(albuminConcentration_ug_Per_mL * 1.6, MassPerVolumeUnit::ug_Per_mL);
     // 1.6 comes from reading http://www.drkaslow.com/html/proteins_-_albumin-_globulins-_etc.html
@@ -324,6 +308,61 @@ namespace pulse
       m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose())->GetMolarity(),
       m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetUrea())->GetMolarity(), 
       GetPlasmaOsmolarity());
+
+
+    // Molar volume of an ideal gas at NTP is 24.04 L_Per_mol
+    double mmol_To_mL = 24.04; // mL O2 per mmol O2
+
+    double aortaO2_mmol_Per_L = m_AortaO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double aortaHbO2_mmol_Per_L = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double aortaHbO2CO2_mmol_Per_L = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    //CaO2
+    double arterialO2Content_mmol_Per_L = aortaO2_mmol_Per_L + 4.0 * aortaHbO2_mmol_Per_L + 4.0 * aortaHbO2CO2_mmol_Per_L;
+    double arterialO2Content_mL_Per_dL = arterialO2Content_mmol_Per_L * mmol_To_mL / 10.0;
+
+    double venaCavaO2_mmol_Per_L = m_VenaCavaO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double venaCavaHbO2_mmol_Per_L = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double venaCavaHbO2CO2_mmol_Per_L = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    //CvO2
+    double venousO2Content_mmol_Per_L = venaCavaO2_mmol_Per_L + 4.0 * venaCavaHbO2_mmol_Per_L + 4.0 * venaCavaHbO2CO2_mmol_Per_L;
+    double venousO2Content_mL_Per_dL = venousO2Content_mmol_Per_L * mmol_To_mL / 10.0;
+
+    //CO
+    double cardiacOutput_L_Per_min = m_data.GetCardiovascular().GetCardiacOutput(VolumePerTimeUnit::L_Per_min);
+    double cardiacOutput_dL_Per_min = cardiacOutput_L_Per_min * 10.0;
+
+    // a-vO2 diff (mL O2 / dL blood)
+    double arteriovenousO2Difference_mL_Per_dL = arterialO2Content_mL_Per_dL - venousO2Content_mL_Per_dL;
+
+    // VO2 = CO x (CaO2 - CvO2)
+    double O2Consumption_mL_Per_min = cardiacOutput_dL_Per_min * arteriovenousO2Difference_mL_Per_dL;
+    // DO2 = CO x CaO2
+    double O2Delivery_mL_Per_min = cardiacOutput_dL_Per_min * arterialO2Content_mL_Per_dL;
+    // DO2/VO2 ratio (unitless)
+    double O2DeliveryToO2ConsumptionRatio = O2Delivery_mL_Per_min / O2Consumption_mL_Per_min;
+
+    GetArterialOxygenContent().SetValue(arterialO2Content_mL_Per_dL * 0.01); //Make unitless
+    GetMixedVenousOxygenContent().SetValue(venousO2Content_mL_Per_dL * 0.01); //Make unitless
+    GetArteriovenousOxygenDifference().SetValue(arteriovenousO2Difference_mL_Per_dL * 0.01); //Make unitless
+    GetOxygenDelivery().SetValue(O2Delivery_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
+    GetApparentOxygenConsumption().SetValue(O2Consumption_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
+    GetOxygenDeliveryToOxygenConsumptionRatio().SetValue(O2DeliveryToO2ConsumptionRatio);
+
+
+    // Calculate the Apparent Shunt Fraction (Qs/Qt) based on the difference between the ideal pulmonary capillary oxygen content and the arterial oxygen content
+    // Extract Alveolar Oxygen Partial Pressure (PAO2)
+    double alveolarOxygenPartialPressure_mmHg = m_Alveoli->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure(PressureUnit::mmHg);
+    // Extract total hemoglobin concentration (g/dL)
+    double hemoglobinContent_g_Per_dL = totalHemoglobin_g / (TotalBloodVolume_mL / 100.0);
+    // Compute Ideal Pulmonary Capillary Oxygen Content (CcO2)
+    // Assumes 100% saturation and includes dissolved oxygen
+    double idealPulmonaryCapillaryOxygenContent_mL_Per_dL = (1.34 * hemoglobinContent_g_Per_dL * 1.0) + (0.0031 * alveolarOxygenPartialPressure_mmHg);
+    // Compute Apparent Shunt Fraction (Qs/Qt)
+    double apparentShuntFraction =
+      (idealPulmonaryCapillaryOxygenContent_mL_Per_dL - arterialO2Content_mL_Per_dL) /
+      (idealPulmonaryCapillaryOxygenContent_mL_Per_dL - venousO2Content_mL_Per_dL);
+    apparentShuntFraction = LIMIT(apparentShuntFraction, 0.0, 1.0);
+    GetApparentShuntFraction().SetValue(apparentShuntFraction);
   }
 
   //--------------------------------------------------------------------------------------------------

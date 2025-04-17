@@ -34,6 +34,10 @@ void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBl
 {
   if (src.has_apparentshuntfraction())
     PBProperty::Load(src.apparentshuntfraction(), dst.GetApparentShuntFraction());
+  if (src.has_arterialoxygencontent())
+    PBProperty::Load(src.arterialoxygencontent(), dst.GetArterialOxygenContent());
+  if (src.has_arteriovenousoxygendifference())
+    PBProperty::Load(src.arteriovenousoxygendifference(), dst.GetArteriovenousOxygenDifference());
   if (src.has_baseexcess())
     PBProperty::Load(src.baseexcess(), dst.GetBaseExcess());
   if (src.has_blooddensity())
@@ -52,6 +56,14 @@ void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBl
     PBProperty::Load(src.hematocrit(), dst.GetHematocrit());
   if (src.has_hemoglobincontent())
     PBProperty::Load(src.hemoglobincontent(), dst.GetHemoglobinContent());
+  if (src.has_mixedvenousoxygencontent())
+    PBProperty::Load(src.mixedvenousoxygencontent(), dst.GetMixedVenousOxygenContent());
+  if (src.has_apparentoxygenconsumption())
+    PBProperty::Load(src.apparentoxygenconsumption(), dst.GetApparentOxygenConsumption());
+  if (src.has_oxygendelivery())
+    PBProperty::Load(src.oxygendelivery(), dst.GetOxygenDelivery());
+  if (src.has_oxygendeliverytooxygenconsumptionratio())
+    PBProperty::Load(src.oxygendeliverytooxygenconsumptionratio(), dst.GetOxygenDeliveryToOxygenConsumptionRatio());
   if (src.has_oxygensaturation())
     PBProperty::Load(src.oxygensaturation(), dst.GetOxygenSaturation());
   if (src.has_phosphate())
@@ -103,6 +115,10 @@ void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodC
 {
   if (src.HasApparentShuntFraction())
     dst.set_allocated_apparentshuntfraction(PBProperty::Unload(*src.m_ApparentShuntFraction));
+  if (src.HasArterialOxygenContent())
+    dst.set_allocated_arterialoxygencontent(PBProperty::Unload(*src.m_ArterialOxygenContent));
+  if (src.HasArteriovenousOxygenDifference())
+    dst.set_allocated_arteriovenousoxygendifference(PBProperty::Unload(*src.m_ArteriovenousOxygenDifference));
   if (src.HasBaseExcess())
     dst.set_allocated_baseexcess(PBProperty::Unload(*src.m_BaseExcess));
   if (src.HasBloodDensity())
@@ -121,6 +137,14 @@ void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodC
     dst.set_allocated_hematocrit(PBProperty::Unload(*src.m_Hematocrit));
   if (src.HasHemoglobinContent())
     dst.set_allocated_hemoglobincontent(PBProperty::Unload(*src.m_HemoglobinContent));
+  if (src.HasMixedVenousOxygenContent())
+    dst.set_allocated_mixedvenousoxygencontent(PBProperty::Unload(*src.m_MixedVenousOxygenContent));
+  if (src.HasApparentOxygenConsumption())
+    dst.set_allocated_apparentoxygenconsumption(PBProperty::Unload(*src.m_ApparentOxygenConsumption));
+  if (src.HasOxygenDelivery())
+    dst.set_allocated_oxygendelivery(PBProperty::Unload(*src.m_OxygenDelivery));
+  if (src.HasOxygenDeliveryToOxygenConsumptionRatio())
+    dst.set_allocated_oxygendeliverytooxygenconsumptionratio(PBProperty::Unload(*src.m_OxygenDeliveryToOxygenConsumptionRatio));
   if (src.HasOxygenSaturation())
     dst.set_allocated_oxygensaturation(PBProperty::Unload(*src.m_OxygenSaturation));
   if (src.HasPhosphate())
