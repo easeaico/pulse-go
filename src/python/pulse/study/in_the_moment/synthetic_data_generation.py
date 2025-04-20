@@ -1,8 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
-import copy
 
+import copy
 import dataframe_image as dfi
+import json
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,6 +18,7 @@ from pulse.cdm.utils.markdown import table
 from scipy.stats import truncnorm
 
 _log = logging.getLogger("pulse")
+
 
 army_population_distributions = {
     "heart_rate": {"mean": 72, "std": 11},
@@ -59,6 +61,11 @@ army_injury_distributions = {  # Location -> Type -> Severity mean/std or explic
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
+    # TODO argparse
+    results_dir = Path("./test_results/itm/data")
+    army_dir = Path(results_dir / "army")
+    army_dir.mkdir(parents=True, exist_ok=True)
+
     # Test specific injury
     if True:
         test_injury(injury_distributions=army_injury_distributions["thorax"],
@@ -84,18 +91,29 @@ def main():
             measure_error(iterations=i, population_size=p,
                           population_distributions=army_population_distributions,
                           injury_distributions=army_injury_distributions,
-                          results_stem=f"./results/measurements/{p}")
+                          results_stem=f"{army_dir}/measurements/{p}")
 
     # Generate a data set
     if True:
         population_size = 1000
         army_patients = synthetic_population_generation(population_size, army_population_distributions)
         army_population_error = calculate_population_error(army_patients, army_population_distributions)
-        plot_population_error(army_population_error, f"./results/army_population_of_{population_size}")
+        plot_population_error(army_population_error, f"{army_dir}/population_of_{population_size}")
 
         army_patient_injuries = synthetic_injury_generation(population_size, army_injury_distributions)
         army_injury_error = calculate_injury_error(army_patient_injuries, army_injury_distributions)
-        plot_injury_error(army_injury_error, f"./results/army_injuries_of_population_of_{population_size}")
+        plot_injury_error(army_injury_error, f"{army_dir}/injuries_of_population_of_{population_size}")
+
+        # Combine the patients and their injuries and write that out to disk
+        data = []
+        for i in range(population_size):
+            patient = {}
+            for field, values in army_patients.items():
+                patient[field] = values[i]
+            patient["injuries"] = army_patient_injuries[i]
+            data.append(patient)
+        with open(f"{army_dir}/{population_size}_patients_with_injuries.json", 'w') as f:
+            json.dump(data, f, indent=2)
 
 
 def synthetic_population_generation(size: int, distributions: dict) -> dict:
@@ -329,13 +347,8 @@ def plot_population_error(population_error: dict, results_stem: str):
     _create_report(f"{results_stem}_sex", data, fields, headings)
 
 
-class Injury:
-    __slots__ = ["location", "type", "severity"]
-
-    def __init__(self, location: str, type: str, severity: float):
-        self.location = location
-        self.type = type
-        self.severity = severity
+def _injury(location_: str, type_: str, severity_: float) -> dict:
+    return {"location": location_, "type": type_, "severity": severity_}
 
 
 def synthetic_injury_generation(population_size: int, distributions: dict) -> list:
@@ -361,8 +374,8 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
             # Generate a list of injury counts for each patient
             polytrauma = injury_distributions["polytrauma"]
             num_polytrauma_injuries = _bounded_random_choices(mean=polytrauma["mean"], sd=0.5,
-                                                           low=1, upp=polytrauma["max"],
-                                                           size=num_injured)
+                                                              low=1, upp=polytrauma["max"],
+                                                              size=num_injured)
             num_polytrauma_injuries = [round(x) for x in num_polytrauma_injuries]
             polytraumas = _weighted_choices(choices=list(injury_types.keys()),
                                             percents=[injury_types[t]["percent"] for t in injury_types],
@@ -372,7 +385,7 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
                                                             list(injury_types.keys()))
 
             # Check that our tuples don't have more than 2 of any 1 injury
-            for injury in injuries:
+            for injury in ledger[location]["injuries"]:
                 if isinstance(injury, tuple) and len(injury) > 2:
                     unique = set(injury)
                     for u in unique:
@@ -409,7 +422,7 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
             injury_severity = severity_ledger["severities"][severity_ledger["index"]]
             severity_ledger["index"] += 1
 
-            patient_injuries.append([Injury(
+            patient_injuries.append([_injury(
                 location,
                 injury_type,
                 injury_severity)])
@@ -420,7 +433,7 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
                 injury_severity = severity_ledger["severities"][severity_ledger["index"]]
                 severity_ledger["index"] += 1
 
-                patient_injuries[-1].append(Injury(
+                patient_injuries[-1].append(_injury(
                     location,
                     injury_type_str,
                     injury_severity))
@@ -437,16 +450,16 @@ def calculate_injury_error(patients_injuries: list, injury_distributions: dict) 
         num_injuries += len(patient_injuries)
         locations = set()
         for patient_injury in patient_injuries:
-            locations.add(patient_injury.location)
-            if patient_injury.location not in error:
-                error[patient_injury.location] = {"count": 0, "injuries": {}}
-            injury_location = error[patient_injury.location]
+            locations.add(patient_injury["location"])
+            if patient_injury["location"] not in error:
+                error[patient_injury["location"]] = {"count": 0, "injuries": {}}
+            injury_location = error[patient_injury["location"]]
             location_injuries = injury_location["injuries"]
-            if patient_injury.type not in location_injuries:
-                location_injuries[patient_injury.type] = {"count": 0, "severities": []}
-            injury = location_injuries[patient_injury.type]
+            if patient_injury["type"] not in location_injuries:
+                location_injuries[patient_injury["type"]] = {"count": 0, "severities": []}
+            injury = location_injuries[patient_injury["type"]]
             injury["count"] += 1
-            injury["severities"].append(patient_injury.severity)
+            injury["severities"].append(patient_injury["severity"])
         for location in locations:
             injury_location = error[location]
             injury_location["count"] += 1
