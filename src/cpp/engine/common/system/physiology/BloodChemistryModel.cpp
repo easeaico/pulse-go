@@ -59,10 +59,16 @@ namespace pulse
     m_AortaHCO3 = nullptr;
     m_BrainO2 = nullptr;
     m_MyocardiumO2 = nullptr;
+    m_PulmonaryArteries = nullptr;
     m_PulmonaryArteriesO2 = nullptr;
     m_PulmonaryArteriesCO2 = nullptr;
+    m_PulmonaryVeins = nullptr;
     m_PulmonaryVeinsO2 = nullptr;
     m_PulmonaryVeinsCO2 = nullptr;
+    m_LeftPulmonaryCapillaries = nullptr;
+    m_LeftPulmonaryCapillariesO2 = nullptr;
+    m_RightPulmonaryCapillaries = nullptr;
+    m_RightPulmonaryCapillariesO2 = nullptr;
     m_RightArm = nullptr;
     m_RightArmCO = nullptr;
     m_RightArmO2 = nullptr;
@@ -141,13 +147,18 @@ namespace pulse
     m_VenaCavaO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_VenaCavaCO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
-    SELiquidCompartment* pulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries);
-    m_PulmonaryArteriesO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_PulmonaryArteriesCO2 = pulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    m_PulmonaryArteries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries);
+    m_PulmonaryArteriesO2 = m_PulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_PulmonaryArteriesCO2 = m_PulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
-    SELiquidCompartment* pulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins);
-    m_PulmonaryVeinsO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_PulmonaryVeinsCO2 = pulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+    m_PulmonaryVeins = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins);
+    m_PulmonaryVeinsO2 = m_PulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_PulmonaryVeinsCO2 = m_PulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+
+    m_LeftPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries);
+    m_LeftPulmonaryCapillariesO2 = m_LeftPulmonaryCapillaries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_RightPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries);
+    m_RightPulmonaryCapillariesO2 = m_RightPulmonaryCapillaries->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
 
     m_Alveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Alveoli);
   }
@@ -257,6 +268,51 @@ namespace pulse
     shunt = MIN(shunt, 1.0);
     GetShuntFraction().SetValue(shunt);
 
+    // Calculate the Apparent Shunt Fraction (Qs/Qt) based on the pulmonary compartments oxygen content
+    // We're going to use the capillaries value from the side with the highest value to account for heterogenous insults 
+    // (e.g., mainstem intubation, pneumothorax, etc.)
+
+    // Get pulmonary capillaries O2 quantities (only the part that participates in gas exchange)
+    double rightPulmonaryCapillariesO2_mmol_Per_L = m_RightPulmonaryCapillariesO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double rightPulmonaryCapillariesHbO2_mmol_Per_L = m_RightPulmonaryCapillaries->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double rightPulmonaryCapillariesHbO2CO2_mmol_Per_L = m_RightPulmonaryCapillaries->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double rightCapillaryO2Content_mmol_Per_L = rightPulmonaryCapillariesO2_mmol_Per_L + 4.0 * rightPulmonaryCapillariesHbO2_mmol_Per_L + 4.0 * rightPulmonaryCapillariesHbO2CO2_mmol_Per_L;
+
+    double leftPulmonaryCapillariesO2_mmol_Per_L = m_LeftPulmonaryCapillariesO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double leftPulmonaryCapillariesHbO2_mmol_Per_L = m_LeftPulmonaryCapillaries->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double leftPulmonaryCapillariesHbO2CO2_mmol_Per_L = m_LeftPulmonaryCapillaries->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double leftCapillaryO2Content_mmol_Per_L = leftPulmonaryCapillariesO2_mmol_Per_L + 4.0 * leftPulmonaryCapillariesHbO2_mmol_Per_L + 4.0 * leftPulmonaryCapillariesHbO2CO2_mmol_Per_L;
+
+    // Get pulmonary arteries O2 quantities
+    double pulmonaryArteriesO2_mmol_Per_L = m_PulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double pulmonaryArteriesHbO2_mmol_Per_L = m_PulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double pulmonaryArteriesHbO2CO2_mmol_Per_L = m_PulmonaryArteries->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+
+    // Get pulmonary veins O2 quantities
+    double pulmonaryVeinsO2_mmol_Per_L = m_PulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double pulmonaryVeinsHbO2_mmol_Per_L = m_PulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+    double pulmonaryVeinsHbO2CO2_mmol_Per_L = m_PulmonaryVeins->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
+
+    // Compute CcO2 - Pulmonary Capillary O2 Content
+    double capillaryO2Content_mmol_Per_L = MAX(rightCapillaryO2Content_mmol_Per_L, leftCapillaryO2Content_mmol_Per_L);
+    // Compute CaO2 - Arterial O2 Content (from pulmonary veins)
+    double arterialO2Content_mmol_Per_L = pulmonaryVeinsO2_mmol_Per_L + 4.0 * pulmonaryVeinsHbO2_mmol_Per_L + 4.0 * pulmonaryVeinsHbO2CO2_mmol_Per_L;
+    // Compute CvO2 - Venous O2 Content (from pulmonary arteries)
+    double venousO2Content_mmol_Per_L = pulmonaryArteriesO2_mmol_Per_L + 4.0 * pulmonaryArteriesHbO2_mmol_Per_L + 4.0 * pulmonaryArteriesHbO2CO2_mmol_Per_L;
+
+    // Compute Apparent Shunt Fraction (Qs/Qt)
+    double apparentShuntFraction = 
+      (capillaryO2Content_mmol_Per_L - arterialO2Content_mmol_Per_L) / 
+      (capillaryO2Content_mmol_Per_L - venousO2Content_mmol_Per_L);
+    apparentShuntFraction = LIMIT(apparentShuntFraction, 0.0, 1.0);
+
+    //Dampen the change to prevent oscillations
+    double previousApparentShuntFraction = GetApparentShuntFraction().GetValue();
+    double dampenFraction_perSec = 0.01 * 50.0;
+    apparentShuntFraction = GeneralMath::Damper(apparentShuntFraction, previousApparentShuntFraction, dampenFraction_perSec, m_data.GetTimeStep_s());
+
+    GetApparentShuntFraction().SetValue(apparentShuntFraction);
+
     CheckBloodSubstanceLevels();
 
     // Total up all active substances
@@ -317,14 +373,14 @@ namespace pulse
     double aortaHbO2_mmol_Per_L = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
     double aortaHbO2CO2_mmol_Per_L = m_Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
     //CaO2
-    double arterialO2Content_mmol_Per_L = aortaO2_mmol_Per_L + 4.0 * aortaHbO2_mmol_Per_L + 4.0 * aortaHbO2CO2_mmol_Per_L;
+    arterialO2Content_mmol_Per_L = aortaO2_mmol_Per_L + 4.0 * aortaHbO2_mmol_Per_L + 4.0 * aortaHbO2CO2_mmol_Per_L;
     double arterialO2Content_mL_Per_dL = arterialO2Content_mmol_Per_L * mmol_To_mL / 10.0;
 
     double venaCavaO2_mmol_Per_L = m_VenaCavaO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
     double venaCavaHbO2_mmol_Per_L = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
     double venaCavaHbO2CO2_mmol_Per_L = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetHbO2CO2())->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
     //CvO2
-    double venousO2Content_mmol_Per_L = venaCavaO2_mmol_Per_L + 4.0 * venaCavaHbO2_mmol_Per_L + 4.0 * venaCavaHbO2CO2_mmol_Per_L;
+    venousO2Content_mmol_Per_L = venaCavaO2_mmol_Per_L + 4.0 * venaCavaHbO2_mmol_Per_L + 4.0 * venaCavaHbO2CO2_mmol_Per_L;
     double venousO2Content_mL_Per_dL = venousO2Content_mmol_Per_L * mmol_To_mL / 10.0;
 
     //CO
@@ -347,22 +403,6 @@ namespace pulse
     GetOxygenDelivery().SetValue(O2Delivery_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
     GetApparentOxygenConsumption().SetValue(O2Consumption_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
     GetOxygenDeliveryToOxygenConsumptionRatio().SetValue(O2DeliveryToO2ConsumptionRatio);
-
-
-    // Calculate the Apparent Shunt Fraction (Qs/Qt) based on the difference between the ideal pulmonary capillary oxygen content and the arterial oxygen content
-    // Extract Alveolar Oxygen Partial Pressure (PAO2)
-    double alveolarOxygenPartialPressure_mmHg = m_Alveoli->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure(PressureUnit::mmHg);
-    // Extract total hemoglobin concentration (g/dL)
-    double hemoglobinContent_g_Per_dL = totalHemoglobin_g / (TotalBloodVolume_mL / 100.0);
-    // Compute Ideal Pulmonary Capillary Oxygen Content (CcO2)
-    // Assumes 100% saturation and includes dissolved oxygen
-    double idealPulmonaryCapillaryOxygenContent_mL_Per_dL = (1.34 * hemoglobinContent_g_Per_dL * 1.0) + (0.0031 * alveolarOxygenPartialPressure_mmHg);
-    // Compute Apparent Shunt Fraction (Qs/Qt)
-    double apparentShuntFraction =
-      (idealPulmonaryCapillaryOxygenContent_mL_Per_dL - arterialO2Content_mL_Per_dL) /
-      (idealPulmonaryCapillaryOxygenContent_mL_Per_dL - venousO2Content_mL_Per_dL);
-    apparentShuntFraction = LIMIT(apparentShuntFraction, 0.0, 1.0);
-    GetApparentShuntFraction().SetValue(apparentShuntFraction);
   }
 
   //--------------------------------------------------------------------------------------------------

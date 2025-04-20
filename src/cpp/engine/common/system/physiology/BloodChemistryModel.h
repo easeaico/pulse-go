@@ -65,10 +65,16 @@ namespace pulse
     SELiquidSubstanceQuantity* m_AortaHCO3;
     SELiquidSubstanceQuantity* m_BrainO2;
     SELiquidSubstanceQuantity* m_MyocardiumO2;
+    SELiquidCompartment*       m_PulmonaryArteries;
     SELiquidSubstanceQuantity* m_PulmonaryArteriesO2;
     SELiquidSubstanceQuantity* m_PulmonaryArteriesCO2;
+    SELiquidCompartment*       m_PulmonaryVeins;
     SELiquidSubstanceQuantity* m_PulmonaryVeinsO2;
     SELiquidSubstanceQuantity* m_PulmonaryVeinsCO2;
+    SELiquidCompartment*       m_LeftPulmonaryCapillaries;
+    SELiquidSubstanceQuantity* m_LeftPulmonaryCapillariesO2;
+    SELiquidCompartment*       m_RightPulmonaryCapillaries;
+    SELiquidSubstanceQuantity* m_RightPulmonaryCapillariesO2;
     SELiquidCompartment*       m_RightArm;
     SELiquidSubstanceQuantity* m_RightArmO2;
     SELiquidSubstanceQuantity* m_RightArmCO;
