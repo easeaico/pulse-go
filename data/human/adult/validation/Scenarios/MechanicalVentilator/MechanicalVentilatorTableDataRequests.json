@@ -6,8 +6,8 @@
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "InspiratoryRespiratoryResistance",    "Unit": "cmH2O s/L" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "ExpiratoryRespiratoryResistance",     "Unit": "cmH2O s/L" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "RespiratoryCompliance",               "Unit": "mL/cmH2O" },
-    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "ApparentPhysiologicDeadSpaceTidalVolumeRatio", "Unit": "unitless" },
-    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "ApparentShuntFraction",               "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "ClinicalPhysiologicDeadSpaceTidalVolumeRatio", "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "ClinicalShuntFraction",               "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "MechanicalVentilator",        "PropertyName": "TidalVolume",                         "Unit": "L" },
 
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology",                  "PropertyName": "BloodPH" },

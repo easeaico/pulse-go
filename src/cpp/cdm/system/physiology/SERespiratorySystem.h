@@ -46,9 +46,9 @@ public:
   virtual SEScalarVolume& GetAlveolarDeadSpace();
   virtual double GetAlveolarDeadSpace(const VolumeUnit& unit) const;
 
-  virtual bool HasApparentPhysiologicDeadSpaceTidalVolumeRatio() const;
-  virtual SEScalar& GetApparentPhysiologicDeadSpaceTidalVolumeRatio();
-  virtual double GetApparentPhysiologicDeadSpaceTidalVolumeRatio() const;
+  virtual bool HasClinicalPhysiologicDeadSpaceTidalVolumeRatio() const;
+  virtual SEScalar& GetClinicalPhysiologicDeadSpaceTidalVolumeRatio();
+  virtual double GetClinicalPhysiologicDeadSpaceTidalVolumeRatio() const;
 
   virtual bool HasAnatomicDeadSpace() const;
   virtual SEScalarVolume& GetAnatomicDeadSpace();
@@ -293,7 +293,7 @@ protected:
   SEScalarPressure*                m_AlveolarArterialGradient;
   SEScalarVolume*                  m_AlveolarDeadSpace;
   SEScalarVolume*                  m_AnatomicDeadSpace;
-  SEScalar*                        m_ApparentPhysiologicDeadSpaceTidalVolumeRatio;
+  SEScalar*                        m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio;
   SEScalarPressure*                m_HorowitzIndex;
   SEScalarVolumePerPressure*       m_ChestWallCompliance;
   SEScalarEnergy*                  m_ElasticWorkOfBreathing;

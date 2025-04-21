@@ -97,11 +97,11 @@
     <td><a href="./plots/MechanicalVentilator/ARDS_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/ARDS_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/ARDS_ApparentShuntFraction.jpg"><img src="./plots/MechanicalVentilator/ARDS_ApparentShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS_ClinicalShuntFraction.jpg"><img src="./plots/MechanicalVentilator/ARDS_ClinicalShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/ARDS_AlveolarDeadSpace.jpg"><img src="./plots/MechanicalVentilator/ARDS_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/ARDS_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/ARDS_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/ARDS_ClinicalPhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/ARDS_ClinicalPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/ARDS_VentilationPerfusionRatio.jpg"><img src="./plots/MechanicalVentilator/ARDS_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>

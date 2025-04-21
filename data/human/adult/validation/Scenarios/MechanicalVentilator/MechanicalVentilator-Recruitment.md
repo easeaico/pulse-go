@@ -73,11 +73,11 @@
     <td><a href="./plots/MechanicalVentilator/Recruitment_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/Recruitment_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/Recruitment_ApparentShuntFraction.jpg"><img src="./plots/MechanicalVentilator/Recruitment_ApparentShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment_ClinicalShuntFraction.jpg"><img src="./plots/MechanicalVentilator/Recruitment_ClinicalShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/Recruitment_AlveolarDeadSpace.jpg"><img src="./plots/MechanicalVentilator/Recruitment_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/Recruitment_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/Recruitment_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/Recruitment_ClinicalPhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/Recruitment_ClinicalPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/Recruitment_VentilationPerfusionRatio.jpg"><img src="./plots/MechanicalVentilator/Recruitment_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>

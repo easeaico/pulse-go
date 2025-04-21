@@ -19,7 +19,7 @@
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PeakInspiratoryPressure",                    "Unit": "cmH2O"     },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpace",                       "Unit": "mL"        },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpaceTidalVolumeRatio",       "Unit": "unitless"  },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ApparentPhysiologicDeadSpaceTidalVolumeRatio", "Unit": "unitless"  },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ClinicalPhysiologicDeadSpaceTidalVolumeRatio", "Unit": "unitless"  },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespiratoryCompliance",                      "Unit": "L/cmH2O"   },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "RespiratoryMuscleFatigue",                   "Unit": "unitless"  },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TransMusclePressure",                        "Unit": "cmH2O"     },
@@ -46,7 +46,7 @@
     { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "PropertyName": "Volume",   "Unit": "mL"    },
 
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",      "Unit": "unitless" },
-    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ApparentShuntFraction", "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ClinicalShuntFraction", "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Patient",    "PropertyName": "IdealBodyWeight",    "Unit": "kg"       },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Patient",    "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2"      },
 

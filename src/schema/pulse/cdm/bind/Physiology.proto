@@ -40,8 +40,8 @@ message PupillaryResponseData
     and will be improved in future releases to include more substances that can provide clinician level details and assessments, such as a CBC and blood panel.*/
 message BloodChemistrySystemData
 {
-  ScalarVolumePerTimeData              ApparentOxygenConsumption                      = 1;/**<< @brief The rate at which oxygen is consumed by the tissues, calculated as the product of cardiac output and arteriovenous oxygen difference.*/
-  Scalar0To1Data                       ApparentShuntFraction                          = 2; /**<< @brief The shunt Fraction (Qs/Qt) based on the difference between the ideal pulmonary capillary oxygen content and the arterial oxygen content.*/
+  ScalarVolumePerTimeData              ClinicalOxygenConsumption                      = 1;/**<< @brief The rate at which oxygen is consumed by the tissues, calculated as the product of cardiac output and arteriovenous oxygen difference.*/
+  Scalar0To1Data                       ClinicalShuntFraction                          = 2; /**<< @brief The shunt Fraction (Qs/Qt) based on the difference between the ideal pulmonary capillary oxygen content and the arterial oxygen content.*/
   ScalarData                           ArterialOxygenContent                          = 3; /**<< @brief The total oxygen content in arterial blood, including dissolved and hemoglobin-bound oxygen.*/
   ScalarData                           ArteriovenousOxygenDifference                  = 4; /**<< @brief The difference between arterial and mixed venous oxygen content.*/
   ScalarAmountPerVolumeData            BaseExcess                                     = 5; /**<< @brief Excess or deficit, respectively, in the amount of base present in the blood. */
@@ -367,7 +367,7 @@ message RespiratorySystemData
   ScalarPressureData                   AlveolarArterialGradient                       = 2; /**<< @brief Measure of the difference between the alveolar concentration of oxygen and the arterial concentration of oxygen to assess the integrity of the alveolar capillary unit.*/
   ScalarVolumeData                     AlveolarDeadSpace                              = 3; /**<< @brief The volume of unperfused alveoli.*/
   ScalarVolumeData                     AnatomicDeadSpace                              = 4; /**<< @brief The total volume of the conducting airways from the nose or mouth down to the level of the terminal bronchioles that does not participate in gas exchange.*/
-  ScalarData                           ApparentPhysiologicDeadSpaceTidalVolumeRatio   = 5; /**<< @brief The estimated ratio of dead-space ventilation (VD) to tidal ventilation (VT) based on the Bohr-Enghoff equation. */
+  ScalarData                           ClinicalPhysiologicDeadSpaceTidalVolumeRatio   = 5; /**<< @brief The estimated ratio of dead-space ventilation (VD) to tidal ventilation (VT) based on the Bohr-Enghoff equation. */
   ScalarVolumePerPressureData          ChestWallCompliance                            = 6; /**<< @brief The static relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
   ScalarEnergyData                     ElasticWorkOfBreathing                         = 7; /**<< @brief The work (generally during the inhalation phase) that is stored as potential energy which is recovered during exhalation.*/
   Scalar0To1Data                       EndTidalCarbonDioxideFraction                  = 8; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/

@@ -32,8 +32,8 @@ void PBPhysiology::Load(const CDM_BIND::BloodChemistrySystemData& src, SEBloodCh
 }
 void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
-  if (src.has_apparentshuntfraction())
-    PBProperty::Load(src.apparentshuntfraction(), dst.GetApparentShuntFraction());
+  if (src.has_clinicalshuntfraction())
+    PBProperty::Load(src.clinicalshuntfraction(), dst.GetClinicalShuntFraction());
   if (src.has_arterialoxygencontent())
     PBProperty::Load(src.arterialoxygencontent(), dst.GetArterialOxygenContent());
   if (src.has_arteriovenousoxygendifference())
@@ -58,8 +58,8 @@ void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBl
     PBProperty::Load(src.hemoglobincontent(), dst.GetHemoglobinContent());
   if (src.has_mixedvenousoxygencontent())
     PBProperty::Load(src.mixedvenousoxygencontent(), dst.GetMixedVenousOxygenContent());
-  if (src.has_apparentoxygenconsumption())
-    PBProperty::Load(src.apparentoxygenconsumption(), dst.GetApparentOxygenConsumption());
+  if (src.has_clinicaloxygenconsumption())
+    PBProperty::Load(src.clinicaloxygenconsumption(), dst.GetClinicalOxygenConsumption());
   if (src.has_oxygendelivery())
     PBProperty::Load(src.oxygendelivery(), dst.GetOxygenDelivery());
   if (src.has_oxygendeliverytooxygenconsumptionratio())
@@ -113,8 +113,8 @@ CDM_BIND::BloodChemistrySystemData* PBPhysiology::Unload(const SEBloodChemistryS
 }
 void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodChemistrySystemData& dst)
 {
-  if (src.HasApparentShuntFraction())
-    dst.set_allocated_apparentshuntfraction(PBProperty::Unload(*src.m_ApparentShuntFraction));
+  if (src.HasClinicalShuntFraction())
+    dst.set_allocated_clinicalshuntfraction(PBProperty::Unload(*src.m_ClinicalShuntFraction));
   if (src.HasArterialOxygenContent())
     dst.set_allocated_arterialoxygencontent(PBProperty::Unload(*src.m_ArterialOxygenContent));
   if (src.HasArteriovenousOxygenDifference())
@@ -139,8 +139,8 @@ void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodC
     dst.set_allocated_hemoglobincontent(PBProperty::Unload(*src.m_HemoglobinContent));
   if (src.HasMixedVenousOxygenContent())
     dst.set_allocated_mixedvenousoxygencontent(PBProperty::Unload(*src.m_MixedVenousOxygenContent));
-  if (src.HasApparentOxygenConsumption())
-    dst.set_allocated_apparentoxygenconsumption(PBProperty::Unload(*src.m_ApparentOxygenConsumption));
+  if (src.HasClinicalOxygenConsumption())
+    dst.set_allocated_clinicaloxygenconsumption(PBProperty::Unload(*src.m_ClinicalOxygenConsumption));
   if (src.HasOxygenDelivery())
     dst.set_allocated_oxygendelivery(PBProperty::Unload(*src.m_OxygenDelivery));
   if (src.HasOxygenDeliveryToOxygenConsumptionRatio())
@@ -1218,8 +1218,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.alveolardeadspace(), dst.GetAlveolarDeadSpace());
   if (src.has_anatomicdeadspace())
     PBProperty::Load(src.anatomicdeadspace(), dst.GetAnatomicDeadSpace());
-  if (src.has_apparentphysiologicdeadspacetidalvolumeratio())
-    PBProperty::Load(src.apparentphysiologicdeadspacetidalvolumeratio(), dst.GetApparentPhysiologicDeadSpaceTidalVolumeRatio());
+  if (src.has_clinicalphysiologicdeadspacetidalvolumeratio())
+    PBProperty::Load(src.clinicalphysiologicdeadspacetidalvolumeratio(), dst.GetClinicalPhysiologicDeadSpaceTidalVolumeRatio());
   if (src.has_horowitzindex())
     PBProperty::Load(src.horowitzindex(), dst.GetHorowitzIndex());
   if (src.has_chestwallcompliance())
@@ -1355,8 +1355,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_alveolardeadspace(PBProperty::Unload(*src.m_AlveolarDeadSpace));
   if (src.HasAnatomicDeadSpace())
     dst.set_allocated_anatomicdeadspace(PBProperty::Unload(*src.m_AnatomicDeadSpace));
-  if (src.HasApparentPhysiologicDeadSpaceTidalVolumeRatio())
-    dst.set_allocated_apparentphysiologicdeadspacetidalvolumeratio(PBProperty::Unload(*src.m_ApparentPhysiologicDeadSpaceTidalVolumeRatio));
+  if (src.HasClinicalPhysiologicDeadSpaceTidalVolumeRatio())
+    dst.set_allocated_clinicalphysiologicdeadspacetidalvolumeratio(PBProperty::Unload(*src.m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio));
   if (src.HasHorowitzIndex())
     dst.set_allocated_horowitzindex(PBProperty::Unload(*src.m_HorowitzIndex));
   if (src.HasChestWallCompliance())

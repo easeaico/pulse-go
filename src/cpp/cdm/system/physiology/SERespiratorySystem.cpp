@@ -45,7 +45,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_AlveolarArterialGradient = nullptr;
   m_AlveolarDeadSpace = nullptr;
   m_AnatomicDeadSpace = nullptr;
-  m_ApparentPhysiologicDeadSpaceTidalVolumeRatio = nullptr;
+  m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio = nullptr;
   m_HorowitzIndex = nullptr;
   m_ChestWallCompliance = nullptr;
   m_ElasticWorkOfBreathing = nullptr;
@@ -113,7 +113,7 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_AlveolarArterialGradient);
   SAFE_DELETE(m_AlveolarDeadSpace);
   SAFE_DELETE(m_AnatomicDeadSpace);
-  SAFE_DELETE(m_ApparentPhysiologicDeadSpaceTidalVolumeRatio);
+  SAFE_DELETE(m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio);
   SAFE_DELETE(m_HorowitzIndex);
   SAFE_DELETE(m_ChestWallCompliance);
   SAFE_DELETE(m_ElasticWorkOfBreathing);
@@ -183,7 +183,7 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_AlveolarArterialGradient);
   INVALIDATE_PROPERTY(m_AlveolarDeadSpace);
   INVALIDATE_PROPERTY(m_AnatomicDeadSpace);
-  INVALIDATE_PROPERTY(m_ApparentPhysiologicDeadSpaceTidalVolumeRatio);
+  INVALIDATE_PROPERTY(m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio);
   INVALIDATE_PROPERTY(m_HorowitzIndex);
   INVALIDATE_PROPERTY(m_ChestWallCompliance);
   INVALIDATE_PROPERTY(m_ElasticWorkOfBreathing);
@@ -256,8 +256,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetAlveolarDeadSpace();
   if (name.compare("AnatomicDeadSpace") == 0)
     return &GetAnatomicDeadSpace();
-  if (name.compare("ApparentPhysiologicDeadSpaceTidalVolumeRatio") == 0)
-    return &GetApparentPhysiologicDeadSpaceTidalVolumeRatio();
+  if (name.compare("ClinicalPhysiologicDeadSpaceTidalVolumeRatio") == 0)
+    return &GetClinicalPhysiologicDeadSpaceTidalVolumeRatio();
   if (name.compare("HorowitzIndex") == 0)
     return &GetHorowitzIndex();
   if (name.compare("ChestWallCompliance") == 0)
@@ -447,21 +447,21 @@ double SERespiratorySystem::GetAnatomicDeadSpace(const VolumeUnit& unit) const
   return m_AnatomicDeadSpace->GetValue(unit);
 }
 
-bool SERespiratorySystem::HasApparentPhysiologicDeadSpaceTidalVolumeRatio() const
+bool SERespiratorySystem::HasClinicalPhysiologicDeadSpaceTidalVolumeRatio() const
 {
-  return m_ApparentPhysiologicDeadSpaceTidalVolumeRatio == nullptr ? false : m_ApparentPhysiologicDeadSpaceTidalVolumeRatio->IsValid();
+  return m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio == nullptr ? false : m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio->IsValid();
 }
-SEScalar& SERespiratorySystem::GetApparentPhysiologicDeadSpaceTidalVolumeRatio()
+SEScalar& SERespiratorySystem::GetClinicalPhysiologicDeadSpaceTidalVolumeRatio()
 {
-  if (m_ApparentPhysiologicDeadSpaceTidalVolumeRatio == nullptr)
-    m_ApparentPhysiologicDeadSpaceTidalVolumeRatio = new SEScalar();
-  return *m_ApparentPhysiologicDeadSpaceTidalVolumeRatio;
+  if (m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio == nullptr)
+    m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio = new SEScalar();
+  return *m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio;
 }
-double SERespiratorySystem::GetApparentPhysiologicDeadSpaceTidalVolumeRatio() const
+double SERespiratorySystem::GetClinicalPhysiologicDeadSpaceTidalVolumeRatio() const
 {
-  if (m_ApparentPhysiologicDeadSpaceTidalVolumeRatio == nullptr)
+  if (m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio == nullptr)
     return SEScalar::dNaN();
-  return m_ApparentPhysiologicDeadSpaceTidalVolumeRatio->GetValue();
+  return m_ClinicalPhysiologicDeadSpaceTidalVolumeRatio->GetValue();
 }
 
 bool SERespiratorySystem::HasHorowitzIndex() const

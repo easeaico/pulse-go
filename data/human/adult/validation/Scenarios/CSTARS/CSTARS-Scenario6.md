@@ -106,11 +106,11 @@ CSTARS Scenario 6 {#CSTARSScenario6}
     <td><a href="./plots/CSTARS/Scenario6_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/CSTARS/Scenario6_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/CSTARS/Scenario6_ShuntFraction.jpg"><img src="./plots/CSTARS/Scenario6_ApparentShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario6_ShuntFraction.jpg"><img src="./plots/CSTARS/Scenario6_ClinicalShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/CSTARS/Scenario6_AlveolarDeadSpace.jpg"><img src="./plots/CSTARS/Scenario6_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/CSTARS/Scenario6_PhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/CSTARS/Scenario6_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
+    <td><a href="./plots/CSTARS/Scenario6_PhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/CSTARS/Scenario6_ClinicalPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
     <td><a href="./plots/CSTARS/Scenario6_VentilationPerfusionRatio.jpg"><img src="./plots/CSTARS/Scenario6_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>

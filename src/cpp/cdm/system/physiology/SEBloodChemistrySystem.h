@@ -23,14 +23,14 @@ public:
   virtual SEScalarMassPerVolume& GetBloodDensity();                                                   /**< @copydoc DOXY_CDM_GET */
   virtual double GetBloodDensity(const MassPerVolumeUnit& unit) const;                                /**< @copydoc DOXY_CDM_GET_VALUE *///@}
 
-  /** @name ApparentShuntFraction
- *  @brief @copybrief Physiology_BloodChemistrySystemData_ApparentShuntFraction
+  /** @name ClinicalShuntFraction
+ *  @brief @copybrief Physiology_BloodChemistrySystemData_ClinicalShuntFraction
  *  @{*/
  /// %Test if member has been allocated
-  virtual bool HasApparentShuntFraction() const;
+  virtual bool HasClinicalShuntFraction() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetApparentShuntFraction();
-  virtual double GetApparentShuntFraction() const;
+  virtual SEScalar0To1& GetClinicalShuntFraction();
+  virtual double GetClinicalShuntFraction() const;
   //@}
 
   /** @name ArterialOxygenContent
@@ -143,14 +143,14 @@ public:
   virtual double GetMixedVenousOxygenContent() const;
   //@}
 
-  /** @name ApparentOxygenConsumption
+  /** @name ClinicalOxygenConsumption
   *  @brief The rate at which oxygen is consumed by the tissues, calculated as the product of cardiac output and arteriovenous oxygen difference.
   *  @{*/
   /// Test if member has been allocated
-  virtual bool HasApparentOxygenConsumption() const;
+  virtual bool HasClinicalOxygenConsumption() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalarVolumePerTime& GetApparentOxygenConsumption();
-  virtual double GetApparentOxygenConsumption(const VolumePerTimeUnit& unit) const;
+  virtual SEScalarVolumePerTime& GetClinicalOxygenConsumption();
+  virtual double GetClinicalOxygenConsumption(const VolumePerTimeUnit& unit) const;
   //@}
 
   /** @name OxygenDelivery
@@ -372,7 +372,7 @@ public:
 
 
 protected:
-  SEScalar0To1*                   m_ApparentShuntFraction;
+  SEScalar0To1*                   m_ClinicalShuntFraction;
   SEScalar*                       m_ArterialOxygenContent;
   SEScalar*                       m_ArteriovenousOxygenDifference;  
   SEScalarAmountPerVolume*        m_BaseExcess;
@@ -385,7 +385,7 @@ protected:
   SEScalar0To1*                   m_Hematocrit;
   SEScalarMass*                   m_HemoglobinContent;
   SEScalar*                       m_MixedVenousOxygenContent;
-  SEScalarVolumePerTime*          m_ApparentOxygenConsumption;
+  SEScalarVolumePerTime*          m_ClinicalOxygenConsumption;
   SEScalarVolumePerTime*          m_OxygenDelivery;
   SEScalar*                       m_OxygenDeliveryToOxygenConsumptionRatio;
   SEScalar0To1*                   m_OxygenSaturation;

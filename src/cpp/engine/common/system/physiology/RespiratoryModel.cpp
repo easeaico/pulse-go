@@ -307,7 +307,7 @@ namespace pulse
     GetInspiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     GetExpiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     GetPhysiologicDeadSpaceTidalVolumeRatio().SetValue(0.0);
-    GetApparentPhysiologicDeadSpaceTidalVolumeRatio().SetValue(0.0);
+    GetClinicalPhysiologicDeadSpaceTidalVolumeRatio().SetValue(0.0);
     GetVentilationPerfusionRatio().SetValue(0.0);
 
     double AnatomicDeadSpace_L = m_AnatomicDeadSpace->GetVolume(VolumeUnit::L);
@@ -2567,8 +2567,8 @@ namespace pulse
         GetPhysiologicDeadSpaceTidalVolumeRatio().SetValue(GetPhysiologicDeadSpace(VolumeUnit::L) / tidalVolumeBaseline_L);
 
         //Bohr-Enghoff equation
-        double apparentPhysiologicDeadSpaceTidalVolumeRatio = (m_ArterialCO2PartialPressure_mmHg - m_MixedExpiredCO2RunningAverage_mmHg->Value()) / m_ArterialCO2PartialPressure_mmHg;
-        GetApparentPhysiologicDeadSpaceTidalVolumeRatio().SetValue(apparentPhysiologicDeadSpaceTidalVolumeRatio);
+        double clinicalPhysiologicDeadSpaceTidalVolumeRatio = (m_ArterialCO2PartialPressure_mmHg - m_MixedExpiredCO2RunningAverage_mmHg->Value()) / m_ArterialCO2PartialPressure_mmHg;
+        GetClinicalPhysiologicDeadSpaceTidalVolumeRatio().SetValue(clinicalPhysiologicDeadSpaceTidalVolumeRatio);
         m_MixedExpiredCO2RunningAverage_mmHg->Invalidate();
 
         if (m_data.HasCardiovascular())

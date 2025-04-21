@@ -100,13 +100,13 @@ namespace pulse
     GetStrongIonDifference().SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
 
     GetShuntFraction().SetValue(0);
-    GetApparentShuntFraction().SetValue(0);
+    GetClinicalShuntFraction().SetValue(0);
 
     GetArterialOxygenContent().SetValue(0);
     GetMixedVenousOxygenContent().SetValue(0);
     GetArteriovenousOxygenDifference().SetValue(0);
     GetOxygenDelivery().SetValue(0, VolumePerTimeUnit::mL_Per_min);
-    GetApparentOxygenConsumption().SetValue(0, VolumePerTimeUnit::mL_Per_min);
+    GetClinicalOxygenConsumption().SetValue(0, VolumePerTimeUnit::mL_Per_min);
     GetOxygenDeliveryToOxygenConsumptionRatio().SetValue(0);
 
     m_ArterialOxygen_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
@@ -268,7 +268,7 @@ namespace pulse
     shunt = MIN(shunt, 1.0);
     GetShuntFraction().SetValue(shunt);
 
-    // Calculate the Apparent Shunt Fraction (Qs/Qt) based on the pulmonary compartments oxygen content
+    // Calculate the Clinical Shunt Fraction (Qs/Qt) based on the pulmonary compartments oxygen content
     // We're going to use the capillaries value from the side with the highest value to account for heterogenous insults 
     // (e.g., mainstem intubation, pneumothorax, etc.)
 
@@ -300,18 +300,18 @@ namespace pulse
     // Compute CvO2 - Venous O2 Content (from pulmonary arteries)
     double venousO2Content_mmol_Per_L = pulmonaryArteriesO2_mmol_Per_L + 4.0 * pulmonaryArteriesHbO2_mmol_Per_L + 4.0 * pulmonaryArteriesHbO2CO2_mmol_Per_L;
 
-    // Compute Apparent Shunt Fraction (Qs/Qt)
-    double apparentShuntFraction = 
+    // Compute Clinical Shunt Fraction (Qs/Qt)
+    double clinicalShuntFraction = 
       (capillaryO2Content_mmol_Per_L - arterialO2Content_mmol_Per_L) / 
       (capillaryO2Content_mmol_Per_L - venousO2Content_mmol_Per_L);
-    apparentShuntFraction = LIMIT(apparentShuntFraction, 0.0, 1.0);
+    clinicalShuntFraction = LIMIT(clinicalShuntFraction, 0.0, 1.0);
 
     //Dampen the change to prevent oscillations
-    double previousApparentShuntFraction = GetApparentShuntFraction().GetValue();
+    double previousClinicalShuntFraction = GetClinicalShuntFraction().GetValue();
     double dampenFraction_perSec = 0.01 * 50.0;
-    apparentShuntFraction = GeneralMath::Damper(apparentShuntFraction, previousApparentShuntFraction, dampenFraction_perSec, m_data.GetTimeStep_s());
+    clinicalShuntFraction = GeneralMath::Damper(clinicalShuntFraction, previousClinicalShuntFraction, dampenFraction_perSec, m_data.GetTimeStep_s());
 
-    GetApparentShuntFraction().SetValue(apparentShuntFraction);
+    GetClinicalShuntFraction().SetValue(clinicalShuntFraction);
 
     CheckBloodSubstanceLevels();
 
@@ -401,7 +401,7 @@ namespace pulse
     GetMixedVenousOxygenContent().SetValue(venousO2Content_mL_Per_dL * 0.01); //Make unitless
     GetArteriovenousOxygenDifference().SetValue(arteriovenousO2Difference_mL_Per_dL * 0.01); //Make unitless
     GetOxygenDelivery().SetValue(O2Delivery_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
-    GetApparentOxygenConsumption().SetValue(O2Consumption_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
+    GetClinicalOxygenConsumption().SetValue(O2Consumption_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
     GetOxygenDeliveryToOxygenConsumptionRatio().SetValue(O2DeliveryToO2ConsumptionRatio);
   }
 

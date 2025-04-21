@@ -97,11 +97,11 @@
     <td><a href="./plots/MechanicalVentilator/COPD_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/MechanicalVentilator/COPD_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/COPD_ApparentShuntFraction.jpg"><img src="./plots/MechanicalVentilator/COPD_ShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD_ClinicalShuntFraction.jpg"><img src="./plots/MechanicalVentilator/COPD_ClinicalShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/COPD_AlveolarDeadSpace.jpg"><img src="./plots/MechanicalVentilator/COPD_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/MechanicalVentilator/COPD_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/COPD_ApparentPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
+    <td><a href="./plots/MechanicalVentilator/COPD_ClinicalPhysiologicDeadSpaceTidalVolumeRatio.jpg"><img src="./plots/MechanicalVentilator/COPD_ClinicalPhysiologicDeadSpaceTidalVolumeRatio.jpg" width="550"></a></td>
     <td><a href="./plots/MechanicalVentilator/COPD_VentilationPerfusionRatio.jpg"><img src="./plots/MechanicalVentilator/COPD_VentilationPerfusionRatio.jpg" width="550"></a></td>
 </tr>
 <tr>
