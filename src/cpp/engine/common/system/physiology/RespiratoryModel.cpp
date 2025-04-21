@@ -3437,6 +3437,7 @@ namespace pulse
     else //Don't do this if we've specified externally - other conditions/actions will still work
     {
       //Intubation
+      double intubationTracheatracheaResistanceMultiplier_cmH2O_s_Per_L = 8.8;
       if (m_PatientActions->HasIntubation())
       {
         switch (m_PatientActions->GetIntubation().GetType())
@@ -3457,7 +3458,7 @@ namespace pulse
           else
           {
             //Tuned based on mechanical ventilator validation data
-            tracheaResistance_cmH2O_s_Per_L *= 8.8;
+            tracheaResistance_cmH2O_s_Per_L *= intubationTracheatracheaResistanceMultiplier_cmH2O_s_Per_L;
           }
 
           break;
@@ -3488,6 +3489,9 @@ namespace pulse
         }
         case eIntubation_Type::RightMainstem:
         {
+          //Update trachea for intubation
+          tracheaResistance_cmH2O_s_Per_L *= intubationTracheatracheaResistanceMultiplier_cmH2O_s_Per_L;
+
           if (m_PatientActions->GetIntubation().HasAirwayResistance())
           {
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -3509,6 +3513,9 @@ namespace pulse
         }
         case eIntubation_Type::LeftMainstem:
         {
+          //Update trachea for intubation
+          tracheaResistance_cmH2O_s_Per_L *= intubationTracheatracheaResistanceMultiplier_cmH2O_s_Per_L;
+
           if (m_PatientActions->GetIntubation().HasAirwayResistance())
           {
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
