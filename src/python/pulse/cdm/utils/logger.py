@@ -6,9 +6,10 @@ import json
 import logging
 from enum import Enum
 from json import JSONDecodeError
+from pathlib import Path
 from typing import List
 
-from pulse.cdm.engine import eSerializationFormat, eEvent
+from pulse.cdm.engine import eSerializationFormat, eEvent, eSwitch
 from pulse.cdm.patient import SEPatient
 from pulse.cdm.io.patient import serialize_patient_from_string
 
@@ -150,258 +151,259 @@ class LogEvent(LogItem):
         return f"{self.time}: {self.text}"
 
 
-# TODO We should gather up all these methods into a Log class, so we only need to process a file once
+class PulseLog:
+    __slots__ = ["_is_valid", "_start_time_s", "_end_time_s",
+                 "_patient", "_actions",
+                 "_events", "_event_windows"]
 
-def parse_timing(log_file: str):
-    start = 0
-    end = 99999
+    def __init__(self):
+        self._is_valid = False
+        self._start_time_s = 0.0
+        self._end_time_s = 999999.0
+        self._patient = None
+        self._actions = []
+        self._events = []
+        self._event_windows = None
 
-    def pull_time():
-        s = line.rfind(']') + 1
-        e = line.find("(s)", s)
-        return float(line[s:e].strip())
+    def clear(self):
+        self.__init__()
 
-    with open(log_file) as f:
-        lines = f.readlines()
-        idx = 0
-        while idx < len(lines):
-            line = lines[idx]
-            if len(line) == 0:
-                idx += 1
-                continue
-            if "[Initial SimTime(s)]" in line:
-                start = pull_time()
-            elif "[Final SimTime(s)]" in line:
-                end = pull_time()
-            idx += 1
-    return start, end
+    @property
+    def is_valid(self): return self._is_valid
 
+    @property
+    def start_time_s(self): return self._start_time_s
 
-def parse_actions(log_file: str, omit: List[str] = []):
-    patient_action = "PatientAction"
-    enviro_action = "EnvironmentAction"
-    equip_action = "EquipmentAction"
-    adv_stable = "AdvanceUntilStable"
-    adv_time = "AdvanceTime"
-    serialize_requested = "SerializeRequested"
-    serialize_state = "SerializeState"
+    @property
+    def end_time_s(self): return self._end_time_s
 
-    omit.append(adv_time)
-    action_tag = "[Action]"
-    actions = []
-    with open(log_file) as f:
-        lines = f.readlines()
-        idx = 0
-        while idx < len(lines):
-            line = lines[idx]
-            if len(line) == 0:
-                idx += 1
-                continue
-            action_idx = line.find(action_tag)
-            if action_idx == -1:
-                idx += 1
-                continue
-            elif adv_time in line:
-                idx += 1
-                continue
-            else:
-                action_text = line
-                # Group 0: Entire match
-                # Group 1: Time
-                match = re.search(r'\[(\d*\.?\d*)\(.*\)\]', action_text)
-                if match is None:
-                    _pulse_logger.error("Could not parse actions from " + str(log_file))
-                    return actions
-                action_time = float(match.group(1))
-                action_text = action_text[(action_idx+len(action_tag)):].lstrip()
+    @property
+    def patient(self): return self._patient
 
-                # Find blank line at end of action
-                while (idx + 1) < len(lines) and len(lines[idx+1].strip()) != 0:
-                    idx += 1
-                    line = lines[idx]
-                    action_text = ''.join([action_text, line])
+    @property
+    def actions(self): return self._actions
 
-                # Attempt to determine action name
-                try:
-                    action_data = json.loads(action_text)
-                except JSONDecodeError:
-                    _pulse_logger.error("Could not parse actions from " + str(log_file))
-                    return actions
+    @property
+    def events(self): return self._events
 
-                if adv_time in action_data:
-                    action_name = adv_time
-                elif adv_stable in action_data:
-                    action_name = adv_stable
-                elif serialize_requested in action_data:
-                    action_name = serialize_requested
-                elif serialize_state in action_data:
-                    action_name = serialize_state
-                elif patient_action in action_data:
-                    action_name = list(action_data[patient_action].keys())[0]
-                elif enviro_action in action_data:
-                    action_name = list(action_data[enviro_action].keys())[0]
-                elif equip_action in action_data:
-                    action_name = list(action_data[equip_action].keys())[0]
-                else:
-                    _pulse_logger.warning(f"Unable to determine action name: {action_text}")
-                    action_name = action_data.keys()[0]
+    @property
+    def event_windows(self): return self._event_windows
 
-                # Check to see if it should be omitted
-                keep_action = True
-                for o in omit:
-                    if o in action_text:
-                        keep_action = False
-                        break
-                if not keep_action:
+    def parse(self, log_file: Path, omit_actions: List[str] = None, omit_events: List[str] = None) -> bool:
+
+        self.clear()
+        if not log_file.exists():
+            _pulse_logger.error(f"Unable to parse log file: {log_file}")
+            return False
+
+        def pull_time():
+            s = line.rfind(']') + 1
+            e = line.find("(s)", s)
+            return float(line[s:e].strip())
+
+        patient_action = "PatientAction"
+        enviro_action = "EnvironmentAction"
+        equip_action = "EquipmentAction"
+        adv_stable = "AdvanceUntilStable"
+        adv_time = "AdvanceTime"
+        serialize_requested = "SerializeRequested"
+        serialize_state = "SerializeState"
+        action_tag = "[Action]"
+        if not omit_actions:
+            omit_actions = []
+        omit_actions.append(adv_time)
+
+        if not omit_events:
+            omit_events = []
+
+        with open(log_file) as f:
+            lines = f.readlines()
+            idx = 0
+            while idx < len(lines):
+                line = lines[idx]
+                if len(line) == 0 or line == "\n":
                     idx += 1
                     continue
 
-                action_text = pretty_print(action_text, ePrettyPrintType.Action)
-
-                # Remove leading spaces on each line
-                action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
-
-                actions.append(LogAction(time=action_time, name=action_name, text=action_text))
-
-            idx += 1
-
-    return actions
-
-
-def parse_events(log_file: str, omit: List[str] = []):
-    # event_tag = "[Event"
-    events = []
-    with open(log_file) as f:
-        lines = f.readlines()
-        for line in lines:
-            if len(line) == 0:
-                continue
-            if "[Initial SimTime(s)]" in line:
-                stabilization_events = events
-                events = []
-                # Clean up events triggered during stabilization
-                # Remove any inactive events we found
-                # Reset all event times we have found to 0
-                for se in stabilization_events:
-                    if se.event == eEvent.Stabilizing:
-                        continue
-                    if se.active:
-                        se.time = 0
-                        events.append(se)
-                    else:
-                        for i, e in enumerate(events):
-                            if e.event == se.event:
-                                del events[i]
-                                break
-                continue
-            match = re.search(
-                r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)(?P<active>[01])\](?P<event_text>.*)",
-                line
-            )
-            if match is None:
-                continue
-            text = match.group("event_text").strip()
-            name = match.group("event_name").strip()
-            time = float(match.group("time_val"))
-            active = True if match.group("active").strip() == '1' else False
-
-            # Check to see if it should be omitted
-            keep_event = True
-            for o in omit:
-                if o in text:
-                    keep_event = False
-                    break
-            if not keep_event:
-                continue
-
-            events.append(LogEvent(time=time, event=eEvent.from_str(name), text=text, active=active))
-
-    return events
-
-
-def active_event_windows(events: [eEvent],
-                         engine_start: float,
-                         engine_end: float):
-
-    windows = {}
-    for e in events:
-        if e.active:
-            if e.event not in windows:
-                windows[e.event] = []
-            # Assume the event will be active through the duration of the simulation
-            windows[e.event].append((e.time, engine_end))
-        else:  # Not active
-            if e.event not in windows:
-                # So the event was on the whole time?
-                # It would be better if you concat logs from time 0, so you can catch all event activations
-                windows[e.event] = [(engine_start, e.time)]
-            else:
-                # Set a more specific time for this event
-                w = windows[e.event][-1]
-                windows[e.event][-1] = (w[0], e.time)
-
-    return windows
-
-
-def active_events(active_windows: {},
-                  window_start: float,
-                  window_end: float):
-
-    events = {}
-    for e, actives in active_windows.items():
-        if e not in events:
-            events[e] = {"Duration_s": 0.0, "ActiveFraction": 0.0, "FinalState": False}
-        for active in actives:
-            if active[0] < window_start:
-                start = window_start
-            elif window_start <= active[0] <= window_end:
-                start = active[0]
-            else:
-                continue
-
-            end = window_end
-            if active[1] > window_end:
-                end = window_end
-            elif window_end <= active[1]:
-                end = active[1]
-
-            events[e]["Duration_s"] += (end - start)
-            if end == window_end:
-                events[e]["FinalState"] = True
-        events[e]["ActiveFraction"] = events[e]["Duration_s"] / (window_end - window_start)
-
-    return events
-
-
-def parse_active_event_windows(log_file: str):
-    start, end = parse_timing(log_file)
-    events = parse_events(log_file)
-    return active_event_windows(events, engine_start=start, engine_end=end)
-
-
-def parse_patient(log_file: str):
-    patient_text = ""
-    patient_tag = "[Patient]"
-    with open(log_file) as f:
-        lines = f.readlines()
-        idx = 0
-        while idx < len(lines):
-            line = lines[idx]
-            if len(line) == 0:
-                idx += 1
-                continue
-            patient_idx = line.find(patient_tag)
-            if patient_idx == -1:
-                idx += 1
-                continue
-            else:
-                # Find blank line at end of action
-                while (idx + 1) < len(lines) and len(lines[idx+1].strip()) != 0:
+                # Look for patient
+                patient_idx = line.find("[Patient]")
+                if patient_idx > -1:
+                    # Find blank line at end of action
+                    patient_text = ""
+                    while (idx + 1) < len(lines) and len(lines[idx + 1].strip()) != 0:
+                        idx += 1
+                        line = lines[idx]
+                        patient_text = ''.join([patient_text, line])
+                    self._patient = SEPatient()
+                    serialize_patient_from_string(patient_text, self._patient, eSerializationFormat.JSON)
                     idx += 1
-                    line = lines[idx]
-                    patient_text = ''.join([patient_text, line])
-                patient = SEPatient()
-                serialize_patient_from_string(patient_text, patient, eSerializationFormat.JSON)
-                return patient
-    # No patient found in log...
-    return None
+                    continue
+
+                # Look for start/end times
+                if "[Initial SimTime(s)]" in line:
+                    self._start_time_s = pull_time()
+                    idx += 1
+                    continue
+                elif "[Final SimTime(s)]" in line:
+                    self._end_time_s = pull_time()
+                    idx += 1
+                    continue
+
+                # Look for actions
+                action_idx = line.find(action_tag)
+                if action_idx > -1 and adv_time not in line:
+                    action_text = line
+                    # Group 0: Entire match
+                    # Group 1: Time
+                    match = re.search(r'\[(\d*\.?\d*)\(.*\)\]', action_text)
+                    if match is None:
+                        _pulse_logger.error(f"Could not match action text from {log_file} : {action_text}")
+                        idx += 1
+                        continue
+                    action_time = float(match.group(1))
+                    action_text = action_text[(action_idx + len(action_tag)):].lstrip()
+
+                    # Find blank line at end of action
+                    while (idx + 1) < len(lines) and len(lines[idx + 1].strip()) != 0:
+                        idx += 1
+                        line = lines[idx]
+                        action_text = ''.join([action_text, line])
+
+                    # Attempt to determine action name
+                    try:
+                        action_data = json.loads(action_text)
+                    except JSONDecodeError:
+                        _pulse_logger.error(f"Could not parse action from {log_file} : {action_text}")
+                        idx += 1
+                        continue
+
+                    if adv_time in action_data:
+                        action_name = adv_time
+                    elif adv_stable in action_data:
+                        action_name = adv_stable
+                    elif serialize_requested in action_data:
+                        action_name = serialize_requested
+                    elif serialize_state in action_data:
+                        action_name = serialize_state
+                    elif patient_action in action_data:
+                        action_name = list(action_data[patient_action].keys())[0]
+                    elif enviro_action in action_data:
+                        action_name = list(action_data[enviro_action].keys())[0]
+                    elif equip_action in action_data:
+                        action_name = list(action_data[equip_action].keys())[0]
+                    else:
+                        _pulse_logger.warning(f"Unable to determine action name: {action_text}")
+                        action_name = action_data.keys()[0]
+
+                    # Check to see if it should be omitted
+                    keep_action = True
+                    for o in omit_actions:
+                        if o in action_text:
+                            keep_action = False
+                            break
+                    if keep_action:
+                        action_text = pretty_print(action_text, ePrettyPrintType.Action)
+                        # Remove leading spaces on each line
+                        action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
+                        self._actions.append(LogAction(time=action_time, name=action_name, text=action_text))
+                    idx += 1
+                    continue
+
+                # Look for events
+                if "[Initial SimTime(s)]" in line:
+                    stabilization_events = self._events
+                    self._events = []
+                    # Clean up events triggered during stabilization
+                    # Remove any inactive events we found
+                    # Reset all event times we have found to 0
+                    for se in stabilization_events:
+                        if se.event == eEvent.Stabilizing:
+                            continue
+                        if se.active:
+                            se.time = 0
+                            self._events.append(se)
+                        else:  # Event went from active to inactive in stabilization, so take it out
+                            for i, e in enumerate(self._events):
+                                if e.event == se.event:
+                                    del self._events[i]
+                                    break
+                    idx += 1
+                    continue
+
+                match = re.search(
+                    r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)(?P<active>[01])\](?P<event_text>.*)",
+                    line)
+                if match:
+                    text = match.group("event_text").strip()
+                    name = match.group("event_name").strip()
+                    time = float(match.group("time_val"))
+                    active = True if match.group("active").strip() == '1' else False
+
+                    # Check to see if it should be omitted
+                    keep_event = True
+                    for o in omit_events:
+                        if o in text:
+                            keep_event = False
+                            break
+                    if keep_event:
+                        self._events.append(LogEvent(time=time, event=eEvent.from_str(name), text=text, active=active))
+                    idx += 1
+                    continue
+
+                idx += 1
+
+        # Sort the events into windows
+        self._event_windows = {}
+        for e in self._events:
+            if e.active:
+                if e.event not in self._event_windows:
+                    self._event_windows[e.event] = []
+                # Assume the event will be active through the duration of the simulation
+                self._event_windows[e.event].append((e.time, self._end_time_s))
+            else:  # Not active
+                if e.event not in self._event_windows:
+                    # So the event was on the whole time?
+                    # It would be better if you concat logs from time 0, so you can catch all event activations
+                    self._event_windows[e.event] = [(self.start_time_s, e.time)]
+                else:
+                    # Set a more specific time for this event
+                    w = self._event_windows[e.event][-1]
+                    self._event_windows[e.event][-1] = (w[0], e.time)
+
+        self._is_valid = True
+        return True
+
+    def get_active_events_in_window(self, window_start_s: float, window_end_s: float):
+
+        events = {}
+        for e, actives in self._event_windows.items():
+            if e not in events:
+                events[e] = {"Duration_s": 0.0, "ActiveFraction": 0.0, "FinalState": False}
+            for active in actives:
+                if active[0] < window_start_s:
+                    start = window_start_s
+                elif window_start_s <= active[0] <= window_end_s:
+                    start = active[0]
+                else:
+                    continue
+
+                end = window_end_s
+                if active[1] > window_end_s:
+                    end = window_end_s
+                elif active[1] < window_end_s:
+                    end = active[1]
+
+                events[e]["Duration_s"] += (end - start)
+                if end == window_end_s:
+                    events[e]["FinalState"] = True
+            events[e]["ActiveFraction"] = events[e]["Duration_s"] / (window_end_s - window_start_s)
+
+        return events
+
+    def get_event_status(self, event: eEvent, time_s: float) -> eSwitch:
+        for e, actives in self._event_windows.items():
+            if e == event:
+                for window in actives:
+                    if window[0] <= time_s <= window[1]:
+                        return eSwitch.On
+        return eSwitch.Off

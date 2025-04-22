@@ -1,18 +1,22 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import logging
+
 from pathlib import Path
 
-from pulse.cdm.engine import SEDataRequestManager, SEDataRequest
-
-from pulse.engine.PulseEngine import PulseEngine
-from pulse.cdm.engine import IEventHandler, SEEventChange, eEvent
-from pulse.cdm.scalars import FrequencyUnit, PressureUnit, TemperatureUnit, VolumeUnit, VolumePerTimeUnit
-from pulse.cdm.utils.logger import parse_actions, parse_patient, parse_active_event_windows
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, IEventHandler, SEEventChange, eEvent
 from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhage_Compartment, SESubstanceCompoundInfusion
+from pulse.cdm.scalars import FrequencyUnit, PressureUnit, TemperatureUnit, VolumeUnit, VolumePerTimeUnit
+from pulse.cdm.utils.logger import PulseLog
+from pulse.engine.PulseEngine import PulseEngine
+
+_pulse_logger = logging.getLogger('pulse')
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
     out_dir = Path("./test_results/howto/HowTo_ProcessResults.py/")
     out_dir.mkdir(parents=True, exist_ok=True)
     csv_file, log_file = run_engine(out_dir, total_duration_min=20, sample_step_s=10)
@@ -62,7 +66,7 @@ def run_engine(out_dir: Path, total_duration_min: float, sample_step_s: float):
     data_req_mgr = SEDataRequestManager(data_requests)
     data_req_mgr.set_results_filename(str(csv_file))
     if not pulse.serialize_from_file("./states/StandardMale@0s.json", data_req_mgr):
-        print("Unable to load initial state file")
+        _pulse_logger.error("Unable to load initial state file")
         return
 
     # Apply some injuries to get some degrading vitals, we want to run until the patient dies
@@ -100,11 +104,33 @@ def run_engine(out_dir: Path, total_duration_min: float, sample_step_s: float):
 
 
 def process_results(csv_file: Path, log_file: Path):
-    # Pull out various items from the log
-    actions = parse_actions(str(log_file))
-    patient = parse_patient(str(log_file))
-
-    active_event_windows = parse_active_event_windows(str(log_file))
+    log = PulseLog()
+    log.parse(log_file)
+    # You can get the SEPatient used in the simulation
+    _pulse_logger.info(f"This simulation used {log.patient.get_name()}")
+    # You can get a [LogAction] for all the actions in the simulation
+    for a in log.actions:
+        _pulse_logger.info(f"A {a.name} was provided at time {a.time}s")
+        text = a.text.replace('\n', ' ')
+        _pulse_logger.info(f"\t{text}")
+    # You can get a [LogEvent] for all the events in the simulation
+    for e in log.events:
+        _pulse_logger.info(f"A {e.event} was {e.active} time {e.time}s")
+        _pulse_logger.info(f"\t{e.text}")
+    # You can get the time windows for when all events were active
+    for e, windows in log.event_windows.items():
+        for w in windows:
+            _pulse_logger.info(f"{e} was active from {w[0]}s to {w[1]}s")
+    # You can get the status of an event for a specific window
+    activities = log.get_active_events_in_window(200.0, 300.0)
+    for e, info in activities.items():
+        _pulse_logger.info(f"{e} was")
+        _pulse_logger.info(f"\tactive for {info['Duration_s']}s in this time window")
+        _pulse_logger.info(f"\tactive for {info['ActiveFraction']} of this time window")
+        _pulse_logger.info(f"\t{info['FinalState']} at the end of this window")
+    # You can get the state of an event at a specific time
+    status = log.get_event_status(eEvent.HypovolemicShock, 260.0)
+    _pulse_logger.info(f"HypovolemicShock was {status} at 260s")
 
 
 if __name__ == "__main__":

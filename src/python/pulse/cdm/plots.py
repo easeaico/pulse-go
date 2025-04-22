@@ -11,7 +11,7 @@ import pandas as pd
 
 from pulse.cdm.utils.file_utils import get_dir_from_run_config
 from pulse.cdm.utils.csv_utils import read_csv_into_df
-from pulse.cdm.utils.logger import LogItem, LogAction, LogEvent, parse_actions, parse_events
+from pulse.cdm.utils.logger import LogItem, LogAction, LogEvent, PulseLog
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -22,6 +22,8 @@ class eDimensionMode(Enum):
     Square = 1
     Legend = 2
     Unbound = 3
+
+
 class SEImageProperties():
     __slots__ = ["_dimension_mode", "_dim_dict", "_file_format", "_height_inch", "_width_inch", "_dpi"]
 
@@ -647,8 +649,12 @@ class SEPlotSource():
             if not self._log_file.is_file():
                 _pulse_logger.error(f"Could not find corresponding log file: {self._csv_data}")
                 return False
-        self._actions_events = parse_actions(self._log_file)
-        self._actions_events.extend(parse_events(self._log_file))
+
+        log = PulseLog()
+        log.parse(self._log_file)
+        self._actions_events = []
+        self._actions_events.extend(log.actions)
+        self._actions_events.extend(log.events)
 
         self._actions_events = sorted(self._actions_events, key=attrgetter('time'))
 

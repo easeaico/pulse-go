@@ -4,17 +4,13 @@
 import re
 import sys
 import shutil
-import logging
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.style as mplstyle
 import matplotlib.ticker as mplticker
-from pathlib import Path
 from cycler import cycler
 from datetime import timedelta
 from textwrap import TextWrapper
-from typing import List, Optional
-from matplotlib import colors as mcolors
 from timeit import default_timer as timer
 
 from pulse.cdm.plots import *
@@ -788,7 +784,13 @@ def create_plot(plot_sources: [SEPlotSource],
             count_limit=20
         ):
             color = next(action_event_fmt_cycler)['color']
-            ax3.axvline(x=ae.time, color = color, label = f"{ae.category.name}:{ae.text}\nt={ae.time}")
+            if isinstance(ae, LogAction):
+                category = "Action"
+            elif isinstance(ae, LogEvent):
+                category = "Event"
+            else:
+                category = "Unknown"
+            ax3.axvline(x=ae.time, color=color, label=f"{category}:{ae.text}\nt={ae.time}")
 
     # Plot validation data if needed
     if validation_source:

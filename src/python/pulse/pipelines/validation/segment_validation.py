@@ -13,7 +13,7 @@ import PyPulse
 
 from pulse.cdm.engine import SEDataRequested, eEvent
 from pulse.cdm.validation import SESegmentValidationTarget, generate_percentage_span, format_float
-from pulse.cdm.utils.logger import parse_active_event_windows, active_events
+from pulse.cdm.utils.logger import PulseLog
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
@@ -89,7 +89,7 @@ def validate(name: str, scenario_dir: Path, results_dir: Path) -> None:
         fields = list(range(len(headers)))
         align = [('<', '<')] * len(headers)
 
-        active_event_windows = None  # Derived from the log
+        log = PulseLog()
         for target in targets:
             if not target.has_validation_targets():
                 continue
@@ -109,12 +109,10 @@ def validate(name: str, scenario_dir: Path, results_dir: Path) -> None:
                         continue
                     seg_start_time = results.get_segment(seg_id - 1).time_s
                     seg_end_time = results.get_segment(seg_id).time_s
-                    if not active_event_windows:
-                        active_event_windows = parse_active_event_windows(str(results_files[1]))
+                    if not log.is_valid:
+                        log.parse(results_files[1])
                     if not segment_durations:
-                        segment_durations = active_events(active_event_windows,
-                                                          window_start=seg_start_time,
-                                                          window_end=seg_end_time)
+                        segment_durations = log.get_active_events_in_window(seg_start_time, seg_end_time)
                     event = eEvent[header[1]]
                     supplemental_results = segment_durations[event]
                 elif "Assessment" in tgt.get_header():

@@ -8,13 +8,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
-from typing import Sequence
+
 from datetime import timedelta
 from timeit import default_timer as timer
 
-from pulse.cdm.utils.file_utils import adjust_filepath
-from pulse.cdm.plots import SEPlotConfig, SEPlotSource, SEMonitorPlotter
+from pulse.cdm.engine import eEvent
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
+from pulse.cdm.plots import SEPlotConfig, SEPlotSource, SEMonitorPlotter
+from pulse.cdm.utils.file_utils import adjust_filepath
+from pulse.cdm.utils.logger import PulseLog
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -233,13 +235,24 @@ def create_vitals_monitor_image(csv_file: Path, start_time_s: float, end_time_s:
 
 def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_time_s: float, fig_name: str="ventilator_monitor.jpg"):
     # Read the CSV file
-    data = pd.read_csv(adjust_filepath(csv_file))
+    csv_path = adjust_filepath(csv_file)
+    data = pd.read_csv(csv_path)
 
     # Filter rows between 1.0 and 20.0 in the "Time(s)" column
     filtered_data = data[(data["Time(s)"] >= start_time_s) & (data["Time(s)"] <= end_time_s)]
     if len(filtered_data) == 0:
         _pulse_logger.error(f"No data found between times {start_time_s} and {end_time_s}. Cannot create ventilator monitor {fig_name}")
         return
+
+    # Grab the log file
+    log_file = Path(csv_path).with_suffix(".log")
+    if not log_file.exists():
+        _pulse_logger.error(f"Expected log file {log_file} does not exist")
+        return
+
+    log = PulseLog()
+    log.parse(log_file)
+    status = log.get_event_status(eEvent.HypovolemicShock, end_time_s)  # TODO JBW
 
     # Extract required data for subplots
     time = filtered_data["Time(s)"]
