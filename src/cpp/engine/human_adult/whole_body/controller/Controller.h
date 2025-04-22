@@ -19,7 +19,7 @@ namespace pulse { namespace human_adult_whole_body
   protected:// Create via Engine
     Controller(Logger* logger = nullptr);
   public:
-    virtual ~Controller() = default;
+    virtual ~Controller();
 
     bool SerializeFromFile(const std::string& file) override;
     bool SerializeToFile(const std::string& file) const override;

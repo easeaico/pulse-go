@@ -16,6 +16,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - Software Architecture Improvements
   - Automated Validation Updates
     - Improved organization for automated validation modules
+    - Moved hemorrhage model validation to an automated validation module
     - Fix the need for duplicate data request files
     - Support multiple md files for a validation xlsx
     - Change argument from xlsx filename to the directory
@@ -26,7 +27,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Support configuration json in validation workbooks
     - Include comparison formula in expected value column of segment validation tables
     - Shifting default to 3 significant digits for values in validation tables
-    - Moved hemorrhage model validation to an automated validation module
+    - Add support for validating event and assessment values
   - Improved Batch Study Support
     - Created Python based HowTo for running/analyzing large amounts of patients and insult/intervention combinations
 

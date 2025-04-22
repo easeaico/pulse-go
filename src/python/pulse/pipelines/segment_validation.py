@@ -17,7 +17,6 @@ from pulse.cdm.validation import SESegmentValidationPipelineConfig
 from pulse.cdm.io.validation import serialize_segment_validation_pipeline_config_from_file
 from pulse.cdm.utils.markdown import process_file
 from pulse.cdm.utils.file_utils import get_root_dir
-from pulse.cdm.utils.math_utils import format_float
 from pulse.cdm.utils.plotter import create_plots, plot_with_test_results
 from pulse.pipelines.dataset.segment_dataset_reader import gen_scenarios_and_targets
 from pulse.pipelines.validation.segment_validation import validate
@@ -182,20 +181,8 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
         config = SESegmentValidationPipelineConfig()
         serialize_segment_validation_pipeline_config_from_file(config_file, config)
 
-    # Carry out validation on each scenario
-    targets = [item.name for item in scenario_dir.glob("*")
-               if not item.is_dir() and "-ValidationTargets.json" in item.name]
-    for target_file in targets:
-        abs_targets_filename = Path(scenario_dir / target_file)
-        abs_segments_filename = Path(validate_dir / target_file.replace("-ValidationTargets", "Results-Segments"))
-        if not abs_segments_filename.exists():
-            _pulse_logger.error(f"Unable to locate segments for {abs_segments_filename}. Continuing without validating.")
-            continue
-
-        sheet = target_file.split('-')[0]
-        table_dir = Path("./validation/tables/" + xls_dir.name + '/' + sheet)
-        table_dir.mkdir(parents=True, exist_ok=True)
-        validate(abs_targets_filename, abs_segments_filename, table_dir=table_dir)
+    # Carry out validation on the targets of each scenario
+    validate(xls_dir.name, scenario_dir, validate_dir)
 
     if config is not None:
         for table in config.get_tables():

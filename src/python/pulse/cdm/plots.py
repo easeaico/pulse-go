@@ -9,10 +9,9 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 import logging
 import pandas as pd
 
-from pulse.cdm.scalars import SEScalar, SEScalarLength
 from pulse.cdm.utils.file_utils import get_dir_from_run_config
 from pulse.cdm.utils.csv_utils import read_csv_into_df
-from pulse.cdm.utils.logger import eActionEventCategory, LogActionEvent, parse_actions, parse_events
+from pulse.cdm.utils.logger import LogItem, LogAction, LogEvent, parse_actions, parse_events
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -654,11 +653,13 @@ class SEPlotSource():
         self._actions_events = sorted(self._actions_events, key=attrgetter('time'))
 
         return True
-    def get_actions_events(self, plot_actions: bool=True, plot_events: bool=True,
-            allow_actions_with: Optional[List[str]]=None, allow_events_with: Optional[List[str]]=None,
-            omit_actions_with: Optional[List[str]]=None, omit_events_with: Optional[List[str]]=None,
-            count_limit: int=None
-    ) -> List[LogActionEvent]:
+
+    def get_actions_events(self, plot_actions: bool = True, plot_events: bool = True,
+                           allow_actions_with: Optional[List[str]] = None,
+                           allow_events_with: Optional[List[str]] = None,
+                           omit_actions_with: Optional[List[str]] = None,
+                           omit_events_with: Optional[List[str]] = None,
+                           count_limit: int = None) -> List[LogItem]:
         if allow_actions_with is None:
             allow_actions_with = list()
         if allow_events_with is None:
@@ -669,9 +670,9 @@ class SEPlotSource():
             omit_events_with = list()
 
         filtered = []
-        ae_counts = {eActionEventCategory.ACTION: {}, eActionEventCategory.EVENT: {}}
+        ae_counts = {"Action": {}, "Event": {}}
         for ae in self._actions_events:
-            if plot_actions and ae.category == eActionEventCategory.ACTION:
+            if plot_actions and isinstance(ae, LogAction):
                 if allow_actions_with:
                     keep = False
                     for o in allow_actions_with:
@@ -688,10 +689,10 @@ class SEPlotSource():
 
                 if keep:
                     filtered.append(ae)
-                    if ae.name not in ae_counts[ae.category]:
-                        ae_counts[ae.category][ae.name] = 0
-                    ae_counts[ae.category][ae.name] += 1
-            elif plot_events and ae.category == eActionEventCategory.EVENT:
+                    if ae.name not in ae_counts["Action"]:
+                        ae_counts["Action"][ae.name] = 0
+                    ae_counts["Action"][ae.name] += 1
+            elif plot_events and isinstance(ae, LogEvent):
                 if allow_events_with:
                     keep = False
                     for o in allow_events_with:
@@ -707,20 +708,25 @@ class SEPlotSource():
                         break
                 if keep:
                     filtered.append(ae)
-                    if ae.name not in ae_counts[ae.category]:
-                        ae_counts[ae.category][ae.name] = 0
-                    ae_counts[ae.category][ae.name] += 1
+                    if ae.event not in ae_counts["Event"]:
+                        ae_counts["Event"][ae.event] = 0
+                    ae_counts["Event"][ae.event] += 1
 
         if count_limit is not None:
-            filtered = [ae for ae in filtered if not ae_counts[ae.category][ae.name] > count_limit]
+            limited = []
+            for ae in filtered:
+                if isinstance(ae, LogAction) and ae_counts["Action"][ae.name] <= count_limit:
+                    limited.append(ae)
+                elif isinstance(ae, LogEvent) and ae_counts["Event"][ae.event] <= count_limit:
+                    limited.append(ae)
+            filtered = limited  # [ae for ae in filtered if not ae_counts[ae.category][ae.name] > count_limit]
 
         return filtered
-    def set_actions_events(self, actions_events: List[LogActionEvent]) -> None:
+
+    def set_actions_events(self, actions_events: List[LogItem]) -> None:
         self._actions_events = sorted(actions_events, key=attrgetter('time'))
     def has_actions_events(self) -> bool:
         return self._actions_events is not None
-    def invalidate_log_file(self) -> None:
-        self._actions_events = None
 
     def get_data_frame(self) -> pd.DataFrame:
         if self._df.empty:

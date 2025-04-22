@@ -158,7 +158,7 @@ class PulseEngine:
         return False
 
     def _pull(self):
-        #self._results = copy.deepcopy(self.__pulse.pull_data())
+        # self._results = copy.deepcopy(self.__pulse.pull_data())
         self._results = self.__pulse.pull_data()
 
     def advance_time(self):
@@ -214,15 +214,15 @@ class PulseEngine:
             return False
         if len(actions) == 0:
             return True
-        json = serialize_actions_to_string(actions,eSerializationFormat.JSON)
-        #print(json)
-        self.__pulse.process_actions(json,PyPulse.serialization_format.json)
+        json = serialize_actions_to_string(actions, eSerializationFormat.JSON)
+        # print(json)
+        self.__pulse.process_actions(json, PyPulse.serialization_format.json)
 
     def _process_events(self):
         if self._is_ready and self._event_handler:
             events = self.__pulse.pull_events(PyPulse.serialization_format.json)
             if events:
-                event_changes = serialize_event_change_list_from_string(events,eSerializationFormat.JSON)
+                event_changes = serialize_event_change_list_from_string(events, eSerializationFormat.JSON)
                 for event_change in event_changes:
                     self._event_handler.handle_event(event_change)
 

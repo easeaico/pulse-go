@@ -96,7 +96,7 @@ void HowToSerialize()
   pe->ProcessAction(obstruction);
 
   // Now let's advance 5 minutes with these actions to get the patient into a injured state
-  pe->AdvanceModelTime(5, TimeUnit::min);
+  pe->AdvanceModelTime(5, TimeUnit::s);
 
   pe->GetLogger()->Info("Wounded patient vitals");
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");

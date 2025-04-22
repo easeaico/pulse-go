@@ -10,6 +10,7 @@ from pulse.cdm.scalars import get_unit
 
 _pulse_logger = logging.getLogger('pulse')
 
+
 def generate_data_request(request_type: str, property_name: str, unit_str: str, precision: Optional[int]) -> SEDataRequest:
     request_type = request_type.strip()
     if request_type == "ActionCmpt" or request_type == "ActionSub":

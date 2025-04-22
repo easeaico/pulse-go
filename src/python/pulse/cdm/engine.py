@@ -110,15 +110,22 @@ class eEvent(Enum):
     SupplementalOxygenBottleExhausted = 1004
     NonRebreatherMaskOxygenBagEmpty = 1005
 
+    @staticmethod
+    def from_str(s: str):
+        if s in eEvent.__members__:
+            return eEvent[s]
+        else:
+            raise ValueError(f"'{s}' is not a valid {eEvent.__name__}")
+
 
 class SEEventChange:
     __slots__ = ["event", "active", "sim_time"]
 
     def __init__(
         self,
-        event: Optional[eEvent]=None,
-        active: Optional[bool]=None,
-        sim_time_s: Optional[float]=None
+        event: Optional[eEvent] = None,
+        active: Optional[bool] = None,
+        sim_time_s: Optional[float] = None
     ):
         self.event = event
         self.active = active
@@ -129,6 +136,7 @@ class SEEventChange:
         if self.sim_time.is_valid():
             return_text += (" @ {}").format(self.sim_time)
         return return_text
+
 
 class IEventHandler:
     def __init__(self, active_events_only=False):

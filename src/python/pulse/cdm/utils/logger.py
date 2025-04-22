@@ -6,9 +6,9 @@ import json
 import logging
 from enum import Enum
 from json import JSONDecodeError
-from typing import List, NamedTuple
+from typing import List
 
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.engine import eSerializationFormat, eEvent
 from pulse.cdm.patient import SEPatient
 from pulse.cdm.io.patient import serialize_patient_from_string
 
@@ -119,16 +119,62 @@ def pretty_print(string: str, print_type: ePrettyPrintType, preserve_camel_case:
     return ret
 
 
-class eActionEventCategory(Enum):
-    ACTION = 0
-    EVENT = 1
+class LogItem:
+    __slots__ = ["time", "text"]
+
+    def __init__(self, time: float, text: str):
+        self.time = time
+        self.text = text
 
 
-class LogActionEvent(NamedTuple):
-    time: float
-    name: str
-    text: str
-    category: eActionEventCategory
+class LogAction(LogItem):
+    __slots__ = ["name"]
+
+    def __init__(self, time: float, name: str, text: str):
+        super().__init__(time, text)
+        self.name = name
+
+    def __repr__(self):
+        return f"{self.time}: {self.name}"
+
+
+class LogEvent(LogItem):
+    __slots__ = ["event", "active"]
+
+    def __init__(self, time: float, event: eEvent, text: str, active: bool):
+        super().__init__(time, text)
+        self.event = event
+        self.active = active
+
+    def __repr__(self):
+        return f"{self.time}: {self.text}"
+
+
+# TODO We should gather up all these methods into a Log class, so we only need to process a file once
+
+def parse_timing(log_file: str):
+    start = 0
+    end = 99999
+
+    def pull_time():
+        s = line.rfind(']') + 1
+        e = line.find("(s)", s)
+        return float(line[s:e].strip())
+
+    with open(log_file) as f:
+        lines = f.readlines()
+        idx = 0
+        while idx < len(lines):
+            line = lines[idx]
+            if len(line) == 0:
+                idx += 1
+                continue
+            if "[Initial SimTime(s)]" in line:
+                start = pull_time()
+            elif "[Final SimTime(s)]" in line:
+                end = pull_time()
+            idx += 1
+    return start, end
 
 
 def parse_actions(log_file: str, omit: List[str] = []):
@@ -215,7 +261,7 @@ def parse_actions(log_file: str, omit: List[str] = []):
                 # Remove leading spaces on each line
                 action_text = '\n'.join([s.strip() for s in action_text.splitlines()])
 
-                actions.append(LogActionEvent(action_time, action_name, action_text, eActionEventCategory.ACTION))
+                actions.append(LogAction(time=action_time, name=action_name, text=action_text))
 
             idx += 1
 
@@ -223,35 +269,114 @@ def parse_actions(log_file: str, omit: List[str] = []):
 
 
 def parse_events(log_file: str, omit: List[str] = []):
-    event_tag = "[Event"
+    # event_tag = "[Event"
     events = []
     with open(log_file) as f:
         lines = f.readlines()
         for line in lines:
             if len(line) == 0:
                 continue
+            if "[Initial SimTime(s)]" in line:
+                stabilization_events = events
+                events = []
+                # Clean up events triggered during stabilization
+                # Remove any inactive events we found
+                # Reset all event times we have found to 0
+                for se in stabilization_events:
+                    if se.event == eEvent.Stabilizing:
+                        continue
+                    if se.active:
+                        se.time = 0
+                        events.append(se)
+                    else:
+                        for i, e in enumerate(events):
+                            if e.event == se.event:
+                                del events[i]
+                                break
+                continue
             match = re.search(
-                r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)[01]\](?P<event_text>.*)",
+                r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)(?P<active>[01])\](?P<event_text>.*)",
                 line
             )
             if match is None:
                 continue
-            event_text = match.group("event_text").strip()
-            event_name = match.group("event_name").strip()
-            event_time = float(match.group("time_val"))
+            text = match.group("event_text").strip()
+            name = match.group("event_name").strip()
+            time = float(match.group("time_val"))
+            active = True if match.group("active").strip() == '1' else False
 
             # Check to see if it should be omitted
             keep_event = True
             for o in omit:
-                if o in event_text:
+                if o in text:
                     keep_event = False
                     break
             if not keep_event:
                 continue
 
-            events.append(LogActionEvent(event_time, event_name, event_text, eActionEventCategory.EVENT))
+            events.append(LogEvent(time=time, event=eEvent.from_str(name), text=text, active=active))
 
     return events
+
+
+def active_event_windows(events: [eEvent],
+                         engine_start: float,
+                         engine_end: float):
+
+    windows = {}
+    for e in events:
+        if e.active:
+            if e.event not in windows:
+                windows[e.event] = []
+            # Assume the event will be active through the duration of the simulation
+            windows[e.event].append((e.time, engine_end))
+        else:  # Not active
+            if e.event not in windows:
+                # So the event was on the whole time?
+                # It would be better if you concat logs from time 0, so you can catch all event activations
+                windows[e.event] = [(engine_start, e.time)]
+            else:
+                # Set a more specific time for this event
+                w = windows[e.event][-1]
+                windows[e.event][-1] = (w[0], e.time)
+
+    return windows
+
+
+def active_events(active_windows: {},
+                  window_start: float,
+                  window_end: float):
+
+    events = {}
+    for e, actives in active_windows.items():
+        if e not in events:
+            events[e] = {"Duration_s": 0.0, "ActiveFraction": 0.0, "FinalState": False}
+        for active in actives:
+            if active[0] < window_start:
+                start = window_start
+            elif window_start <= active[0] <= window_end:
+                start = active[0]
+            else:
+                continue
+
+            end = window_end
+            if active[1] > window_end:
+                end = window_end
+            elif window_end <= active[1]:
+                end = active[1]
+
+            events[e]["Duration_s"] += (end - start)
+            if end == window_end:
+                events[e]["FinalState"] = True
+        events[e]["ActiveFraction"] = events[e]["Duration_s"] / (window_end - window_start)
+
+    return events
+
+
+def parse_active_event_windows(log_file: str):
+    start, end = parse_timing(log_file)
+    events = parse_events(log_file)
+    return active_event_windows(events, engine_start=start, engine_end=end)
 
 
 def parse_patient(log_file: str):
