@@ -23,6 +23,36 @@ public:
   virtual SEScalarMassPerVolume& GetBloodDensity();                                                   /**< @copydoc DOXY_CDM_GET */
   virtual double GetBloodDensity(const MassPerVolumeUnit& unit) const;                                /**< @copydoc DOXY_CDM_GET_VALUE *///@}
 
+  /** @name ClinicalShuntFraction
+ *  @brief @copybrief Physiology_BloodChemistrySystemData_ClinicalShuntFraction
+ *  @{*/
+ /// %Test if member has been allocated
+  virtual bool HasClinicalShuntFraction() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalar0To1& GetClinicalShuntFraction();
+  virtual double GetClinicalShuntFraction() const;
+  //@}
+
+  /** @name ArterialOxygenContent
+  *  @brief The total oxygen content in arterial blood, including dissolved and hemoglobin-bound oxygen.
+  *  @{*/
+  /// Test if member has been allocated
+  virtual bool HasArterialOxygenContent() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalar& GetArterialOxygenContent();
+  virtual double GetArterialOxygenContent() const;
+  //@}
+
+  /** @name ArteriovenousOxygenDifference
+  *  @brief The difference between arterial and mixed venous oxygen content.
+  *  @{*/
+  /// Test if member has been allocated
+  virtual bool HasArteriovenousOxygenDifference() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalar& GetArteriovenousOxygenDifference();
+  virtual double GetArteriovenousOxygenDifference() const;
+  //@}
+
   /** @name BaseExcess
   *  @brief @copybrief Physiology_BloodChemistrySystemData_BaseExcess
   *  @{*/
@@ -101,6 +131,46 @@ public:
   /// Get member class, allocate if nullptr
   virtual SEScalarMass& GetHemoglobinContent();
   virtual double GetHemoglobinContent(const MassUnit& unit) const;
+  //@}
+
+  /** @name MixedVenousOxygenContent
+  *  @brief The total oxygen content in mixed venous blood, including dissolved and hemoglobin-bound oxygen.
+  *  @{*/
+  /// Test if member has been allocated
+  virtual bool HasMixedVenousOxygenContent() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalar& GetMixedVenousOxygenContent();
+  virtual double GetMixedVenousOxygenContent() const;
+  //@}
+
+  /** @name ClinicalOxygenConsumption
+  *  @brief The rate at which oxygen is consumed by the tissues, calculated as the product of cardiac output and arteriovenous oxygen difference.
+  *  @{*/
+  /// Test if member has been allocated
+  virtual bool HasClinicalOxygenConsumption() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalarVolumePerTime& GetClinicalOxygenConsumption();
+  virtual double GetClinicalOxygenConsumption(const VolumePerTimeUnit& unit) const;
+  //@}
+
+  /** @name OxygenDelivery
+  *  @brief The rate at which oxygen is delivered to the tissues, calculated as the product of cardiac output and arterial oxygen content.
+  *  @{*/
+  /// Test if member has been allocated
+  virtual bool HasOxygenDelivery() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalarVolumePerTime& GetOxygenDelivery();
+  virtual double GetOxygenDelivery(const VolumePerTimeUnit& unit) const;
+  //@}
+
+  /** @name OxygenDeliveryToOxygenConsumptionRatio
+  *  @brief The ratio of oxygen delivery to oxygen consumption, an indicator of the adequacy of tissue oxygenation.
+  *  @{*/
+  /// Test if member has been allocated
+  virtual bool HasOxygenDeliveryToOxygenConsumptionRatio() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalar& GetOxygenDeliveryToOxygenConsumptionRatio();
+  virtual double GetOxygenDeliveryToOxygenConsumptionRatio() const;
   //@}
 
   /** @name OxygenSaturation
@@ -302,6 +372,9 @@ public:
 
 
 protected:
+  SEScalar0To1*                   m_ClinicalShuntFraction;
+  SEScalar*                       m_ArterialOxygenContent;
+  SEScalar*                       m_ArteriovenousOxygenDifference;  
   SEScalarAmountPerVolume*        m_BaseExcess;
   SEScalarMassPerVolume*          m_BloodDensity;
   SEScalar*                       m_BloodPH;
@@ -311,6 +384,10 @@ protected:
   SEScalar0To1*                   m_CarbonMonoxideSaturation;
   SEScalar0To1*                   m_Hematocrit;
   SEScalarMass*                   m_HemoglobinContent;
+  SEScalar*                       m_MixedVenousOxygenContent;
+  SEScalarVolumePerTime*          m_ClinicalOxygenConsumption;
+  SEScalarVolumePerTime*          m_OxygenDelivery;
+  SEScalar*                       m_OxygenDeliveryToOxygenConsumptionRatio;
   SEScalar0To1*                   m_OxygenSaturation;
   SEScalarAmountPerVolume*        m_Phosphate;
   SEScalarOsmolality*             m_PlasmaOsmolality;

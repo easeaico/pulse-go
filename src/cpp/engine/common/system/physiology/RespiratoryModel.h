@@ -119,12 +119,20 @@ namespace pulse
     double m_LastCardiacCycleBloodPH;
     SERunningAverage* m_BloodPHRunningAverage;
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
+    // Compliances
+    double m_PreviousLeftLungPressureDiff_cmH2O;
+    double m_PreviousRightLungPressureDiff_cmH2O;
+    double m_PreviousLeftLungVolume_L;
+    double m_PreviousRightLungVolume_L;
+    double m_PreviousLeftPleuralPressureDiff_cmH2O;
+    double m_PreviousRightPleuralPressureDiff_cmH2O;
+    double m_PreviousLeftPleuralVolume_L;
+    double m_PreviousRightPleuralVolume_L;
 
     // Expanded pulmonary methodology
     std::vector<double> m_AlveoliVolumeIncrement_L;
     std::vector<double> m_TopBreathAcinarZoneVolumes_L;
     std::vector<double> m_BottomBreathAcinarZoneVolumes_L;
-    double m_PreviousPleuralVolume_L;
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -141,6 +149,7 @@ namespace pulse
     double m_VentilationToTidalVolumeSlope;
     SERunningAverage* m_ArterialO2RunningAverage_mmHg;
     SERunningAverage* m_ArterialCO2RunningAverage_mmHg;
+    SERunningAverage* m_MixedExpiredCO2RunningAverage_mmHg;
 
     // Muscle Pressure Waveform
     double m_ExpiratoryHoldFraction;

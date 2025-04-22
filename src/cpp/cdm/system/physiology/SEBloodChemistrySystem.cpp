@@ -12,9 +12,13 @@
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarHeatCapacitancePerMass.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger)
 {
+  m_ClinicalShuntFraction = nullptr;
+  m_ArterialOxygenContent = nullptr;
+  m_ArteriovenousOxygenDifference = nullptr;
   m_BaseExcess = nullptr;
   m_BloodDensity = nullptr;
   m_BloodPH = nullptr;
@@ -24,6 +28,10 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
   m_CarbonMonoxideSaturation = nullptr;
   m_Hematocrit = nullptr;
   m_HemoglobinContent = nullptr;
+  m_MixedVenousOxygenContent = nullptr;
+  m_ClinicalOxygenConsumption = nullptr;
+  m_OxygenDelivery = nullptr;
+  m_OxygenDeliveryToOxygenConsumptionRatio = nullptr;
   m_OxygenSaturation = nullptr;
   m_Phosphate = nullptr;
   m_PlasmaOsmolality = nullptr;
@@ -50,6 +58,9 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
 
 SEBloodChemistrySystem::~SEBloodChemistrySystem()
 {
+  SAFE_DELETE(m_ClinicalShuntFraction);
+  SAFE_DELETE(m_ArterialOxygenContent);
+  SAFE_DELETE(m_ArteriovenousOxygenDifference);
   SAFE_DELETE(m_BaseExcess);
   SAFE_DELETE(m_BloodDensity);
   SAFE_DELETE(m_BloodPH);
@@ -59,6 +70,10 @@ SEBloodChemistrySystem::~SEBloodChemistrySystem()
   SAFE_DELETE(m_CarbonMonoxideSaturation);
   SAFE_DELETE(m_Hematocrit);
   SAFE_DELETE(m_HemoglobinContent);
+  SAFE_DELETE(m_MixedVenousOxygenContent);
+  SAFE_DELETE(m_ClinicalOxygenConsumption);
+  SAFE_DELETE(m_OxygenDelivery);
+  SAFE_DELETE(m_OxygenDeliveryToOxygenConsumptionRatio);
   SAFE_DELETE(m_OxygenSaturation);
   SAFE_DELETE(m_Phosphate);
   SAFE_DELETE(m_PlasmaOsmolality);
@@ -85,6 +100,9 @@ SEBloodChemistrySystem::~SEBloodChemistrySystem()
 
 void SEBloodChemistrySystem::Clear()
 {
+  INVALIDATE_PROPERTY(m_ClinicalShuntFraction);
+  INVALIDATE_PROPERTY(m_ArterialOxygenContent);
+  INVALIDATE_PROPERTY(m_ArteriovenousOxygenDifference);
   INVALIDATE_PROPERTY(m_BaseExcess);
   INVALIDATE_PROPERTY(m_BloodDensity);
   INVALIDATE_PROPERTY(m_BloodPH);
@@ -94,6 +112,10 @@ void SEBloodChemistrySystem::Clear()
   INVALIDATE_PROPERTY(m_CarbonMonoxideSaturation);
   INVALIDATE_PROPERTY(m_Hematocrit);
   INVALIDATE_PROPERTY(m_HemoglobinContent);
+  INVALIDATE_PROPERTY(m_MixedVenousOxygenContent);
+  INVALIDATE_PROPERTY(m_ClinicalOxygenConsumption);
+  INVALIDATE_PROPERTY(m_OxygenDelivery);
+  INVALIDATE_PROPERTY(m_OxygenDeliveryToOxygenConsumptionRatio);
   INVALIDATE_PROPERTY(m_OxygenSaturation);
   INVALIDATE_PROPERTY(m_Phosphate);
   INVALIDATE_PROPERTY(m_PlasmaOsmolality);
@@ -120,6 +142,12 @@ void SEBloodChemistrySystem::Clear()
 
 const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
 {
+  if (name.compare("ClinicalShuntFraction") == 0)
+    return &GetClinicalShuntFraction();
+  if (name.compare("ArterialOxygenContent") == 0)
+    return &GetArterialOxygenContent();
+  if (name.compare("ArteriovenousOxygenDifference") == 0)
+    return &GetArteriovenousOxygenDifference();
   if (name.compare("BaseExcess") == 0)
     return &GetBaseExcess();
   if (name.compare("BloodDensity") == 0)
@@ -138,6 +166,14 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
     return &GetHematocrit();
   if (name.compare("HemoglobinContent") == 0)
     return &GetHemoglobinContent();
+  if (name.compare("MixedVenousOxygenContent") == 0)
+    return &GetMixedVenousOxygenContent();
+  if (name.compare("ClinicalOxygenConsumption") == 0)
+    return &GetClinicalOxygenConsumption();
+  if (name.compare("OxygenDelivery") == 0)
+    return &GetOxygenDelivery();
+  if (name.compare("OxygenDeliveryToOxygenConsumptionRatio") == 0)
+    return &GetOxygenDeliveryToOxygenConsumptionRatio();
   if (name.compare("OxygenSaturation") == 0)
     return &GetOxygenSaturation();
   if (name.compare("Phosphate") == 0)
@@ -153,7 +189,7 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
   if (name.compare("RedBloodCellCount") == 0)
     return &GetRedBloodCellCount();
   if (name.compare("ShuntFraction") == 0)
-    return &GetShuntFraction();  
+    return &GetShuntFraction();
   if (name.compare("StrongIonDifference") == 0)
     return &GetStrongIonDifference();
   if (name.compare("TotalProteinConcentration") == 0)
@@ -182,6 +218,57 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
     return &GetVenousOxygenPressure();
 
   return nullptr;
+}
+
+bool SEBloodChemistrySystem::HasClinicalShuntFraction() const
+{
+  return m_ClinicalShuntFraction == nullptr ? false : m_ClinicalShuntFraction->IsValid();
+}
+SEScalar0To1& SEBloodChemistrySystem::GetClinicalShuntFraction()
+{
+  if (m_ClinicalShuntFraction == nullptr)
+    m_ClinicalShuntFraction = new SEScalar0To1();
+  return *m_ClinicalShuntFraction;
+}
+double SEBloodChemistrySystem::GetClinicalShuntFraction() const
+{
+  if (m_ClinicalShuntFraction == nullptr)
+    return SEScalar::dNaN();
+  return m_ClinicalShuntFraction->GetValue();
+}
+
+bool SEBloodChemistrySystem::HasArterialOxygenContent() const
+{
+  return m_ArterialOxygenContent == nullptr ? false : m_ArterialOxygenContent->IsValid();
+}
+SEScalar& SEBloodChemistrySystem::GetArterialOxygenContent()
+{
+  if (m_ArterialOxygenContent == nullptr)
+    m_ArterialOxygenContent = new SEScalar();
+  return *m_ArterialOxygenContent;
+}
+double SEBloodChemistrySystem::GetArterialOxygenContent() const
+{
+  if (m_ArterialOxygenContent == nullptr)
+    return SEScalar::dNaN();
+  return m_ArterialOxygenContent->GetValue();
+}
+
+bool SEBloodChemistrySystem::HasArteriovenousOxygenDifference() const
+{
+  return m_ArteriovenousOxygenDifference == nullptr ? false : m_ArteriovenousOxygenDifference->IsValid();
+}
+SEScalar& SEBloodChemistrySystem::GetArteriovenousOxygenDifference()
+{
+  if (m_ArteriovenousOxygenDifference == nullptr)
+    m_ArteriovenousOxygenDifference = new SEScalar();
+  return *m_ArteriovenousOxygenDifference;
+}
+double SEBloodChemistrySystem::GetArteriovenousOxygenDifference() const
+{
+  if (m_ArteriovenousOxygenDifference == nullptr)
+    return SEScalar::dNaN();
+  return m_ArteriovenousOxygenDifference->GetValue();
 }
 
 bool SEBloodChemistrySystem::HasBaseExcess() const
@@ -335,6 +422,74 @@ double SEBloodChemistrySystem::GetHemoglobinContent(const MassUnit& unit) const
   if (m_HemoglobinContent == nullptr)
     return SEScalar::dNaN();
   return m_HemoglobinContent->GetValue(unit);
+}
+
+bool SEBloodChemistrySystem::HasMixedVenousOxygenContent() const
+{
+  return m_MixedVenousOxygenContent == nullptr ? false : m_MixedVenousOxygenContent->IsValid();
+}
+SEScalar& SEBloodChemistrySystem::GetMixedVenousOxygenContent()
+{
+  if (m_MixedVenousOxygenContent == nullptr)
+    m_MixedVenousOxygenContent = new SEScalar();
+  return *m_MixedVenousOxygenContent;
+}
+double SEBloodChemistrySystem::GetMixedVenousOxygenContent() const
+{
+  if (m_MixedVenousOxygenContent == nullptr)
+    return SEScalar::dNaN();
+  return m_MixedVenousOxygenContent->GetValue();
+}
+
+bool SEBloodChemistrySystem::HasClinicalOxygenConsumption() const
+{
+  return m_ClinicalOxygenConsumption == nullptr ? false : m_ClinicalOxygenConsumption->IsValid();
+}
+SEScalarVolumePerTime& SEBloodChemistrySystem::GetClinicalOxygenConsumption()
+{
+  if (m_ClinicalOxygenConsumption == nullptr)
+    m_ClinicalOxygenConsumption = new SEScalarVolumePerTime();
+  return *m_ClinicalOxygenConsumption;
+}
+double SEBloodChemistrySystem::GetClinicalOxygenConsumption(const VolumePerTimeUnit& unit) const
+{
+  if (m_ClinicalOxygenConsumption == nullptr)
+    return SEScalar::dNaN();
+  return m_ClinicalOxygenConsumption->GetValue(unit);
+}
+
+bool SEBloodChemistrySystem::HasOxygenDelivery() const
+{
+  return m_OxygenDelivery == nullptr ? false : m_OxygenDelivery->IsValid();
+}
+SEScalarVolumePerTime& SEBloodChemistrySystem::GetOxygenDelivery()
+{
+  if (m_OxygenDelivery == nullptr)
+    m_OxygenDelivery = new SEScalarVolumePerTime();
+  return *m_OxygenDelivery;
+}
+double SEBloodChemistrySystem::GetOxygenDelivery(const VolumePerTimeUnit& unit) const
+{
+  if (m_OxygenDelivery == nullptr)
+    return SEScalar::dNaN();
+  return m_OxygenDelivery->GetValue(unit);
+}
+
+bool SEBloodChemistrySystem::HasOxygenDeliveryToOxygenConsumptionRatio() const
+{
+  return m_OxygenDeliveryToOxygenConsumptionRatio == nullptr ? false : m_OxygenDeliveryToOxygenConsumptionRatio->IsValid();
+}
+SEScalar& SEBloodChemistrySystem::GetOxygenDeliveryToOxygenConsumptionRatio()
+{
+  if (m_OxygenDeliveryToOxygenConsumptionRatio == nullptr)
+    m_OxygenDeliveryToOxygenConsumptionRatio = new SEScalar();
+  return *m_OxygenDeliveryToOxygenConsumptionRatio;
+}
+double SEBloodChemistrySystem::GetOxygenDeliveryToOxygenConsumptionRatio() const
+{
+  if (m_OxygenDeliveryToOxygenConsumptionRatio == nullptr)
+    return SEScalar::dNaN();
+  return m_OxygenDeliveryToOxygenConsumptionRatio->GetValue();
 }
 
 bool SEBloodChemistrySystem::HasOxygenSaturation() const

@@ -82,10 +82,9 @@ namespace pulse
 
         //calculate a scaling factor for the CO2 saturation curve based on total CO2
         //scaling factor is linear such that when CO2 mM is 27, factor is .2; when CO2 mM is 29, factor is 1
-        //scaling factor is bounded between 0.1 and 1.0
-        double totalCO2_mM = co2_mM / .05;
+        double totalCO2_mM = co2_mM / .05; // Assuming co2_mM is in mmol/L (0.05 L = 50 mL of blood)
         double CO2_scaling_factor = .4 * totalCO2_mM - 10.6;
-        CO2_scaling_factor = LIMIT(CO2_scaling_factor, 0.1, 1.0);
+        CO2_scaling_factor = MAX(CO2_scaling_factor, 0.1);
 
         sc.CalculateHemoglobinSaturations(cs, O2PartialPressureGuess_mmHg, CO2PartialPressureGuess_mmHg, pH, sc.m_temperature_C, sc.m_hematocrit, OxygenSaturation, CarbonDioxideSaturation, CO2_scaling_factor);
         logTerm = log10(bicarb_mM / co2_mM);
@@ -558,9 +557,10 @@ namespace pulse
     if (!(solver.fnorm < fnormCheck))
     {
 #ifdef VERBOSE
+      std::stringstream ss;
       ss << "SaturationCalculator::CalculateBloodGasDistribution: Eigen solution out of tolerance. Switch to secondary. ";
       ss << "fnorm: " << solver.fnorm;
-      ss << ". compartment = " << m_cmpt->GetName();
+      ss << ". compartment = " << cmpt.GetName();
       Error(ss);
 #endif
       solverSolution = false;

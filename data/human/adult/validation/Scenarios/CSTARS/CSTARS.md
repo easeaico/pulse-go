@@ -15,7 +15,7 @@ Empirical data and published sources were utilized where available. In cases lac
   @refitem CSTARSScenario2 "Scenario 2: Moderate COPD with Subsequent Bronchospasm"
   @refitem CSTARSScenario3 "Scenario 3: Mild TBI with worsening ARDS"
   @refitem CSTARSScenario4 "Scenario 4: Moderate ARDS with Tension Pneumothorax"
-  @refitem CSTARSScenario5 "Scenario 5: Moderate ARDS with Right Mainstem Intubation"
+  @refitem CSTARSScenario5 "Scenario 5: Mild ARDS with Right Mainstem Intubation"
   @refitem CSTARSScenario6 "Scenario 6: Hypoxemic Respiratory Failure - Pneumonia"
   @refitem CSTARSScenario7 "Scenario 7: Hypoxemic Respiratory Failure Plugged ETT"
 @endsecreflist

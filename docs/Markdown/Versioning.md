@@ -26,11 +26,16 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Support configuration json in validation workbooks
     - Include comparison formula in expected value column of segment validation tables
     - Shifting default to 3 significant digits for values in validation tables
+    - Moved hemorrhage model validation to an automated validation module
   - Improved Batch Study Support
     - Created Python based HowTo for running/analyzing large amounts of patients and insult/intervention combinations
 
 - Physiology Model Improvements
-    - Moved hemorrrhage model validation to an automated validation module
+    - Added clinical shunt and dead space outputs using blood gas values instead of fluid mechanics properties
+    - Improved respiratory system compliance calculations, especially for heterogeneous insults
+    - Added new oxygen transport and utilization metrics to blood chemistry data
+    - Removed inflection point in CO2 saturation calculation for high dissolved CO2 values
+    - Fixed bug in upper airway resistance setting for mainstem intubation
 
 
 ## Pulse v4.3.1 (January 2025)
