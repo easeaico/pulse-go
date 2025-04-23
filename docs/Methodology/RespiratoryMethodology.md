@@ -1797,7 +1797,7 @@ The pulmonary fibrosis condition was validated with a severe pulmonary fibrosis 
 Validation - Actions
 --------------------
 
-@insert ./validation/markdown/AirwayObstruction.md
+@insert ./validation/markdown/AirwayObstruction/AirwayObstruction.md
 
 ### Bronchoconstriction
 
