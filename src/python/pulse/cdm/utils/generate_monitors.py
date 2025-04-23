@@ -249,7 +249,7 @@ def create_ventilator_monitor_image(csv_file: Path, start_time_s: float, end_tim
     if not log_file.exists():
         _pulse_logger.error(f"Expected log file {log_file} does not exist")
         return
-
+    # Load and get information out of the log for our plot
     log = PulseLog()
     log.parse(log_file)
     status = log.get_event_status(eEvent.HypovolemicShock, end_time_s)  # TODO JBW
