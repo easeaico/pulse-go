@@ -411,7 +411,7 @@ All feedback and imapcts from additional actions will NOT impact the hemodynamic
 
 #### Hemorrhage
 @anchor hemorrhage-action
-@insert ./validation/markdown/Hemorrhage_Action.md
+@insert ./validation/markdown/Hemorrhage/Hemorrhage_Action.md
 
 #### Pericardial Effusion
 The pericardial effusion action is used to model acute pericardial effusion by adding a flow source on the pericardium. This action leads to a volume accumulation over the course of the simulation. The accumulated volume is used to calculate a pressure source that is applied to the left and right heart. This pressure source is identical to the one used in the pericardial effusion condition. For the pericardial effusion action, the strain-rate dependent compliance of the pericardium is modeled so that the change in intrapericardial pressure is a function of flow rate and the current volume of the pericardium @cite Metoyer2014Modeling.
@@ -702,7 +702,7 @@ There are three CPR scenarios for validation. Each scenario perscribes the same 
 
 ### Hemorrhage
 @anchor hemorrhage-validation
-@insert ./validation/markdown/Hemorrhage_Validation.md
+@insert ./validation/markdown/Hemorrhage/Hemorrhage_Validation.md
 
 
 ### Pericardial Effusion

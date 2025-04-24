@@ -7,6 +7,55 @@
       {
         "MultiHeaderSeriesPlotter":
         {
+          "Comment": "For Blood Chemistry Methodology Report",
+          "PlotConfig":
+          {
+            "ImageProperties": { "Height_inch": 4, "Width_inch": 11 }, "LegendMode": "NoLegends",
+            "OutputPathOverride": "./docs/html/plots/BloodChemistry/", "PlotActions": true, "PlotEvents": true
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class2SalineResults.csv" }
+          ],
+          "Series":
+          [
+            { "Title": "Volume", "YHeader": [ "BloodVolume(L)" ] },
+            { "Title": "Hemoglobin", "YHeader": [ "HemoglobinContent(g)" ] },
+            { "OutputFilename": "BloodChemistryLegend",
+                "PlotConfig": { "ImageProperties": { "DimensionMode": "Unbound" }, "LegendMode": "OnlyActionEventLegend",
+                  "PlotEvents": false } }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
+          "Comment": "Renal Methodology Report - Hemorrhage Class 3",
+          "PlotConfig":
+          {
+            "FontSize": 10, "ImageProperties": { "Height_inch": 4, "Width_inch": 8 }, "LegendMode": "NoLegends",
+            "OutputPathOverride": "./docs/html/plots/Renal/", "PlotActions": true, "PlotEvents": true
+          },
+          "PlotSource":
+          [
+            { "CSVData": "$VERIFICATION_DIR/scenarios/Hemorrhage/Class3NoFluidResults.csv" }
+          ],
+          "Series":
+          [
+            { "Title": "", "OutputFilename": "HemorrhageMAP", "YHeader": [ "MeanArterialPressure(mmHg)" ]},
+            { "Title": "", "OutputFilename": "HemorrhageGFR", "YHeader": [ "GlomerularFiltrationRate(mL/min)" ] },
+            { "Title": "", "OutputFilename": "HemorrhageRBF", "YHeader": [ "RenalBloodFlow(L/min)" ] },
+            { "Title": "", "OutputFilename": "HemorrhageArterioleResistance",
+                "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
+            { "OutputFilename": "HemorrhageClass3NoFluidLegend",
+                "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
+                  "ImageProperties": { "DimensionMode": "Unbound" }, "PlotEvents": false } }
+          ]
+        }
+      },
+      {
+        "MultiHeaderSeriesPlotter":
+        {
           "Comment": "Hemorrhages - Severity",
           "PlotConfig":
           {

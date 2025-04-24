@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import json
 import re
 import sys
 import logging
@@ -10,78 +11,151 @@ from typing import List
 
 import PyPulse
 
-from pulse.cdm.engine import SEDataRequested
+from pulse.cdm.engine import SEDataRequested, eEvent
 from pulse.cdm.validation import SESegmentValidationTarget, generate_percentage_span, format_float
+from pulse.cdm.utils.logger import PulseLog
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
 from pulse.cdm.io.validation import serialize_segment_validation_segment_list_from_file
+
+
 _pulse_logger = logging.getLogger('pulse')
 
 
-def validate(targets_filename: Path, segments_filename: Path, table_dir: Path) -> None:
-    # Get all validation targets and segment results from files
-    _pulse_logger.info(f"Validating {segments_filename} against {targets_filename}")
-    # Get the sheet name from the filename
-    this_sheet_name = segments_filename.stem[:segments_filename.stem.find("Results")]
-    targets = serialize_segment_validation_segment_list_from_file(str(targets_filename))
-    referenced_results = {}
-    # Look through the targets and find all the sheets this test case references
-    for target in targets:
-        for property_target in target.get_validation_targets():
-            if property_target.has_comparison_formula():
-                #  Does this formula reference another workbook/sheet?
-                formula = property_target.get_comparison_formula()
-                #  Note: If we want to also allow referencing other workbook books, maybe add another [a-zA-Z]+:
-                sheet_references = re.findall(r"\{[a-zA-Z]+:[0-9]+\}", formula, re.DOTALL)
-                for sheet_reference in sheet_references:
-                    sheet_name = re.findall(r"[a-zA-Z]+", sheet_reference, re.DOTALL)[0]
-                    if sheet_name not in referenced_results:
-                        referenced_segments_filename = Path(str(segments_filename).replace(this_sheet_name, sheet_name))
-                        if not referenced_segments_filename.exists():
-                            _pulse_logger.error(f"Cannot find referenced sheet: {referenced_segments_filename}")
-                        else:
-                            referenced_results[sheet_name] = (
-                                serialize_data_requested_result_from_file(str(referenced_segments_filename)))
-    # Load the results for this test case
-    results = serialize_data_requested_result_from_file(str(segments_filename))
+def validate(name: str, scenario_dir: Path, results_dir: Path) -> None:
+    target_files = [item.name for item in scenario_dir.glob("*")
+                    if not item.is_dir() and "-ValidationTargets.json" in item.name]
 
-    headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
-    fields = list(range(len(headers)))
-    align = [('<', '<')] * len(headers)
+    def find_results_files() -> (Path, Path, list[Path]):
+        segments_filename = Path(results_dir / f"{target_name}Results-Segments.json")
+        if not segments_filename.exists():
+            _pulse_logger.error(f"Unable to locate segments for {segments_filename}")
+            return None, None, []
 
-    for target in targets:
-        if not target.has_validation_targets():
-            continue
-        # Get the result associated with this target
-        seg_id = target.get_segment_id()
-        _pulse_logger.info(f"Processing segment {seg_id}")
+        log_filename = Path(results_dir / f"{target_name}Results.log")
+        if not log_filename.exists():
+            _pulse_logger.warning(f"Unable to locate log file {log_filename}")
+            log_filename = None
 
-        # Evaluate targets and create Markdown tables for each segment
-        table_data = []
-        for tgt in target.get_validation_targets():
-            table_data.append(evaluate(seg_id, tgt, results, referenced_results))
+        # Are there any assessment files?
+        assessment_files = [item for item in results_dir.glob(f"{target_name}*@*.json")]
 
-        # Write our table
-        md_filename = table_dir / f"Segment{seg_id}ValidationTable.md"
-        with open(md_filename, "w") as md_file:
-            _pulse_logger.info(f"Writing {md_filename}")
-            lines = list()
-            if target.has_notes():
-                lines.append(target.get_notes().rstrip())
-                lines.append("\n\n")
-            table_name = table_dir.as_posix()
-            table_name = table_name[table_name.rindex('/') + 1:]
-            lines.append(f"<center>\n<i>@tabledef {{{table_name}Segment{seg_id}}}. "
-                         f"Data request validation results for Segment {seg_id}.</i>\n</center>\n\n")
-            md_file.writelines(lines)
-            table(md_file, table_data, fields, headers, align)
+        return segments_filename, log_filename, assessment_files
+
+    for target_file in target_files:
+        target_name = target_file[:target_file.find('-')]
+        # Create a directory to put our tables
+        table_dir = Path(f"./validation/tables/{name}/{target_name}")
+        table_dir.mkdir(parents=True, exist_ok=True)
+
+        targets_filename = Path(scenario_dir / target_file)
+        results_files = find_results_files()
+        # idx 0 = segments file
+        # idx 1 = log file
+        # idx 2 = list of assessment files
+        if results_files[0] is None:
+            _pulse_logger.error(f"NOT Validating {targets_filename}")
+            continue  # Must, at least, have a segments file
+
+        # Get all validation targets and segment results from files
+        _pulse_logger.info(f"Validating {results_files[0]} against {targets_filename}")
+        targets = serialize_segment_validation_segment_list_from_file(str(targets_filename))
+        # Load the results for this test case
+        results = serialize_data_requested_result_from_file(str(results_files[0]))
+
+        # Look through the targets and find all the sheets this test case references
+        referenced_results = {}
+        for target in targets:
+            for property_target in target.get_validation_targets():
+                if property_target.has_comparison_formula():
+                    #  Does this formula reference another workbook/sheet?
+                    formula = property_target.get_comparison_formula()
+                    #  Note: If we want to also allow referencing other workbook books, maybe add another [a-zA-Z]+:
+                    sheet_references = re.findall(r"\{[a-zA-Z]+:[0-9]+\}", formula, re.DOTALL)
+                    for sheet_reference in sheet_references:
+                        sheet_name = re.findall(r"[a-zA-Z]+", sheet_reference, re.DOTALL)[0]
+                        if sheet_name not in referenced_results:
+                            referenced_segments_filename = Path(str(results_files[0]).replace(target_name, sheet_name))
+                            if not referenced_segments_filename.exists():
+                                _pulse_logger.error(f"Cannot find referenced sheet: {referenced_segments_filename}")
+                            else:
+                                referenced_results[sheet_name] = (
+                                    serialize_data_requested_result_from_file(str(referenced_segments_filename)))
+                                #  TODO Not supporting referencing event/assessment values from another workbook/sheet
+                                #  Would need to call find_results_files for the referenced sheet, and pass them along
+
+        headers = ["Property Name", "Validation", "Engine Value", "Percent Error", "Percent Change", "Notes"]
+        fields = list(range(len(headers)))
+        align = [('<', '<')] * len(headers)
+
+        log = PulseLog()
+        for target in targets:
+            if not target.has_validation_targets():
+                continue
+            # Get the result associated with this target
+            seg_id = target.get_segment_id()
+            _pulse_logger.info(f"Processing segment {seg_id}")
+
+            # Evaluate targets and create Markdown tables for each segment
+            table_data = []
+            segment_durations = None
+            for tgt in target.get_validation_targets():
+                supplemental_results = None
+                if "Event" in tgt.get_header():
+                    header = tgt.get_header().split('-')
+                    if results_files[1] is None:
+                        _pulse_logger.error(f"No log file, cannot Validate {tgt.get_header()}")
+                        continue
+                    seg_start_time = results.get_segment(seg_id - 1).time_s
+                    seg_end_time = results.get_segment(seg_id).time_s
+                    if not log.is_valid:
+                        log.parse(results_files[1])
+                    if not segment_durations:
+                        segment_durations = log.get_active_events_in_window(seg_start_time, seg_end_time)
+                    event = eEvent[header[1]]
+                    supplemental_results = segment_durations[event]
+                elif "Assessment" in tgt.get_header():
+                    if len(results_files[2]) == 0:
+                        _pulse_logger.error(f"No assessment files found, cannot Validate {tgt.get_header()}")
+                        continue
+                    header = tgt.get_header().split('-')
+                    seg_end_time = results.get_segment(seg_id).time_s
+                    if seg_end_time - int(seg_end_time) == 0:
+                        seg_end_time = int(seg_end_time)
+                    for assessment_file in results_files[2]:
+                        if header[1] in assessment_file.name and f"@{seg_end_time}s.json" in assessment_file.name:
+                            with open(assessment_file, 'r') as file:
+                                supplemental_results = json.load(file)
+                            break
+                    if supplemental_results is None:
+                        _pulse_logger.error(f"Could not get assessment value, cannot Validate {tgt.get_header()}")
+                        continue
+
+                # If the target result is event or assessment, we need to pull it and insert it into the results
+                table_data.append(evaluate(seg_id, tgt, results, supplemental_results, referenced_results))
+
+            # Write our table
+            md_filename = table_dir / f"Segment{seg_id}ValidationTable.md"
+            with open(md_filename, "w") as md_file:
+                _pulse_logger.info(f"Writing {md_filename}")
+                lines = list()
+                if target.has_notes():
+                    lines.append(target.get_notes().rstrip())
+                    lines.append("\n\n")
+                table_name = table_dir.as_posix()
+                table_name = table_name[table_name.rindex('/') + 1:]
+                lines.append(f"<center>\n<i>@tabledef {{{table_name}Segment{seg_id}}}. "
+                             f"Data request validation results for Segment {seg_id}.</i>\n</center>\n\n")
+                md_file.writelines(lines)
+                table(md_file, table_data, fields, headers, align)
 
 
 def evaluate(seg_id: int,
              tgt: SESegmentValidationTarget,
              results: SEDataRequested,
-             referenced_results: List[SEDataRequested]) -> List[str]:
+             supplemental_results: dict,
+             referenced_results: dict) -> List[str]:
     header = tgt.get_header()
     _pulse_logger.info(f"Evaluating {header}")
 
@@ -91,11 +165,18 @@ def evaluate(seg_id: int,
     if result is None:
         _pulse_logger.error(f"Could not find result for segment {seg_id}")
         return []
-    header_idx = results.get_header_index(header)
-    if header_idx is None:
-        _pulse_logger.error(f"Could not find results for {header} in segment {seg_id}")
-        return []
-    engine_val = result.values[header_idx]
+    if "Event" in header:
+        header = header.replace("Event-", "")
+        engine_val = supplemental_results[header.split('-')[1]]
+    elif "Assessment" in header:
+        header = header.replace("Assessment-", "")
+        engine_val = supplemental_results[header.split('-')[1]]
+    else:
+        header_idx = results.get_header_index(header)
+        if header_idx is None:
+            _pulse_logger.error(f"Could not find results for {header} in segment {seg_id}")
+            return []
+        engine_val = result.values[header_idx]
 
     def _convert_unit(_header: str, _val: float):
         paren_idx = _header.find("(")
@@ -118,7 +199,14 @@ def evaluate(seg_id: int,
     # The problem is splitting out the %diff and %change for each expression and getting them into the table
     # It's probably not that bad, we can revisit if needed
     logical_join = None
-    formula = tgt.get_comparison_formula().lower().replace("healthy", "-1").replace("baseline", "0")
+    formula = tgt.get_comparison_formula()
+    replace = tgt.get_comparison_formula().lower()
+    s = replace.find("healthy")
+    if s >= 0:
+        formula = f"{formula[:s]}-1{formula[s + 7:]}"
+    s = replace.find("baseline")
+    if s >= 0:
+        formula = f"{formula[:s]}-1{formula[s + 8:]}"
     if ("and" in formula and "or" in formula) or '(' in formula:
         _pulse_logger.error(f"We currently don't support this complex of a formula: {formula}")
         return []
@@ -209,14 +297,31 @@ def evaluate(seg_id: int,
 
         elif '=' in expression:
             compare_type = compare_type.replace("=", "EqualTo")
-            err = percent_difference(expected_val, engine_val, epsilon)
-            # Close enough
-            if abs(err) < epsilon:
-                err = 0.
-            success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
-            warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
-            expression_error_str = generate_percentage_span(err, success, warning)
-            expression_expected_str = f"{format_float(expected_val)}"
+            if isinstance(engine_val, float):
+                err = percent_difference(expected_val, engine_val, epsilon)
+                # Close enough
+                if abs(err) < epsilon:
+                    err = 0.
+                success = 10 if not tgt.has_good_percent_error() else tgt.get_good_percent_error()
+                warning = 30 if not tgt.has_fair_percent_error() else tgt.get_fair_percent_error()
+                expression_error_str = generate_percentage_span(err, success, warning)
+                expression_expected_str = f"{format_float(expected_val)}"
+            elif isinstance(engine_val, bool):
+                if engine_val != expected_val:
+                    expression_error_str = f"<span class=\"danger\">Fail</span>"
+                else:
+                    expression_error_str = f"<span class=\"success\">Pass</span>"
+                expression_expected_str = f"{expected_val}"
+            elif isinstance(engine_val, str):
+                expected_val = expected_val.replace('"', '')
+                expected_val = expected_val.replace("'", '')
+                if engine_val != expected_val:
+                    expression_error_str = f"<span class=\"danger\">Fail</span>"
+                else:
+                    expression_error_str = f"<span class=\"success\">Pass</span>"
+                expression_expected_str = f"{expected_val}"
+            else:
+                _pulse_logger.error(f"Unsupported data type for property {header}")
 
         elif '[' in expression and ']' in expression:
             compare_type = None
@@ -300,10 +405,60 @@ def evaluate(seg_id: int,
             if not ref.startswith('['):
                 formula_expected_str += f" @cite {ref}"
 
+    if logical_join:
+        if "or" in logical_join:
+            def _get_best_or_class(logical_expression: str):
+                _success = ""
+                _warning = ""
+                _danger = ""
+                for e in logical_expression.split("or"):
+                    # TODO might want to keep the the lowest (or highest) percent for each category?
+                    if "success" in e:
+                        _success = e.strip()
+                    elif "warning" in e:
+                        _warning = e.strip()
+                    elif "danger" in e:
+                        _danger = e.strip()
+                if _success:
+                    return _success
+                elif _warning:
+                    return _warning
+                elif _danger:
+                    return _danger
+            if formula_error_str:
+                formula_error_str = _get_best_or_class(formula_error_str)
+            if formula_change_str:
+                formula_change_str = _get_best_or_class(formula_change_str)
+        elif "and" in logical_join:
+            def _replace_and_class(logical_expression: str):
+                _success = 0
+                _warning = 0
+                _danger = 0
+                for e in logical_expression.split("and"):
+                    # TODO might want to keep the the lowest (or highest) percent for each category?
+                    if "success" in e:
+                        _success += 1
+                    elif "warning" in e:
+                        _warning += 1
+                    elif "danger" in e:
+                        _danger += 1
+                # Change class tags with the worst class, so the cell is colored appropriately
+                if _danger > 0:
+                    logical_expression.replace("warning", "danger")
+                    logical_expression.replace("success", "danger")
+                elif _warning > 0:
+                    logical_expression.replace("success", "warning")
+                return logical_expression
+
+            if formula_error_str:
+                formula_error_str = _replace_and_class(formula_error_str)
+            if formula_change_str:
+                formula_change_str = _replace_and_class(formula_change_str)
+
     return [
         header,
         formula_expected_str if formula_expected_str else "&nbsp;",
-        f"{format_float(engine_val)}",
+        f"{format_float(engine_val) if isinstance(engine_val,float) else engine_val}",
         formula_error_str if formula_error_str else "&nbsp;",
         formula_change_str if formula_change_str else "&nbsp;",
         tgt.get_notes() if tgt.get_notes() else "&nbsp;"

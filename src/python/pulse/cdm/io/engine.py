@@ -43,7 +43,7 @@ def serialize_event_change_list_from_bind(src: EventChangeListData):
     event_changes = []
     for ecd in src.Change:
         ec = SEEventChange()
-        ec.event = eEvent(ecd.Event).name
+        ec.event = eEvent(ecd.Event)
         ec.active = ecd.Active
         event_changes.append(ec)
     return event_changes
@@ -377,7 +377,7 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
             print("Skipping invalid action")
             continue
         #  print(action)
-        dst.append(serialize_action_to_bind(action))
+        dst.AnyAction.append(serialize_action_to_bind(action))
 
 
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):

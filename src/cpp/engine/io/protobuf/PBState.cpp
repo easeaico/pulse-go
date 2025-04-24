@@ -118,7 +118,6 @@ namespace pulse
       dst.m_CurrentTime.SetValue(0, TimeUnit::s);
       dst.m_SimulationTime.SetValue(0, TimeUnit::s);
     }
-    dst.Info("[SimTime(s)] " + dst.m_SimulationTime.ToString());
 
     dst.m_AirwayMode = (eAirwayMode)src.airwaymode();
     if (src.intubation() == (CDM_BIND::eSwitch)eSwitch::NullSwitch)

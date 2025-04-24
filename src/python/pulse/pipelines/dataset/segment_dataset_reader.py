@@ -186,19 +186,25 @@ def process_sheet(sheet: Worksheet, output_dir: Path, results_dir: Path, scenari
                 stage = Stage.Segment
                 continue
 
-            if "request type" in h2c and r[h2c["request type"]] is not None and r[h2c["request type"]] != "Assessment":
-                dr = generate_data_request(
-                    request_type=r[h2c["request type"]] if "request type" in h2c and isinstance(r[h2c["request type"]], str) else "",
-                    property_name=r[h2c["property name"]] if "property name" in h2c and isinstance(r[h2c["property name"]], str) else "",
-                    unit_str=r[h2c["unit"]] if "unit" in h2c and isinstance(r[h2c["unit"]], str) else "",
-                    precision=None,
-                )
+            if "request type" in h2c and r[h2c["request type"]] is not None:
+                if r[h2c["request type"]] == "Assessment":
+                    header = f"Assessment-{r[h2c['property name']]}"
+                elif r[h2c["request type"]] == "Event":
+                    header = f"Event-{r[h2c['property name']]}"
+                else:
+                    dr = generate_data_request(
+                        request_type=r[h2c["request type"]] if "request type" in h2c and isinstance(r[h2c["request type"]], str) else "",
+                        property_name=r[h2c["property name"]] if "property name" in h2c and isinstance(r[h2c["property name"]], str) else "",
+                        unit_str=r[h2c["unit"]] if "unit" in h2c and isinstance(r[h2c["unit"]], str) else "",
+                        precision=None,
+                    )
+                    header = dr.to_string()
                 val_tgt = SESegmentValidationTarget()
-                val_tgt.set_header(dr.to_string())
+                val_tgt.set_header(header)
                 if isinstance(r[h2c["reference"]], str):
                     val_tgt.set_reference(r[h2c["reference"]])
                 if isinstance(r[h2c["comparison formula"]], str):
-                    val_tgt.set_comparison_formula(r[h2c["comparison formula"]].strip().lower())
+                    val_tgt.set_comparison_formula(r[h2c["comparison formula"]].strip())
                 threshold_str = r[h2c["threshold"]]
                 if threshold_str:
                     for threshold in threshold_str.split(","):

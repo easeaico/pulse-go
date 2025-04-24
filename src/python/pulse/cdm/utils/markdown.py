@@ -97,7 +97,8 @@ def table(file, records, fields, headings, alignment=None):
     for row in zip(*columns):
         file.write(row_template.format(*row).rstrip() + '\n')
 
-def get_table_tag(word: str)->str:
+
+def get_table_tag(word: str) -> str:
     start = word.find('{')
     end = word.find('}')
     if start == -1 or end == -1:
@@ -238,6 +239,17 @@ def process_file(fpath: Path, ref_dir: Path, dest_dir: Path,
                 else:
                     _pulse_logger.info(f"Inserting {f}")
                     out_lines.extend(_process_file(f, ancestors.copy()))
+            elif "<img" in line:
+                # Check to see if the image exists
+                idx = line.find("<img")
+                start = line.find("\"", idx)
+                end = line.find("\"", start+1)
+                src = line[start+1:end]
+                image_file = Path(src.replace("./", "./docs/html/"))
+                if not image_file.exists():
+                    _pulse_logger.error(f"Could not find image {image_file}")
+                    line = line.replace(src, "./Images/MissingImage.jpg")
+                out_lines.append(line)
             else:
                 out_lines.append(line)
         return out_lines
@@ -267,7 +279,7 @@ def main():
                 found = list(src_dir.rglob("*.[mM][dD]"))
                 for f in found:
                     if f.is_dir():
-                        continue # Not currently recursively processing directories
+                        continue  # Not currently recursively processing directories
                     process_file(f, ref_dir, dest_dir, replace_refs=True)
             else:
                 _pulse_logger.error(f"Cannot find source directory: {sys.argv[1]}")

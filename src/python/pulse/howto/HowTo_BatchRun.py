@@ -9,7 +9,7 @@ from typing import List
 from pulse.cdm.engine import SEAdvanceTime, SEDataRequest, SESerializeState, eSwitch
 from pulse.cdm.patient import eSex
 from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhage_Compartment
-from pulse.cdm.plots import SEBounds, SEPlotSource, SESeries, SEMultiHeaderSeriesPlotter, eLegendMode
+from pulse.cdm.plots import SEPlotSource, SESeries, SEMultiHeaderSeriesPlotter
 from pulse.cdm.scenario import SEScenario, SEScenarioExecStatus
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 from pulse.cdm.io.scenario import serialize_scenario_to_file, \

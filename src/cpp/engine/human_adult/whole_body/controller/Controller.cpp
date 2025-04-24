@@ -43,6 +43,11 @@ namespace pulse { namespace human_adult_whole_body
 
   }
 
+  Controller::~Controller()
+  {
+    Info("[Final SimTime(s)] " + m_SimulationTime.ToString());
+  }
+
   // I am pretty sure we will want different states per engine
   bool Controller::SerializeFromFile(const std::string& filename)
   {

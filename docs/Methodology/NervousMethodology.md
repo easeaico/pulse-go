@@ -271,9 +271,9 @@ The baroreceptor reflex is validated through simulation of an acute hemorrhage s
 <center>
 <table>
 <tr>
-<td><a href="./plots/Cardiovascular/MeanArterialPressureShock.jpg"><img src="./plots/Cardiovascular/MeanArterialPressureShock.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/MeanArterialPressureShock.jpg"><img src="./plots/Hemorrhage/MeanArterialPressureShock.jpg" width="550"></a>
 </td>
-<td><a href="./plots/Cardiovascular/CardiacOutputShock.jpg"><img src="./plots/Cardiovascular/CardiacOutputShock.jpg" width="550"></a>
+<td><a href="./plots/Hemorrhage/CardiacOutputShock.jpg"><img src="./plots/Hemorrhage/CardiacOutputShock.jpg" width="550"></a>
 </td>
 </tr>
 </table>

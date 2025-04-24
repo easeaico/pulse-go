@@ -1,7 +1,7 @@
 
 ### Hemorrhage
 
-@insert ./validation/markdown/Hemorrhage_Action.md
+@insert ./validation/markdown/Hemorrhage/Hemorrhage_Action.md
 
 ### Hemorrhage Validation
-@insert ./validation/markdown/Hemorrhage_Validation.md
+@insert ./validation/markdown/Hemorrhage/Hemorrhage_Validation.md

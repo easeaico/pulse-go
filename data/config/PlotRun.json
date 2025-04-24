@@ -4,29 +4,6 @@
     {
       "MultiHeaderSeriesPlotter":
       {
-        "Comment": "Blood Chemistry Methodology Report",
-        "PlotConfig":
-        {
-          "ImageProperties": { "Height_inch": 4, "Width_inch": 11 }, "LegendMode": "NoLegends",
-          "OutputPathOverride": "./docs/html/plots/BloodChemistry/", "PlotActions": true, "PlotEvents": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass2SalineResults.csv" }
-        ],
-        "Series":
-        [
-          { "Title": "Volume", "YHeader": [ "BloodVolume(L)" ] },
-          { "Title": "Hemoglobin", "YHeader": [ "HemoglobinContent(g)" ] },
-          { "OutputFilename": "BloodChemistryLegend",
-              "PlotConfig": { "ImageProperties": { "DimensionMode": "Unbound" }, "LegendMode": "OnlyActionEventLegend",
-                "PlotEvents": false } }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
         "Comment": "Elastance/Compliance plot",
         "PlotConfig": { "Gridlines": true, "OutputPathOverride": "./docs/html/plots/Cardiovascular/" },
         "PlotSource":
@@ -977,32 +954,6 @@
               "YLabel": "" },
           { "OutputFilename": "PupilLegend",
               "PlotConfig": { "LegendMode": "OnlyActionEventLegend", "ImageProperties": { "DimensionMode": "Unbound" } } }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "Comment": "Renal Methodology Report - Hemorrhage Class 3",
-        "PlotConfig":
-        {
-          "FontSize": 10, "ImageProperties": { "Height_inch": 4, "Width_inch": 8 }, "LegendMode": "NoLegends",
-          "OutputPathOverride": "./docs/html/plots/Renal/", "PlotActions": true, "PlotEvents": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/patient/HemorrhageClass3NoFluidResults.csv" }
-        ],
-        "Series":
-        [
-          { "Title": "", "OutputFilename": "HemorrhageMAP", "YHeader": [ "MeanArterialPressure(mmHg)" ]},
-          { "Title": "", "OutputFilename": "HemorrhageGFR", "YHeader": [ "GlomerularFiltrationRate(mL/min)" ] },
-          { "Title": "", "OutputFilename": "HemorrhageRBF", "YHeader": [ "RenalBloodFlow(L/min)" ] },
-          { "Title": "", "OutputFilename": "HemorrhageArterioleResistance",
-              "YHeader": [ "RightAfferentArterioleResistance(mmHg_min/mL)" ] },
-          { "OutputFilename": "HemorrhageClass3NoFluidLegend",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Unbound" }, "PlotEvents": false } }
         ]
       }
     },
@@ -1999,64 +1950,6 @@
           { "OutputFilename": "Inhaler_TwoActuations_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
           { "OutputFilename": "Inhaler_TwoActuations_AlbuterolConcentration",
               "YHeader": [ "Albuterol-PlasmaConcentration(ug/L)" ] }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "Comment": "Mechanical Ventilator Methodology Report - Validation - PC-CMV Varied",
-        "PlotConfig":
-        {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/",
-          "PlotActions": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/MechanicalVentilator_PC-CMV_VariedResults.csv" }
-        ],
-        "Series":
-        [
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TotalLungVolume",
-              "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_RR",
-              "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_TidalVolume",
-              "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVaried_InspiratoryExpiratoryRatio",
-              "YHeader": [ "InspiratoryExpiratoryRatio" ] },
-          { "OutputFilename": "MechanicalVentilatorPressureControlledVariedLegend",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Unbound" } } }
-        ]
-      }
-    },
-    {
-      "MultiHeaderSeriesPlotter":
-      {
-        "Comment": "Mechanical Ventilator Methodology Report - Validation - VC-AC ARDS",
-        "PlotConfig":
-        {
-          "LegendMode": "NoLegends", "OutputPathOverride": "./docs/html/plots/MechanicalVentilator/",
-          "PlotActions": true
-        },
-        "PlotSource":
-        [
-          { "CSVData": "$VERIFICATION_DIR/scenarios/equipment/MechanicalVentilator_VC-AC_ARDSResults.csv" }
-        ],
-        "Series":
-        [
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TotalLungVolume",
-              "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_RR",
-              "YHeader": [ "RespirationRate(1/min)" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_TidalVolume",
-              "YHeader": [ "TidalVolume(mL)" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio",
-              "YHeader": [ "InspiratoryExpiratoryRatio" ] },
-          { "OutputFilename": "MechanicalVentilatorVolumeControlledARDSLegend",
-              "PlotConfig": { "LegendMode": "OnlyActionEventLegend",
-                "ImageProperties": { "DimensionMode": "Unbound" } } }
         ]
       }
     },

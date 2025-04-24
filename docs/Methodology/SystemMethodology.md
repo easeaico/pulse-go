@@ -510,15 +510,6 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 <center>
 <table border="0">
 <tr>
-    <td><a href="./plots/System/AsthmaAttack_PFT.jpg"><img src="./plots/System/AsthmaAttack_PFT.jpg" width="550"></a></td>
-</tr>
-</table>
-</center>
-<center><i>Figure 11. The pulmonary function test for the asthma patient shows overall good agreement with the expected results. The residual volume may appear lower than expected. @cite bergeronSME</i></center>
-
-<center>
-<table border="0">
-<tr>
     <td><a href="./plots/System/AsthmaAttack_TotalLungVolume.jpg"><img src="./plots/System/AsthmaAttack_TotalLungVolume.jpg" width="550"></a></td>
     <td><a href="./plots/System/AsthmaAttack_TidalVolume.jpg"><img src="./plots/System/AsthmaAttack_TidalVolume.jpg" width="550"></a></td>
 </tr>
@@ -531,7 +522,7 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 </tr>
 </table>
 </center>
-<center><i>Figure 12. Select outputs from the Asthma Attack showcase scenario.</i></center>
+<center><i>Figure 11. Select outputs from the Asthma Attack showcase scenario.</i></center>
 
 ### Heat Stroke
 
@@ -564,7 +555,7 @@ A 25 year old male is hiking towards a rock formation to begin a recreational fr
 </tr>
 </table>
 </center>
-<center><i>Figure 13. Select outputs from the Heat Stroke showcase scenario.</i></center>
+<center><i>Figure 12. Select outputs from the Heat Stroke showcase scenario.</i></center>
 
 ### Environment Exposure
 
@@ -594,7 +585,7 @@ A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a new
 </tr>
 </table>
 </center>
-<center><i>Figure 14. Select outputs from the %Environment Exposure showcase scenario.</i></center>
+<center><i>Figure 13. Select outputs from the %Environment Exposure showcase scenario.</i></center>
 
 ## Conclusion
 

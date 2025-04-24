@@ -298,6 +298,7 @@ namespace pulse
       m_EngineInitializationState = eEngineInitializationState::FailedState;
       return false;
     }
+    Info("[Initial SimTime(s)] " + m_SimulationTime.ToString());
     return true;
   }
   bool Controller::SerializeToFile(const std::string& filename) const
@@ -315,6 +316,7 @@ namespace pulse
       m_EngineInitializationState = eEngineInitializationState::FailedState;
       return false;
     }
+    Info("[Initial SimTime(s)] " + m_SimulationTime.ToString());
     return true;
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
@@ -422,6 +424,7 @@ namespace pulse
     m_EventManager->ForwardEvents(event_handler);
     // Ready to go!
     AtSteadyState(EngineState::Active);
+    Info("[Initial SimTime(s)] " + m_SimulationTime.ToString());
     return true;
   }
 
@@ -701,6 +704,8 @@ namespace pulse
     {
       std::string output;
       double currentSimTime_s = GetSimulationTime().GetValue(TimeUnit::s);
+      // Round sim time to nearest hundredth, TODO to nearest time step?
+      currentSimTime_s = std::ceil(currentSimTime_s * 100.0) / 100.0;
       GetEngineTracker().PullData(currentSimTime_s);
       if(serializeRequested->GetClearCache())
         m_DataRequested->ClearDataRequested();

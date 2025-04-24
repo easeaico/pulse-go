@@ -1,12 +1,6 @@
 \anchor HealthyHydration
 @insert ./validation/scenarios/Dehydration/Healthy-Introduction.md
 
-### Segment Validation
-
-#### Segment 1
-
-@insert ./validation/tables/Dehydration/Healthy/Segment1ValidationTable.md
-
 @htmlonly
 <center>
 <table border="0">
