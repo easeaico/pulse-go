@@ -30,6 +30,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Add support for validating event and assessment values
   - Improved Batch Study Support
     - Created Python based HowTo for running/analyzing large amounts of patients and insult/intervention combinations
+    - Added examples and support for post processing log files
 
 - Physiology Model Improvements
     - Added clinical shunt and dead space outputs using blood gas values instead of fluid mechanics properties
