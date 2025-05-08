@@ -481,7 +481,7 @@ namespace pulse
     SEFluidCircuitPath& LeftSuperiorLobeAnteriorAlveoliToLeftPleuralConnection = cRespiratory.CreatePath(LeftSuperiorLobeAnteriorAlveoli, LeftPleuralConnection, pulse::ExpandedLungsRespiratoryPath::LeftSuperiorLobeAnteriorAlveoliToLeftPleuralConnection);
     SEFluidCircuitPath& LeftSuperiorLobeApicoposteriorAlveoliToLeftPleuralConnection = cRespiratory.CreatePath(LeftSuperiorLobeApicoposteriorAlveoli, LeftPleuralConnection, pulse::ExpandedLungsRespiratoryPath::LeftSuperiorLobeApicoposteriorAlveoliToLeftPleuralConnection);
 
-    double CarinaToRightMainBronchusResistance_cmH2O_s_Per_L = 1.125;
+    double CarinaToRightMainBronchusResistance_cmH2O_s_Per_L = 0.231;
     double RightMainBronchusToRightIntermediateBronchusResistance_cmH2O_s_Per_L = 0.150;
     double RightMainBronchusToRightSuperiorLobarBronchusResistance_cmH2O_s_Per_L = 0.387;
     double RightIntermediateBronchusToRightMiddleLobarBronchusResistance_cmH2O_s_Per_L = 0.877;
