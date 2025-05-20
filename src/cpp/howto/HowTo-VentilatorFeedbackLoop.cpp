@@ -55,7 +55,7 @@ public:
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// C-STARS closed-loop ventilator control demo
+/// En Route Care closed-loop ventilator control demo
 ///
 /// \details
 /// Refer to the SEVentilatorFeedbackLoop class
@@ -70,7 +70,7 @@ void HowToVentilatorFeedbackLoop()
 
   //Load the starting state that was saved at the end of Segment 1
   //Patient has mild ARDS
-  if (!pe->SerializeFromFile("CSTARS-Scenario1-InitialHemeostasis.json"))
+  if (!pe->SerializeFromFile("EnRouteCare-Scenario1-InitialHemeostasis.json"))
   {
     pe->GetLogger()->Error("Could not load state, loading Standard Male instead.");
     if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))// Select patient

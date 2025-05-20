@@ -1,20 +1,20 @@
 {
   "Plots" :
   {
-    "PlotConfig": { "OutputPathOverride": "./docs/html/plots/CSTARS/" },
+    "PlotConfig": { "OutputPathOverride": "./docs/html/plots/EnRouteCare/" },
     "Plotter" :
     [
       {
         "MultiHeaderSeriesPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 1)",
+          "Comment": "En Route Care Validation (Scenario 1)",
           "PlotConfig":
           {
             "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario1Results.csv" }
           ],
           "Series":
           [
@@ -42,25 +42,25 @@
       {
         "MonitorPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 1) Monitors",
+          "Comment": "En Route Care Validation (Scenario 1) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario1Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario1-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario1Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario1Results-Segments.json"
         }
       }
       ,
       {
         "MultiHeaderSeriesPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 2)",
+          "Comment": "En Route Care Validation (Scenario 2)",
           "PlotConfig":
           {
             "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario2Results.csv" }
           ],
           "Series":
           [
@@ -88,25 +88,25 @@
       {
         "MonitorPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 2) Monitors",
+          "Comment": "En Route Care Validation (Scenario 2) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario2Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario2-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario2Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario2Results-Segments.json"
         }
       }
       ,
       {
         "MultiHeaderSeriesPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 3)",
+          "Comment": "En Route Care Validation (Scenario 3)",
           "PlotConfig":
           {
             "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario3Results.csv" }
           ],
           "Series":
           [
@@ -134,25 +134,25 @@
       {
         "MonitorPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 3) Monitors",
+          "Comment": "En Route Care Validation (Scenario 3) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario3Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario3-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario3Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario3Results-Segments.json"
         }
       }
       ,
       {
         "MultiHeaderSeriesPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 4)",
+          "Comment": "En Route Care Validation (Scenario 4)",
           "PlotConfig":
           {
             "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario4Results.csv" }
           ],
           "Series":
           [
@@ -182,25 +182,25 @@
       {
         "MonitorPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 4) Monitors",
+          "Comment": "En Route Care Validation (Scenario 4) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario4Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario4-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario4Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario4Results-Segments.json"
         }
       }
       ,
       {
         "MultiHeaderSeriesPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 5)",
+          "Comment": "En Route Care Validation (Scenario 5)",
           "PlotConfig":
           {
             "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario5Results.csv" }
           ],
           "Series":
           [
@@ -230,25 +230,25 @@
       {
         "MonitorPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 5) Monitors",
+          "Comment": "En Route Care Validation (Scenario 5) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario5Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario5-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario5Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario5Results-Segments.json"
         }
       }
       ,
       {
         "MultiHeaderSeriesPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 6)",
+          "Comment": "En Route Care Validation (Scenario 6)",
           "PlotConfig":
           {
             "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario6Results.csv" }
           ],
           "Series":
           [
@@ -276,25 +276,25 @@
       {
         "MonitorPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 6) Monitors",
+          "Comment": "En Route Care Validation (Scenario 6) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario6Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario6-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario6Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario6Results-Segments.json"
         }
       }
       ,
       {
         "MultiHeaderSeriesPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 7)",
+          "Comment": "En Route Care Validation (Scenario 7)",
           "PlotConfig":
           {
             "LegendMode": "NoLegends", "PlotActions": true, "AllowActionsWith": ["Serialize Requested"]
           },
           "PlotSource":
           [
-            { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results.csv" }
+            { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario7Results.csv" }
           ],
           "Series":
           [
@@ -322,11 +322,11 @@
       {
         "MonitorPlotter":
         {
-          "Comment": "CSTARS Validation (Scenario 7) Monitors",
+          "Comment": "En Route Care Validation (Scenario 7) Monitors",
           "PlotSource":
-          { "CSVData": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results.csv" },
+          { "CSVData": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario7Results.csv" },
           "Vitals": true, "Ventilator": true, "OutputPrefix": "Scenario7-",
-          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/CSTARS/Scenario7Results-Segments.json"
+          "DataRequestedFile": "$VERIFICATION_DIR/scenarios/EnRouteCare/Scenario7Results-Segments.json"
         }
       }
     ]
@@ -339,161 +339,161 @@
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario1",
         "Segment": 1,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Scenario1",
         "Segment": 2,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario1",
         "Segment": 3,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment4SegmentTable",
         "ScenarioName": "Scenario1",
         "Segment": 4,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario2",
         "Segment": 1,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Scenario2",
         "Segment": 2,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario2",
         "Segment": 3,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario3",
         "Segment": 1,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Scenario3",
         "Segment": 2,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario3",
         "Segment": 3,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment4SegmentTable",
         "ScenarioName": "Scenario3",
         "Segment": 4,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario4",
         "Segment": 1,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Scenario4",
         "Segment": 2,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario4",
         "Segment": 3,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario5",
         "Segment": 1,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Scenario5",
         "Segment": 2,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario5",
         "Segment": 3,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario6",
         "Segment": 1,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Scenario6",
         "Segment": 2,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario6",
         "Segment": 3,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario7",
         "Segment": 1,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment2SegmentTable",
         "ScenarioName": "Scenario7",
         "Segment": 2,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       },
       {
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario7",
         "Segment": 3,
-        "DataRequestFile": ["CSTARSDataRequests.json"],
+        "DataRequestFile": ["EnRouteCareDataRequests.json"],
         "Header": []
       }
     ]
