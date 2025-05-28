@@ -219,6 +219,7 @@ namespace pulse
     m_AlveoliVolumeIncrement_L.clear();
     m_TopBreathAcinarZoneVolumes_L.clear();
     m_BottomBreathAcinarZoneVolumes_L.clear();
+    m_PreviousShuntScalingFactor.clear();
 
     //Running Averages
     m_BloodPHRunningAverage->Invalidate();
@@ -307,6 +308,7 @@ namespace pulse
     GetInspiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     GetExpiratoryFlow().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
     GetPhysiologicDeadSpaceTidalVolumeRatio().SetValue(0.0);
+    GetPhysiologicShuntFraction().SetValue(0.0);
     GetClinicalPhysiologicDeadSpaceTidalVolumeRatio().SetValue(0.0);
     GetVentilationPerfusionRatio().SetValue(0.0);
 
@@ -400,6 +402,7 @@ namespace pulse
     m_TopBreathAcinarZoneVolumes_L.resize(m_LungComponents.size(), 0.0);
     m_BottomBreathAcinarZoneVolumes_L.resize(m_LungComponents.size(), 0.0);
     m_AlveoliVolumeIncrement_L.resize(m_LungComponents.size(), 0.0);
+    m_PreviousShuntScalingFactor.resize(m_LungComponents.size(), 0.0);
 
     //Get the substances to a good starting point
     TuneCircuit();
@@ -495,8 +498,10 @@ namespace pulse
       // Dead Space Node
       // Resistance Path
       // Compliance Path
-      // Shunt Path
-      // Capillary Path
+      // Shunt Link
+      // Arteries Link
+      // Veins Link
+      // Veins Path
       // Alveoli Compartment
       // Capillary Compartment
       m_LungComponents[eLungCompartment::LeftLung] =
@@ -506,7 +511,11 @@ namespace pulse
         m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::LeftAlveolarDeadSpace),
         m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace),
         m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection),
+        m_data.GetCompartments().GetLiquidLink(pulse::VascularLink::LeftPulmonaryArteriesToVeins),
+        m_data.GetCompartments().GetLiquidLink(pulse::VascularLink::LeftPulmonaryArteriesToCapillaries),
+        m_data.GetCompartments().GetLiquidLink(pulse::VascularLink::LeftPulmonaryCapillariesToVeins),
         m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryVeins1),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1),
         m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1),
         m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli),
         m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries)
@@ -518,7 +527,11 @@ namespace pulse
         m_RespiratoryCircuit->GetNode(pulse::RespiratoryNode::RightAlveolarDeadSpace),
         m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAnatomicDeadSpaceToRightAlveolarDeadSpace),
         m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection),
+        m_data.GetCompartments().GetLiquidLink(pulse::VascularLink::RightPulmonaryArteriesToVeins),
+        m_data.GetCompartments().GetLiquidLink(pulse::VascularLink::RightPulmonaryArteriesToCapillaries),
+        m_data.GetCompartments().GetLiquidLink(pulse::VascularLink::RightPulmonaryCapillariesToVeins),
         m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryVeins1),
+        m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1),
         m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1),
         m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli),
         m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries)
@@ -4498,7 +4511,7 @@ namespace pulse
       eLungCompartment cmpt = itr.first;
       LungComponent& cpt = itr.second;
 
-      SEFluidCircuitPath* pulmonaryCapillaryPath = cpt.CapillaryPath;
+      SEFluidCircuitPath* pulmonaryCapillaryPath = cpt.VeinsPath;
 
       double combinedSeverity = 0.0;
 
@@ -4553,27 +4566,12 @@ namespace pulse
   /// Update Pulmonary Shunt Resistance 
   ///
   /// \details
-  /// This decreases the pulmonary shunt resistance in the cardiovascular system.  The resistance is 
-  /// inversely proportional to the severity.  The shunt allows deoxgenated blood to pass without
-  /// participating in gas exchange.  This often occurs with alveoli filled with fluid.
+  /// This decreases the physiologic pulmonary shunt in the cardiovascular system.  The shunt allows 
+  /// deoxgenated blood to pass without participating in gas exchange.  This often occurs with alveoli
+  /// filled with fluid.
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::UpdatePulmonaryShunt()
   {
-    unsigned int numLeftComponents = 0;
-    unsigned int numRightComponents = 0;
-    for (auto& itr : m_LungComponents)
-    {
-      LungComponent& cpt = itr.second;
-      if (cpt.Side == eSide::Right)
-      {
-        numRightComponents++;
-      }
-      else
-      {
-        numLeftComponents++;
-      }
-    }
-
     double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
 
     double totalBaselineAlveoliVolume_L = 0.0;
@@ -4583,16 +4581,28 @@ namespace pulse
       totalBaselineAlveoliVolume_L += cpt.AlveoliNode->GetVolumeBaseline(VolumeUnit::L);
     }
 
+    double totalShuntFlow_mL_Per_s = 0.0;
+    double totalPulmonaryFlow_mL_Per_s = 0.0;
+
+    unsigned int iter = 0;
     for (auto& itr : m_LungComponents)
     {
       eLungCompartment cmpt = itr.first;
       LungComponent& cpt = itr.second;
 
       SEFluidCircuitNode* alveoliNode = cpt.AlveoliNode;
+      SELiquidCompartmentLink* shuntLink = cpt.ShuntLink;
+      SELiquidCompartmentLink* arteriesLink = cpt.ArteriesLink;
+      SELiquidCompartmentLink* veinsLink = cpt.VeinsLink;
       SEFluidCircuitPath* shuntPath = cpt.ShuntPath;
+      SEFluidCircuitPath* arteriesPath = cpt.ArteriesPath;
+      SEFluidCircuitPath* veinsPath = cpt.VeinsPath;
 
-      double combinedSeverity = 0.0; //Damage and fluid effects
-      double recruitedFraction = 1.0; //Recruitment effects
+      double combinedSeverity = 0.0;
+      double recruitedFraction = 0.0;
+      double recruitmentScalingFactor = 0.0;
+      double totalScalingFactor = 0.0;
+      double damageScalingFactor = 0.0;
 
       //------------------------------------------------------------------------------------------------------
       //Acinar recruitment
@@ -4650,31 +4660,33 @@ namespace pulse
       //Damage factor acts as floor if fully recruited
       std::vector<std::pair<double, double>> interpolatorPoints =
       {
-        {0.0, 1.0}, //None
-        {0.3, 0.100}, //Mild (likely the only one hit instead of the recruitment factor)
-        {0.6, 0.200}, //Moderate
-        {0.9, 0.150}, //Severe
-        {1.0, 0.100}  //Max
+        {0.0, 0.0}, //None
+        {0.3, 0.35}, //Mild
+        {0.6, 0.35}, //Moderate
+        {0.9, 0.5}, //Severe
+        {1.0, 1.0}  //Max
       };
-      double damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity);
+      damageScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, combinedSeverity);
 
       interpolatorPoints =
       {
-        {0.0, 1.0}, //None
-        {0.1, 0.300},
-        {0.2, 0.200},
-        {0.3, 0.100},
-        {0.4, 0.080},
-        {0.5, 0.060},
-        {0.6, 0.055},
-        {0.7, 0.050},
-        {0.8, 0.045},
-        {0.9, 0.040},
-        {1.0, 0.035} //Max
+        {0.0, 0.0}, //None
+        {0.1, 0.2},
+        {0.2, 0.2},
+        {0.3, 0.3},
+        {0.4, 0.4},
+        {0.5, 0.5},
+        {0.6, 0.6},
+        {0.7, 0.6},
+        {0.8, 0.6},
+        {0.9, 0.7},
+        {1.0, 0.8} //Max
       };
-      double recruitmentScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, 1.0 - recruitedFraction);
-
-      double totalScalingFactor = MIN(recruitmentScalingFactor, damageScalingFactor);
+      recruitmentScalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, 1.0 - recruitedFraction);
+      //Dampen the change to prevent potential craziness
+      double dampenFraction_perSec = 0.001 * 50.0;
+      recruitmentScalingFactor = GeneralMath::Damper(recruitmentScalingFactor, m_PreviousShuntScalingFactor[iter], dampenFraction_perSec, m_data.GetTimeStep_s());
+      m_PreviousShuntScalingFactor[iter] = recruitmentScalingFactor;
 
       //------------------------------------------------------------------------------------------------------
       //COPD
@@ -4693,15 +4705,14 @@ namespace pulse
 
         interpolatorPoints =
         {
-          {0.0, 1.0},   //None
-          {0.3, 0.280}, //Mild
-          {0.6, 0.181}, //Moderate
-          {0.9, 0.220}, //Severe
-          {1.0, 0.100}  //Max
-
+          {0.0, 0.0}, //None
+          {0.3, 0.2}, //Mild
+          {0.6, 0.3}, //Moderate
+          {0.9, 0.35}, //Severe
+          {1.0, 0.5}  //Max
         };
         double scalingFactor = GeneralMath::PiecewiseLinearInterpolator(interpolatorPoints, emphysemaSeverity);
-        totalScalingFactor = MIN(totalScalingFactor, scalingFactor);
+        damageScalingFactor = MAX(damageScalingFactor, scalingFactor);
       }
 
       //------------------------------------------------------------------------------------------------------
@@ -4719,40 +4730,80 @@ namespace pulse
           severity = m_data.GetConditions().GetPulmonaryShunt().GetSeverity().GetValue();
         }
 
-        double scalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.02, 1.0, severity);
-        totalScalingFactor = MIN(totalScalingFactor, scalingFactor);
+        double scalingFactor = severity;
+        damageScalingFactor = MAX(damageScalingFactor, scalingFactor);
       }
+
+      //Apply Damage threshold
+      totalScalingFactor = MAX(recruitmentScalingFactor, damageScalingFactor);
 
       //------------------------------------------------------------------------------------------------------
       //Apply the shunt
-
-      //Tuning factor for imbalanced shunt flow (due to unequal number of paths between left and right)
-      //This is linearly interpolated with experimentally calibrated values
-      double segmentedRightCalibratedValue = 1.8;
-      double segmentedLeftCalibratedValue = 0.6;
-      unsigned int numComponents = cpt.Side == eSide::Right ? numRightComponents : numLeftComponents;
-      if (numComponents > 1)
+      if (totalScalingFactor > ZERO_APPROX)
       {
-        totalScalingFactor *= segmentedLeftCalibratedValue + (numComponents - double(numLeftComponents)) / 
-          (double(numRightComponents) - double(numLeftComponents)) * (segmentedRightCalibratedValue - segmentedLeftCalibratedValue);
+        //This is phsyiologic (not anatomic) shunt flow, so we'll manually update the links,
+        //which will allow the fluid mechanics to remain constant, especially the capillary pressures
+        double shuntFlow_mL_Per_s = shuntPath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+        double arteriesFlow_mL_Per_s = arteriesPath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+        double veinsFlow_mL_Per_s = veinsPath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+
+        //A scaling factor of 1.0 is approximately 50% shunt
+        double initialArteriesFlow_mL_Per_s = arteriesFlow_mL_Per_s;
+        arteriesFlow_mL_Per_s *= (1.0 - totalScalingFactor / 2.0);
+
+        double flowChange__mL_Per_s = initialArteriesFlow_mL_Per_s - arteriesFlow_mL_Per_s;
+        veinsFlow_mL_Per_s -= flowChange__mL_Per_s;
+        shuntFlow_mL_Per_s += flowChange__mL_Per_s;
+
+        arteriesFlow_mL_Per_s = LIMIT(arteriesFlow_mL_Per_s, 0.0, 2000.0);
+        veinsFlow_mL_Per_s = LIMIT(veinsFlow_mL_Per_s, 0.0, 2000.0);
+        shuntFlow_mL_Per_s = LIMIT(shuntFlow_mL_Per_s, 0.0, 2000.0);
+
+        shuntLink->GetFlow().SetReadOnly(false);
+        arteriesLink->GetFlow().SetReadOnly(false);
+        veinsLink->GetFlow().SetReadOnly(false);
+
+        shuntLink->RemovePath();
+        arteriesLink->RemovePath();
+        veinsLink->RemovePath();
+
+        shuntLink->GetFlow().SetValue(shuntFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        arteriesLink->GetFlow().SetValue(arteriesFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        veinsLink->GetFlow().SetValue(veinsFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+
+        shuntLink->GetFlow().SetReadOnly(true);
+        arteriesLink->GetFlow().SetReadOnly(true);
+        veinsLink->GetFlow().SetReadOnly(true);
+
+        totalShuntFlow_mL_Per_s += shuntFlow_mL_Per_s;
+        totalPulmonaryFlow_mL_Per_s += shuntFlow_mL_Per_s + arteriesFlow_mL_Per_s;
+      }
+      else
+      {
+        if (!shuntLink->HasPath())
+        {
+          shuntLink->MapPath(*shuntPath);
+        }
+        if (!arteriesLink->HasPath())
+        {
+          arteriesLink->MapPath(*arteriesPath);
+        }
+        if (!veinsLink->HasPath())
+        {
+          veinsLink->MapPath(*veinsPath);
+        }
       }
 
-      double previousShuntResistance_mmHg_s_Per_mL = shuntPath->GetResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      double shuntResistance_mmHg_s_Per_mL = shuntPath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-      double baselineShuntResistance_mmHg_s_Per_mL = shuntPath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      iter++;
+    }
 
-      shuntResistance_mmHg_s_Per_mL *= totalScalingFactor;
-      shuntResistance_mmHg_s_Per_mL = LIMIT(shuntResistance_mmHg_s_Per_mL, m_DefaultClosedResistance_cmH2O_s_Per_L, baselineShuntResistance_mmHg_s_Per_mL);
-
-      if (m_data.GetState() > EngineState::InitialStabilization) //Only dampen response if we're not initializing
-      {
-        //Dampen the change to prevent potential craziness
-        //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
-        double dampenFraction_perSec = 0.001 * 50.0;
-        shuntResistance_mmHg_s_Per_mL = GeneralMath::Damper(shuntResistance_mmHg_s_Per_mL, previousShuntResistance_mmHg_s_Per_mL, dampenFraction_perSec, m_data.GetTimeStep_s());
-      }
-
-      shuntPath->GetNextResistance().SetValue(shuntResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    if (totalPulmonaryFlow_mL_Per_s > ZERO_APPROX)
+    {
+      GetPhysiologicShuntFraction().SetValue(totalShuntFlow_mL_Per_s / totalPulmonaryFlow_mL_Per_s);
+    }
+    else
+    {
+      GetPhysiologicShuntFraction().SetValue(0.0);
     }
   }
 

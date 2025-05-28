@@ -74,8 +74,8 @@ void PBPhysiology::Serialize(const CDM_BIND::BloodChemistrySystemData& src, SEBl
     PBProperty::Load(src.pulseoximetry(), dst.GetPulseOximetry());
   if (src.has_redbloodcellcount())
     PBProperty::Load(src.redbloodcellcount(), dst.GetRedBloodCellCount());
-  if (src.has_shuntfraction())
-    PBProperty::Load(src.shuntfraction(), dst.GetShuntFraction());
+  if (src.has_anatomicshuntfraction())
+    PBProperty::Load(src.anatomicshuntfraction(), dst.GetAnatomicShuntFraction());
   if (src.has_strongiondifference())
     PBProperty::Load(src.strongiondifference(), dst.GetStrongIonDifference());
   if (src.has_totalproteinconcentration())
@@ -155,8 +155,8 @@ void PBPhysiology::Serialize(const SEBloodChemistrySystem& src, CDM_BIND::BloodC
     dst.set_allocated_pulseoximetry(PBProperty::Unload(*src.m_PulseOximetry));
   if (src.HasRedBloodCellCount())
     dst.set_allocated_redbloodcellcount(PBProperty::Unload(*src.m_RedBloodCellCount));
-  if (src.HasShuntFraction())
-    dst.set_allocated_shuntfraction(PBProperty::Unload(*src.m_ShuntFraction));
+  if (src.HasAnatomicShuntFraction())
+    dst.set_allocated_anatomicshuntfraction(PBProperty::Unload(*src.m_AnatomicShuntFraction));
   if (src.HasStrongIonDifference())
     dst.set_allocated_strongiondifference(PBProperty::Unload(*src.m_StrongIonDifference));
   if (src.HasTotalProteinConcentration())
@@ -1282,6 +1282,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.physiologicdeadspace(), dst.GetPhysiologicDeadSpace());
   if (src.has_physiologicdeadspacetidalvolumeratio())
     PBProperty::Load(src.physiologicdeadspacetidalvolumeratio(), dst.GetPhysiologicDeadSpaceTidalVolumeRatio());
+  if (src.has_physiologicshuntfraction())
+    PBProperty::Load(src.physiologicshuntfraction(), dst.GetPhysiologicShuntFraction());
   if (src.has_respiratorycompliance())
     PBProperty::Load(src.respiratorycompliance(), dst.GetRespiratoryCompliance());
   if (src.has_respiratoryelastance())
@@ -1300,6 +1302,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.respiratorymusclepressure(), dst.GetRespiratoryMusclePressure());
   if (src.has_saturationandfractionofinspiredoxygenratio())
     PBProperty::Load(src.saturationandfractionofinspiredoxygenratio(), dst.GetSaturationAndFractionOfInspiredOxygenRatio());
+  if (src.has_physiologicshuntfraction())
+    PBProperty::Load(src.physiologicshuntfraction(), dst.GetPhysiologicShuntFraction());
   if (src.has_specificventilation())
     PBProperty::Load(src.specificventilation(), dst.GetSpecificVentilation());
   if (src.has_tidalvolume())
@@ -1419,6 +1423,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_physiologicdeadspace(PBProperty::Unload(*src.m_PhysiologicDeadSpace));
   if (src.HasPhysiologicDeadSpaceTidalVolumeRatio())
     dst.set_allocated_physiologicdeadspacetidalvolumeratio(PBProperty::Unload(*src.m_PhysiologicDeadSpaceTidalVolumeRatio));
+  if (src.HasPhysiologicShuntFraction())
+    dst.set_allocated_physiologicshuntfraction(PBProperty::Unload(*src.m_PhysiologicShuntFraction));
   if (src.HasRespiratoryCompliance())
     dst.set_allocated_respiratorycompliance(PBProperty::Unload(*src.m_RespiratoryCompliance));
   if (src.HasRespiratoryElastance())
@@ -1437,6 +1443,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_respiratorymusclepressure(PBProperty::Unload(*src.m_RespiratoryMusclePressure));
   if (src.HasSaturationAndFractionOfInspiredOxygenRatio())
     dst.set_allocated_saturationandfractionofinspiredoxygenratio(PBProperty::Unload(*src.m_SaturationAndFractionOfInspiredOxygenRatio));
+  if (src.HasPhysiologicShuntFraction())
+    dst.set_allocated_physiologicshuntfraction(PBProperty::Unload(*src.m_PhysiologicShuntFraction));
   if (src.HasSpecificVentilation())
     dst.set_allocated_specificventilation(PBProperty::Unload(*src.m_SpecificVentilation));
   if (src.HasTidalVolume())

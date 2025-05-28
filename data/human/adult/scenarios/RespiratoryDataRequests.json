@@ -45,7 +45,7 @@
     { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "LeftAlveoli",  "PropertyName": "Volume",   "Unit": "mL"    },
     { "DecimalFormat": { "Precision": 4 }, "Category": "GasCompartment", "CompartmentName": "RightAlveoli", "PropertyName": "Volume",   "Unit": "mL"    },
 
-    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ShuntFraction",      "Unit": "unitless" },
+    { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "PhysiologicShuntFraction",      "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "ClinicalShuntFraction", "Unit": "unitless" },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Patient",    "PropertyName": "IdealBodyWeight",    "Unit": "kg"       },
     { "DecimalFormat": { "Precision": 3 }, "Category": "Patient",    "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2"      },

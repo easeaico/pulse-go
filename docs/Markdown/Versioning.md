@@ -34,6 +34,9 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 - Physiology Model Improvements
     - Added clinical shunt and dead space outputs using blood gas values instead of fluid mechanics properties
+    - Updated pulmonary shunting to distinguish between anatomic (with fluid mechanics changes) and physiologic
+        - Anatomic shunting updates a resistance, which effect the fluid mechanics
+        - Physiologic shunting updates the transport graph flows only, which does not effect the fluid mechanics
     - Improved respiratory system compliance calculations, especially for heterogeneous insults
     - Added new oxygen transport and utilization metrics to blood chemistry data
     - Removed inflection point in CO2 saturation calculation for high dissolved CO2 values

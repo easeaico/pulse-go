@@ -440,6 +440,8 @@ namespace pulse
       dst.m_TopBreathAcinarZoneVolumes_L.push_back(src.topbreathacinarzonevolumes_l()[i]);
     for (int i=0; i<src.bottombreathacinarzonevolumes_l_size(); i++)
       dst.m_BottomBreathAcinarZoneVolumes_L.push_back(src.bottombreathacinarzonevolumes_l()[i]);
+    for (int i = 0; i < src.previousshuntscalingfactor_size(); i++)
+      dst.m_PreviousShuntScalingFactor.push_back(src.previousshuntscalingfactor()[i]);
 
     dst.m_ArterialO2PartialPressure_mmHg = src.arterialo2partialpressure_mmhg();
     dst.m_ArterialCO2PartialPressure_mmHg = src.arterialco2partialpressure_mmhg();
@@ -520,6 +522,8 @@ namespace pulse
       dst.mutable_topbreathacinarzonevolumes_l()->Add(d);
     for (double d : src.m_BottomBreathAcinarZoneVolumes_L)
       dst.mutable_bottombreathacinarzonevolumes_l()->Add(d);
+    for (double d : src.m_PreviousShuntScalingFactor)
+      dst.mutable_previousshuntscalingfactor()->Add(d);
 
     dst.set_arterialo2partialpressure_mmhg(src.m_ArterialO2PartialPressure_mmHg);
     dst.set_arterialco2partialpressure_mmhg(src.m_ArterialCO2PartialPressure_mmHg);

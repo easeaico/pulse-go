@@ -13,10 +13,14 @@ import com.kitware.pulse.cdm.properties.SEScalarOsmolality;
 import com.kitware.pulse.cdm.properties.SEScalarOsmolarity;
 import com.kitware.pulse.cdm.properties.SEScalarPressure;
 import com.kitware.pulse.cdm.properties.SEScalarVolume;
+import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 import com.kitware.pulse.cdm.system.SESystem;
 
 public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESystem
 {
+  protected SEScalar0To1                   anatomicShuntFraction;
+  protected SEScalar                       arterialOxygenContent;
+  protected SEScalar                       arteriovenousOxygenDifference;
   protected SEScalarAmountPerVolume        baseExcess;
   protected SEScalarMassPerVolume          bloodDensity;
   protected SEScalar                       bloodPH;
@@ -24,8 +28,13 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   protected SEScalarMassPerVolume          bloodUreaNitrogenConcentration;
   protected SEScalar0To1                   carbonDioxideSaturation;
   protected SEScalar0To1                   carbonMonoxideSaturation;
+  protected SEScalarVolumePerTime          clinicalOxygenConsumption;
+  protected SEScalar0To1                   clinicalShuntFraction;
   protected SEScalar0To1                   hematocrit;
   protected SEScalarMass                   hemoglobinContent;
+  protected SEScalar                       mixedVenousOxygenContent;
+  protected SEScalarVolumePerTime          oxygenDelivery;
+  protected SEScalar                       oxygenDeliveryToOxygenConsumptionRatio;
   protected SEScalar0To1                   oxygenSaturation;
   protected SEScalarAmountPerVolume        phosphate;
   protected SEScalarVolume                 plasmaVolume;
@@ -33,7 +42,6 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   protected SEScalarOsmolarity             plasmaOsmolarity;
   protected SEScalar0To1                   pulseOximetry;
   protected SEScalarAmountPerVolume        redBloodCellCount;
-  protected SEScalar0To1                   shuntFraction;
   protected SEScalarAmountPerVolume        strongIonDifference;
   protected SEScalarMassPerVolume          totalProteinConcentration;
   protected SEScalar0To1                   volumeFractionNeutralLipidInPlasma;
@@ -51,6 +59,9 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
 
   public SEBloodChemistrySystem()
   {
+    anatomicShuntFraction = null;
+    arterialOxygenContent = null;
+    arteriovenousOxygenDifference = null;
     baseExcess = null;
     bloodDensity = null;
     bloodPH = null;
@@ -58,8 +69,13 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
     bloodUreaNitrogenConcentration = null;
     carbonDioxideSaturation = null;
     carbonMonoxideSaturation = null;
+    clinicalOxygenConsumption = null;
+    clinicalShuntFraction = null;
     hematocrit = null;
     hemoglobinContent = null;
+    mixedVenousOxygenContent = null;
+    oxygenDelivery = null;
+    oxygenDeliveryToOxygenConsumptionRatio = null;
     oxygenSaturation = null;
     phosphate = null;
     plasmaOsmolality = null;
@@ -67,7 +83,6 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
     plasmaVolume = null;
     pulseOximetry = null;
     redBloodCellCount = null;
-    shuntFraction = null;
     strongIonDifference = null;
     totalProteinConcentration = null;
     volumeFractionNeutralLipidInPlasma = null;
@@ -87,6 +102,12 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   @Override
   public void clear()
   {
+    if (anatomicShuntFraction != null)
+      anatomicShuntFraction.invalidate();
+    if (arterialOxygenContent != null)
+      arterialOxygenContent.invalidate();
+    if (arteriovenousOxygenDifference != null)
+      arteriovenousOxygenDifference.invalidate();
     if (baseExcess != null)
       baseExcess.invalidate();
     if (bloodDensity != null)
@@ -101,10 +122,20 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       carbonDioxideSaturation.invalidate();
     if (carbonMonoxideSaturation != null)
       carbonMonoxideSaturation.invalidate();
+    if (clinicalOxygenConsumption != null)
+      clinicalOxygenConsumption.invalidate();
+    if (clinicalShuntFraction != null)
+      clinicalShuntFraction.invalidate();
     if (hematocrit != null)
       hematocrit.invalidate();
     if (hemoglobinContent != null)
       hemoglobinContent.invalidate();
+    if (mixedVenousOxygenContent != null)
+      mixedVenousOxygenContent.invalidate();
+    if (oxygenDelivery != null)
+      oxygenDelivery.invalidate();
+    if (oxygenDeliveryToOxygenConsumptionRatio != null)
+      oxygenDeliveryToOxygenConsumptionRatio.invalidate();
     if (oxygenSaturation != null)
       oxygenSaturation.invalidate();
     if (phosphate != null)
@@ -119,8 +150,6 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       pulseOximetry.invalidate();
     if (redBloodCellCount != null)
       redBloodCellCount.invalidate();
-    if (shuntFraction != null)
-      shuntFraction.invalidate();
     if (strongIonDifference != null)
       strongIonDifference.invalidate();
     if (totalProteinConcentration != null)
@@ -152,6 +181,12 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
 
   public static void load(BloodChemistrySystemData src, SEBloodChemistrySystem dst)
   {
+    if (src.hasAnatomicShuntFraction())
+      SEScalar0To1.load(src.getAnatomicShuntFraction(),dst.getAnatomicShuntFraction());
+    if (src.hasArterialOxygenContent())
+      SEScalar.load(src.getArterialOxygenContent(),dst.getArterialOxygenContent());
+    if (src.hasArteriovenousOxygenDifference())
+      SEScalar.load(src.getArteriovenousOxygenDifference(),dst.getArteriovenousOxygenDifference());
     if (src.hasBaseExcess())
       SEScalarAmountPerVolume.load(src.getBaseExcess(),dst.getBaseExcess());
     if (src.hasBloodDensity())
@@ -166,10 +201,20 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       SEScalar0To1.load(src.getCarbonDioxideSaturation(),dst.getCarbonDioxideSaturation());
     if (src.hasCarbonMonoxideSaturation())
       SEScalar0To1.load(src.getCarbonMonoxideSaturation(),dst.getCarbonMonoxideSaturation());
+    if (src.hasClinicalOxygenConsumption())
+      SEScalarVolumePerTime.load(src.getClinicalOxygenConsumption(),dst.getClinicalOxygenConsumption());
+    if (src.hasClinicalShuntFraction())
+      SEScalar0To1.load(src.getClinicalShuntFraction(),dst.getClinicalShuntFraction());
     if (src.hasHematocrit())
       SEScalar0To1.load(src.getHematocrit(),dst.getHematocrit());
     if (src.hasHemoglobinContent())
       SEScalarMass.load(src.getHemoglobinContent(),dst.getHemoglobinContent());
+    if (src.hasMixedVenousOxygenContent())
+      SEScalar.load(src.getMixedVenousOxygenContent(),dst.getMixedVenousOxygenContent());
+    if (src.hasOxygenDelivery())
+      SEScalarVolumePerTime.load(src.getOxygenDelivery(),dst.getOxygenDelivery());
+    if (src.hasOxygenDeliveryToOxygenConsumptionRatio())
+      SEScalar.load(src.getOxygenDeliveryToOxygenConsumptionRatio(),dst.getOxygenDeliveryToOxygenConsumptionRatio());
     if (src.hasOxygenSaturation())
       SEScalar0To1.load(src.getOxygenSaturation(),dst.getOxygenSaturation());
     if (src.hasPhosphate())
@@ -184,8 +229,6 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       SEScalar0To1.load(src.getPulseOximetry(),dst.getPulseOximetry());  
     if (src.hasRedBloodCellCount())
       SEScalarAmountPerVolume.load(src.getRedBloodCellCount(),dst.getRedBloodCellCount());
-    if (src.hasShuntFraction())
-      SEScalar0To1.load(src.getShuntFraction(),dst.getShuntFraction());
     if (src.hasStrongIonDifference())
       SEScalarAmountPerVolume.load(src.getStrongIonDifference(),dst.getStrongIonDifference());
     if (src.hasTotalProteinConcentration())
@@ -224,6 +267,12 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
 
   protected static void unload(SEBloodChemistrySystem src, BloodChemistrySystemData.Builder dst)
   {
+    if (src.hasAnatomicShuntFraction())
+      dst.setAnatomicShuntFraction(SEScalar0To1.unload(src.getAnatomicShuntFraction()));
+    if (src.hasArterialOxygenContent())
+      dst.setArterialOxygenContent(SEScalar.unload(src.getArterialOxygenContent()));
+    if (src.hasArteriovenousOxygenDifference())
+      dst.setArteriovenousOxygenDifference(SEScalar.unload(src.getArteriovenousOxygenDifference()));
     if (src.hasBaseExcess())
       dst.setBaseExcess(SEScalarAmountPerVolume.unload(src.getBaseExcess()));
     if (src.hasBloodDensity())
@@ -238,10 +287,20 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       dst.setCarbonDioxideSaturation(SEScalar0To1.unload(src.getCarbonDioxideSaturation()));
     if (src.hasCarbonMonoxideSaturation())
       dst.setCarbonMonoxideSaturation(SEScalar0To1.unload(src.getCarbonMonoxideSaturation()));
+    if (src.hasClinicalOxygenConsumption())
+      dst.setClinicalOxygenConsumption(SEScalarVolumePerTime.unload(src.getClinicalOxygenConsumption()));
+    if (src.hasClinicalShuntFraction())
+      dst.setClinicalShuntFraction(SEScalar0To1.unload(src.getClinicalShuntFraction()));
     if (src.hasHematocrit())
       dst.setHematocrit(SEScalar0To1.unload(src.getHematocrit()));
     if (src.hasHemoglobinContent())
       dst.setHemoglobinContent(SEScalarMass.unload(src.getHemoglobinContent()));
+    if (src.hasMixedVenousOxygenContent())
+      dst.setMixedVenousOxygenContent(SEScalar.unload(src.getMixedVenousOxygenContent()));
+    if (src.hasOxygenDelivery())
+      dst.setOxygenDelivery(SEScalarVolumePerTime.unload(src.getOxygenDelivery()));
+    if (src.hasOxygenDeliveryToOxygenConsumptionRatio())
+      dst.setOxygenDeliveryToOxygenConsumptionRatio(SEScalar.unload(src.getOxygenDeliveryToOxygenConsumptionRatio()));
     if (src.hasOxygenSaturation())
       dst.setOxygenSaturation(SEScalar0To1.unload(src.getOxygenSaturation()));
     if (src.hasPhosphate())
@@ -256,8 +315,6 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       dst.setPulseOximetry(SEScalar0To1.unload(src.getPulseOximetry()));
     if (src.hasRedBloodCellCount())
       dst.setRedBloodCellCount(SEScalarAmountPerVolume.unload(src.getRedBloodCellCount()));
-    if (src.hasShuntFraction())
-      dst.setShuntFraction(SEScalar0To1.unload(src.getShuntFraction()));
     if (src.hasStrongIonDifference())
       dst.setStrongIonDifference(SEScalarAmountPerVolume.unload(src.getStrongIonDifference()));
     if (src.hasTotalProteinConcentration())
@@ -285,6 +342,39 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
       dst.setVenousOxygenPressure(SEScalarPressure.unload(src.getVenousOxygenPressure()));
     if (src.hasVenousCarbonDioxidePressure())
       dst.setVenousCarbonDioxidePressure(SEScalarPressure.unload(src.getVenousCarbonDioxidePressure()));
+  }
+
+  public boolean hasAnatomicShuntFraction()
+  {
+    return anatomicShuntFraction == null ? false : anatomicShuntFraction.isValid();
+  }
+  public SEScalar0To1 getAnatomicShuntFraction()
+  {
+    if (anatomicShuntFraction == null)
+      anatomicShuntFraction = new SEScalar0To1();
+    return anatomicShuntFraction;
+  }
+
+  public boolean hasArterialOxygenContent()
+  {
+    return arterialOxygenContent == null ? false : arterialOxygenContent.isValid();
+  }
+  public SEScalar getArterialOxygenContent()
+  {
+    if (arterialOxygenContent == null)
+      arterialOxygenContent = new SEScalar();
+    return arterialOxygenContent;
+  }
+
+  public boolean hasArteriovenousOxygenDifference()
+  {
+    return arteriovenousOxygenDifference == null ? false : arteriovenousOxygenDifference.isValid();
+  }
+  public SEScalar getArteriovenousOxygenDifference()
+  {
+    if (arteriovenousOxygenDifference == null)
+      arteriovenousOxygenDifference = new SEScalar();
+    return arteriovenousOxygenDifference;
   }
 
   public boolean hasBaseExcess()
@@ -317,7 +407,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     if (bloodPH == null)
       bloodPH = new SEScalar();
-    return bloodPH;  }
+    return bloodPH;
+  }
 
   public boolean hasBloodSpecificHeat()
   {
@@ -363,6 +454,28 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
     return carbonMonoxideSaturation;
   }
 
+  public boolean hasClinicalOxygenConsumption()
+  {
+    return clinicalOxygenConsumption == null ? false : clinicalOxygenConsumption.isValid();
+  }
+  public SEScalarVolumePerTime getClinicalOxygenConsumption()
+  {
+    if (clinicalOxygenConsumption == null)
+      clinicalOxygenConsumption = new SEScalarVolumePerTime();
+    return clinicalOxygenConsumption;
+  }
+
+  public boolean hasClinicalShuntFraction()
+  {
+    return clinicalShuntFraction == null ? false : clinicalShuntFraction.isValid();
+  }
+  public SEScalar0To1 getClinicalShuntFraction()
+  {
+    if (clinicalShuntFraction == null)
+      clinicalShuntFraction = new SEScalar0To1();
+    return clinicalShuntFraction;
+  }
+
   public boolean hasHematocrit()
   {
     return hematocrit == null ? false : hematocrit.isValid();
@@ -371,7 +484,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     if (hematocrit == null)
       hematocrit = new SEScalar0To1();
-    return hematocrit;  }
+    return hematocrit;
+  }
 
   public boolean hasHemoglobinContent()
   {
@@ -381,7 +495,41 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     if (hemoglobinContent == null)
       hemoglobinContent = new SEScalarMass();
-    return hemoglobinContent;  }
+    return hemoglobinContent;
+  }
+
+  public boolean hasMixedVenousOxygenContent()
+  {
+    return mixedVenousOxygenContent == null ? false : mixedVenousOxygenContent.isValid();
+  }
+  public SEScalar getMixedVenousOxygenContent()
+  {
+    if (mixedVenousOxygenContent == null)
+      mixedVenousOxygenContent = new SEScalar();
+    return mixedVenousOxygenContent;
+  }
+
+  public boolean hasOxygenDelivery()
+  {
+    return oxygenDelivery == null ? false : oxygenDelivery.isValid();
+  }
+  public SEScalarVolumePerTime getOxygenDelivery()
+  {
+    if (oxygenDelivery == null)
+      oxygenDelivery = new SEScalarVolumePerTime();
+    return oxygenDelivery;
+  }
+
+  public boolean hasOxygenDeliveryToOxygenConsumptionRatio()
+  {
+    return oxygenDeliveryToOxygenConsumptionRatio == null ? false : oxygenDeliveryToOxygenConsumptionRatio.isValid();
+  }
+  public SEScalar getOxygenDeliveryToOxygenConsumptionRatio()
+  {
+    if (oxygenDeliveryToOxygenConsumptionRatio == null)
+      oxygenDeliveryToOxygenConsumptionRatio = new SEScalar();
+    return oxygenDeliveryToOxygenConsumptionRatio;
+  }
 
   public boolean hasOxygenSaturation()
   {
@@ -391,7 +539,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     if (oxygenSaturation == null)
       oxygenSaturation = new SEScalar0To1();
-    return oxygenSaturation;  }
+    return oxygenSaturation;
+  }
 
   public boolean hasPhosphate()
   {
@@ -456,17 +605,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     if (redBloodCellCount == null)
       redBloodCellCount = new SEScalarAmountPerVolume();
-    return redBloodCellCount;  }
-
-  public boolean hasShuntFraction()
-  {
-    return shuntFraction == null ? false : shuntFraction.isValid();
+    return redBloodCellCount;
   }
-  public SEScalar0To1 getShuntFraction()
-  {
-    if (shuntFraction == null)
-      shuntFraction = new SEScalar0To1();
-    return shuntFraction;  }
   
   public boolean hasStrongIonDifference()
   {
@@ -523,7 +663,6 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
     return whiteBloodCellCount;
   }
   
-
   public boolean hasArterialCarbonDioxidePressure()
   {
     return arterialCarbonDioxidePressure == null ? false : arterialCarbonDioxidePressure.isValid();
@@ -587,7 +726,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     if (pulmonaryVenousOxygenPressure == null)
       pulmonaryVenousOxygenPressure = new SEScalarPressure();
-    return pulmonaryVenousOxygenPressure;  }
+    return pulmonaryVenousOxygenPressure;
+  }
 
   public boolean hasVenousCarbonDioxidePressure()
   {
@@ -608,5 +748,6 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   {
     if (venousOxygenPressure == null)
       venousOxygenPressure = new SEScalarPressure();
-    return venousOxygenPressure;  }
+    return venousOxygenPressure;
+  }
 }

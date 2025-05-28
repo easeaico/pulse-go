@@ -612,7 +612,7 @@ namespace pulse::study::multiplex_ventilation
       multiVentilation->set_oxygensaturation(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
       multiVentilation->set_oxygensaturationindex_mmhg(pc->GetRespiratory().GetOxygenSaturationIndex().GetValue(PressureUnit::mmHg));
       multiVentilation->set_sfratio(pc->GetRespiratory().GetSaturationAndFractionOfInspiredOxygenRatio().GetValue());
-      multiVentilation->set_shuntfraction(pc->GetBloodChemistry().GetShuntFraction().GetValue());
+      multiVentilation->set_shuntfraction(pc->GetRespiratory().GetPhysiologicShuntFraction().GetValue());
       multiVentilation->set_tidalvolume_ml(pc->GetRespiratory().GetTidalVolume(VolumeUnit::mL));
       multiVentilation->set_totallungvolume_ml(pc->GetRespiratory().GetTotalLungVolume(VolumeUnit::mL));
       // Update the sim
@@ -674,7 +674,7 @@ namespace pulse::study::multiplex_ventilation
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("ShuntFraction");
+    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("PhysiolgicShuntFraction");
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("AlveolarArterialGradient", PressureUnit::mmHg);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_min);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit::cmH2O);
