@@ -180,7 +180,7 @@ message RespiratoryData
   repeated double                          AlveoliVolumeIncrement_L                            = 25;
   repeated double                          TopBreathAcinarZoneVolumes_L                        = 26;
   repeated double                          BottomBreathAcinarZoneVolumes_L                     = 27;
-  double                                   PreviousPleuralVolume_L                             = 28;
+  repeated double                          PreviousShuntScalingFactor                          = 28;
   
   double                                   ArterialO2PartialPressure_mmHg                      = 29;
   double                                   ArterialCO2PartialPressure_mmHg                     = 30;

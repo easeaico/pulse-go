@@ -133,6 +133,7 @@ namespace pulse
     std::vector<double> m_AlveoliVolumeIncrement_L;
     std::vector<double> m_TopBreathAcinarZoneVolumes_L;
     std::vector<double> m_BottomBreathAcinarZoneVolumes_L;
+    std::vector<double> m_PreviousShuntScalingFactor;
 
     // Respiratory Driver
     double m_ArterialO2PartialPressure_mmHg;
@@ -245,15 +246,19 @@ namespace pulse
     // These are the components we will iterate on for actions
     struct LungComponent
     {
-      eSide                Side;
-      SEFluidCircuitNode*  AlveoliNode;
-      SEFluidCircuitNode*  DeadSpaceNode;
-      SEFluidCircuitPath*  ResistancePath;
-      SEFluidCircuitPath*  CompliancePath;
-      SEFluidCircuitPath*  ShuntPath;
-      SEFluidCircuitPath*  CapillaryPath;
-      SEGasCompartment*    AlveoliCompartment;
-      SELiquidCompartment* CapillaryCompartment;
+      eSide                    Side;
+      SEFluidCircuitNode*      AlveoliNode;
+      SEFluidCircuitNode*      DeadSpaceNode;
+      SEFluidCircuitPath*      ResistancePath;
+      SEFluidCircuitPath*      CompliancePath;
+      SELiquidCompartmentLink* ShuntLink;
+      SELiquidCompartmentLink* ArteriesLink;
+      SELiquidCompartmentLink* VeinsLink;
+      SEFluidCircuitPath*      ShuntPath;
+      SEFluidCircuitPath*      ArteriesPath;
+      SEFluidCircuitPath*      VeinsPath;
+      SEGasCompartment*        AlveoliCompartment;
+      SELiquidCompartment*     CapillaryCompartment;
     };
     std::map<eLungCompartment, LungComponent> m_LungComponents;
     // Nodes

@@ -241,14 +241,14 @@ public:
   virtual double GetStrongIonDifference(const AmountPerVolumeUnit& unit) const;
   //@}
 
-  /** @name ShuntFraction
-   *  @brief @copybrief Physiology_BloodChemistrySystemData_ShuntFraction
+  /** @name AnatomicShuntFraction
+   *  @brief @copybrief Physiology_BloodChemistrySystemData_AnatomicShuntFraction
    *  @{*/
    /// %Test if member has been allocated
-  virtual bool HasShuntFraction() const;
+  virtual bool HasAnatomicShuntFraction() const;
   /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetShuntFraction();
-  virtual double GetShuntFraction() const;
+  virtual SEScalar0To1& GetAnatomicShuntFraction();
+  virtual double GetAnatomicShuntFraction() const;
   //@}
 
   /** @name TotalProteinConcentration
@@ -395,7 +395,7 @@ protected:
   SEScalarVolume*                 m_PlasmaVolume;
   SEScalar0To1*                   m_PulseOximetry;
   SEScalarAmountPerVolume*        m_RedBloodCellCount;
-  SEScalar0To1*                   m_ShuntFraction;
+  SEScalar0To1*                   m_AnatomicShuntFraction;
   SEScalarAmountPerVolume*        m_StrongIonDifference;
   SEScalarMassPerVolume*          m_TotalProteinConcentration;
   SEScalar0To1*                   m_VolumeFractionNeutralPhospholipidInPlasma;

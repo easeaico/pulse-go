@@ -270,7 +270,7 @@ namespace pulse::study::multiplex_ventilation
     pData.set_oxygensaturation(engine->GetBloodChemistrySystem()->GetOxygenSaturation());
     pData.set_oxygensaturationindex_mmhg(engine->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::mmHg));
     pData.set_sfratio(engine->GetRespiratorySystem()->GetSaturationAndFractionOfInspiredOxygenRatio());
-    pData.set_shuntfraction(engine->GetBloodChemistrySystem()->GetShuntFraction());
+    pData.set_shuntfraction(engine->GetRespiratorySystem()->GetPhysiologicShuntFraction());
     pData.set_tidalvolume_ml(engine->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL));
     pData.set_totallungvolume_ml(engine->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL));
     engine->GetLogger()->Info("#################################################################################################\n\n");

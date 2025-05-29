@@ -263,7 +263,7 @@ def main():
         folders.append("AirwayObstruction")
         folders.append("Dehydration")
         folders.append("MechanicalVentilator")
-        folders.append("CSTARS")
+        folders.append("EnRouteCare")
 
     exec_opt = eExecOpt.Full
     if opts.generate_only:

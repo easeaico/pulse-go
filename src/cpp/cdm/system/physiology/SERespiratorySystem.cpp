@@ -77,6 +77,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_PeakInspiratoryPressure = nullptr;
   m_PhysiologicDeadSpace = nullptr;
   m_PhysiologicDeadSpaceTidalVolumeRatio = nullptr;
+  m_PhysiologicShuntFraction = nullptr;
   m_RespiratoryCompliance = nullptr;
   m_RespiratoryElastance = nullptr;
   m_RelativeTotalLungVolume = nullptr;
@@ -145,6 +146,7 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_PeakInspiratoryPressure);
   SAFE_DELETE(m_PhysiologicDeadSpace);
   SAFE_DELETE(m_PhysiologicDeadSpaceTidalVolumeRatio);
+  SAFE_DELETE(m_PhysiologicShuntFraction);
   SAFE_DELETE(m_RespiratoryCompliance);
   SAFE_DELETE(m_RespiratoryElastance);
   SAFE_DELETE(m_RelativeTotalLungVolume);
@@ -215,6 +217,7 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_PeakInspiratoryPressure);
   INVALIDATE_PROPERTY(m_PhysiologicDeadSpace);
   INVALIDATE_PROPERTY(m_PhysiologicDeadSpaceTidalVolumeRatio);
+  INVALIDATE_PROPERTY(m_PhysiologicShuntFraction);
   INVALIDATE_PROPERTY(m_RespiratoryCompliance);
   INVALIDATE_PROPERTY(m_RespiratoryElastance);
   INVALIDATE_PROPERTY(m_RelativeTotalLungVolume);
@@ -320,6 +323,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetPhysiologicDeadSpace();
   if (name.compare("PhysiologicDeadSpaceTidalVolumeRatio") == 0)
     return &GetPhysiologicDeadSpaceTidalVolumeRatio();
+  if (name.compare("PhysiologicShuntFraction") == 0)
+    return &GetPhysiologicShuntFraction();
   if (name.compare("RespiratoryCompliance") == 0)
     return &GetRespiratoryCompliance();
   if (name.compare("RespiratoryElastance") == 0)
@@ -988,6 +993,23 @@ double SERespiratorySystem::GetPhysiologicDeadSpaceTidalVolumeRatio() const
   if (m_PhysiologicDeadSpaceTidalVolumeRatio == nullptr)
     return SEScalar::dNaN();
   return m_PhysiologicDeadSpaceTidalVolumeRatio->GetValue();
+}
+
+bool SERespiratorySystem::HasPhysiologicShuntFraction() const
+{
+  return m_PhysiologicShuntFraction == nullptr ? false : m_PhysiologicShuntFraction->IsValid();
+}
+SEScalar0To1& SERespiratorySystem::GetPhysiologicShuntFraction()
+{
+  if (m_PhysiologicShuntFraction == nullptr)
+    m_PhysiologicShuntFraction = new SEScalar0To1();
+  return *m_PhysiologicShuntFraction;
+}
+double SERespiratorySystem::GetPhysiologicShuntFraction() const
+{
+  if (m_PhysiologicShuntFraction == nullptr)
+    return SEScalar::dNaN();
+  return m_PhysiologicShuntFraction->GetValue();
 }
 
 bool SERespiratorySystem::HasRespiratoryCompliance() const

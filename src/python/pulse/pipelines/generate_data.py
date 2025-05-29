@@ -46,7 +46,7 @@ if __name__ == "__main__":
                "AirwayObstruction",
                "Dehydration",
                "MechanicalVentilator",
-               "CSTARS"]
+               "EnRouteCare"]
 
     for folder in folders:
         segment_validation_pipeline(

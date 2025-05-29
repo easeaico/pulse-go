@@ -178,6 +178,10 @@ public:
   virtual SEScalar& GetPhysiologicDeadSpaceTidalVolumeRatio();
   virtual double GetPhysiologicDeadSpaceTidalVolumeRatio() const;
 
+  virtual bool HasPhysiologicShuntFraction() const;
+  virtual SEScalar0To1& GetPhysiologicShuntFraction();
+  virtual double GetPhysiologicShuntFraction() const;
+
   virtual bool HasRespiratoryCompliance() const;
   virtual SEScalarVolumePerPressure& GetRespiratoryCompliance();
   virtual double GetRespiratoryCompliance(const VolumePerPressureUnit& unit) const;
@@ -325,6 +329,7 @@ protected:
   SEScalarPressure*                m_PeakInspiratoryPressure;
   SEScalarVolume*                  m_PhysiologicDeadSpace;
   SEScalar*                        m_PhysiologicDeadSpaceTidalVolumeRatio;
+  SEScalar0To1*                    m_PhysiologicShuntFraction;
   SEScalarVolumePerPressure*       m_RespiratoryCompliance;
   SEScalarPressurePerVolume*       m_RespiratoryElastance;
   SEScalarVolume*                  m_RelativeTotalLungVolume;

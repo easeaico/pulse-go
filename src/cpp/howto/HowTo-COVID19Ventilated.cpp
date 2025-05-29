@@ -92,7 +92,7 @@ void HowToCOVID19Ventilated()
   pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetRespiratoryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
   pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "P/F Ratio : " << pe->GetRespiratorySystem()->GetHorowitzIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetBloodChemistrySystem()->GetShuntFraction() * 100 << "%");
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetRespiratorySystem()->GetPhysiologicShuntFraction() * 100 << "%");
   pe->GetLogger()->Info(std::stringstream() << "Mean Airway Pressure : " << pe->GetRespiratorySystem()->GetMeanAirwayPressure(PressureUnit::cmH2O) << PressureUnit::cmH2O);
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation Index : " << pe->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
 
@@ -147,7 +147,7 @@ void HowToCOVID19Ventilated()
   pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetRespiratoryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << VolumePerPressureUnit::mL_Per_cmH2O);
   pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "P/F Ratio : " << pe->GetRespiratorySystem()->GetHorowitzIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetBloodChemistrySystem()->GetShuntFraction() * 100 << "%");
+  pe->GetLogger()->Info(std::stringstream() << "Pulmonary Shunt Fraction : " << pe->GetRespiratorySystem()->GetPhysiologicShuntFraction() * 100 << "%");
   pe->GetLogger()->Info(std::stringstream() << "Mean Airway Pressure : " << pe->GetRespiratorySystem()->GetMeanAirwayPressure(PressureUnit::cmH2O) << PressureUnit::cmH2O);
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation Index : " << pe->GetRespiratorySystem()->GetOxygenSaturationIndex(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info("Finished");

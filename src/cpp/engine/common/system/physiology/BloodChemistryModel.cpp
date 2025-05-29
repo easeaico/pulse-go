@@ -99,7 +99,7 @@ namespace pulse
     GetPhosphate().SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
     GetStrongIonDifference().SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
 
-    GetShuntFraction().SetValue(0);
+    GetAnatomicShuntFraction().SetValue(0);
     GetClinicalShuntFraction().SetValue(0);
 
     GetArterialOxygenContent().SetValue(0);
@@ -266,7 +266,7 @@ namespace pulse
       shunt = shuntFlow_mL_Per_min / totalFlow_mL_Per_min;
     }
     shunt = MIN(shunt, 1.0);
-    GetShuntFraction().SetValue(shunt);
+    GetAnatomicShuntFraction().SetValue(shunt);
 
     // Calculate the Clinical Shunt Fraction (Qs/Qt) based on the pulmonary compartments oxygen content
     // We're going to use the capillaries value from the side with the highest value to account for heterogenous insults 

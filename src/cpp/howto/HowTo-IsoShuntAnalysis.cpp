@@ -116,7 +116,7 @@ void HowToIsoShuntAnalysis()
           << std::setw(30) << ARDSSeverity
           << std::setw(30) << FiO2
           << std::setw(30) << PEEP_cmH2O
-          << std::setw(30) << pe->GetBloodChemistrySystem()->GetShuntFraction()
+          << std::setw(30) << pe->GetRespiratorySystem()->GetPhysiologicShuntFraction()
           << std::setw(30) << pe->GetBloodChemistrySystem()->GetArterialOxygenPressure(PressureUnit::mmHg)
           << std::setw(30) << pe->GetPatient().GetFunctionalResidualCapacity(VolumeUnit::L)
           << "\n";

@@ -39,7 +39,7 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
   m_PlasmaVolume = nullptr;
   m_PulseOximetry = nullptr;
   m_RedBloodCellCount = nullptr;
-  m_ShuntFraction = nullptr;
+  m_AnatomicShuntFraction = nullptr;
   m_StrongIonDifference = nullptr;
   m_TotalProteinConcentration = nullptr;
   m_VolumeFractionNeutralPhospholipidInPlasma = nullptr;
@@ -81,7 +81,7 @@ SEBloodChemistrySystem::~SEBloodChemistrySystem()
   SAFE_DELETE(m_PlasmaVolume);
   SAFE_DELETE(m_PulseOximetry);
   SAFE_DELETE(m_RedBloodCellCount);
-  SAFE_DELETE(m_ShuntFraction);
+  SAFE_DELETE(m_AnatomicShuntFraction);
   SAFE_DELETE(m_StrongIonDifference);
   SAFE_DELETE(m_TotalProteinConcentration);
   SAFE_DELETE(m_VolumeFractionNeutralPhospholipidInPlasma);
@@ -123,7 +123,7 @@ void SEBloodChemistrySystem::Clear()
   INVALIDATE_PROPERTY(m_PlasmaVolume);
   INVALIDATE_PROPERTY(m_PulseOximetry);
   INVALIDATE_PROPERTY(m_RedBloodCellCount);
-  INVALIDATE_PROPERTY(m_ShuntFraction);
+  INVALIDATE_PROPERTY(m_AnatomicShuntFraction);
   INVALIDATE_PROPERTY(m_StrongIonDifference);
   INVALIDATE_PROPERTY(m_TotalProteinConcentration);
   INVALIDATE_PROPERTY(m_VolumeFractionNeutralPhospholipidInPlasma);
@@ -188,8 +188,8 @@ const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)
     return &GetPulseOximetry();
   if (name.compare("RedBloodCellCount") == 0)
     return &GetRedBloodCellCount();
-  if (name.compare("ShuntFraction") == 0)
-    return &GetShuntFraction();
+  if (name.compare("AnatomicShuntFraction") == 0)
+    return &GetAnatomicShuntFraction();
   if (name.compare("StrongIonDifference") == 0)
     return &GetStrongIonDifference();
   if (name.compare("TotalProteinConcentration") == 0)
@@ -611,21 +611,21 @@ double SEBloodChemistrySystem::GetRedBloodCellCount(const AmountPerVolumeUnit& u
   return m_RedBloodCellCount->GetValue(unit);
 }
 
-bool SEBloodChemistrySystem::HasShuntFraction() const
+bool SEBloodChemistrySystem::HasAnatomicShuntFraction() const
 {
-  return m_ShuntFraction==nullptr?false:m_ShuntFraction->IsValid();
+  return m_AnatomicShuntFraction==nullptr?false:m_AnatomicShuntFraction->IsValid();
 }
-SEScalar0To1& SEBloodChemistrySystem::GetShuntFraction()
+SEScalar0To1& SEBloodChemistrySystem::GetAnatomicShuntFraction()
 {
-  if(m_ShuntFraction==nullptr)
-    m_ShuntFraction=new SEScalar0To1();
-  return *m_ShuntFraction;
+  if(m_AnatomicShuntFraction==nullptr)
+    m_AnatomicShuntFraction=new SEScalar0To1();
+  return *m_AnatomicShuntFraction;
 }
-double SEBloodChemistrySystem::GetShuntFraction() const
+double SEBloodChemistrySystem::GetAnatomicShuntFraction() const
 {
-  if (m_ShuntFraction == nullptr)
+  if (m_AnatomicShuntFraction == nullptr)
     return SEScalar::dNaN();
-  return m_ShuntFraction->GetValue();
+  return m_AnatomicShuntFraction->GetValue();
 }
 
 bool SEBloodChemistrySystem::HasStrongIonDifference() const
