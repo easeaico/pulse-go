@@ -8,6 +8,7 @@
 #include "cdm/substance/SESubstanceFraction.h"
 
 class SEMechanicalVentilatorConfiguration;
+class SEMechanicalVentilatorAlarms;
 
 class CDM_DECL SEMechanicalVentilatorSettings : public Loggable
 {
@@ -188,6 +189,11 @@ public:
   void RemoveConcentrationInspiredAerosol(const SESubstance& substance);
   void RemoveConcentrationInspiredAerosols();
 
+  virtual bool HasAlarms() const;
+  virtual SEMechanicalVentilatorAlarms& GetAlarms();
+  virtual const SEMechanicalVentilatorAlarms* GetAlarms() const;
+  virtual void RemoveAlarms();
+
 protected:
   
   eSwitch                                      m_Connection;
@@ -247,4 +253,6 @@ protected:
 
   std::vector<SESubstanceConcentration*>       m_ConcentrationInspiredAerosols;
   std::vector<const SESubstanceConcentration*> m_cConcentrationInspiredAerosols;
+
+  SEMechanicalVentilatorAlarms*                m_Alarms;
 };

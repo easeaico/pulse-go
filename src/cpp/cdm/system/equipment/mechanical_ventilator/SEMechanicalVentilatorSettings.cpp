@@ -3,6 +3,7 @@
 
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.h"
 
 #include "cdm/substance/SESubstance.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -64,6 +65,8 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
 
   m_ReliefValveThreshold = nullptr;
   m_YPieceVolume = nullptr;
+
+  m_Alarms = nullptr;
 }
 
 SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
@@ -122,6 +125,8 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
   DELETE_VECTOR(m_ConcentrationInspiredAerosols);
   m_cConcentrationInspiredAerosols.clear();
   m_ConcentrationInspiredAerosols.clear();
+
+  SAFE_DELETE(m_Alarms);
 }
 
 void SEMechanicalVentilatorSettings::Clear()
@@ -175,6 +180,9 @@ void SEMechanicalVentilatorSettings::Clear()
 
   RemoveFractionInspiredGases();
   RemoveConcentrationInspiredAerosols();
+
+  if (m_Alarms)
+    m_Alarms->Clear();
 }
 
 void SEMechanicalVentilatorSettings::Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager& subMgr)
@@ -1203,4 +1211,23 @@ void SEMechanicalVentilatorSettings::RemoveConcentrationInspiredAerosols()
   {
     sc->GetConcentration().Invalidate();
   }
+}
+
+bool SEMechanicalVentilatorSettings::HasAlarms() const
+{
+  return m_Alarms != nullptr;
+}
+SEMechanicalVentilatorAlarms& SEMechanicalVentilatorSettings::GetAlarms()
+{
+  if (m_Alarms == nullptr)
+    m_Alarms = new SEMechanicalVentilatorAlarms(GetLogger());
+  return *m_Alarms;
+}
+const SEMechanicalVentilatorAlarms* SEMechanicalVentilatorSettings::GetAlarms() const
+{
+  return m_Alarms;
+}
+void SEMechanicalVentilatorSettings::RemoveAlarms()
+{
+  SAFE_DELETE(m_Alarms);
 }

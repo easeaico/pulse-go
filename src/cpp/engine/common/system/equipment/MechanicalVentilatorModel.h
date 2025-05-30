@@ -61,11 +61,13 @@ namespace pulse
     void CalculateRespiratoryParameters();
     void CalculateInspiratoryRespiratoryParameters();
     void CalculatePauseRespiratoryParameters();
-    void CalculateExpiratoryRespiratoryParameters();
+    void CalculateExpiratoryRespiratoryParameters(bool patientTriggered);
     void SetResistances();
     void SetCompliance();
     void SetVolumes();
     void CheckReliefValve();
+    void CheckCyclingAlarms();
+    void CheckAlarms();
 
     // Serializable member variables (Set in Initialize and in schema)
     double                m_CurrentPeriodTime_s;
@@ -82,6 +84,7 @@ namespace pulse
     bool                  m_PauseOccurred;
     eBreathState          m_CurrentBreathState;
     bool                  m_Initializing;
+    double                m_TimeSincePatientTrigger_s;
 
     double                m_PositiveEndExpiratoryPressure_cmH2O;
     double                m_PeakExpiratoryFlow_L_Per_s;

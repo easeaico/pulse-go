@@ -83,11 +83,34 @@ enum eEvent
   StartOfInhale                              = 48;/**<< @brief Patient is starting to inhale. */
   Tachycardia                                = 49;/**<< @brief The heart rate is elevated above 100 beats per minute. */
   Tachypnea                                  = 50;/**<< @brief A breathing rate above 20 breaths per minute. */
-  // Equipment
-  AnesthesiaMachineOxygenBottleOneExhausted  = 1000;/**<< @brief Anesthesia machine oxygen bottle one has been exhausted. */
-  AnesthesiaMachineOxygenBottleTwoExhausted  = 1001;/**<< @brief Anesthesia machine oxygen bottle two has been exhausted. */
-  AnesthesiaMachineReliefValveActive         = 1002;/**<< @brief Anesthesia machine relief valve is active. */
-  MechanicalVentilatorReliefValveActive      = 1003;/**<< @brief Mechanical ventilator relief valve is active. */
-  SupplementalOxygenBottleExhausted          = 1004;/**<< @brief The supplemental oxygen bottle is exhausted. There is no longer any oxygen to provide. */
-  NonRebreatherMaskOxygenBagEmpty            = 1005;/**<< @brief The non rebreather mask oxygen bag is empty. Oxygen may need to be provided at a faster rate. */
+  
+  // Supplemental Oxygen
+  SupplementalOxygenBottleExhausted          = 1000;/**<< @brief The supplemental oxygen bottle is exhausted. There is no longer any oxygen to provide. */
+  NonRebreatherMaskOxygenBagEmpty            = 1001;/**<< @brief The non rebreather mask oxygen bag is empty. Oxygen may need to be provided at a faster rate. */
+  
+  // Anesthesia Machine
+  AnesthesiaMachineOxygenBottleOneExhausted  = 2000;/**<< @brief Anesthesia machine oxygen bottle one has been exhausted. */
+  AnesthesiaMachineOxygenBottleTwoExhausted  = 2001;/**<< @brief Anesthesia machine oxygen bottle two has been exhausted. */
+  AnesthesiaMachineReliefValveActive         = 2002;/**<< @brief Anesthesia machine relief valve is active. */
+  
+  // Mechanical Ventilator
+  MechanicalVentilatorReliefValveActive           = 3000;/**<< @brief Mechanical ventilator relief valve is active. */
+  // Mechanical Ventilator Alarms
+  ApneaTimeAlarmTriggered                         = 3001;/**<< @brief No breath detected within specified time interval. */
+  AutoPositiveEndExpiratoryPressureAlarmTriggered = 3002;/**<< @brief Air trapping (intrinsic PEEP) has exceeded threshold. */
+  CircuitLeakAlarmTriggered                       = 3003;/**<< @brief Circuit leak fraction has exceeded threshold. */
+  HighEndTidalCarbonDioxideAlarmTriggered         = 3004;/**<< @brief End-tidal CO2 pressure has exceeded high threshold. */
+  HighMinuteVentilationAlarmTriggered             = 3005;/**<< @brief Minute ventilation has exceeded high threshold. */
+  HighOxygenSaturationAlarmTriggered              = 3006;/**<< @brief Oxygen saturation has exceeded high threshold. */
+  HighPositiveEndExpiratoryPressureAlarmTriggered = 3007;/**<< @brief PEEP has exceeded high threshold. */
+  HighPressureAlarmTriggered                      = 3008;/**<< @brief Airway pressure (PIP) has exceeded high threshold. */
+  HighRespiratoryRateAlarmTriggered               = 3009;/**<< @brief Respiratory rate has exceeded high threshold. */
+  HighTidalVolumeAlarmTriggered                   = 3010;/**<< @brief Tidal volume has exceeded high threshold. */
+  LowEndTidalCarbonDioxideAlarmTriggered          = 3011;/**<< @brief End-tidal CO2 pressure has fallen below low threshold. */
+  LowMinuteVentilationAlarmTriggered              = 3012;/**<< @brief Minute ventilation has fallen below low threshold. */
+  LowOxygenSaturationAlarmTriggered               = 3013;/**<< @brief Oxygen saturation has fallen below low threshold. */
+  LowPositiveEndExpiratoryPressureAlarmTriggered  = 3014;/**<< @brief PEEP has fallen below low threshold. */
+  LowPressureAlarmTriggered                       = 3015;/**<< @brief Airway pressure (PIP) has fallen below low threshold. */
+  LowTidalVolumeAlarmTriggered                    = 3016;/**<< @brief Tidal volume has fallen below low threshold. */
+  OxygenSupplyFailureAlarmTriggered               = 3017;/**<< @brief Measured FiO2 has fallen below threshold indicating oxygen supply failure. */
 }

@@ -7,6 +7,7 @@
 #include "engine/common/controller/SubstanceManager.h"
 #include "engine/common/system/equipment/MechanicalVentilatorModel.h"
 
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
@@ -556,7 +557,7 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Determine the instantaneous driver pressure during inspiration.
+  /// Check the triggers pressure during inspiration.
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CheckInspirationTriggers()
   {
@@ -636,6 +637,7 @@ namespace pulse
     }
 
     CheckInspirationTriggers();
+    CheckCyclingAlarms();
 
     // Check limit
 
@@ -954,13 +956,13 @@ namespace pulse
         return;
       }
 
-      CalculateExpiratoryRespiratoryParameters();
+      CalculateExpiratoryRespiratoryParameters(patientTriggered);
       m_InspirationTime_s = 0.0;
       m_BreathState = patientTriggered ? eBreathState::PatientInhale : eBreathState::EquipmentInhale;
     }
     else if (m_BreathState == eBreathState::ExpiratoryHold)
     {
-      CalculateExpiratoryRespiratoryParameters();
+      CalculateExpiratoryRespiratoryParameters(patientTriggered);
       m_InspirationTime_s = 0.0;
       m_BreathState = patientTriggered ? eBreathState::PatientInhale : eBreathState::EquipmentInhale;
     }
@@ -1249,16 +1251,17 @@ namespace pulse
   /// \brief
   /// Set key respiratory parameters at the end of expiration.
   //--------------------------------------------------------------------------------------------------
-  void MechanicalVentilatorModel::CalculateExpiratoryRespiratoryParameters()
+  void MechanicalVentilatorModel::CalculateExpiratoryRespiratoryParameters(bool patientTriggered)
   {
     //End of breath
 
+    double totalTime_s = 0.0;
     double tidalVolume_L = GetTidalVolume(VolumeUnit::L);
 
     if (m_InspirationTime_s > 0.0) // Make sure we've actually done a breath
     {
       double expirationTime_s = m_CurrentPeriodTime_s;
-      double totalTime_s = m_InspirationTime_s + expirationTime_s;
+      totalTime_s = m_InspirationTime_s + expirationTime_s;
       double respirationRate_Per_min = 0.0;
       if (totalTime_s > ZERO_APPROX)
         respirationRate_Per_min = 60.0 / totalTime_s;
@@ -1383,16 +1386,24 @@ namespace pulse
     m_CurrentRespiratoryVolume_L = 0.0;
     m_PeakExpiratoryFlow_L_Per_s = 0.0;
     m_PeakInspiratoryFlow_L_Per_s = 0.0;
+
+    m_TimeSincePatientTrigger_s += totalTime_s;
+    if (patientTriggered)
+    {
+      m_TimeSincePatientTrigger_s = 0.0;
+    }
+
+    CheckAlarms();
   }
 
   //--------------------------------------------------------------------------------------------------
-/// \brief
-/// Checks Relief Valve Pressure
-///
-/// \details
-/// Assigns relief valve pressure as a pressure source based on the pressure setting and checks if the status 
-/// of the relief valve is open or closed.
-//--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Checks Relief Valve Pressure
+  ///
+  /// \details
+  /// Assigns relief valve pressure as a pressure source based on the pressure setting and checks if 
+  /// the status of the relief valve is open or closed.
+  //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CheckReliefValve()
   {
     //Set the Pressure Source based on the setting
@@ -1411,5 +1422,393 @@ namespace pulse
 
     //Always try to let it run without the relief valve open (i.e. not allowing flow), otherwise it will always stay shorted
     m_ConnectionToReliefValve->SetNextValve(eGate::Open);
+  }
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Checks pressure-cycling alarm conditions during ventilation
+  ///
+  /// \details
+  /// Monitors airway pressure against the high pressure threshold when pressure cycling is enabled.
+  /// If the pressure limit is exceeded, triggers the high pressure alarm event and immediately
+  /// cycles the ventilator to the expiration phase to prevent barotrauma.
+  //--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::CheckCyclingAlarms()
+  {
+    // High Pressure Alarm
+    if (GetSettings().GetAlarms().HasHighPressureThreshold() && 
+      (GetSettings().GetAlarms().HasHighPressureCycleOption() && GetSettings().GetAlarms().GetHighPressureCycleOption() == eSwitch::On))
+    {
+      double highPressureThreshold_cmH2O = GetSettings().GetAlarms().GetHighPressureThreshold(PressureUnit::cmH2O);
+      double ambientPressure_cmH2O = m_AmbientNode->GetPressure(PressureUnit::cmH2O);
+      double airwayPressure_cmH2O = m_ConnectionNode->GetPressure(PressureUnit::cmH2O);
+      bool triggered = (airwayPressure_cmH2O - ambientPressure_cmH2O) > highPressureThreshold_cmH2O;
+      if (triggered)
+      {
+        if (!m_data.GetEvents().IsEventActive(eEvent::HighPressureAlarmTriggered))
+        {
+          m_data.GetEvents().SetEvent(eEvent::HighPressureAlarmTriggered, true, m_data.GetSimulationTime());
+        }
+        CycleMode(true);
+        return;
+      }
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Monitors and evaluates all mechanical ventilator alarm conditions
+  ///
+  /// \details
+  /// Systematically checks each configured alarm threshold against current ventilator measurements
+  /// and triggers or clears the corresponding alarm events based on whether measured values exceed
+  /// their configured thresholds. Events are set active when limits are breached and cleared when
+  /// conditions return to normal ranges or when alarm thresholds are disabled.
+  //--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::CheckAlarms()
+  {
+    // High Pressure Alarm
+    if (GetSettings().GetAlarms().HasHighPressureThreshold())
+    {
+      double highPressureThreshold_cmH2O = GetSettings().GetAlarms().GetHighPressureThreshold(PressureUnit::cmH2O);
+      double peakInspiratoryPressure_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+      bool triggered = peakInspiratoryPressure_cmH2O > highPressureThreshold_cmH2O;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::HighPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighPressureAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::HighPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighPressureAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::HighPressureAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::HighPressureAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Low Pressure Alarm
+    if (GetSettings().GetAlarms().HasLowPressureThreshold())
+    {
+      double lowPressureThreshold_cmH2O = GetSettings().GetAlarms().GetLowPressureThreshold(PressureUnit::cmH2O);
+      double peakInspiratoryPressure_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+      bool triggered = peakInspiratoryPressure_cmH2O < lowPressureThreshold_cmH2O;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::LowPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowPressureAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::LowPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowPressureAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::LowPressureAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::LowPressureAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // High Respiratory Rate Alarm
+    if (GetSettings().GetAlarms().HasHighRespiratoryRateThreshold())
+    {
+      double highRespiratoryRateThreshold_Per_min = GetSettings().GetAlarms().GetHighRespiratoryRateThreshold(FrequencyUnit::Per_min);
+      double respirationRate_Per_min = GetRespirationRate(FrequencyUnit::Per_min);
+      bool triggered = respirationRate_Per_min > highRespiratoryRateThreshold_Per_min;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::HighRespiratoryRateAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighRespiratoryRateAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::HighRespiratoryRateAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighRespiratoryRateAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::HighRespiratoryRateAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::HighRespiratoryRateAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Low Tidal Volume Alarm
+    if (GetSettings().GetAlarms().HasLowTidalVolumeThreshold())
+    {
+      double lowTidalVolumeThreshold_mL = GetSettings().GetAlarms().GetLowTidalVolumeThreshold(VolumeUnit::mL);
+      double tidalVolume_mL = GetTidalVolume(VolumeUnit::mL);
+      bool triggered = tidalVolume_mL < lowTidalVolumeThreshold_mL;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::LowTidalVolumeAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowTidalVolumeAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::LowTidalVolumeAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowTidalVolumeAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::LowTidalVolumeAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::LowTidalVolumeAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // High Tidal Volume Alarm
+    if (GetSettings().GetAlarms().HasHighTidalVolumeThreshold())
+    {
+      double highTidalVolumeThreshold_mL = GetSettings().GetAlarms().GetHighTidalVolumeThreshold(VolumeUnit::mL);
+      double tidalVolume_mL = GetTidalVolume(VolumeUnit::mL);
+      bool triggered = tidalVolume_mL > highTidalVolumeThreshold_mL;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::HighTidalVolumeAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighTidalVolumeAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::HighTidalVolumeAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighTidalVolumeAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::HighTidalVolumeAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::HighTidalVolumeAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Low Minute Ventilation Alarm
+    if (GetSettings().GetAlarms().HasLowMinuteVentilationThreshold())
+    {
+      double lowMinuteVentilationThreshold_L_Per_min = GetSettings().GetAlarms().GetLowMinuteVentilationThreshold(VolumePerTimeUnit::L_Per_min);
+      double totalPulmonaryVentilation_L_Per_min = GetTotalPulmonaryVentilation(VolumePerTimeUnit::L_Per_min);
+      bool triggered = totalPulmonaryVentilation_L_Per_min < lowMinuteVentilationThreshold_L_Per_min;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::LowMinuteVentilationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowMinuteVentilationAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::LowMinuteVentilationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowMinuteVentilationAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::LowMinuteVentilationAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::LowMinuteVentilationAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // High Minute Ventilation Alarm
+    if (GetSettings().GetAlarms().HasHighMinuteVentilationThreshold())
+    {
+      double highMinuteVentilationThreshold_L_Per_min = GetSettings().GetAlarms().GetHighMinuteVentilationThreshold(VolumePerTimeUnit::L_Per_min);
+      double totalPulmonaryVentilation_L_Per_min = GetTotalPulmonaryVentilation(VolumePerTimeUnit::L_Per_min);
+      bool triggered = totalPulmonaryVentilation_L_Per_min > highMinuteVentilationThreshold_L_Per_min;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::HighMinuteVentilationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighMinuteVentilationAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::HighMinuteVentilationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighMinuteVentilationAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::HighMinuteVentilationAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::HighMinuteVentilationAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Low End Tidal Carbon Dioxide Alarm
+    if (GetSettings().GetAlarms().HasLowEndTidalCarbonDioxideThreshold())
+    {
+      double lowEndTidalCarbonDioxideThreshold_mmHg = GetSettings().GetAlarms().GetLowEndTidalCarbonDioxideThreshold(PressureUnit::mmHg);
+      double endTidalCarbonDioxidePressure_mmHg = GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg);
+      bool triggered = endTidalCarbonDioxidePressure_mmHg < lowEndTidalCarbonDioxideThreshold_mmHg;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::LowEndTidalCarbonDioxideAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowEndTidalCarbonDioxideAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::LowEndTidalCarbonDioxideAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowEndTidalCarbonDioxideAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::LowEndTidalCarbonDioxideAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::LowEndTidalCarbonDioxideAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // High End Tidal Carbon Dioxide Alarm
+    if (GetSettings().GetAlarms().HasHighEndTidalCarbonDioxideThreshold())
+    {
+      double highEndTidalCarbonDioxideThreshold_mmHg = GetSettings().GetAlarms().GetHighEndTidalCarbonDioxideThreshold(PressureUnit::mmHg);
+      double endTidalCarbonDioxidePressure_mmHg = GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg);
+      bool triggered = endTidalCarbonDioxidePressure_mmHg > highEndTidalCarbonDioxideThreshold_mmHg;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::HighEndTidalCarbonDioxideAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighEndTidalCarbonDioxideAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::HighEndTidalCarbonDioxideAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighEndTidalCarbonDioxideAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::HighEndTidalCarbonDioxideAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::HighEndTidalCarbonDioxideAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Low Positive End Expiratory Pressure Alarm
+    if (GetSettings().GetAlarms().HasLowPositiveEndExpiratoryPressureThreshold())
+    {
+      double lowPositiveEndExpiratoryPressureThreshold_cmH2O = GetSettings().GetAlarms().GetLowPositiveEndExpiratoryPressureThreshold(PressureUnit::cmH2O);
+      double totalPositiveEndExpiratoryPressure_cmH2O = GetTotalPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
+      bool triggered = totalPositiveEndExpiratoryPressure_cmH2O < lowPositiveEndExpiratoryPressureThreshold_cmH2O;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // High Positive End Expiratory Pressure Alarm
+    if (GetSettings().GetAlarms().HasHighPositiveEndExpiratoryPressureThreshold())
+    {
+      double highPositiveEndExpiratoryPressureThreshold_cmH2O = GetSettings().GetAlarms().GetHighPositiveEndExpiratoryPressureThreshold(PressureUnit::cmH2O);
+      double totalPositiveEndExpiratoryPressure_cmH2O = GetTotalPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
+      bool triggered = totalPositiveEndExpiratoryPressure_cmH2O > highPositiveEndExpiratoryPressureThreshold_cmH2O;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Auto Positive End Expiratory Pressure Alarm (Intrinsic PEEP / Air Trapping)
+    if (GetSettings().GetAlarms().HasAutoPositiveEndExpiratoryPressureThreshold())
+    {
+      double autoPositiveEndExpiratoryPressureThreshold_cmH2O = GetSettings().GetAlarms().GetAutoPositiveEndExpiratoryPressureThreshold(PressureUnit::cmH2O);
+      double intrinsicPositiveEndExpiratoryPressure_cmH2O = GetIntrinsicPositiveEndExpiratoryPressure(PressureUnit::cmH2O);
+      bool triggered = intrinsicPositiveEndExpiratoryPressure_cmH2O > autoPositiveEndExpiratoryPressureThreshold_cmH2O;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Circuit Leak Alarm
+    if (GetSettings().GetAlarms().HasCircuitLeakThreshold())
+    {
+      double circuitLeakThreshold = GetSettings().GetAlarms().GetCircuitLeakThreshold().GetValue();
+      double leakFraction = GetLeakFraction().GetValue();
+      bool triggered = leakFraction > circuitLeakThreshold;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::CircuitLeakAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::CircuitLeakAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::CircuitLeakAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::CircuitLeakAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::CircuitLeakAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::CircuitLeakAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Low Oxygen Saturation Alarm
+    if (GetSettings().GetAlarms().HasLowOxygenSaturationThreshold())
+    {
+      double lowOxygenSaturationThreshold = GetSettings().GetAlarms().GetLowOxygenSaturationThreshold().GetValue();
+      double oxygenSaturation = m_data.GetBloodChemistry().GetOxygenSaturation().GetValue();
+      bool triggered = oxygenSaturation < lowOxygenSaturationThreshold;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::LowOxygenSaturationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowOxygenSaturationAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::LowOxygenSaturationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::LowOxygenSaturationAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::LowOxygenSaturationAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::LowOxygenSaturationAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // High Oxygen Saturation Alarm
+    if (GetSettings().GetAlarms().HasHighOxygenSaturationThreshold())
+    {
+      double highOxygenSaturationThreshold = GetSettings().GetAlarms().GetHighOxygenSaturationThreshold().GetValue();
+      double oxygenSaturation = m_data.GetBloodChemistry().GetOxygenSaturation().GetValue();
+      bool triggered = oxygenSaturation > highOxygenSaturationThreshold;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::HighOxygenSaturationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighOxygenSaturationAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::HighOxygenSaturationAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::HighOxygenSaturationAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::HighOxygenSaturationAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::HighOxygenSaturationAlarmTriggered, false, m_data.GetSimulationTime());
+    }
+
+    // Apnea Time Alarm
+    if (GetSettings().GetAlarms().HasApneaTimeThreshold())
+    {
+      double apneaTimeThreshold_s = GetSettings().GetAlarms().GetApneaTimeThreshold(TimeUnit::s);
+      bool triggered = m_TimeSincePatientTrigger_s > apneaTimeThreshold_s;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::ApneaTimeAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::ApneaTimeAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::ApneaTimeAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::ApneaTimeAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::ApneaTimeAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::ApneaTimeAlarmTriggered, false, m_data.GetSimulationTime());
+      m_TimeSincePatientTrigger_s = 0.0;
+    }
+    else
+    {
+      m_TimeSincePatientTrigger_s = 0.0;
+    }
+
+    // Oxygen Supply Failure Alarm
+    if (GetSettings().GetAlarms().HasOxygenSupplyFailureThreshold())
+    {
+      double oxygenSupplyFailureThreshold = GetSettings().GetAlarms().GetOxygenSupplyFailureThreshold().GetValue();
+      double measuredFiO2 = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
+      bool triggered = measuredFiO2 < oxygenSupplyFailureThreshold;
+      if (triggered && !m_data.GetEvents().IsEventActive(eEvent::OxygenSupplyFailureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::OxygenSupplyFailureAlarmTriggered, true, m_data.GetSimulationTime());
+      }
+      else if (!triggered && m_data.GetEvents().IsEventActive(eEvent::OxygenSupplyFailureAlarmTriggered))
+      {
+        m_data.GetEvents().SetEvent(eEvent::OxygenSupplyFailureAlarmTriggered, false, m_data.GetSimulationTime());
+      }
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::OxygenSupplyFailureAlarmTriggered))
+    {
+      m_data.GetEvents().SetEvent(eEvent::OxygenSupplyFailureAlarmTriggered, false, m_data.GetSimulationTime());
+    }
   }
 END_NAMESPACE

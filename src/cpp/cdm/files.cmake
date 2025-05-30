@@ -329,6 +329,7 @@ set(CDM_H_FILES
   cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h
   cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h
   cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h
+  cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.h
   cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h
   cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h
   cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h
@@ -704,6 +705,7 @@ set(CDM_CPP_FILES
   cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.cpp
   cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.cpp
   cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.cpp
+  cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.cpp
   cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.cpp
   cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.cpp
   cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.cpp

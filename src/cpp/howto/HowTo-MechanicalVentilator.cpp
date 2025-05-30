@@ -15,6 +15,7 @@
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
@@ -174,6 +175,10 @@ void HowToMechanicalVentilator()
   //  vc_ac.GetInspirationPatientTriggerPressure().SetValue(-1.0, PressureUnit::cmH2O);
   //  vc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   // If neither are provided, we will use the respiratory model trigger
+
+  // Add an alarm that will cycle from inhale to exhale when it is reached
+  vc_ac.GetSupplementalSettings().GetAlarms().GetHighPressureThreshold().SetValue(20.0, PressureUnit::cmH2O);
+  vc_ac.GetSupplementalSettings().GetAlarms().SetHighPressureCycleOption(eSwitch::On);
 
   pe->ProcessAction(vc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
