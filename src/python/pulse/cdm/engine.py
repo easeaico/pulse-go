@@ -150,24 +150,28 @@ class SEEventChange:
 
     def __init__(
         self,
-        event: Optional[eEvent] = None,
-        active: Optional[bool] = None,
-        sim_time_s: Optional[float] = None
+        event: eEvent,
+        active: bool,
+        sim_time_s: float
     ):
         self.event = event
         self.active = active
-        self.sim_time = SEScalarTime(sim_time_s, TimeUnit.s) if sim_time_s is not None else SEScalarTime()
+        self.sim_time = SEScalarTime(sim_time_s, TimeUnit.s)
+
+    def __str__(self) -> str:
+        return "{} is {}".format(self.event, "Active" if self.active else "Inactive")
 
     def __repr__(self) -> str:
-        return_text = ("{} is {}").format(self.event, "Active" if self.active else "Inactive")
+        return_text = self.__str__()
         if self.sim_time.is_valid():
-            return_text += (" @ {}").format(self.sim_time)
+            return_text += " @ {}".format(self.sim_time)
         return return_text
 
 
 class IEventHandler:
     def __init__(self, active_events_only=False):
         self._active = active_events_only
+
     def handle_event(self, change: SEEventChange):
         pass
 

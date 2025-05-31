@@ -229,16 +229,15 @@ def csv_plotter(csv: Path, benchmark: bool = False):
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
         if ps.parse_actions_events():
-            ae = ps.get_actions_events(
-                plot_actions=config.get_plot_actions(),
-                plot_events=config.get_plot_events(),
-                allow_actions_with=config.get_allow_actions_with(),
-                allow_events_with=config.get_allow_events_with(),
-                omit_actions_with=config.get_omit_actions_with(),
-                omit_events_with=config.get_omit_events_with(),
-                count_limit=20
-            )
-            if ae:
+            actions = ps.get_actions(plot_actions=config.get_plot_actions(),
+                                     allow_actions_with=config.get_allow_actions_with(),
+                                     omit_actions_with=config.get_omit_actions_with(),
+                                     count_limit=20)
+            events = ps.get_events(plot_events=config.get_plot_events(),
+                                   allow_events_with=config.get_allow_events_with(),
+                                   omit_events_with=config.get_omit_events_with(),
+                                   count_limit=20)
+            if len(actions) > 0 or len(events) > 0:
                 config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
                 output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
                 output_filepath = output_dir / output_filename
@@ -319,7 +318,6 @@ def csv_plotter(csv: Path, benchmark: bool = False):
         _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
-
 def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     if benchmark:
         start = timer()
@@ -365,17 +363,16 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
         if computed_source.parse_actions_events():
-            ae = computed_source.get_actions_events(
-                plot_actions=config.get_plot_actions(),
-                plot_events=config.get_plot_events(),
-                allow_actions_with=config.get_allow_actions_with(),
-                allow_events_with=config.get_allow_events_with(),
-                omit_actions_with=config.get_omit_actions_with(),
-                omit_events_with=config.get_omit_events_with(),
-                count_limit=20
-            )
-            if ae:
-                expected_source.set_actions_events(ae)
+            actions = computed_source.get_actions(plot_actions=config.get_plot_actions(),
+                                                  allow_actions_with=config.get_allow_actions_with(),
+                                                  omit_actions_with=config.get_omit_actions_with(),
+                                                  count_limit=20)
+            events = computed_source.get_events(plot_events=config.get_plot_events(),
+                                                allow_events_with=config.get_allow_events_with(),
+                                                omit_events_with=config.get_omit_events_with(),
+                                                count_limit=20)
+            if actions or events:
+                expected_source.set_actions_events(actions=actions, events=events)
 
                 config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
                 output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
@@ -392,7 +389,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
                 else:
                     legend_success = False
                 clear_current_plot()
-            else: # No actions/events to plot
+            else:  # No actions/events to plot
                 config.set_plot_actions(False)
                 config.set_plot_events(False)
         else:
@@ -406,6 +403,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         Default = 0
         Pass = 1
         Fail = 2
+
     # Helper function to plot every header against x_header
     def _plot_header(sources: List[SEPlotSource], color_mode: _eColorMode=_eColorMode.Default):
         if benchmark:

@@ -67,7 +67,7 @@ def main():
     army_dir.mkdir(parents=True, exist_ok=True)
 
     # Test specific injury
-    if True:
+    if False:
         test_injury(injury_distributions=army_injury_distributions["thorax"],
                     num_patients_injured=1000,
                     log=True)
@@ -85,7 +85,7 @@ def main():
     # Run a measurement study
     if False:
         # Measure error for various population sizes
-        for p in range(500, 5001, 500):
+        for p in [100, 500, 1000, 2000, 3000]:
             i = 25
             _log.info(f"Measuring error for a population size of {p} using {i} iterations")
             measure_error(iterations=i, population_size=p,
@@ -95,7 +95,7 @@ def main():
 
     # Generate a data set
     if True:
-        population_size = 1000
+        population_size = 2000
         army_patients = synthetic_population_generation(population_size, army_population_distributions)
         army_population_error = calculate_population_error(army_patients, army_population_distributions)
         plot_population_error(army_population_error, f"{army_dir}/population_of_{population_size}")
@@ -103,6 +103,20 @@ def main():
         army_patient_injuries = synthetic_injury_generation(population_size, army_injury_distributions)
         army_injury_error = calculate_injury_error(army_patient_injuries, army_injury_distributions)
         plot_injury_error(army_injury_error, f"{army_dir}/injuries_of_population_of_{population_size}")
+
+        # Check\count for injury combinations not currently supported in Pulse
+        num_hemopneumothorax = 0
+        for injuries in army_patient_injuries:
+            if len(injuries) > 1:
+                hemopneumothorax = 0
+                for injury in injuries:
+                    if injury["type"] == "pneumothorax" or injury["type"] == "hemothorax":
+                        hemopneumothorax += 1
+                if hemopneumothorax >= 3:
+                    num_hemopneumothorax += 1
+        if num_hemopneumothorax > 0:
+            _log.warning(f"Found {num_hemopneumothorax} hemopneumothorax(s), "
+                         f"Pulse currently does not support this type of injury")
 
         # Combine the patients and their injuries and write that out to disk
         data = []
@@ -140,6 +154,7 @@ def synthetic_population_generation(size: int, distributions: dict) -> dict:
     female_heights = np.random.normal(loc=female_distributions["height"]["mean"],
                                       scale=female_distributions["height"]["std"],
                                       size=num_females)
+
     male_heights = np.random.normal(loc=male_distributions["height"]["mean"],
                                     scale=male_distributions["height"]["std"],
                                     size=num_males)
@@ -167,9 +182,9 @@ def synthetic_population_generation(size: int, distributions: dict) -> dict:
             male_idx += 1
 
     # Heart Rate
-    heart_rates = np.random.normal(loc=distributions["heart_rate"]["mean"],
-                                   scale=distributions["heart_rate"]["std"],
-                                   size=size)
+    heart_rates = list(np.random.normal(loc=distributions["heart_rate"]["mean"],
+                                        scale=distributions["heart_rate"]["std"],
+                                        size=size))
 
     # Age
     num_bins = len(distributions["age"]["bins"])
@@ -438,6 +453,9 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
                     injury_type_str,
                     injury_severity))
 
+    # Randomize the injuries a few times
+    for _ in range(5):
+        random.shuffle(patient_injuries)
     return patient_injuries
 
 

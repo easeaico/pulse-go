@@ -23,18 +23,7 @@ from pulse.cdm.io.scenario import serialize_scenario_exec_status_list_from_file
 _pulse_logger = logging.getLogger('pulse')
 
 
-class AVPU(str, Enum):
-    Alert = "Alert"
-    Voice = "Voice"
-    Pain = "Pain"
-    Unresponsive = "Unresponsive"
 
-
-class TriageTag(str, Enum):
-    Black = "Black"
-    Red = "Red"
-    Yellow = "Yellow"
-    Green = "Green"
 
 
 
@@ -564,119 +553,6 @@ class ITMObservationModule(SEObservationReportModule):
 
 
 
-class TCCCDeathCheckModule(SETimestepReportModule):
-    """
-    Reports if patient survives. Raises StopIteration on update if patient death detected.
-    """
-
-    __slots__ = ("_irreversible_state", "_cardiovascular_collapse", "_brain_O2_deficit",
-                 "_start_brain_O2_deficit_s", "_myocardium_O2_deficit", "_start_myocardium_O2_deficit_s",
-                 "_spO2_deficit", "_start_spO2_deficit_s", "_max_hr_bpm", "_survived")
-
-    TIME_s = "Time(s)"
-    HR_bpm = "HeartRate(1/min)"
-    SPO2 = "OxygenSaturation"
-    SAP_mmHg = "SystolicArterialPressure(mmHg)"
-
-    def __init__(self):
-        super().__init__()
-        self._headers = [
-            self.TIME_s,
-            self.HR_bpm,
-            self.SPO2,
-            self.SAP_mmHg
-        ]
-        self._irreversible_state = False
-        self._cardiovascular_collapse = False
-        self._brain_O2_deficit = False
-        self._start_brain_O2_deficit_s = 0.
-        self._myocardium_O2_deficit = False
-        self._start_myocardium_O2_deficit_s = 0.
-        self._spO2_deficit = False
-        self._start_spO2_deficit_s = 0.
-        self._max_hr_bpm = None
-        self._survived = True
-
-    def set_max_hr(self, max_hr: SEScalarFrequency) -> None:
-        self._max_hr_bpm = max_hr.get_value(FrequencyUnit.Per_min)
-
-    def handle_event(self, change: SEEventChange) -> None:
-        """
-        Check for death indicators.
-        """
-        if change.event == eEvent.IrreversibleState:
-            self._irreversible_state = change.active
-
-        if change.event == eEvent.CardiovascularCollapse:
-            self._cardiovascular_collapse = change.active
-
-        if change.event == eEvent.BrainOxygenDeficit:
-            if change.active:
-                if not self._brain_O2_deficit:
-                    self._brain_O2_deficit = True
-                    self._start_brain_O2_deficit_s = change.sim_time.get_value(TimeUnit.s)
-            else:
-                self._brain_O2_deficit = False
-                self._start_brain_O2_deficit_s = 0
-
-        if change.event == eEvent.MyocardiumOxygenDeficit:
-            if change.active:
-                if not self._myocardium_O2_deficit:
-                    self._myocardium_O2_deficit = True
-                    self._start_myocardium_O2_deficit_s = change.sim_time.get_value(TimeUnit.s)
-            else:
-                self._myocardium_O2_deficit = False
-                self._start_myocardium_O2_deficit_s = 0
-
-    def update(self, data_slice: NamedTuple, slice_idx: Dict[str, int]) -> None:
-        """
-        Determine if death is indicated, if so raise StopIteration.
-        """
-        curr_time_s = data_slice[slice_idx[self.TIME_s]]
-
-        if self._irreversible_state:
-            self._survived = False
-            raise StopIteration(f"Patient died from irreversible state @{curr_time_s}s")
-
-        if self._cardiovascular_collapse:
-            self._survived = False
-            raise StopIteration(f"Patient died from cardiovascular collapse @{curr_time_s}s")
-
-        if self._max_hr_bpm is None:
-            raise ValueError("Max HR BPM is not set in death check")
-        elif data_slice[slice_idx[self.HR_bpm]] >= self._max_hr_bpm:
-            self._survived = False
-            raise StopIteration(f"Patient died from reaching max hr of {self._max_hr_bpm} @{curr_time_s}s")
-
-        if self._brain_O2_deficit and (curr_time_s - self._start_brain_O2_deficit_s) > 180:
-            self._survived = False
-            raise StopIteration(f"Patient died from brain O2 deficit of 180s @{curr_time_s}s")
-
-        if self._myocardium_O2_deficit and (curr_time_s - self._start_myocardium_O2_deficit_s) > 180:
-            self._survived = False
-            raise StopIteration(f"Patient died from myocardium O2 deficit of 180s @{curr_time_s}s")
-
-        if data_slice[slice_idx[self.SPO2]] < 0.85:
-            if not self._spO2_deficit:
-                self._spO2_deficit = True
-                self._start_spO2_deficit_s = curr_time_s
-            elif (curr_time_s - self._start_spO2_deficit_s) > 140:
-                self._survived = False
-                raise StopIteration(f"Patient died from SpO2 < 85 for 140s @{curr_time_s}s")
-        else:
-            self._spO2_deficit = False
-
-        #if data_slice[slice_idx[self.SAP_mmHg]] < 60:
-        #    self._survived = False
-        #    raise StopIteration(f"Patient died from SBP < 60 @{curr_time_s}s")
-
-    def report(self) -> Iterable[Tuple[Hashable, Any]]:
-        """
-        Report survival status.
-        """
-        return [
-            ("Survives", self._survived),
-        ]
 
 
 class ITMScenarioReport(SEScenarioReport):

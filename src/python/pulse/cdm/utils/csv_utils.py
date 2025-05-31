@@ -25,8 +25,12 @@ def read_csv_into_df(csv_filename: Path, replace_slashes: bool = False, **kwargs
 def concat_csv_into_df(earlier: Path, later: Path, replace_slashes: bool = False, **kwargs):
     df1 = read_csv_into_df(earlier, replace_slashes)
     df2 = read_csv_into_df(later, replace_slashes)
+    concat_dataframes(df1, df2)
 
-    # Make sure these csv file have close overlap
+
+def concat_dataframes(df1: Path, df2: Path):
+
+    # Make sure these dataframes have close overlap
     def overlap(start1, end1, start2, end2):
         if start2 == end1:  # Edge overlap is ok
             return False
