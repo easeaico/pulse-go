@@ -5,7 +5,98 @@ namespace Pulse.CDM
 {
   public class PBMechanicalVentilator
   {
-    #region SEMechanicalVentilator
+    #region SEMechanicalVentilatorAlarms
+    public static void Load(pulse.cdm.bind.MechanicalVentilatorAlarmsData src, SEMechanicalVentilatorAlarms dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.MechanicalVentilatorAlarmsData src, SEMechanicalVentilatorAlarms dst)
+    {
+      dst.Clear();
+      if (src.ApneaTimeThreshold != null)
+        PBProperty.Load(src.ApneaTimeThreshold, dst.GetApneaTimeThreshold());
+      if (src.AutoPositiveEndExpiratoryPressureThreshold != null)
+        PBProperty.Load(src.AutoPositiveEndExpiratoryPressureThreshold, dst.GetAutoPositiveEndExpiratoryPressureThreshold());
+      if (src.CircuitLeakThreshold != null)
+        PBProperty.Load(src.CircuitLeakThreshold, dst.GetCircuitLeakThreshold());
+      if (src.HighEndTidalCarbonDioxideThreshold != null)
+        PBProperty.Load(src.HighEndTidalCarbonDioxideThreshold, dst.GetHighEndTidalCarbonDioxideThreshold());
+      if (src.HighMinuteVentilationThreshold != null)
+        PBProperty.Load(src.HighMinuteVentilationThreshold, dst.GetHighMinuteVentilationThreshold());
+      if (src.HighOxygenSaturationThreshold != null)
+        PBProperty.Load(src.HighOxygenSaturationThreshold, dst.GetHighOxygenSaturationThreshold());
+      if (src.HighPositiveEndExpiratoryPressureThreshold != null)
+        PBProperty.Load(src.HighPositiveEndExpiratoryPressureThreshold, dst.GetHighPositiveEndExpiratoryPressureThreshold());
+      dst.SetHighPressureCycleOption((eSwitch)src.HighPressureCycleOption); 
+      if (src.HighPressureThreshold != null)
+        PBProperty.Load(src.HighPressureThreshold, dst.GetHighPressureThreshold());
+      if (src.HighRespiratoryRateThreshold != null)
+        PBProperty.Load(src.HighRespiratoryRateThreshold, dst.GetHighRespiratoryRateThreshold());
+      if (src.HighTidalVolumeThreshold != null)
+        PBProperty.Load(src.HighTidalVolumeThreshold, dst.GetHighTidalVolumeThreshold());
+      if (src.LowEndTidalCarbonDioxideThreshold != null)
+        PBProperty.Load(src.LowEndTidalCarbonDioxideThreshold, dst.GetLowEndTidalCarbonDioxideThreshold());
+      if (src.LowMinuteVentilationThreshold != null)
+        PBProperty.Load(src.LowMinuteVentilationThreshold, dst.GetLowMinuteVentilationThreshold());
+      if (src.LowOxygenSaturationThreshold != null)
+        PBProperty.Load(src.LowOxygenSaturationThreshold, dst.GetLowOxygenSaturationThreshold());
+      if (src.LowPositiveEndExpiratoryPressureThreshold != null)
+        PBProperty.Load(src.LowPositiveEndExpiratoryPressureThreshold, dst.GetLowPositiveEndExpiratoryPressureThreshold());
+      if (src.LowPressureThreshold != null)
+        PBProperty.Load(src.LowPressureThreshold, dst.GetLowPressureThreshold());
+      if (src.LowTidalVolumeThreshold != null)
+        PBProperty.Load(src.LowTidalVolumeThreshold, dst.GetLowTidalVolumeThreshold());
+      if (src.OxygenSupplyFailureThreshold != null)
+        PBProperty.Load(src.OxygenSupplyFailureThreshold, dst.GetOxygenSupplyFailureThreshold());
+    }
+
+    public static pulse.cdm.bind.MechanicalVentilatorAlarmsData Unload(SEMechanicalVentilatorAlarms src)
+    {
+      pulse.cdm.bind.MechanicalVentilatorAlarmsData dst = new pulse.cdm.bind.MechanicalVentilatorAlarmsData();
+      Unload(src, dst);
+      return dst;
+    }
+    protected static void Unload(SEMechanicalVentilatorAlarms src, pulse.cdm.bind.MechanicalVentilatorAlarmsData dst)
+    {
+      if (src.HasApneaTimeThreshold())
+        dst.ApneaTimeThreshold = PBProperty.Unload(src.GetApneaTimeThreshold());
+      if (src.HasAutoPositiveEndExpiratoryPressureThreshold())
+        dst.AutoPositiveEndExpiratoryPressureThreshold = PBProperty.Unload(src.GetAutoPositiveEndExpiratoryPressureThreshold());
+      if (src.HasCircuitLeakThreshold())
+        dst.CircuitLeakThreshold = PBProperty.Unload(src.GetCircuitLeakThreshold());
+      if (src.HasHighEndTidalCarbonDioxideThreshold())
+        dst.HighEndTidalCarbonDioxideThreshold = PBProperty.Unload(src.GetHighEndTidalCarbonDioxideThreshold());
+      if (src.HasHighMinuteVentilationThreshold())
+        dst.HighMinuteVentilationThreshold = PBProperty.Unload(src.GetHighMinuteVentilationThreshold());
+      if (src.HasHighOxygenSaturationThreshold())
+        dst.HighOxygenSaturationThreshold = PBProperty.Unload(src.GetHighOxygenSaturationThreshold());
+      if (src.HasHighPositiveEndExpiratoryPressureThreshold())
+        dst.HighPositiveEndExpiratoryPressureThreshold = PBProperty.Unload(src.GetHighPositiveEndExpiratoryPressureThreshold());
+      dst.HighPressureCycleOption = (pulse.cdm.bind.eSwitch)(int)src.GetHighPressureCycleOption();
+      if (src.HasHighPressureThreshold())
+        dst.HighPressureThreshold = PBProperty.Unload(src.GetHighPressureThreshold());
+      if (src.HasHighRespiratoryRateThreshold())
+        dst.HighRespiratoryRateThreshold = PBProperty.Unload(src.GetHighRespiratoryRateThreshold());
+      if (src.HasHighTidalVolumeThreshold())
+        dst.HighTidalVolumeThreshold = PBProperty.Unload(src.GetHighTidalVolumeThreshold());
+      if (src.HasLowEndTidalCarbonDioxideThreshold())
+        dst.LowEndTidalCarbonDioxideThreshold = PBProperty.Unload(src.GetLowEndTidalCarbonDioxideThreshold());
+      if (src.HasLowMinuteVentilationThreshold())
+        dst.LowMinuteVentilationThreshold = PBProperty.Unload(src.GetLowMinuteVentilationThreshold());
+      if (src.HasLowOxygenSaturationThreshold())
+        dst.LowOxygenSaturationThreshold = PBProperty.Unload(src.GetLowOxygenSaturationThreshold());
+      if (src.HasLowPositiveEndExpiratoryPressureThreshold())
+        dst.LowPositiveEndExpiratoryPressureThreshold = PBProperty.Unload(src.GetLowPositiveEndExpiratoryPressureThreshold());
+      if (src.HasLowPressureThreshold())
+        dst.LowPressureThreshold = PBProperty.Unload(src.GetLowPressureThreshold());
+      if (src.HasLowTidalVolumeThreshold())
+        dst.LowTidalVolumeThreshold = PBProperty.Unload(src.GetLowTidalVolumeThreshold());
+      if (src.HasOxygenSupplyFailureThreshold())
+        dst.OxygenSupplyFailureThreshold = PBProperty.Unload(src.GetOxygenSupplyFailureThreshold());
+    }
+    #endregion
+
+    #region SEMechanicalVentilatorSettings
     public static void Load(pulse.cdm.bind.MechanicalVentilatorSettingsData src, SEMechanicalVentilatorSettings dst/*, SESubstanceManager subMgr*/)
     {
       Serialize(src, dst);
@@ -90,6 +181,9 @@ namespace Pulse.CDM
         PBProperty.Load(src.ReliefValveThreshold, dst.GetReliefValveThreshold());
       if (src.YPieceVolume != null)
         PBProperty.Load(src.YPieceVolume, dst.GetYPieceVolume());
+
+      if (src.Alarms != null)
+        PBMechanicalVentilator.Load(src.Alarms, dst.GetAlarms());
 
       foreach (pulse.cdm.bind.SubstanceFractionData sf in src.FractionInspiredGas)
       {
@@ -187,6 +281,9 @@ namespace Pulse.CDM
         dst.ReliefValveThreshold = PBProperty.Unload(src.GetReliefValveThreshold());
       if (src.HasYPieceVolume())
         dst.YPieceVolume = PBProperty.Unload(src.GetYPieceVolume());
+
+      if (src.HasAlarms())
+        dst.Alarms = PBMechanicalVentilator.Unload(src.GetAlarms());
 
       foreach (SESubstanceFraction aGas in src.GetFractionInspiredGases())
       {

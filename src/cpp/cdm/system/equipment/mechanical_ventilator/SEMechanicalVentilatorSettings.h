@@ -18,16 +18,16 @@ public:
   SEMechanicalVentilatorSettings(Logger* logger);
   virtual ~SEMechanicalVentilatorSettings();
 
-  virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager&);
-
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr);
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
-  virtual void Merge(const SEMechanicalVentilatorSettings& from, SESubstanceManager& subMgr);
   virtual void ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr);
+
+  virtual void Clear();
+  virtual void Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager&);
+  virtual void Merge(const SEMechanicalVentilatorSettings& from, SESubstanceManager& subMgr);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

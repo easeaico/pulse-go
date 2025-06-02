@@ -3,6 +3,7 @@
 
 #include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.h"
+#include "cdm/io/protobuf/PBMechanicalVentilator.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarPressure.h"
@@ -74,6 +75,34 @@ void SEMechanicalVentilatorAlarms::Clear()
   INVALIDATE_PROPERTY(m_LowPressureThreshold);
   INVALIDATE_PROPERTY(m_LowTidalVolumeThreshold);
   INVALIDATE_PROPERTY(m_OxygenSupplyFailureThreshold);
+}
+
+void SEMechanicalVentilatorAlarms::Copy(const SEMechanicalVentilatorAlarms& src)
+{
+  PBMechanicalVentilator::Copy(src, *this);
+}
+
+void SEMechanicalVentilatorAlarms::Merge(const SEMechanicalVentilatorAlarms& from)
+{
+  COPY_PROPERTY(ApneaTimeThreshold);
+  COPY_PROPERTY(AutoPositiveEndExpiratoryPressureThreshold);
+  COPY_PROPERTY(CircuitLeakThreshold);
+  COPY_PROPERTY(HighEndTidalCarbonDioxideThreshold);
+  COPY_PROPERTY(HighMinuteVentilationThreshold);
+  COPY_PROPERTY(HighOxygenSaturationThreshold);
+  COPY_PROPERTY(HighPositiveEndExpiratoryPressureThreshold);
+  if (from.HasHighPressureCycleOption())
+    SetHighPressureCycleOption(from.m_HighPressureCycleOption);
+  COPY_PROPERTY(HighPressureThreshold);
+  COPY_PROPERTY(HighRespiratoryRateThreshold);
+  COPY_PROPERTY(HighTidalVolumeThreshold);
+  COPY_PROPERTY(LowEndTidalCarbonDioxideThreshold);
+  COPY_PROPERTY(LowMinuteVentilationThreshold);
+  COPY_PROPERTY(LowOxygenSaturationThreshold);
+  COPY_PROPERTY(LowPositiveEndExpiratoryPressureThreshold);
+  COPY_PROPERTY(LowPressureThreshold);
+  COPY_PROPERTY(LowTidalVolumeThreshold);
+  COPY_PROPERTY(OxygenSupplyFailureThreshold);
 }
 
 const SEScalar* SEMechanicalVentilatorAlarms::GetScalar(const std::string& name)

@@ -5,8 +5,6 @@ package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions;
 
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorModeData;
-import com.kitware.pulse.cdm.properties.SEScalarPressure;
-import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilatorSettings;
 
 public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction

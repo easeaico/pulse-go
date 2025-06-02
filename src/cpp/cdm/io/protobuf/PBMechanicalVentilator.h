@@ -31,5 +31,6 @@ public:
   static CDM_BIND::MechanicalVentilatorAlarmsData* Unload(const SEMechanicalVentilatorAlarms& src);
   static void Serialize(const CDM_BIND::MechanicalVentilatorAlarmsData& src, SEMechanicalVentilatorAlarms& dst);
   static void Serialize(const SEMechanicalVentilatorAlarms& src, CDM_BIND::MechanicalVentilatorAlarmsData& dst);
+  static void Copy(const SEMechanicalVentilatorAlarms& src, SEMechanicalVentilatorAlarms& dst);
 
 };

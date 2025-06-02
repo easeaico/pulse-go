@@ -5,8 +5,7 @@ using System.Collections.Generic;
 
 namespace Pulse.CDM
 {
-  // TODO Substance Fractions and Concentrations!!!
-  public class SEMechanicalVentilatorSettings : SEEquipment
+  public class SEMechanicalVentilatorSettings
   {
     protected eSwitch connection;
     protected SEScalarVolume connection_volume;
@@ -60,6 +59,8 @@ namespace Pulse.CDM
     protected SEScalarPressure relief_valve_threshold;
     protected SEScalarVolume y_piece_volume;
 
+    protected SEMechanicalVentilatorAlarms alarms;
+
     protected List<SESubstanceFraction> fraction_inspired_gases;
     protected List<SESubstanceConcentration> concentration_inspired_aerosols;
 
@@ -105,13 +106,14 @@ namespace Pulse.CDM
       relief_valve_threshold = null;
       y_piece_volume = null;
 
+      alarms = null;
+
       this.fraction_inspired_gases = new List<SESubstanceFraction>();
       this.concentration_inspired_aerosols = new List<SESubstanceConcentration>();
     }
 
-    public override void Clear()
+    public void Clear()
     {
-      base.Clear();
       connection = eSwitch.NullSwitch;
       if (connection_volume != null)
         connection_volume.Invalidate();
@@ -180,6 +182,9 @@ namespace Pulse.CDM
       if (relief_valve_threshold != null)
         relief_valve_threshold.Invalidate();
 
+      if (alarms != null)
+        alarms.Clear();
+
       if (y_piece_volume != null)
         y_piece_volume.Invalidate();
 
@@ -189,7 +194,7 @@ namespace Pulse.CDM
 
     public void Copy(SEMechanicalVentilatorSettings from)
     {
-      base.Copy(from);
+      Clear();
       if (from.connection != eSwitch.NullSwitch)
         this.connection = from.connection;
       if (from.HasConnectionVolume())
@@ -263,6 +268,9 @@ namespace Pulse.CDM
 
       if (from.HasYPieceVolume())
         this.GetYPieceVolume().Set(from.GetYPieceVolume());
+
+      if (from.HasAlarms())
+        this.GetAlarms().Copy(from.GetAlarms());
 
       if (from.fraction_inspired_gases != null)
       {
@@ -680,6 +688,17 @@ namespace Pulse.CDM
     public bool HasYPieceVolume()
     {
       return y_piece_volume == null ? false : y_piece_volume.IsValid();
+    }
+
+    public SEMechanicalVentilatorAlarms GetAlarms()
+    {
+      if (alarms == null)
+        alarms = new SEMechanicalVentilatorAlarms();
+      return alarms;
+    }
+    public bool HasAlarms()
+    {
+      return alarms == null ? false : true;
     }
 
     public SESubstanceFraction CreateFractionInspiredGas(string substance)

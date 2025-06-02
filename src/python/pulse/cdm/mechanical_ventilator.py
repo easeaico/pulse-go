@@ -6,9 +6,10 @@ from pulse.cdm.engine import eSwitch
 from pulse.cdm.equipment import SEEquipment
 from pulse.cdm.substance import SESubstanceFraction, \
                                 SESubstanceConcentration
-from pulse.cdm.scalars import SEScalarFrequency, SEScalarPressureTimePerVolume, SEScalarVolumePerTime, \
+from pulse.cdm.scalars import SEScalar0To1, SEScalarFrequency, SEScalarPressureTimePerVolume, SEScalarVolumePerTime, \
                               SEScalarPressure, SEScalarTime, SEScalarVolume, SEScalarVolumePerPressure, \
                               MassPerVolumeUnit
+
 
 class eDriverWaveform(Enum):
     NullDriverWaveform = 0
@@ -23,7 +24,253 @@ class eDriverWaveform(Enum):
     SigmoidalFall = 9
 
 
-class SEMechanicalVentilatorSettings(SEEquipment):
+class SEMechanicalVentilatorAlarms:
+    __slots__ = ["_apnea_time_threshold",
+                 "_auto_positive_end_expiratory_pressure_threshold",
+                 "_circuit_leak_threshold",
+                 "_high_end_tidal_carbon_dioxide_threshold",
+                 "_high_minute_ventilation_threshold",
+                 "_high_oxygen_saturation_threshold",
+                 "_high_positive_end_expiratory_pressure_threshold",
+                 "_high_pressure_cycle_option",
+                 "_high_pressure_threshold",
+                 "_high_respiratory_rate_threshold",
+                 "_high_tidal_volume_threshold",
+                 "_low_end_tidal_carbon_dioxide_threshold",
+                 "_low_minute_ventilation_threshold",
+                 "_low_oxygen_saturation_threshold",
+                 "_low_positive_end_expiratory_pressure_threshold",
+                 "_low_pressure_threshold",
+                 "_low_tidal_volume_threshold",
+                 "_oxygen_supply_failure_threshold"
+                ]
+
+    def __init__(self):
+        super().__init__()
+        self._apnea_time_threshold = None
+        self._auto_positive_end_expiratory_pressure_threshold = None
+        self._circuit_leak_threshold = None
+        self._high_end_tidal_carbon_dioxide_threshold = None
+        self._high_minute_ventilation_threshold = None
+        self._high_oxygen_saturation_threshold = None
+        self._high_positive_end_expiratory_pressure_threshold = None
+        self._high_pressure_cycle_option = eSwitch.NullSwitch
+        self._high_pressure_threshold = None
+        self._high_respiratory_rate_threshold = None
+        self._high_tidal_volume_threshold = None
+        self._low_end_tidal_carbon_dioxide_threshold = None
+        self._low_minute_ventilation_threshold = None
+        self._low_oxygen_saturation_threshold = None
+        self._low_positive_end_expiratory_pressure_threshold = None
+        self._low_pressure_threshold = None
+        self._low_tidal_volume_threshold = None
+        self._oxygen_supply_failure_threshold = None
+
+    def clear(self):
+        if self._apnea_time_threshold is not None:
+            self._apnea_time_threshold.invalidate()
+        if self._auto_positive_end_expiratory_pressure_threshold is not None:
+            self._auto_positive_end_expiratory_pressure_threshold.invalidate()
+        if self._circuit_leak_threshold is not None:
+            self._circuit_leak_threshold.invalidate()
+        if self._high_end_tidal_carbon_dioxide_threshold is not None:
+            self._high_end_tidal_carbon_dioxide_threshold.invalidate()
+        if self._high_minute_ventilation_threshold is not None:
+            self._high_minute_ventilation_threshold.invalidate()
+        if self._high_oxygen_saturation_threshold is not None:
+            self._high_oxygen_saturation_threshold.invalidate()
+        if self._high_positive_end_expiratory_pressure_threshold is not None:
+            self._high_positive_end_expiratory_pressure_threshold.invalidate()
+        self._high_pressure_cycle_option = eSwitch.NullSwitch
+        if self._high_pressure_threshold is not None:
+            self._high_pressure_threshold.invalidate()
+        if self._high_respiratory_rate_threshold is not None:
+            self._high_respiratory_rate_threshold.invalidate()
+        if self._high_tidal_volume_threshold is not None:
+            self._high_tidal_volume_threshold.invalidate()
+        if self._low_end_tidal_carbon_dioxide_threshold is not None:
+            self._low_end_tidal_carbon_dioxide_threshold.invalidate()
+        if self._low_minute_ventilation_threshold is not None:
+            self._low_minute_ventilation_threshold.invalidate()
+        if self._low_oxygen_saturation_threshold is not None:
+            self._low_oxygen_saturation_threshold.invalidate()
+        if self._low_positive_end_expiratory_pressure_threshold is not None:
+            self._low_positive_end_expiratory_pressure_threshold.invalidate()
+        if self._low_pressure_threshold is not None:
+            self._low_pressure_threshold.invalidate()
+        if self._low_tidal_volume_threshold is not None:
+            self._low_tidal_volume_threshold.invalidate()
+        if self._oxygen_supply_failure_threshold is not None:
+            self._oxygen_supply_failure_threshold.invalidate()
+
+    def copy(self, src):
+        if not isinstance(SEMechanicalVentilatorAlarms, src):
+            raise Exception("Provided argument must be a SEMechanicalVentilatorAlarms")
+        self.clear()
+        if src.has_apnea_time_threshold():
+            self.get_apnea_time_threshold().set(src._apnea_time_threshold)
+        if src.has_auto_positive_end_expiratory_pressure_threshold():
+            self.get_auto_positive_end_expiratory_pressure_threshold().set(src._auto_positive_end_expiratory_pressure_threshold)
+        if src.has_circuit_leak_threshold():
+            self.get_circuit_leak_threshold().set(src._circuit_leak_threshold)
+        if src.has_high_end_tidal_carbon_dioxide_threshold():
+            self.get_high_end_tidal_carbon_dioxide_threshold().set(src._high_end_tidal_carbon_dioxide_threshold)
+        if src.has_high_minute_ventilation_threshold():
+            self.get_high_minute_ventilation_threshold().set(src._high_minute_ventilation_threshold)
+        if src.has_high_oxygen_saturation_threshold():
+            self.get_high_oxygen_saturation_threshold().set(src._high_oxygen_saturation_threshold)
+        if src.has_high_positive_end_expiratory_pressure_threshold():
+            self.get_high_positive_end_expiratory_pressure_threshold().set(src._high_positive_end_expiratory_pressure_threshold)
+        if src.has_high_pressure_cycle_option():
+            self.get_high_pressure_cycle_option().set(src._high_pressure_cycle_option)
+        self._high_pressure_threshold = src._high_pressure_threshold
+        if src.has_high_respiratory_rate_threshold():
+            self.get_high_respiratory_rate_threshold().set(src._high_respiratory_rate_threshold)
+        if src.has_high_tidal_volume_threshold():
+            self.get_high_tidal_volume_threshold().set(src._high_tidal_volume_threshold)
+        if src.has_low_end_tidal_carbon_dioxide_threshold():
+            self.get_low_end_tidal_carbon_dioxide_threshold().set(src._low_end_tidal_carbon_dioxide_threshold)
+        if src.has_low_minute_ventilation_threshold():
+            self.get_low_minute_ventilation_threshold().set(src._low_minute_ventilation_threshold)
+        if src.has_low_oxygen_saturation_threshold():
+            self.get_low_oxygen_saturation_threshold().set(src._low_oxygen_saturation_threshold)
+        if src.has_low_positive_end_expiratory_pressure_threshold():
+            self.get_low_positive_end_expiratory_pressure_threshold().set(src._low_positive_end_expiratory_pressure_threshold)
+        if src.has_low_pressure_threshold():
+            self.get_low_pressure_threshold().set(src._low_pressure_threshold)
+        if src.has_low_tidal_volume_threshold():
+            self.get_low_tidal_volume_threshold().set(src._low_tidal_volume_threshold)
+        if src.has_oxygen_supply_failure_threshold():
+            self.get_oxygen_supply_failure_threshold().set(src._oxygen_supply_failure_threshold)
+
+    def has_apnea_time_threshold(self):
+        return False if self._apnea_time_threshold is None else self._apnea_time_threshold.is_valid()
+    def get_apnea_time_threshold(self):
+        if self._apnea_time_threshold is None:
+            self._apnea_time_threshold = SEScalarTime()
+        return self._apnea_time_threshold
+
+    def has_auto_positive_end_expiratory_pressure_threshold(self):
+        return False if self._auto_positive_end_expiratory_pressure_threshold is None else self._auto_positive_end_expiratory_pressure_threshold.is_valid()
+    def get_auto_positive_end_expiratory_pressure_threshold(self):
+        if self._auto_positive_end_expiratory_pressure_threshold is None:
+            self._auto_positive_end_expiratory_pressure_threshold = SEScalarPressure()
+        return self._auto_positive_end_expiratory_pressure_threshold
+
+    def has_circuit_leak_threshold(self):
+        return False if self._circuit_leak_threshold is None else self._circuit_leak_threshold.is_valid()
+    def get_circuit_leak_threshold(self):
+        if self._circuit_leak_threshold is None:
+            self._circuit_leak_threshold = SEScalar0To1()
+        return self._circuit_leak_threshold
+
+    def has_high_end_tidal_carbon_dioxide_threshold(self):
+        return False if self._high_end_tidal_carbon_dioxide_threshold is None else self._high_end_tidal_carbon_dioxide_threshold.is_valid()
+    def get_high_end_tidal_carbon_dioxide_threshold(self):
+        if self._high_end_tidal_carbon_dioxide_threshold is None:
+            self._high_end_tidal_carbon_dioxide_threshold = SEScalarPressure()
+        return self._high_end_tidal_carbon_dioxide_threshold
+
+    def has_high_minute_ventilation_threshold(self):
+        return False if self._high_minute_ventilation_threshold is None else self._high_minute_ventilation_threshold.is_valid()
+    def get_high_minute_ventilation_threshold(self):
+        if self._high_minute_ventilation_threshold is None:
+            self._high_minute_ventilation_threshold = SEScalarVolumePerTime()
+        return self._high_minute_ventilation_threshold
+
+    def has_high_oxygen_saturation_threshold(self):
+        return False if self._high_oxygen_saturation_threshold is None else self._high_oxygen_saturation_threshold.is_valid()
+    def get_high_oxygen_saturation_threshold(self):
+        if self._high_oxygen_saturation_threshold is None:
+            self._high_oxygen_saturation_threshold = SEScalar0To1()
+        return self._high_oxygen_saturation_threshold
+
+    def has_high_positive_end_expiratory_pressure_threshold(self):
+        return False if self._high_positive_end_expiratory_pressure_threshold is None else self._high_positive_end_expiratory_pressure_threshold.is_valid()
+    def get_high_positive_end_expiratory_pressure_threshold(self):
+        if self._high_positive_end_expiratory_pressure_threshold is None:
+            self._high_positive_end_expiratory_pressure_threshold = SEScalarPressure()
+        return self._high_positive_end_expiratory_pressure_threshold
+
+    def get_high_pressure_cycle_option(self):
+        return self._high_pressure_cycle_option
+    def set_high_pressure_cycle_option(self, t: eSwitch):
+        self._high_pressure_cycle_option = t
+    def has_high_pressure_threshold(self):
+        return self._high_pressure_cycle_option != eSwitch.NullSwitch
+
+    def has_high_pressure_threshold(self):
+        return False if self._high_pressure_threshold is None else self._high_pressure_threshold.is_valid()
+    def get_high_pressure_threshold(self):
+        if self._high_pressure_threshold is None:
+            self._high_pressure_threshold = SEScalarPressure()
+        return self._high_pressure_threshold
+
+    def has_high_respiratory_rate_threshold(self):
+        return False if self._high_respiratory_rate_threshold is None else self._high_respiratory_rate_threshold.is_valid()
+    def get_high_respiratory_rate_threshold(self):
+        if self._high_respiratory_rate_threshold is None:
+            self._high_respiratory_rate_threshold = SEScalarFrequency()
+        return self._high_respiratory_rate_threshold
+
+    def has_high_tidal_volume_threshold(self):
+        return False if self._high_tidal_volume_threshold is None else self._high_tidal_volume_threshold.is_valid()
+    def get_high_tidal_volume_threshold(self):
+        if self._high_tidal_volume_threshold is None:
+            self._high_tidal_volume_threshold = SEScalarVolume()
+        return self._high_tidal_volume_threshold
+
+    def has_low_end_tidal_carbon_dioxide_threshold(self):
+        return False if self._low_end_tidal_carbon_dioxide_threshold is None else self._low_end_tidal_carbon_dioxide_threshold.is_valid()
+    def get_low_end_tidal_carbon_dioxide_threshold(self):
+        if self._low_end_tidal_carbon_dioxide_threshold is None:
+            self._low_end_tidal_carbon_dioxide_threshold = SEScalarPressure()
+        return self._low_end_tidal_carbon_dioxide_threshold
+
+    def has_low_minute_ventilation_threshold(self):
+        return False if self._low_minute_ventilation_threshold is None else self._low_minute_ventilation_threshold.is_valid()
+    def get_low_minute_ventilation_threshold(self):
+        if self._low_minute_ventilation_threshold is None:
+            self._low_minute_ventilation_threshold = SEScalarVolumePerTime()
+        return self._low_minute_ventilation_threshold
+
+    def has_low_oxygen_saturation_threshold(self):
+        return False if self._low_oxygen_saturation_threshold is None else self._low_oxygen_saturation_threshold.is_valid()
+    def get_low_oxygen_saturation_threshold(self):
+        if self._low_oxygen_saturation_threshold is None:
+            self._low_oxygen_saturation_threshold = SEScalar0To1()
+        return self._low_oxygen_saturation_threshold
+
+    def has_low_positive_end_expiratory_pressure_threshold(self):
+        return False if self._low_positive_end_expiratory_pressure_threshold is None else self._low_positive_end_expiratory_pressure_threshold.is_valid()
+    def get_low_positive_end_expiratory_pressure_threshold(self):
+        if self._low_positive_end_expiratory_pressure_threshold is None:
+            self._low_positive_end_expiratory_pressure_threshold = SEScalarPressure()
+        return self._low_positive_end_expiratory_pressure_threshold
+
+    def has_low_pressure_threshold(self):
+        return False if self._low_pressure_threshold is None else self._low_pressure_threshold.is_valid()
+    def get_low_pressure_threshold(self):
+        if self._low_pressure_threshold is None:
+            self._low_pressure_threshold = SEScalarPressure()
+        return self._low_pressure_threshold
+
+    def has_low_tidal_volume_threshold(self):
+        return False if self._low_tidal_volume_threshold is None else self._low_tidal_volume_threshold.is_valid()
+    def get_low_tidal_volume_threshold(self):
+        if self._low_tidal_volume_threshold is None:
+            self._low_tidal_volume_threshold = SEScalarVolume()
+        return self._low_tidal_volume_threshold
+
+    def has_oxygen_supply_failure_threshold(self):
+        return False if self._oxygen_supply_failure_threshold is None else self._oxygen_supply_failure_threshold.is_valid()
+    def get_oxygen_supply_failure_threshold(self):
+        if self._oxygen_supply_failure_threshold is None:
+            self._oxygen_supply_failure_threshold = SEScalar0To1()
+        return self._oxygen_supply_failure_threshold
+
+
+class SEMechanicalVentilatorSettings:
     __slots__ = ["_connection",
                  "_connection_volume",
                  "_compliance",
@@ -69,6 +316,8 @@ class SEMechanicalVentilatorSettings(SEEquipment):
 
                  "_relief_valve_threshold",
                  "_y_piece_volume",
+
+                 "_alarms",
 
                  "_fraction_inspired_gasses",
                  "_concentration_inspired_aerosol"]
@@ -121,6 +370,8 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         self._relief_valve_threshold = None
         self._y_piece_volume = None
 
+        self._alarms = None
+
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
 
@@ -170,6 +421,8 @@ class SEMechanicalVentilatorSettings(SEEquipment):
 
         if self._relief_valve_threshold is not None: self._relief_valve_threshold.invalidate()
         if self._y_piece_volume is not None: self._y_piece_volume.invalidate()
+
+        if self._alarms is not None: self._alarms.clear()
 
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
@@ -223,6 +476,8 @@ class SEMechanicalVentilatorSettings(SEEquipment):
 
         if src.has_relief_valve_threshold(): self.get_relief_valve_threshold().set(src._relief_valve_threshold)
         if src.has_y_piece_volume(): self.get_y_piece_volume().set(src._y_piece_volume)
+
+        if src.has_alarms(): self.get_alarms().copy(src._alarms)
 
         if src.has_fraction_inspired_gasses:
             self._fraction_inspired_gasses.append(src._fraction_inspired_gasses[:])
@@ -469,6 +724,13 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         if self._inspiration_waveform_period is None:
             self._inspiration_waveform_period = SEScalarTime()
         return self._inspiration_waveform_period
+
+    def has_alarms(self):
+        return False if self._alarms is None else True
+    def get_alarms(self):
+        if self._alarms is None:
+            self._alarms = SEMechanicalVentilatorAlarms()
+        return self._alarms
         
     def has_fraction_inspired_gas(self, substance_name: str = None):
         if substance_name is None:

@@ -73,6 +73,8 @@ public class SEMechanicalVentilatorSettings
   protected SEScalarPressure                  reliefValveThreshold;
   protected SEScalarVolume                    yPieceVolume;
   
+  protected SEMechanicalVentilatorAlarms      alarms;
+  
   protected List<SESubstanceFraction>         fractionInspiredGases;
   protected List<SESubstanceConcentration>    concentrationInspiredAerosol;
 
@@ -124,6 +126,8 @@ public class SEMechanicalVentilatorSettings
 
     reliefValveThreshold = null;
     yPieceVolume = null;
+    
+    alarms = null;
 
     this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
     this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
@@ -207,6 +211,9 @@ public class SEMechanicalVentilatorSettings
       reliefValveThreshold.invalidate();
     if (yPieceVolume != null)
       yPieceVolume.invalidate();
+    
+    if (alarms != null)
+      alarms.clear();
     
     this.fractionInspiredGases.clear();
     this.concentrationInspiredAerosol.clear();
@@ -295,6 +302,9 @@ public class SEMechanicalVentilatorSettings
       this.getReliefValveThreshold().set(from.getReliefValveThreshold());
     if(from.hasYPieceVolume())
       this.getYPieceVolume().set(from.getYPieceVolume());
+    
+    if (from.hasAlarms())
+      this.getAlarms().copy(from.getAlarms());
     
     if(from.fractionInspiredGases!=null)
     {
@@ -402,6 +412,9 @@ public class SEMechanicalVentilatorSettings
     if (src.hasYPieceVolume())
       SEScalarVolume.load(src.getYPieceVolume(), dst.getYPieceVolume());
     
+    if (src.hasAlarms())
+      SEMechanicalVentilatorAlarms.load(src.getAlarms(), dst.getAlarms());
+    
     if(src.getFractionInspiredGasList()!=null)
     {
       for(SubstanceFractionData subData : src.getFractionInspiredGasList())
@@ -506,6 +519,9 @@ public class SEMechanicalVentilatorSettings
       dst.setReliefValveThreshold(SEScalarPressure.unload(src.getReliefValveThreshold()));
     if(src.hasYPieceVolume())
       dst.setYPieceVolume(SEScalarVolume.unload(src.getYPieceVolume()));
+    
+    if(src.hasAlarms())
+      dst.setAlarms(SEMechanicalVentilatorAlarms.unload(src.getAlarms()));
     
     for(SESubstanceFraction ambSub : src.fractionInspiredGases)
       dst.addFractionInspiredGas(SESubstanceFraction.unload(ambSub));
@@ -908,6 +924,17 @@ public class SEMechanicalVentilatorSettings
     return yPieceVolume == null ? false : yPieceVolume.isValid();
   }
   
+  public boolean hasAlarms()
+  {
+    return alarms != null;
+  }
+  public SEMechanicalVentilatorAlarms getAlarms()
+  {
+    if (alarms == null)
+      alarms = new SEMechanicalVentilatorAlarms();
+    return alarms;
+  }
+  
   //////////////////////////////
   // Fraction Of Inspired Gas //
   //////////////////////////////
@@ -1024,7 +1051,7 @@ public class SEMechanicalVentilatorSettings
   @Override
   public String toString()
   {
-    String str = "Mechanical Ventilator"
+    String str = "Mechanical Ventilator Settings"
         + "\n\tConnection: " + (hasConnection()?getConnection():"NotProvided")
         
         + "\n\tPositiveEndExpiratoryPressure: " + (hasPositiveEndExpiratoryPressure()?getPositiveEndExpiratoryPressure():"NotProvided")
@@ -1061,10 +1088,14 @@ public class SEMechanicalVentilatorSettings
         + "\n\tInspirationWaveform: " + (hasInspirationWaveform()?getInspirationWaveform():"NotProvided")
         + "\n\tInspirationWaveformPeriod: " + (hasInspirationWaveformPeriod()?getInspirationWaveformPeriod():"NotProvided");
     
+    if (hasAlarms())
+      str += "\n\t"+alarms.toString();
+    
     for(SESubstanceFraction sf : this.fractionInspiredGases)
       str += "\n\t"+sf.toString();
     for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)
     str += "\n\t"+sc.toString();
+    
     return str;
   }
 }

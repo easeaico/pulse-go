@@ -328,6 +328,9 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
   if (src.has_ypiecevolume())
     PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
 
+  if (src.has_alarms())
+    PBMechanicalVentilator::Load(src.alarms(), dst.GetAlarms());
+
   const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
   {
@@ -450,6 +453,9 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
   if (src.HasYPieceVolume())
     dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));
 
+  if (src.HasAlarms())
+    dst.set_allocated_alarms(PBMechanicalVentilator::Unload(*src.m_Alarms));
+
   for (SESubstanceFraction* sf : src.m_FractionInspiredGases)
     dst.mutable_fractioninspiredgas()->AddAllocated(PBSubstance::Unload(*sf));
 
@@ -493,4 +499,12 @@ bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMe
     return false;
   PBMechanicalVentilator::Load(data, dst, subMgr);
   return true;
+}
+
+void PBMechanicalVentilator::Copy(const SEMechanicalVentilatorAlarms& src, SEMechanicalVentilatorAlarms& dst)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorAlarmsData data;
+  PBMechanicalVentilator::Serialize(src, data);
+  PBMechanicalVentilator::Serialize(data, dst);
 }

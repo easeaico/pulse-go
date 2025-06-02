@@ -14,6 +14,8 @@ public:
   virtual ~SEMechanicalVentilatorAlarms();
 
   virtual void Clear();
+  virtual void Copy(const SEMechanicalVentilatorAlarms& src);
+  virtual void Merge(const SEMechanicalVentilatorAlarms& from);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
