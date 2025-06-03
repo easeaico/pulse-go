@@ -18,15 +18,9 @@ En Route Care Scenario 7 {#EnRouteCareScenario7}
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/EnRouteCare/Scenario7-vitals_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario7-vitals_monitor_1.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_1.jpg" width="825"></a></td>
-    <td><a href="./plots/EnRouteCare/Scenario7-ventilator_loops_1.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_loops_1.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/EnRouteCare/Scenario7-vitals_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario7-vitals_monitor_1.jpg" width="1100"></a>
+<br>
+<a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_1.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
@@ -42,15 +36,9 @@ En Route Care Scenario 7 {#EnRouteCareScenario7}
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/EnRouteCare/Scenario7-vitals_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario7-vitals_monitor_2.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_2.jpg" width="825"></a></td>
-    <td><a href="./plots/EnRouteCare/Scenario7-ventilator_loops_2.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_loops_2.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/EnRouteCare/Scenario7-vitals_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario7-vitals_monitor_2.jpg" width="1100"></a>
+<br>
+<a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_12.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
@@ -66,15 +54,9 @@ En Route Care Scenario 7 {#EnRouteCareScenario7}
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/EnRouteCare/Scenario7-vitals_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario7-vitals_monitor_3.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_3.jpg" width="825"></a></td>
-    <td><a href="./plots/EnRouteCare/Scenario7-ventilator_loops_3.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_loops_3.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/EnRouteCare/Scenario7-vitals_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario7-vitals_monitor_3.jpg" width="1100"></a>
+<br>
+<a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_3.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
