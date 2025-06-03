@@ -20,22 +20,101 @@
   "AnyAction":
   [
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-
+  
   { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
-
-  { "EquipmentAction": { "MechanicalVentilatorPressureControl": { "MechanicalVentilatorMode": 
+  
+  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": { "MechanicalVentilatorMode": 
     { "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {} } }, "Connection": "On",
-    "SupplementalSettings": { "Alarms" : { "LowPressureThreshold" : { "ScalarPressure": { "Value": 20, "Unit": "cmH2O" } } } } },
+    "SupplementalSettings": { "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 20, "Unit": "cmH2O" } },
+    "HighPressureCycleOption": "Off",
+    "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
+    "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
+    "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
+    "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
     "Mode": "AssistedControl", 
     "InspirationWaveform": "Square",
-    "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.26 } },
-    "InspiratoryPeriod": { "ScalarTime": { "Value": 1.3, "Unit": "s" } },
-    "InspiratoryPressure": { "ScalarPressure": { "Value": 14, "Unit": "cmH2O" } },
+    "Flow": { "ScalarVolumePerTime": { "Value": 23, "Unit": "L/min" } },
+    "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
+    "InspiratoryPeriod": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
     "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
-    "RespirationRate": { "ScalarFrequency": { "Value": 10, "Unit": "1/min" } }
+    "RespirationRate": { "ScalarFrequency": { "Value": 10, "Unit": "1/min" } },
+    "TidalVolume": { "ScalarVolume": { "Value": 567, "Unit": "mL" } },
+    "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -1.0, "Unit": "cmH2O" } }
     }}
   },
-
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } }
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "Dyspnea": {
+    "RespirationRateSeverity": { "Scalar0To1": { "Value": 1.0 } },
+    "TidalVolumeSeverity": { "Scalar0To1": { "Value": 1.0 } } } } },
+  
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
+    {
+      "Severity": [ 
+        { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+        { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.9 }}}]
+    }}
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": { "MechanicalVentilatorMode": 
+    { "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {} } }, "Connection": "On",
+    "SupplementalSettings": { "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 20, "Unit": "cmH2O" } },
+    "HighPressureCycleOption": "On",
+    "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
+    "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
+    "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
+    "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
+    "Mode": "AssistedControl", 
+    "InspirationWaveform": "Square",
+    "Flow": { "ScalarVolumePerTime": { "Value": 23, "Unit": "L/min" } },
+    "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
+    "InspiratoryPeriod": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
+    "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+    "RespirationRate": { "ScalarFrequency": { "Value": 10, "Unit": "1/min" } },
+    "TidalVolume": { "ScalarVolume": { "Value": 567, "Unit": "mL" } },
+    "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -1.0, "Unit": "cmH2O" } }
+    }}
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": { "MechanicalVentilatorMode": 
+    { "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {} } }, "Connection": "On",
+    "SupplementalSettings": { "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 50, "Unit": "cmH2O" } },
+    "HighPressureCycleOption": "On",
+    "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
+    "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
+    "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
+    "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
+    "Mode": "AssistedControl", 
+    "InspirationWaveform": "Square",
+    "Flow": { "ScalarVolumePerTime": { "Value": 23, "Unit": "L/min" } },
+    "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
+    "InspiratoryPeriod": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
+    "PositiveEndExpiratoryPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+    "RespirationRate": { "ScalarFrequency": { "Value": 10, "Unit": "1/min" } },
+    "TidalVolume": { "ScalarVolume": { "Value": 567, "Unit": "mL" } },
+    "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -1.0, "Unit": "cmH2O" } }
+    }}
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "Dyspnea": {
+    "RespirationRateSeverity": { "Scalar0To1": { "Value": 0.0 } },
+    "TidalVolumeSeverity": { "Scalar0To1": { "Value": 0.0 } } } } },
+  
+  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
+    {
+      "Severity": [ 
+        { "Compartment": "LeftLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}},
+        { "Compartment": "RightLung", "Severity": { "Scalar0To1": { "Value": 0.0 }}}]
+    }}
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } }
   ]
 }

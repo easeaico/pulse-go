@@ -622,6 +622,8 @@ namespace pulse
     {
       Fatal("No expiration cycle defined.");
     }
+
+    CheckCyclingAlarms();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -637,7 +639,6 @@ namespace pulse
     }
 
     CheckInspirationTriggers();
-    CheckCyclingAlarms();
 
     // Check limit
 
@@ -1449,7 +1450,7 @@ namespace pulse
         {
           m_data.GetEvents().SetEvent(eEvent::HighPressureAlarmTriggered, true, m_data.GetSimulationTime());
         }
-        CycleMode(true);
+        CycleMode(false);
         return;
       }
     }
@@ -1795,7 +1796,7 @@ namespace pulse
     if (GetSettings().GetAlarms().HasOxygenSupplyFailureThreshold())
     {
       double oxygenSupplyFailureThreshold = GetSettings().GetAlarms().GetOxygenSupplyFailureThreshold().GetValue();
-      double measuredFiO2 = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
+      double measuredFiO2 = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
       bool triggered = measuredFiO2 < oxygenSupplyFailureThreshold;
       if (triggered && !m_data.GetEvents().IsEventActive(eEvent::OxygenSupplyFailureAlarmTriggered))
       {
