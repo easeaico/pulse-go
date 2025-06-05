@@ -6,7 +6,7 @@ En Route Care Scenario 7 {#EnRouteCareScenario7}
 @htmlonly
 <a href="./Images/EnRouteCare/Placeholder.png"><img src="./Images/EnRouteCare/Placeholder.png" width="400"></a>
 <center>
-<i>@figuredef {Scenario2XRay}. Chest radiograph demonstrates with right middle lobe consolidation, flattened diaphragms and hyperinflation in the upper lobes bilaterally, but no signs of barotrauma.</i>
+<i>@figuredef {Scenario2XRay}. Chest radiograph demonstrates right middle lobe consolidation, flattened diaphragms and hyperinflation in the upper lobes bilaterally, but no signs of barotrauma.</i>
 </center><br>
 @endhtmlonly
 
@@ -38,7 +38,7 @@ En Route Care Scenario 7 {#EnRouteCareScenario7}
 <center>
 <a href="./plots/EnRouteCare/Scenario7-vitals_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario7-vitals_monitor_2.jpg" width="1100"></a>
 <br>
-<a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_12.jpg" width="1100"></a>
+<a href="./plots/EnRouteCare/Scenario7-ventilator_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario7-ventilator_monitor_2.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
@@ -88,7 +88,7 @@ En Route Care Scenario 7 {#EnRouteCareScenario7}
     <td><a href="./plots/EnRouteCare/Scenario7_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/EnRouteCare/Scenario7_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/EnRouteCare/Scenario7_ShuntFraction.jpg"><img src="./plots/EnRouteCare/Scenario7_ClinicalShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/EnRouteCare/Scenario7_ClinicalShuntFraction.jpg"><img src="./plots/EnRouteCare/Scenario7_ClinicalShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/EnRouteCare/Scenario7_AlveolarDeadSpace.jpg"><img src="./plots/EnRouteCare/Scenario7_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>

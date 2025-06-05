@@ -16,7 +16,7 @@
 </center>
 @endhtmlonly
 <center>
-<i>@figuredef {Recruitmentegment1Monitors}. Vitals and ventilator monitors for Segment 1.</i>
+<i>@figuredef {RecruitmentSegment1Monitors}. Vitals and ventilator monitors for Segment 1.</i>
 </center><br>
 
 @insert ./validation/tables/MechanicalVentilator/Recruitment/Segment1SegmentTable.md

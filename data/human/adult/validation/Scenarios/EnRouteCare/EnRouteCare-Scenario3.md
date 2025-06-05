@@ -106,7 +106,7 @@ En Route Care Scenario 3 {#EnRouteCareScenario3}
     <td><a href="./plots/EnRouteCare/Scenario3_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/EnRouteCare/Scenario3_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/EnRouteCare/Scenario3_ShuntFraction.jpg"><img src="./plots/EnRouteCare/Scenario3_ClinicalShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/EnRouteCare/Scenario3_ClinicalShuntFraction.jpg"><img src="./plots/EnRouteCare/Scenario3_ClinicalShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/EnRouteCare/Scenario3_AlveolarDeadSpace.jpg"><img src="./plots/EnRouteCare/Scenario3_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>
