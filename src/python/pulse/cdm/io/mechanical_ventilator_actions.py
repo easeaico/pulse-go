@@ -36,6 +36,7 @@ def serialize_mechanical_ventilator_action_from_bind(src: MechanicalVentilatorAc
 
 def serialize_mechanical_ventilator_configuration_to_bind(src: SEMechanicalVentilatorConfiguration, dst: MechanicalVentilatorConfigurationData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
+    dst.MergeType = src.get_merge_type().value
     if src.has_settings_file():
         dst.SettingsFile = src.get_settings_file()
     elif src.has_settings():
@@ -48,7 +49,10 @@ def serialize_mechanical_ventilator_configuration_from_bind(src: MechanicalVenti
 def serialize_mechanical_ventilator_mode_to_bind(src: SEMechanicalVentilatorMode, dst: MechanicalVentilatorModeData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
     dst.Connection = src.get_connection().value
-    if src.has_supplemental_settings():
+    dst.MergeType = src.get_merge_type().value
+    if src.has_supplemental_settings_file():
+        dst.SupplementalSettingsFile = src.get_supplemental_settings_file()
+    elif src.has_supplemental_settings():
         serialize_mechanical_ventilator_settings_to_bind(src.get_supplemental_settings(), dst.SupplementalSettings)
 
 def serialize_mechanical_ventilator_mode_from_bind(src: MechanicalVentilatorModeData, dst: SEMechanicalVentilatorMode):

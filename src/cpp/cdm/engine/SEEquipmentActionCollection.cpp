@@ -161,17 +161,26 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorContinuousPositiveAirwayPressure* cpap = dynamic_cast<const SEMechanicalVentilatorContinuousPositiveAirwayPressure*>(&action);
     if (cpap != nullptr)
     {
+      bool existingCPAP = HasMechanicalVentilatorContinuousPositiveAirwayPressure();
       GetMechanicalVentilatorContinuousPositiveAirwayPressure().Copy(*cpap, m_SubMgr, true);
       m_MechanicalVentilatorContinuousPositiveAirwayPressure->Activate();
       if (!m_MechanicalVentilatorContinuousPositiveAirwayPressure->IsActive())
         RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+      else
       {
-        RemoveMechanicalVentilatorPressureControl();
-        RemoveMechanicalVentilatorVolumeControl();
+        eMergeType mt = cpap->GetMergeType();
+        if (!existingCPAP)
+        {
+          // You can only merge::append if you are in the same mode
+          if (mt == eMergeType::Append)
+            Warning("Can only Append a mode to the same mode. Replacing all existing settings.");
+          mt = eMergeType::Replace;
+          RemoveMechanicalVentilatorVolumeControl();
+          RemoveMechanicalVentilatorPressureControl();
+        }
         // Convert to a SEMechanicalVentilatorConfiguration
-        GetMechanicalVentilatorConfiguration().Clear();
-        GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        if (!GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        GetMechanicalVentilatorConfiguration().SetMergeType(mt);
+        if (!GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr, mt))
         {
           RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
           GetMechanicalVentilatorConfiguration().Clear();
@@ -186,17 +195,26 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorPressureControl* pc = dynamic_cast<const SEMechanicalVentilatorPressureControl*>(&action);
     if (pc != nullptr)
     {
+      bool existingPC = HasMechanicalVentilatorPressureControl();
       GetMechanicalVentilatorPressureControl().Copy(*pc, m_SubMgr, true);
       m_MechanicalVentilatorPressureControl->Activate();
       if (!m_MechanicalVentilatorPressureControl->IsActive())
         RemoveMechanicalVentilatorPressureControl();
+      else
       {
-        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
-        RemoveMechanicalVentilatorVolumeControl();
+        eMergeType mt = pc->GetMergeType();
+        if (!existingPC)
+        {
+          // You can only merge::append if you are in the same mode
+          if (mt == eMergeType::Append)
+            Warning("Can only Append a mode to the same mode. Replacing all existing settings.");
+          mt = eMergeType::Replace;
+          RemoveMechanicalVentilatorVolumeControl();
+          RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+        }
         // Convert to a SEMechanicalVentilatorConfiguration
-        GetMechanicalVentilatorConfiguration().Clear();
-        GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        if (!GetMechanicalVentilatorPressureControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        GetMechanicalVentilatorConfiguration().SetMergeType(mt);
+        if (!GetMechanicalVentilatorPressureControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr, mt))
         {
           RemoveMechanicalVentilatorPressureControl();
           GetMechanicalVentilatorConfiguration().Clear();
@@ -211,17 +229,26 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorVolumeControl* vc = dynamic_cast<const SEMechanicalVentilatorVolumeControl*>(&action);
     if (vc != nullptr)
     {
+      bool existingVC = HasMechanicalVentilatorPressureControl();
       GetMechanicalVentilatorVolumeControl().Copy(*vc, m_SubMgr, true);
       m_MechanicalVentilatorVolumeControl->Activate();
       if (!m_MechanicalVentilatorVolumeControl->IsActive())
         RemoveMechanicalVentilatorVolumeControl();
+      else
       {
-        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
-        RemoveMechanicalVentilatorPressureControl();
+        eMergeType mt = vc->GetMergeType();
+        if (!existingVC)
+        {
+          // You can only merge::append if you are in the same mode
+          if (mt == eMergeType::Append)
+            Warning("Can only Append a mode to the same mode. Replacing all existing settings.");
+          mt = eMergeType::Replace;
+          RemoveMechanicalVentilatorPressureControl();
+          RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+        }
         // Convert to a SEMechanicalVentilatorConfiguration
-        GetMechanicalVentilatorConfiguration().Clear();
-        GetMechanicalVentilatorConfiguration().SetMergeType(eMergeType::Replace);
-        if (!GetMechanicalVentilatorVolumeControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr))
+        GetMechanicalVentilatorConfiguration().SetMergeType(mt);
+        if (!GetMechanicalVentilatorVolumeControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr, mt))
         {
           RemoveMechanicalVentilatorVolumeControl();
           GetMechanicalVentilatorConfiguration().Clear();

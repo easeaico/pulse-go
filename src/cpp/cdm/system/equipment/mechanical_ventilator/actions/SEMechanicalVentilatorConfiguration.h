@@ -38,7 +38,7 @@ public:
 
 protected:
 
-  std::string                       m_SettingsFile;
   SEMechanicalVentilatorSettings*   m_Settings;
+  std::string                       m_SettingsFile;
   eMergeType                        m_MergeType;
 };

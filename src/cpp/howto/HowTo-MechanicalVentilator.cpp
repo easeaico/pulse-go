@@ -6,9 +6,11 @@
 #include "PulseEngine.h"
 
 // Include the various types you will be using in your code
+#include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEquipmentActionCollection.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/substance/SESubstance.h"
@@ -184,26 +186,19 @@ void HowToMechanicalVentilator()
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues();
 
-
-  // Expose all ventilator configuration settings from the higher-level modes
-  SEMechanicalVentilatorConfiguration vc_ac_config;
-  SEMechanicalVentilatorSettings& vc_ac_mv = vc_ac_config.GetSettings();
-  vc_ac.ToSettings(vc_ac_mv, pe->GetSubstanceManager());
-
   // Now add an aerosol
   const SESubstance* Albuterol = pe->GetSubstanceManager().GetSubstance("Albuterol");
-  SESubstanceConcentration& concentrationAlbuterol = vc_ac_mv.GetConcentrationInspiredAerosol(*Albuterol);
+  SESubstanceConcentration& concentrationAlbuterol = vc_ac.GetSupplementalSettings().GetConcentrationInspiredAerosol(*Albuterol);
   concentrationAlbuterol.GetConcentration().SetValue(1.0, MassPerVolumeUnit::mg_Per_L);
 
   // Now add a gas
   const SESubstance* Desflurane = pe->GetSubstanceManager().GetSubstance("Desflurane");
-  SESubstanceFraction& fractionDesflurane = vc_ac_mv.GetFractionInspiredGas(*Desflurane);
+  SESubstanceFraction& fractionDesflurane = vc_ac.GetSupplementalSettings().GetFractionInspiredGas(*Desflurane);
   fractionDesflurane.GetFractionAmount().SetValue(0.06);
 
-  pe->ProcessAction(vc_ac_config);
+  pe->ProcessAction(vc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues();
-
 
   // Here is an example of programming a custom ventilator mode
   SEMechanicalVentilatorConfiguration mv_config;

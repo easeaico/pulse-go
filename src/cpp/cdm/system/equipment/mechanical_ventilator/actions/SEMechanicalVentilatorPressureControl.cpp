@@ -57,9 +57,9 @@ void SEMechanicalVentilatorPressureControl::Copy(const SEMechanicalVentilatorPre
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
-bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
+bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSettings& s, SESubstanceManager& subMgr, eMergeType mt)
 {
-  if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr))
+  if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr, mt))
     return false;
   if (SEMechanicalVentilatorMode::IsActive())
   {

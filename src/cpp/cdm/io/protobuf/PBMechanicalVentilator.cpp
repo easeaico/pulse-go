@@ -83,6 +83,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   if (src.has_settings())
     PBMechanicalVentilator::Load(src.settings(), dst.GetSettings(), subMgr);
 }
+
 CDM_BIND::MechanicalVentilatorData* PBMechanicalVentilator::Unload(const SEMechanicalVentilator& src)
 {
   CDM_BIND::MechanicalVentilatorData* dst = new CDM_BIND::MechanicalVentilatorData();
@@ -151,13 +152,11 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.set_allocated_settings(PBMechanicalVentilator::Unload(*src.m_Settings));
 }
 
-// NEW: Add alarms serialization functions
 void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorAlarmsData& src, SEMechanicalVentilatorAlarms& dst)
 {
   dst.Clear();
   PBMechanicalVentilator::Serialize(src, dst);
 }
-
 void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorAlarmsData& src, SEMechanicalVentilatorAlarms& dst)
 {
   if (src.has_apneatimethreshold())
@@ -203,7 +202,6 @@ CDM_BIND::MechanicalVentilatorAlarmsData* PBMechanicalVentilator::Unload(const S
   PBMechanicalVentilator::Serialize(src, *dst);
   return dst;
 }
-
 void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorAlarms& src, CDM_BIND::MechanicalVentilatorAlarmsData& dst)
 {
   if (src.HasApneaTimeThreshold())

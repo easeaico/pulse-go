@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+from pulse.cdm.engine import eMergeType
 from pulse.cdm.equipment_actions import SEEquipmentAction
 from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorSettings, \
                                             eSwitch, eDriverWaveform
@@ -16,15 +17,18 @@ class SEMechanicalVentilatorAction(SEEquipmentAction):
 
 
 class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
-    __slots__ = ["_settings_file",
-                 "_settings"]
+    __slots__ = ["_merge_type",
+                 "_settings",
+                 "_settings_file"]
 
     def __init__(self):
         super().__init__()
+        self._merge_type = eMergeType.Append
         self._settings_file = None
         self._settings = None
 
     def clear(self):
+        self._merge_type = eMergeType.Append
         self._settings_file = None
         if self._settings is not None:
             self._settings.invalidate()
@@ -33,8 +37,11 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
         if not isinstance(SEMechanicalVentilatorConfiguration, src):
             raise Exception("Provided argument must be a SEMechanicalVentilatorConfiguration")
         self.clear()
-        self._settings_file = src._settings_file
-        self._settings.copy(src._settings)
+        self._merge_type = src.get_merge_type()
+        if src.has_settings_file():
+            self._settings_file = src.get_settings_file()
+        elif src.has_settings():
+            self._settings.copy(src.get_settings())
 
     def is_valid(self):
         return self.has_settings() or self.has_settings_file()
@@ -42,12 +49,10 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
     def is_active(self):
         return True
 
-    def has_settings_file(self):
-        return self._settings_file is not None
-    def get_settings_file(self):
-        return self._settings_file
-    def set_settings_file(self, filename: str):
-        self._settings_file = filename
+    def get_merge_type(self):
+        return self._merge_type
+    def set_merge_type(self, mt: eMergeType):
+        self._merge_type = mt
 
     def has_settings(self):
         return self._settings is not None
@@ -56,27 +61,45 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
             self._settings = SEMechanicalVentilatorSettings()
         return self._settings
 
+    def has_settings_file(self):
+        return self._settings_file is not None
+    def get_settings_file(self):
+        return self._settings_file
+    def set_settings_file(self, filename: str):
+        self._settings_file = filename
+
+
 class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
     __slots__ = ["_connection",
-                 "_supplemental_settings"]
+                 "_merge_type",
+                 "_supplemental_settings",
+                 "_supplemental_settings_file"]
 
     def __init__(self):
         super().__init__()
+        self._merge_type = eMergeType.Replace
         self._connection = eSwitch.NullSwitch
         self._supplemental_settings = None
+        self._supplemental_settings_file = None
 
     def clear(self):
         self._connection = eSwitch.NullSwitch
+        self._merge_type = eMergeType.Replace
         if self._supplemental_settings is not None:
             self._supplemental_settings.invalidate()
+        self._supplemental_settings_file = None
 
     def copy(self, src):
         if not isinstance(SEMechanicalVentilatorMode, src):
             raise Exception("Provided argument must be a SEMechanicalVentilatorMode")
         self.clear()
         super().copy(src)
-        self._connection = src._connection
-        self._supplemental_settings.copy(src._supplemental_settings)
+        self._connection = src.get_connection()
+        self._merge_type = src.get_merge_type()
+        if src.has_supplemental_settings_file():
+            self._supplemental_settings_file = src.get_supplemental_settings_file()
+        elif src.has_supplemental_settings():
+            self._supplemental_settings.copy(src.get_supplemental_settings())
 
     def is_valid(self):
         return self.has_connection()
@@ -91,12 +114,24 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
     def set_connection(self, src : eSwitch):
         self._connection = src
 
+    def get_merge_type(self):
+        return self._merge_type
+    def set_merge_type(self, mt: eMergeType):
+        self._merge_type = mt
+
     def has_supplemental_settings(self):
         return self._supplemental_settings is not None
     def get_supplemental_settings(self):
         if self._supplemental_settings is None:
             self._supplemental_settings = SEMechanicalVentilatorSettings()
         return self._supplemental_settings
+
+    def has_supplemental_settings_file(self):
+        return self._supplemental_settings_file is not None
+    def get_supplemental_settings_file(self):
+        return self._supplemental_settings_file
+    def set_supplemental_settings_file(self, filename: str):
+        self._supplemental_settings_file = filename
 
     def __repr__(self):
         return "Mechanical Ventilator Mode" + "\n\tConnection: " + str(self._connection)

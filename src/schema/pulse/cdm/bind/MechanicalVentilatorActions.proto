@@ -17,13 +17,13 @@ message MechanicalVentilatorActionData
 /** @brief The configuration of the mechanical ventilator to use. */
 message MechanicalVentilatorConfigurationData
 {
- MechanicalVentilatorActionData                MechanicalVentilatorAction                = 1;
+  MechanicalVentilatorActionData               MechanicalVentilatorAction                = 1;
   oneof Option
   {
     MechanicalVentilatorSettingsData           Settings                                  = 2; /**<< @brief A settings object with properties to set in the system object. */
     string                                     SettingsFile                              = 3; /**<< @brief File containing a settings object with properties to set in the system object. */
   }
-  eMergeType                                   MergeType                                 = 4; /**<< @brief How to apply provided configuration to internal data model. */
+  eMergeType                                   MergeType                                 = 4; /**<< @brief How to apply provided properties to internal data model. */
 }
 
 message MechanicalVentilatorHoldData
@@ -45,7 +45,12 @@ message MechanicalVentilatorModeData
   MechanicalVentilatorActionData               MechanicalVentilatorAction                = 1;
   
   eSwitch                                      Connection                                = 2; /**<< @brief @ref eSwitchTable */
-  MechanicalVentilatorSettingsData             SupplementalSettings                      = 3; /**<< @brief Additional settings to apply with the mode (ex. Drugs). */
+  oneof Option
+  {
+    MechanicalVentilatorSettingsData           SupplementalSettings                      = 3; /**<< @brief Additional settings to apply with the mode (ex. Drugs). */
+    string                                     SupplementalSettingsFile                  = 4; /**<< @brief File containing a settings object with properties to set in the system object. */
+  }
+  eMergeType                                   MergeType                                 = 5; /**<< @brief How to apply provided properties to internal data model. */
 }
 
 message MechanicalVentilatorContinuousPositiveAirwayPressureData

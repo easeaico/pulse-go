@@ -24,10 +24,11 @@ class eSerializationFormat(Enum):
     TEXT = 3
 
 
-class eSide(Enum):
-    NullSide = 0
-    Left = 1
-    Right = 2
+class eCharge(Enum):
+    NullCharge = 0
+    Negative = 1
+    Neutral = 2
+    Positive = 3
 
 
 class eGate(Enum):
@@ -36,17 +37,21 @@ class eGate(Enum):
     Closed = 2
 
 
+class eMergeType(Enum):
+    Append = 0
+    Replace = 1
+
+
+class eSide(Enum):
+    NullSide = 0
+    Left = 1
+    Right = 2
+
+
 class eSwitch(Enum):
     NullSwitch = 0
     Off = 1
     On = 2
-
-
-class eCharge(Enum):
-    NullCharge = 0
-    Negative = 1
-    Neutral = 2
-    Positive = 3
 
 
 class eEvent(Enum):
