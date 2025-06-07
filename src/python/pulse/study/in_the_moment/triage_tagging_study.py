@@ -2,29 +2,41 @@
 # See accompanying NOTICE file for details.
 
 import argparse
-import json
 import logging
-import numpy as np
 
+from enum import Enum
 from pathlib import Path
-from typing import List, TypeVar
+from typing import List
 
-from pulse.cdm.engine import SEAction, SEAdvanceTime, SEDataRequest, SESerializeState, eGate, eSide, eSwitch
+from army_dataset import injuries_to_actions as army_injuries_to_actions
+from army_dataset import generate_dataset as generate_army_dataset
+
+from pulse.cdm.engine import SEAdvanceTime, SEDataRequest, SESerializeState, eSwitch
 from pulse.cdm.patient import eSex
-from pulse.cdm.patient_actions import (SEAcuteRespiratoryDistressSyndromeExacerbation,
-                                       SEAcuteStress, SEAirwayObstruction,
-                                       SEBrainInjury, eBrainInjuryType,
-                                       SEHemorrhage, eHemorrhage_Compartment,
-                                       SEHemothorax, eLungCompartment, SETensionPneumothorax)
 from pulse.cdm.scenario import SEScenario, SEScenarioExecStatus
-from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
+from pulse.cdm.scalars import FrequencyUnit, LengthUnit, PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 from pulse.cdm.io.scenario import serialize_scenario_to_file, \
                                   serialize_scenario_exec_status_list_to_file, \
                                   serialize_scenario_exec_status_list_from_file
-
+from pulse.engine.PulseEngineResults import PulseLog, PulseEngineReprocessor
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
 
 _log = logging.getLogger("pulse")
+
+
+class AVPU(str, Enum):
+    Alert = "Alert"
+    Voice = "Voice"
+    Pain = "Pain"
+    Unresponsive = "Unresponsive"
+
+
+class TriageTag(str, Enum):
+    Black = "Black"
+    Red = "Red"
+    Yellow = "Yellow"
+    Green = "Green"
+
 
 _data_requests = [
     SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
@@ -40,279 +52,7 @@ _data_requests = [
 ]
 
 
-def injuries_to_actions(injuries: list) -> List[SEAction]:
-    actions: List[SEAction] = []
-
-    def to_pulse_severity(value: float,
-                          min_input: float = 1.0, max_input: float = 5.0,
-                          min_output: float = 0.0, max_output: float = 1.0) -> float:
-        return (value - min_input) / (max_input - min_input) * (max_output - min_output) + min_output
-
-    def get_action(action_class) -> any:
-        for a in actions:
-            if isinstance(a, action_class):
-                return a
-        actions.append(action_class())
-        return actions[-1]
-
-    # Collapse injuries to a dict:
-    #  location -> type -> [severities]
-    # This will make supporting polytraumas easier
-    injury_dict = {}
-    for i in injuries:
-        if i["location"] not in injury_dict:
-            injury_dict[i["location"]] = {}
-        locations = injury_dict[i["location"]]
-        if i["type"] not in locations:
-            locations[i["type"]] = []
-        locations[i["type"]].append(i["severity"])
-
-    # Note, this is written with the assumption all injuries in list are at the same location
-
-    for location, types in injury_dict.items():
-        for t, severities in types.items():
-            num = len(severities)
-
-            if location == "head_and_neck":
-                if num > 1:
-                    _log.error(f"Multiple {t} injuries on the {location}, is currently unsupported")
-                    exit(1)
-
-                if t == "tbi":
-                    tbi = SEBrainInjury()
-                    tbi.get_severity().set_value(to_pulse_severity(severities[0]))
-                    tbi_type = np.random.randint(0, 2)
-                    if tbi_type == 0:
-                        tbi.set_injury_type(eBrainInjuryType.Diffuse)
-                    elif tbi_type == 1:
-                        tbi.set_injury_type(eBrainInjuryType.LeftFocal)
-                    elif tbi_type == 2:
-                        tbi.set_injury_type(eBrainInjuryType.RightFocal)
-                    actions.append(tbi)
-                    continue
-
-                elif t == "airway_obstruction":
-                    obs = SEAirwayObstruction()
-                    obs.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(obs)
-                    continue
-
-                elif t == "superficial":
-                    stress = SEAcuteStress()
-                    stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                      min_output=0.2,
-                                                                      max_output=0.4))
-                    actions.append(stress)
-
-                    skin = SEHemorrhage()
-                    skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                    skin.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(skin)
-                    continue
-
-            if location == "thorax":
-                if num > 2:
-                    _log.error(f"More than 2 {t} injuries on the {location}, is currently unsupported")
-                    exit(1)
-
-                if t == "pneumothorax":
-                    if num == 1:
-                        pneumo = SETensionPneumothorax()
-                        side = np.random.randint(0, 1)
-                        if side == 0:
-                            pneumo.set_side(eSide.Left)
-                        elif side == 1:
-                            pneumo.set_side(eSide.Right)
-                        gate = np.random.randint(0, 1)
-                        if gate == 0:
-                            pneumo.set_type(eGate.Open)
-                        elif gate == 1:
-                            pneumo.set_type(eGate.Closed)
-                        pneumo.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(pneumo)
-                        continue
-                    elif num == 2:
-                        left = SETensionPneumothorax()
-                        left.set_side(eSide.Left)
-                        gate = np.random.randint(0, 1)
-                        if gate == 0:
-                            left.set_type(eGate.Open)
-                        elif gate == 1:
-                            left.set_type(eGate.Closed)
-                        left.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(left)
-
-                        right = SETensionPneumothorax()
-                        right.set_side(eSide.Right)
-                        gate = np.random.randint(0, 1)
-                        if gate == 0:
-                            right.set_type(eGate.Open)
-                        elif gate == 1:
-                            right.set_type(eGate.Closed)
-                        right.get_severity().set_value(to_pulse_severity(severities[1]))
-                        actions.append(right)
-                        continue
-
-                if t == "pulmonary_contusion":
-                    if num == 1:
-                        ards = SEAcuteRespiratoryDistressSyndromeExacerbation()
-                        cmpt = np.random.randint(0, 1)
-                        if cmpt == 0:
-                            ards.get_severity(eLungCompartment.LeftLung).set_value(to_pulse_severity(severities[0]))
-                        elif cmpt == 1:
-                            ards.get_severity(eLungCompartment.RightLung).set_value(to_pulse_severity(severities[0]))
-                        actions.append(ards)
-                        continue
-                    elif num == 2:
-                        left = SEAcuteRespiratoryDistressSyndromeExacerbation()
-                        left.get_severity(eLungCompartment.LeftLung).set_value(to_pulse_severity(severities[0]))
-                        actions.append(left)
-
-                        right = SEAcuteRespiratoryDistressSyndromeExacerbation()
-                        right.get_severity(eLungCompartment.RightLung).set_value(to_pulse_severity(severities[1]))
-                        actions.append(right)
-                        continue
-
-                if t == "hemothorax":
-                    if num == 1:
-                        hemo = SEHemothorax()
-                        side = np.random.randint(0, 1)
-                        if side == 0:
-                            hemo.set_side(eSide.Left)
-                        elif side == 1:
-                            hemo.set_side(eSide.Right)
-                        hemo.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(hemo)
-                        continue
-                    elif num == 2:
-                        left = SEHemothorax()
-                        left.set_side(eSide.Left)
-                        left.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(left)
-
-                        right = SEHemothorax()
-                        right.set_side(eSide.Right)
-                        right.get_severity().set_value(to_pulse_severity(severities[1]))
-                        actions.append(right)
-                        continue
-
-                if t == "hemorrhage":
-                    severity = severities[0]
-                    if num == 2:
-                        # Average the severities
-                        severity += severities[1]
-                        severity /= 2
-                    skin = SEHemorrhage()
-                    skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                    skin.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(skin)
-
-                    muscle = SEHemorrhage()
-                    muscle.set_compartment(eHemorrhage_Compartment.Muscle.value)
-                    muscle.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(muscle)
-                    continue
-
-                if t == "fracture" or t == "spinal":
-                    # Going to keep adding stress severities and cap at 1
-                    # Create/Grab a stress action
-                    stress = get_action(SEAcuteStress)
-                    severity = 0
-                    if stress.has_severity():
-                        severity = stress.get_severity().get_value()
-                    for s in severities:
-                        severity += to_pulse_severity(s,
-                                                      min_output=0.2,
-                                                      max_output=0.7)
-                    if severity > 1.0:
-                        severity = 1.0
-                    stress.get_severity().set_value(severity)
-                    continue
-
-            if location == "abdomen":
-                if num > 1:
-                    _log.error(f"Multiple {t} injuries on the {location}, is currently unsupported")
-                    exit(1)
-
-                if t == "hemorrhage":
-                    skin = SEHemorrhage()
-                    skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                    skin.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(skin)
-
-                    muscle = SEHemorrhage()
-                    muscle.set_compartment(eHemorrhage_Compartment.Muscle.value)
-                    muscle.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(muscle)
-                    continue
-
-                if t == "laceration_contusion":
-                    stress = SEAcuteStress()
-                    stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                      min_output=0.2,
-                                                                      max_output=0.4))
-                    actions.append(stress)
-
-                    skin = SEHemorrhage()
-                    skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                    skin.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(skin)
-
-                    muscle = SEHemorrhage()
-                    muscle.set_compartment(eHemorrhage_Compartment.Muscle.value)
-                    muscle.get_severity().set_value(to_pulse_severity(severities[0]))
-                    actions.append(muscle)
-                    continue
-
-            if location == "extremity":
-                if num > 1:
-                    _log.error(f"Multiple {t} injuries on the {location}, is currently unsupported")
-                    exit(1)
-
-                if t == "hemorrhage":
-                    hemorrhage = SEHemorrhage()
-                    cmpt = np.random.randint(0, 3)
-                    if cmpt == 0:
-                        hemorrhage.set_compartment(eHemorrhage_Compartment.LeftArm.value)
-                    elif cmpt == 1:
-                        hemorrhage.set_compartment(eHemorrhage_Compartment.LeftLeg.value)
-                    elif cmpt == 2:
-                        hemorrhage.set_compartment(eHemorrhage_Compartment.RightArm.value)
-                    elif cmpt == 3:
-                        hemorrhage.set_compartment(eHemorrhage_Compartment.RightLeg.value)
-                    hemorrhage.get_severity().set_value(to_pulse_severity(severities[0]))
-                    continue
-
-                if t == "fracture_dislocation":
-                    stress = SEAcuteStress()
-                    stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                      min_output=0.2,
-                                                                      max_output=0.7))
-                    actions.append(stress)
-                    continue
-
-                if t == "contusion_sprain_strain":
-                    stress = SEAcuteStress()
-                    stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                      min_output=0.2,
-                                                                      max_output=0.7))
-                    actions.append(stress)
-                    continue
-
-                if t == "burn_nerve":
-                    stress = SEAcuteStress()
-                    stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                      min_output=0.2,
-                                                                      max_output=0.7))
-                    actions.append(stress)
-                    continue
-
-            _log.error(f"Unsupported injury: {location} {t}")
-
-    return actions
-
-
-def generate_initial_injury_states(synthetic_patients: list, output_dir: Path):
+def generate_initial_injury_states(synthetic_patients: list, minimum_injury_time_min: float, output_dir: Path):
     executor = PulseScenarioExec()
     injury_scenarios: List[SEScenarioExecStatus] = []
 
@@ -327,32 +67,38 @@ def generate_initial_injury_states(synthetic_patients: list, output_dir: Path):
     injury_exec_status_filename = output_dir / "injured/exec_status.json"
 
     # Scenarios will not be rerun if they are marked as complete in this json file
-    # You will need to delete this file if you want to rerun this file (set of scenarios)
+    # You will need to delete the exec_status.json file if you want to rerun scenarios already run
+    # You could also edit exec_status to rerun particular scenarios
     if not injury_exec_status_filename.exists():
-        for i, sp in enumerate(synthetic_patients):  # Just create a single patient, but loop more if you want more
+        for i, sp in enumerate(synthetic_patients):
             s = SEScenario()
             s.set_name(f"Patient_{i}")  # Result csv/log file will use this as its filename
             s.set_description("")
-            p = s.get_patient_configuration().get_patient()
-            p.set_sex(eSex.Male if sp["sex"] == "male" else eSex.Female)
-            p.set_name(f"Patient_{i}")
-            p.get_age().set_value(sp["age"], TimeUnit.yr)
-            p.get_height().set_value(sp["height"], LengthUnit.cm)
-            p.get_body_mass_index().set_value(sp["bmi"])
-            p.get_heart_rate_baseline().set_value(sp["heart_rate"], FrequencyUnit.Per_min)
+            if "state" in sp:
+                s.set_engine_state(sp["state"])
+            else:
+                p = s.get_patient_configuration().get_patient()
+                p.set_sex(eSex.Male if sp["sex"] == "male" else eSex.Female)
+                p.set_name(f"Patient_{i}")
+                p.get_age().set_value(sp["age"], TimeUnit.yr)
+                p.get_height().set_value(sp["height"], LengthUnit.cm)
+                p.get_body_mass_index().set_value(sp["bmi"])
+                p.get_heart_rate_baseline().set_value(sp["heart_rate"], FrequencyUnit.Per_min)
+
+            s.get_data_request_manager().set_data_requests(_data_requests)
 
             # Add a bit of buffer to show patient baseline
             adv = SEAdvanceTime()
-            adv.get_time().set_value(30, TimeUnit.s)
+            adv.get_time().set_value(5, TimeUnit.s)
             s.get_actions().append(adv)
 
             # Add the injuries
-            for action in injuries_to_actions(sp["injuries"]):
+            for action in army_injuries_to_actions(sp["injuries"]):
                 s.get_actions().append(action)
 
             # Add a minimum amount of time until treatment can start
             adv = SEAdvanceTime()
-            adv.get_time().set_value(30, TimeUnit.s)
+            adv.get_time().set_value(minimum_injury_time_min, TimeUnit.min)
             s.get_actions().append(adv)
 
             # Finally, save out the state of this patient
@@ -386,14 +132,57 @@ def generate_initial_injury_states(synthetic_patients: list, output_dir: Path):
     return patient_states_exec_status
 
 
+def generate_triage_data(synthetic_patient: dict, exec_status: SEScenarioExecStatus):
+    injuries = synthetic_patient["injuries"]
+
+    results = PulseEngineReprocessor(csv_files=[Path(exec_status.get_csv_filename())],
+                                     log_files=[Path(exec_status.get_log_filename())])
+    # Get active events from the last minute of the simulation
+    active_events = results.get_active_events_in_window(results.end_time_s-60, results.end_time_s)
+    values = results.get_values_at(results.end_time_s)
+
+    # TODO figure out the data we need for all our tagging protocols
+
+    # TODO generate an unstructured text description of this patient/injury
+
+    triage_vitals = {
+        "ambulatory": True,
+        "breathing": True,
+        "visible_respiratory_distress": True,
+        "visible_hemorrhage": True,
+        "avpu": AVPU.Alert,
+        "respiratory_rate": 11,
+        "heart_rate": 72,
+        "radial_pulse_present": True,
+        "healthy_capillary_refill_time": True,
+        "spO2": 0.95
+    }
+    return triage_vitals
+
+
+def start_tag(triage_vitals):
+    #  TODO implement algorithm
+
+    return TriageTag.Green
+
+def salt_tag(triage_vitals):
+    #  TODO implement algorithm
+
+    return TriageTag.Green
+
+def bcd_sieve_tag(triage_vitals):
+    #  TODO implement algorithm
+
+    return TriageTag.Green
+
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     parser = argparse.ArgumentParser(description="Process the full pipeline for segment validation")
     parser.add_argument(
-        "-f", "--filename",
-        type=Path,
-        default="./test_results/itm/data/army/1000_patients_with_injuries.json",
-        help="Synthetic data generated json file"
+        "-ps", "--population_size",
+        type=int,
+        default=0,
+        help="Population size"
     )
     parser.add_argument(
         "-o", "--output_dir",
@@ -402,15 +191,19 @@ def main():
         help="Location to put all files related to this study"
     )
     opts = parser.parse_args()
-    if not opts.filename.exists():
-        _log.error(f"{opts.filename} cannot be found. Please provide a valid synthetic data json file")
-
-    with open(opts.filename, 'r') as file:
-        synthetic_patients = json.load(file)
     output_dir = opts.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    generate_initial_injury_states(synthetic_patients, output_dir)
+    # Load/generate the synthetic data set
+    synthetic_patients = generate_army_dataset(opts.population_size, output_dir/"synthetic")
+    # Simulate the injuries and create states
+    exec_status = generate_initial_injury_states(synthetic_patients, minimum_injury_time_min=5, output_dir=output_dir)
+    # Tag each patient
+    for i in range(len(synthetic_patients)):
+        triage_vitals = generate_triage_data(synthetic_patient=synthetic_patients[i], exec_status=exec_status[i])
+        _log.info(f"START Tag: {start_tag(triage_vitals)}")
+        _log.info(f"SALT Tag: {salt_tag(triage_vitals)}")
+        _log.info(f"BCD Sieve Tag: {bcd_sieve_tag(triage_vitals)}")
 
 
 if __name__ == "__main__":

@@ -392,6 +392,11 @@ class PulseEngineReprocessor(PulseLog):
 
         self._df = df
 
+    def get_values_at(self, time: float):
+        # TODO get a slice of values from the df
+        # TODO how do we want to do units?
+        pass
+
     def replay(self, modules: List[PulseResultsProcessor]):
         stop = False
 

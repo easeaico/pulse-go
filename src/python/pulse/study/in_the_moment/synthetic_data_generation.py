@@ -3,7 +3,6 @@
 
 import copy
 import dataframe_image as dfi
-import json
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,123 +10,12 @@ import pandas as pd
 import random
 import statistics
 
-
 from itertools import combinations
 from pathlib import Path
 from pulse.cdm.utils.markdown import table
 from scipy.stats import truncnorm
 
 _log = logging.getLogger("pulse")
-
-
-army_population_distributions = {
-    "heart_rate": {"mean": 72, "std": 11},
-    "sex": {
-              "male": {"height": {"mean": 177, "std": 7.1}, "bmi": {"mean": 26.4, "std": 3.4}},
-              "female": {"percent": 15.4, "height": {"mean": 163.5, "std": 7.7}, "bmi": {"mean": 24.7, "std": 2.8}}
-            },
-    "age": {"bins": [18, 25, 30, 35, 40, 55],
-            "percents": [41.6, 22.4, 15.3, 11.3, 9.4],
-            "counts": [191975, 103628, 70783, 52055, 43215]}
-}
-
-army_injury_distributions = {  # Location -> Type -> Severity mean/std or explicit value/percent
-    "head_and_neck": {"percent": 36.2, "severity_mean": 2.69, "types": {
-        "tbi": {"percent": 22, "severity": {"mean": 3.5, "std": 0.25}},
-        "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.25}},
-        "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}}
-    }},
-    "thorax": {"percent": 8.6, "severity_mean": 2.85, "polytrauma": {"max": 4, "mean": 2.3}, "types": {
-        "pneumothorax": {"percent": 51.8, "severity": {"mean": 2.85, "std": 0.25}},
-        "pulmonary_contusion": {"percent": 50.2, "severity": {"mean": 2.85, "std": 0.25}},
-        "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.25}},
-        "hemothorax": {"percent": 30, "severity": {"mean": 2.85, "std": 0.25}},
-        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
-        "spinal": {"percent": 14.6, "severity": {"mean": 2.85, "std": 0.25}}
-    }},
-    "abdomen": {"percent": 6.9, "severity_mean": 2.85, "types": {
-        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
-        "laceration_contusion": {"percent": 65.4, "severity": {"mean": 2.85, "std": 0.25}}
-    }},
-    "extremity": {"percent": 49.4, "severity_mean": 2.05, "types": {
-        "hemorrhage": {"percent": 52, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
-        "fracture_dislocation": {"percent": 22, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
-        "contusion_sprain_strain": {"percent": 20, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
-        "burn_nerve": {"percent": 5, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
-    }}
-}
-
-
-def main():
-    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-
-    # TODO argparse
-    results_dir = Path("./test_results/itm/data")
-    army_dir = Path(results_dir / "army")
-    army_dir.mkdir(parents=True, exist_ok=True)
-
-    # Test specific injury
-    if False:
-        test_injury(injury_distributions=army_injury_distributions["thorax"],
-                    num_patients_injured=1000,
-                    log=True)
-    if False:
-        for p in range(100, 10001, 100):
-            max_error = 0
-            for i in range(50):
-                err = test_injury(injury_distributions=army_injury_distributions["abdomen"],
-                                  num_patients_injured=p,
-                                  log=False)
-                if err > max_error:
-                    max_error = err
-            _log.info(f"Max Error of {max_error} for {p} patients")
-
-    # Run a measurement study
-    if False:
-        # Measure error for various population sizes
-        for p in [100, 500, 1000, 2000, 3000]:
-            i = 25
-            _log.info(f"Measuring error for a population size of {p} using {i} iterations")
-            measure_error(iterations=i, population_size=p,
-                          population_distributions=army_population_distributions,
-                          injury_distributions=army_injury_distributions,
-                          results_stem=f"{army_dir}/measurements/{p}")
-
-    # Generate a data set
-    if True:
-        population_size = 2000
-        army_patients = synthetic_population_generation(population_size, army_population_distributions)
-        army_population_error = calculate_population_error(army_patients, army_population_distributions)
-        plot_population_error(army_population_error, f"{army_dir}/population_of_{population_size}")
-
-        army_patient_injuries = synthetic_injury_generation(population_size, army_injury_distributions)
-        army_injury_error = calculate_injury_error(army_patient_injuries, army_injury_distributions)
-        plot_injury_error(army_injury_error, f"{army_dir}/injuries_of_population_of_{population_size}")
-
-        # Check\count for injury combinations not currently supported in Pulse
-        num_hemopneumothorax = 0
-        for injuries in army_patient_injuries:
-            if len(injuries) > 1:
-                hemopneumothorax = 0
-                for injury in injuries:
-                    if injury["type"] == "pneumothorax" or injury["type"] == "hemothorax":
-                        hemopneumothorax += 1
-                if hemopneumothorax >= 3:
-                    num_hemopneumothorax += 1
-        if num_hemopneumothorax > 0:
-            _log.warning(f"Found {num_hemopneumothorax} hemopneumothorax(s), "
-                         f"Pulse currently does not support this type of injury")
-
-        # Combine the patients and their injuries and write that out to disk
-        data = []
-        for i in range(population_size):
-            patient = {}
-            for field, values in army_patients.items():
-                patient[field] = values[i]
-            patient["injuries"] = army_patient_injuries[i]
-            data.append(patient)
-        with open(f"{army_dir}/{population_size}_patients_with_injuries.json", 'w') as f:
-            json.dump(data, f, indent=2)
 
 
 def synthetic_population_generation(size: int, distributions: dict) -> dict:
@@ -959,8 +847,3 @@ def test_injury(injury_distributions: dict, num_patients_injured: int, log: bool
             _log.info(f" Distribution Error: {synthetic_distribution - actual_distribution}%")
 
     return max_error
-
-
-if __name__ == "__main__":
-    main()
-
