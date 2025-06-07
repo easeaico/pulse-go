@@ -50,14 +50,17 @@ def plot_with_test_results(plotters: []):
             _pulse_logger.error(f"Unknown plotter type: {p}")
 
 
-def create_plots(plotters: [], benchmark: bool = False):
+def create_plots(plotters: [], sheet_name: str = "", benchmark: bool = False):
     for p in plotters:
         if isinstance(p, SEMultiHeaderSeriesPlotter):
-            multi_header_series_plotter(p, benchmark)
+            if not sheet_name or p.uses(sheet_name):
+                multi_header_series_plotter(p, benchmark)
         elif isinstance(p, SEComparePlotter):
-            compare_plotter(p, benchmark)
+            if not sheet_name or p.uses(sheet_name):
+                compare_plotter(p, benchmark)
         elif isinstance(p, SEMonitorPlotter):
-            generate_monitors(p, benchmark)
+            if not sheet_name or p.uses(sheet_name):
+                generate_monitors(p, benchmark)
         else:
             _pulse_logger.error(f"Unknown plotter type: {p}")
 

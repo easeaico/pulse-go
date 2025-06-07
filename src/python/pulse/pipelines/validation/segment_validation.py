@@ -23,7 +23,7 @@ from pulse.cdm.io.validation import serialize_segment_validation_segment_list_fr
 _pulse_logger = logging.getLogger('pulse')
 
 
-def validate(name: str, scenario_dir: Path, results_dir: Path) -> None:
+def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str = "") -> None:
     target_files = [item.name for item in scenario_dir.glob("*")
                     if not item.is_dir() and "-ValidationTargets.json" in item.name]
 
@@ -44,6 +44,8 @@ def validate(name: str, scenario_dir: Path, results_dir: Path) -> None:
         return segments_filename, log_filename, assessment_files
 
     for target_file in target_files:
+        if sheet_name and not target_file.startswith(sheet_name):
+            continue
         target_name = target_file[:target_file.find('-')]
         # Create a directory to put our tables
         table_dir = Path(f"./validation/tables/{name}/{target_name}")

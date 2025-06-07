@@ -611,6 +611,11 @@ class SEPlotSource():
         self._actions_events = None
         self._df = pd.DataFrame()
 
+    def get_name(self):
+        if self._csv_data:
+            return self._csv_data[self._csv_data.rfind('/')+1:self._csv_data.rfind('Results')]
+        return ""
+
     def get_csv_data(self) -> Union[str, None]:
         return self._csv_data
     def set_csv_data(self, csv_data: str) -> None:
@@ -982,6 +987,12 @@ class SEMultiHeaderSeriesPlotter(SEPlotter):
         self._series = list(series) if series else []
         self._validation_source = validation_source
 
+    def uses(self, sheet_name: str) -> bool:
+        for source in self._plot_sources:
+            if source.get_name() == sheet_name:
+                return True
+        return False
+
     def get_plot_sources(self) -> List[SEPlotSource]:
         return self._plot_sources
     def add_plot_source(self, plot_source: SEPlotSource) -> None:
@@ -1034,6 +1045,11 @@ class SEComparePlotter(SEPlotter):
         self._failures = set(failures) if failures is not None else set()
         self._rms = dict(rms) if rms is not None else dict()
         self._plot_type = plot_type
+
+    def uses(self, sheet_name: str) -> bool:
+        if self._computed_source.get_name() == sheet_name:
+            return True
+        return False
 
     def get_plot_type(self) -> ePlotType:
         return self._plot_type
@@ -1094,6 +1110,11 @@ class SEMonitorPlotter(SEPlotter):
         self._times_s = list(times_s) if times_s is not None else None
         self._data_requested_file = Path(data_requested_file) if data_requested_file is not None else None
         self._output_prefix = output_prefix
+
+    def uses(self, sheet_name: str = ""):
+        if self._plot_source.get_name() == sheet_name:
+            return True
+        return False
 
     def get_plot_source(self) -> Union[SEPlotSource, None]:
         return self._plot_source
