@@ -3,6 +3,7 @@
 
 import argparse
 import logging
+import PyPulse
 
 from enum import Enum
 from pathlib import Path
@@ -18,7 +19,7 @@ from pulse.cdm.scalars import FrequencyUnit, LengthUnit, PressureUnit, TimeUnit,
 from pulse.cdm.io.scenario import serialize_scenario_to_file, \
                                   serialize_scenario_exec_status_list_to_file, \
                                   serialize_scenario_exec_status_list_from_file
-from pulse.engine.PulseEngineResults import PulseLog, PulseEngineReprocessor
+from pulse.engine.PulseEngineResults import PulseEngineReprocessor
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
 
 _log = logging.getLogger("pulse")
@@ -46,9 +47,10 @@ _data_requests = [
     SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
     SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
     SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
-    SEDataRequest.create_physiology_request("OxygenSaturation"),
+    SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
     SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
-    SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min)
+    SEDataRequest.create_physiology_request("OxygenSaturation"),
+    SEDataRequest.create_physiology_request("PeripheralPerfusionIndex")
 ]
 
 
@@ -137,13 +139,29 @@ def generate_triage_data(synthetic_patient: dict, exec_status: SEScenarioExecSta
 
     results = PulseEngineReprocessor(csv_files=[Path(exec_status.get_csv_filename())],
                                      log_files=[Path(exec_status.get_log_filename())])
+    values = results.get_values_at_time(results.end_time_s)
+
     # Get active events from the last minute of the simulation
     active_events = results.get_active_events_in_window(results.end_time_s-60, results.end_time_s)
-    values = results.get_values_at(results.end_time_s)
+
+    # Get actions provided to the scenario
+    # These are provided as a dict, and the key is the time provided
+    # We may want to get the active actions in API format
+    # It really depends on how much we need the action info here
+    for time_s, actions in results.actions.items():
+        for action in actions:
+            _log.info(f"[{time_s}] {action.text}")
+
+    cardiac_output_mL_Per_s = PyPulse.convert(values[2],
+                                              VolumePerTimeUnit.L_Per_min.get_string(),
+                                              VolumePerTimeUnit.mL_Per_s.get_string())
 
     # TODO figure out the data we need for all our tagging protocols
 
-    # TODO generate an unstructured text description of this patient/injury
+    # Unhealthy CRT > 2s = PPI < 0.3%
+    healthy_capillary_refill_time = True
+    if values[11] < 0.003:
+        healthy_capillary_refill_time = False
 
     triage_vitals = {
         "ambulatory": True,
@@ -154,26 +172,35 @@ def generate_triage_data(synthetic_patient: dict, exec_status: SEScenarioExecSta
         "respiratory_rate": 11,
         "heart_rate": 72,
         "radial_pulse_present": True,
-        "healthy_capillary_refill_time": True,
-        "spO2": 0.95
+        "healthy_capillary_refill_time": healthy_capillary_refill_time,
+        "spO2": values[10]
     }
     return triage_vitals
 
 
-def start_tag(triage_vitals):
-    #  TODO implement algorithm
+def start_protocol(triage_vitals):
+    #  TODO Implement tagging algorithm
+    #  TODO Create a list of intervention actions
+    #  TODO   - ex. set airway obstruction or hemorrhage to 0
 
     return TriageTag.Green
 
-def salt_tag(triage_vitals):
-    #  TODO implement algorithm
+
+def salt_protocol(triage_vitals):
+    #  TODO Implement tagging algorithm
+    #  TODO Create a list of intervention actions
+    #  TODO   - ex. set airway obstruction or hemorrhage to 0
 
     return TriageTag.Green
 
-def bcd_sieve_tag(triage_vitals):
-    #  TODO implement algorithm
+
+def bcd_sieve_protocol(triage_vitals):
+    #  TODO Implement tagging algorithm
+    #  TODO Create a list of intervention actions
+    #  TODO   - ex. set airway obstruction or hemorrhage to 0
 
     return TriageTag.Green
+
 
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -201,9 +228,9 @@ def main():
     # Tag each patient
     for i in range(len(synthetic_patients)):
         triage_vitals = generate_triage_data(synthetic_patient=synthetic_patients[i], exec_status=exec_status[i])
-        _log.info(f"START Tag: {start_tag(triage_vitals)}")
-        _log.info(f"SALT Tag: {salt_tag(triage_vitals)}")
-        _log.info(f"BCD Sieve Tag: {bcd_sieve_tag(triage_vitals)}")
+        _log.info(f"START Tag: {start_protocol(triage_vitals)}")
+        _log.info(f"SALT Tag: {salt_protocol(triage_vitals)}")
+        _log.info(f"BCD Sieve Tag: {bcd_sieve_protocol(triage_vitals)}")
 
 
 if __name__ == "__main__":

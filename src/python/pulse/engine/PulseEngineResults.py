@@ -392,10 +392,16 @@ class PulseEngineReprocessor(PulseLog):
 
         self._df = df
 
-    def get_values_at(self, time: float):
-        # TODO get a slice of values from the df
-        # TODO how do we want to do units?
-        pass
+    def get_values_at_time(self, time_s: float):
+        headers = self._df.columns.tolist()
+        rows = self._df.loc[self._df[headers[0]] == time_s].values.tolist()
+        if len(rows) == 0:
+            _pulse_logger.error(f"Could not find time {time_s}")
+            return []
+        if len(rows) > 1:
+            _pulse_logger.error(f"Found more than 1 entry for time {time_s}")
+            return []
+        return rows[0]
 
     def replay(self, modules: List[PulseResultsProcessor]):
         stop = False
