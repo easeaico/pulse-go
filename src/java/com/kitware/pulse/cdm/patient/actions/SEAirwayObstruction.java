@@ -11,10 +11,12 @@ public class SEAirwayObstruction extends SEPatientAction
   private static final long serialVersionUID = 447938500845345205L;
   
   protected SEScalar0To1 severity;
+  protected boolean hasSecretions;
   
   public SEAirwayObstruction()
   {
     severity = null;
+    hasSecretions = false;
   }
   
   @Override
@@ -23,6 +25,7 @@ public class SEAirwayObstruction extends SEPatientAction
     super.clear();
     if (severity != null)
       severity.invalidate();
+    hasSecretions = false;
   }
   
   public void copy(SEAirwayObstruction other)
@@ -34,6 +37,7 @@ public class SEAirwayObstruction extends SEPatientAction
       getSeverity().set(other.getSeverity());
     else if (severity != null)
       severity.invalidate();
+    hasSecretions = other.hasSecretions;
   }
   
   @Override
@@ -47,6 +51,7 @@ public class SEAirwayObstruction extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
+    dst.setHasSecretions(src.getHasSecretions());
   }
   
   public static AirwayObstructionData unload(SEAirwayObstruction src)
@@ -61,6 +66,7 @@ public class SEAirwayObstruction extends SEPatientAction
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasSeverity())
       dst.setSeverity(SEScalar0To1.unload(src.severity));
+    dst.setHasSecretions(src.getHasSecretions());
   }
   
   public boolean hasSeverity()
@@ -73,13 +79,23 @@ public class SEAirwayObstruction extends SEPatientAction
       severity = new SEScalar0To1();
     return severity;
   }
+  
+  public boolean getHasSecretions()
+  {
+    return hasSecretions;
+  }
+  public void setHasSecretions(boolean hasSecretions)
+  {
+    this.hasSecretions = hasSecretions;
+  }
 
   @Override
   public String toString()
   {
     if (severity != null)
       return "Airway Obstruction" 
-          + "\n\tSeverity: " + getSeverity();
+          + "\n\tSeverity: " + getSeverity()
+          + "\n\tHas Secretions: " + getHasSecretions();
     else
       return "Action not specified properly";
   }

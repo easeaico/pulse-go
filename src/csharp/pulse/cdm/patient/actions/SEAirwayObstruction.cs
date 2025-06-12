@@ -6,10 +6,12 @@ namespace Pulse.CDM
   public class SEAirwayObstruction : SEPatientAction
   {
     protected SEScalar0To1 severity;
+    protected bool hasSecretions;
 
     public SEAirwayObstruction()
     {
       severity = null;
+      hasSecretions = false;
     }
 
     public override void Clear()
@@ -17,6 +19,7 @@ namespace Pulse.CDM
       base.Clear();
       if (severity != null)
         severity.Invalidate();
+      hasSecretions = false;
     }
 
     public override bool IsValid()
@@ -33,6 +36,15 @@ namespace Pulse.CDM
       if (severity == null)
         severity = new SEScalar0To1();
       return severity;
+    }
+
+    public bool GetHasSecretions()
+    {
+      return hasSecretions;
+    }
+    public void SetHasSecretions(bool hasSecretions)
+    {
+      this.hasSecretions = hasSecretions;
     }
   }
 }

@@ -145,6 +145,7 @@ void PBPatientAction::Serialize(const CDM_BIND::AirwayObstructionData& src, SEAi
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
+  dst.SetHasSecretions(src.hassecretions());
 }
 CDM_BIND::AirwayObstructionData* PBPatientAction::Unload(const SEAirwayObstruction& src)
 {
@@ -157,6 +158,7 @@ void PBPatientAction::Serialize(const SEAirwayObstruction& src, CDM_BIND::Airway
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  dst.set_hassecretions(src.GetHasSecretions());
 }
 void PBPatientAction::Copy(const SEAirwayObstruction& src, SEAirwayObstruction& dst)
 {

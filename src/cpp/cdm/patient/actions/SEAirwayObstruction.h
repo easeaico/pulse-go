@@ -28,6 +28,10 @@ public:
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
+  virtual bool GetHasSecretions() const;
+  virtual void SetHasSecretions(bool hasSecretions);
+
 protected:
   SEScalar0To1*           m_Severity;
+  bool                    m_HasSecretions;
 };

@@ -502,6 +502,7 @@ namespace Pulse.CDM
         Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
+      dst.SetHasSecretions(src.HasSecretions);
     }
     public static pulse.cdm.bind.AirwayObstructionData Unload(SEAirwayObstruction src)
     {
@@ -515,6 +516,7 @@ namespace Pulse.CDM
       Serialize(src, dst.PatientAction);
       if (src.HasSeverity())
         dst.Severity = PBProperty.Unload(src.GetSeverity());
+      dst.HasSecretions = src.GetHasSecretions();
     }
     #endregion
 

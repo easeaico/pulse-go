@@ -71,6 +71,7 @@ namespace pulse
     void UpdateVolumes();
     void UpdateResistances();
     void UpdateAlveolarCompliances();
+    double CalculateSuctioningSawtoothPattern(double baseResistance_cmH2O_s_Per_L, double flow_L_Per_s);
     void UpdateInspiratoryExpiratoryRatio();
     void UpdateDiffusion();
     void UpdatePulmonaryCapillary();

@@ -94,16 +94,18 @@ class SEAcuteStress(SEPatientAction):
                 "  Severity: {}").format(self._severity)
 
 class SEAirwayObstruction(SEPatientAction):
-    __slots__ = ["_severity"]
+    __slots__ = ["_severity", "_has_secretions"]
 
     def __init__(self):
         super().__init__()
         self._severity = None
+        self._has_secretions = False
 
     def clear(self):
         super().clear()
         if self._severity is not None:
             self._severity.invalidate()
+        self._has_secretions = False
 
     def is_valid(self):
         return self.has_severity()
@@ -115,9 +117,17 @@ class SEAirwayObstruction(SEPatientAction):
         if self._severity is None:
             self._severity = SEScalar0To1()
         return self._severity
+
+    def get_has_secretions(self):
+        return self._has_secretions
+
+    def set_has_secretions(self, has_secretions):
+        self._has_secretions = has_secretions
+
     def __repr__(self):
         return ("Airway Obstruction\n"
-                "  Severity: {}").format(self._severity)
+                "  Severity: {}\n"
+                "  Has Secretions: {}").format(self._severity, self._has_secretions)
 
 class eHeartRhythm(Enum):
     NormalSinus = 0

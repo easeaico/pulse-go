@@ -9,6 +9,7 @@
 SEAirwayObstruction::SEAirwayObstruction(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity=nullptr;
+  m_HasSecretions=false;
 }
 
 SEAirwayObstruction::~SEAirwayObstruction()
@@ -20,6 +21,7 @@ void SEAirwayObstruction::Clear()
 {
   SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_Severity);
+  m_HasSecretions=false;
 }
 
 void SEAirwayObstruction::Copy(const SEAirwayObstruction& src, bool /*preserveState*/)
@@ -68,4 +70,13 @@ double SEAirwayObstruction::GetSeverity() const
   if (m_Severity == nullptr)
     return SEScalar::dNaN();
   return m_Severity->GetValue();
+}
+
+bool SEAirwayObstruction::GetHasSecretions() const
+{
+  return m_HasSecretions;
+}
+void SEAirwayObstruction::SetHasSecretions(bool hasSecretions)
+{
+  m_HasSecretions = hasSecretions;
 }
