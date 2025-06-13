@@ -12,7 +12,7 @@ from typing import List
 from army_dataset import injuries_to_actions as army_injuries_to_actions
 from army_dataset import generate_dataset as generate_army_dataset
 
-from pulse.cdm.engine import SEAdvanceTime, SEDataRequest, SESerializeState, eSwitch
+from pulse.cdm.engine import SEAdvanceTime, SEDataRequest, SESerializeState, eSwitch, eEvent
 from pulse.cdm.patient import eSex
 from pulse.cdm.scenario import SEScenario, SEScenarioExecStatus
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
@@ -49,6 +49,8 @@ _data_requests = [
     SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
     SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
     SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
+    SEDataRequest.create_physiology_request("TotalHemorrhageRate", unit=VolumePerTimeUnit.L_Per_min),
+    SEDataRequest.create_liquid_compartment_substance_request("BrainVasculature","Oxygen","PartialPressure",unit=PressureUnit.mmHg),
     SEDataRequest.create_physiology_request("OxygenSaturation"),
     SEDataRequest.create_physiology_request("PeripheralPerfusionIndex")
 ]
@@ -158,22 +160,68 @@ def generate_triage_data(synthetic_patient: dict, exec_status: SEScenarioExecSta
 
     # TODO figure out the data we need for all our tagging protocols
 
-    # Unhealthy CRT > 2s = PPI < 0.3%
+    #Breathing
+    breathing = True
+    if values[8] < 1.0:
+        breathing:False
+
+    #Respiratory Distress
+    #ToDo: Loop over active events to find if tachypnea is present
+    respiratory_distress = False
+    if values[8] > 30:
+        respiratory_distress = True
+
+    #Controlled Hemorrhage
+    total_hemorrhage_rate_mL_Per_min = PyPulse.convert(values[10], VolumePerTimeUnit.mL_Per_min.get_string(),
+                                                       VolumePerTimeUnit.L_Per_min.get_string())
+    controlled_hemorrhage = False
+    if total_hemorrhage_rate_mL_Per_min < 15.0:
+        controlled_hemorrhage = True
+
+    #AVPU
+    avpu = AVPU.Alert
+    #find highest severity injury
+    severity = 0
+    for i in range(len(injuries)):
+        if injuries[i]['severity'] > severity:
+            severity = injuries[i]['severity']
+
+    #Now check severity and oxygen partial pressure in the brain
+    if severity == 5.0 or values[11] < 15:
+        avpu = AVPU.Unresponsive
+    elif severity == 4.0:
+        if values[11] >= 15 and values[11] <= 25:
+            avpu = AVPU.Pain
+        else:
+            avpu = AVPU.Voice
+    elif values[11] > 25 and values[11] < 35:
+        avpu = AVPU.Voice
+
+    # Ambulatory
+    ambulatory = True
+    if injuries[0]['severity'] >= 2.5:
+        ambulatory = False
+    elif avpu != AVPU.Alert:
+        ambulatory = False
+
+    # Unhealthy CRT > 2s - we are associating with hypotension
+    #Used a MAP of 60 mmHg
     healthy_capillary_refill_time = True
-    if values[11] < 0.003:
+    if values[4] < 60:
         healthy_capillary_refill_time = False
 
+    #TODO: Delete radial_pulse_pressure and spO2, change visible_hemorrhage to hemorrhage_controlled and visible_respiratory_distress to just respiratory_distress
     triage_vitals = {
-        "ambulatory": True,
-        "breathing": True,
-        "visible_respiratory_distress": True,
-        "visible_hemorrhage": True,
-        "avpu": AVPU.Alert,
-        "respiratory_rate": 11,
-        "heart_rate": 72,
-        "radial_pulse_present": True,
+        "ambulatory": ambulatory,
+        "breathing": breathing,
+        "visible_respiratory_distress": respiratory_distress,
+        "visible_hemorrhage": controlled_hemorrhage,
+        "avpu": avpu,
+        "respiratory_rate": values[8],
+        "heart_rate": values[1],
+        "radial_pulse_present": True, #delete
         "healthy_capillary_refill_time": healthy_capillary_refill_time,
-        "spO2": values[10]
+        "spO2": values[10] #delete
     }
     return triage_vitals
 
