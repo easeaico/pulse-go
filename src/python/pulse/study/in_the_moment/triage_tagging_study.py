@@ -158,7 +158,7 @@ def generate_triage_data(synthetic_patient: dict, exec_status: SEScenarioExecSta
                                               VolumePerTimeUnit.L_Per_min.get_string(),
                                               VolumePerTimeUnit.mL_Per_s.get_string())
 
-    # TODO figure out the data we need for all our tagging protocols
+    #Data needed for Tagging protocols
 
     #Breathing
     breathing = True
@@ -166,9 +166,8 @@ def generate_triage_data(synthetic_patient: dict, exec_status: SEScenarioExecSta
         breathing:False
 
     #Respiratory Distress
-    #ToDo: Loop over active events to find if tachypnea is present
     respiratory_distress = False
-    if values[8] > 30:
+    if eEvent.Tachypnea in active_events:
         respiratory_distress = True
 
     #Controlled Hemorrhage
