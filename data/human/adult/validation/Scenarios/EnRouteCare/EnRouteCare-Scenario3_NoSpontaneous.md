@@ -119,10 +119,10 @@ En Route Care Scenario 3 - NoSpontaneous {#EnRouteCareScenario3_NoSpontaneous}
 </tr>
 <tr>
     <td><a href="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient-FunctionalResidualCapacity.jpg"><img src="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient-FunctionalResidualCapacity.jpg" width="550"></a></td>
-    <td><a href="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
+    <td><a href="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient-AlveoliSurfaceArea.jpg"><img src="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient-AlveoliSurfaceArea.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient_Legend.jpg"><img src="./plots/EnRouteCare/Scenario3_NoSpontaneous_Patient_Legend.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/EnRouteCare/Scenario3_NoSpontaneous_Legend.jpg"><img src="./plots/EnRouteCare/Scenario3_NoSpontaneous_Legend.jpg" width="1100"></a></td>
 </tr>
 </table>
 <br>
