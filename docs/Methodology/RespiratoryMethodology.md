@@ -1448,15 +1448,7 @@ mechanically ventilated patient, the model generates a characteristic sawtooth
 oscillation pattern in the upper airway resistance during expiration.
 
 The sawtooth pattern implementation is based on the physiological phenomenon
-where secretions in the airway create turbulent flow during expiration, producing
-an audible "straw-in-fluid" sound that clinicians recognize as an indication for
-suctioning. The resistance oscillations are:
-
-- Flow-dependent amplitude: 10-40% of baseline resistance, proportional to expiratory flow rate
-- Flow-dependent frequency: 5-20 Hz range, increasing with higher flow rates  
-- Expiration-specific: Pattern occurs only during expiratory phase
-- Pseudo-random: Combines sawtooth wave with harmonic noise components for realistic variability
-
+where secretions in the airway create turbulent flow during expiration. 
 This enhancement provides a quantifiable signal for automated suctioning alerts
 and distinguishes between structural obstruction and secretion-related obstruction,
 improving the clinical realism and utility of the respiratory model during 

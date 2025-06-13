@@ -3704,7 +3704,7 @@ namespace pulse
       if (m_PatientActions->GetAirwayObstruction().GetHasSecretions() && !inhaling)
       {
         double currentFlow_L_Per_s = std::abs(m_PharynxToCarina->GetNextFlow(VolumePerTimeUnit::L_Per_s));
-        tracheaResistance_cmH2O_s_Per_L = CalculateSuctioningSawtoothPattern(tracheaResistance_cmH2O_s_Per_L, currentFlow_L_Per_s);
+        tracheaResistance_cmH2O_s_Per_L = CalculateSuctioningPattern(tracheaResistance_cmH2O_s_Per_L, currentFlow_L_Per_s);
       }
     }
 
@@ -4114,58 +4114,50 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Calculate sawtooth resistance pattern for suctioning signal during mechanical ventilation
+  /// Modulates airway resistance with a flow-dependent sinusoidal pattern to simulate secretion buildup
   ///
   /// \param baseResistance_cmH2O_s_Per_L - The baseline upper airway resistance
-  /// \param flow_L_Per_s - Current expiratory flow rate
-  /// \return Modified resistance with sawtooth pattern applied
+  /// \param flow_L_Per_s - Current expiratory flow rate (positive value)
+  /// \return Resistance with sinusoidal variation applied
   ///
   /// \details
-  /// Creates a pseudo-random sawtooth oscillation pattern during expiration to signal the need
-  /// for suctioning when mechanically ventilated. The amplitude and frequency are flow-dependent,
-  /// similar to a straw oscillating in fluid flow. Higher flows create larger amplitude and
-  /// higher frequency oscillations.
+  /// Applies a sinusoidal oscillation to the airway resistance during expiration when secretions
+  /// are present. The amplitude and frequency of the sinusoid scale with the expiratory flow rate,
+  /// producing visible ripples in the expiratory flow signal. This mimics the dynamic resistance
+  /// caused by fluid buildup or mucus fluttering in the airway.
+  /// 
+  /// The waveform is continuous and smooth, with higher flow generating higher-frequency and
+  /// higher-amplitude oscillations. The decaying envelope of the flow is not modeled here —
+  /// it is governed by the fluid dynamics of the Pulse Physiology Engine.
   //--------------------------------------------------------------------------------------------------
-  double RespiratoryModel::CalculateSuctioningSawtoothPattern(double baseResistance_cmH2O_s_Per_L, double flow_L_Per_s)
+  double RespiratoryModel::CalculateSuctioningPattern(double baseResistance_cmH2O_s_Per_L, double flow_L_Per_s)
   {
-    // Only apply pattern during expiration with sufficient flow
-    if (flow_L_Per_s < 0.05) // Minimum flow threshold (L/s)
+    if (flow_L_Per_s < 0.01)
     {
       return baseResistance_cmH2O_s_Per_L;
     }
 
-    // Flow-dependent amplitude (higher flow = higher amplitude)
-    // Scale: 0.1-0.4 multiplier based on flow 0.05-2.0 L/s
-    double flowNormalized = std::min(flow_L_Per_s / 2.0, 1.0); // Normalize to 0-1
-    double amplitudeMultiplier = 0.1 + 0.3 * flowNormalized; // 0.1 to 0.4 range
+    // Normalize flow magnitude (0–1 range based on expected expiratory peak ~1 L/s)
+    double flowNormalized = std::min(flow_L_Per_s / 1.0, 1.0);
 
-    // Flow-dependent frequency (higher flow = higher frequency)
-    // Scale: 5-20 Hz based on flow
-    double frequency_Hz = 5.0 + 15.0 * flowNormalized; // 5 to 20 Hz range
+    // Amplitude and frequency scale with flow
+    double amplitude = baseResistance_cmH2O_s_Per_L * (0.3 + 0.2 * flowNormalized); // 30–50% of base
+    double frequency_Hz = 1.0 + 4.0 * flowNormalized; // 1–5 Hz
 
-    // Create pseudo-random component using multiple sine waves
-    double timeInCycle = m_BreathingCycleTime_s;
-    double omega = 2.0 * 3.14159265359 * frequency_Hz;
-    
-    // Primary sawtooth component
-    double sawtoothPhase = fmod(omega * timeInCycle, 2.0 * 3.14159265359);
-    double sawtoothValue = (sawtoothPhase / 3.14159265359) - 1.0; // -1 to 1 sawtooth
-    
-    // Add higher frequency noise for pseudo-random effect
-    double noiseComponent = 0.3 * sin(omega * 3.7 * timeInCycle) + 
-                           0.2 * sin(omega * 7.3 * timeInCycle) +
-                           0.1 * sin(omega * 13.1 * timeInCycle);
-    
-    // Combine sawtooth with noise
-    double oscillation = 0.7 * sawtoothValue + 0.3 * noiseComponent;
-    
-    // Apply oscillation to resistance
-    double resistanceVariation = baseResistance_cmH2O_s_Per_L * amplitudeMultiplier * oscillation;
-    
-    // Ensure resistance stays positive
-    double finalResistance = baseResistance_cmH2O_s_Per_L + resistanceVariation;
-    return std::max(finalResistance, baseResistance_cmH2O_s_Per_L * 0.1); // Minimum 10% of base resistance
+    // Time in seconds
+    double t = m_ElapsedBreathingCycleTime_min * 60.0;
+    double omega = 2.0 * M_PI * frequency_Hz;
+
+    // Sinusoidal oscillation: -1 to 1
+    double sinusoid = sin(omega * t);
+
+    // Apply to resistance
+    double modulatedResistance = baseResistance_cmH2O_s_Per_L + amplitude * sinusoid;
+
+    // Clamp to stay positive
+    return std::max(modulatedResistance, baseResistance_cmH2O_s_Per_L * 0.1);
   }
+
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
