@@ -1750,7 +1750,8 @@ namespace pulse
     if (m_PatientActions->HasTensionPneumothorax())
     {
       // Minimum flow resistance for the chest cavity or alveoli leak 
-      double PneumoMinResistance_cmH2O_s_Per_L = 100.0;
+      double PneumoOpenMinResistance_cmH2O_s_Per_L = 100.0;
+      double PneumoClosedMinResistance_cmH2O_s_Per_L = 10.0;
       // Maximum flow resistance for the chest cavity or alveoli leak
       double PneumoMaxResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
       // Flow resistance for the decompression needle, if used
@@ -1763,7 +1764,7 @@ namespace pulse
         double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
         if (severity > 0.0 && !m_PatientActions->HasLeftChestOcclusiveDressing())
         {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          resistance_cmH2O_s_Per_L = PneumoOpenMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
         }
         resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
         m_EnvironmentToLeftChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1781,7 +1782,7 @@ namespace pulse
         double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
         if (severity > 0.0 && !m_PatientActions->HasRightChestOcclusiveDressing())
         {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          resistance_cmH2O_s_Per_L = PneumoOpenMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
         }
         resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
         m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1795,37 +1796,41 @@ namespace pulse
 
       if (m_PatientActions->HasLeftClosedTensionPneumothorax())
       {
-        // Scale the flow resistance through the chest opening based on severity
-        double severity = m_PatientActions->GetLeftClosedTensionPneumothorax().GetSeverity().GetValue();
-        double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
-        if (severity > 0.0)
-        {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
-        }
-        resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
-        m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
         if (m_PatientActions->HasLeftNeedleDecompression())
         {
           m_LeftNeedleToLeftPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        }
+        else
+        {
+          // Scale the flow resistance through the chest opening based on severity
+          double severity = m_PatientActions->GetLeftClosedTensionPneumothorax().GetSeverity().GetValue();
+          double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+          if (severity > 0.0)
+          {
+            resistance_cmH2O_s_Per_L = PneumoClosedMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          }
+          resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+          m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
 
       if (m_PatientActions->HasRightClosedTensionPneumothorax())
       {
-        // Scale the flow resistance through the chest opening based on severity
-        double severity = m_PatientActions->GetRightClosedTensionPneumothorax().GetSeverity().GetValue();
-        double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
-        if (severity > 0.0)
-        {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
-        }
-        resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
-        m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
         if (m_PatientActions->HasRightNeedleDecompression())
         {
           m_RightNeedleToRightPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        }
+        else
+        {
+          // Scale the flow resistance through the chest opening based on severity
+          double severity = m_PatientActions->GetRightClosedTensionPneumothorax().GetSeverity().GetValue();
+          double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+          if (severity > 0.0)
+          {
+            resistance_cmH2O_s_Per_L = PneumoClosedMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          }
+          resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+          m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
 
@@ -3683,11 +3688,15 @@ namespace pulse
     if (m_PatientActions->HasAirwayObstruction())
     {
       double severity = m_PatientActions->GetAirwayObstruction().GetSeverity().GetValue();
-      if (severity != 0.0) //Prevent small numerical error
+      if (severity > ZERO_APPROX) //Prevent small numerical error
       {
         //Piecewise to ensure fully blocked at a severity of 1.0;
         double startSeverity = 0.9;
-        if (severity > startSeverity)
+        if (severity == 1.0)
+        {
+          tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+        }
+        else if (severity > startSeverity)
         {
           double minResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, startSeverity);
           double maxResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
@@ -3713,7 +3722,7 @@ namespace pulse
     if (m_PatientActions->HasBronchoconstriction())
     {
       double severity = m_PatientActions->GetBronchoconstriction().GetSeverity().GetValue();
-      if (severity != 0.0) //Prevent small numerical error
+      if (severity > ZERO_APPROX) //Prevent small numerical error
       {
         leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
         rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
