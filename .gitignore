@@ -10,6 +10,7 @@
 .eclipse/bind/build
 .classpath
 .project
+proj/eclipse/build
 
 # PyCharm Files
 /src/python/.idea/*
