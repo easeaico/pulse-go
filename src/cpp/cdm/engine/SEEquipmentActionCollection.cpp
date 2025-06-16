@@ -229,7 +229,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEMechanicalVentilatorVolumeControl* vc = dynamic_cast<const SEMechanicalVentilatorVolumeControl*>(&action);
     if (vc != nullptr)
     {
-      bool existingVC = HasMechanicalVentilatorPressureControl();
+      bool existingVC = HasMechanicalVentilatorVolumeControl();
       GetMechanicalVentilatorVolumeControl().Copy(*vc, m_SubMgr, true);
       m_MechanicalVentilatorVolumeControl->Activate();
       if (!m_MechanicalVentilatorVolumeControl->IsActive())
