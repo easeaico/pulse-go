@@ -17,6 +17,7 @@ from army_dataset import generate_dataset as generate_army_dataset
 from pulse.cdm.engine import SEAdvanceTime, SEDataRequest, SESerializeState, SEEventChange, \
                              eSwitch, eEvent, eSerializationFormat
 from pulse.cdm.patient import eSex
+from pulse.cdm.patient_actions import SEAirwayObstruction, SEHemorrhage, eHemorrhage_Type
 from pulse.cdm.scenario import SEScenario, SEScenarioExecStatus
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 from pulse.cdm.io.scenario import serialize_scenario_to_file, \
@@ -219,7 +220,7 @@ class TriageStudy:
     __slots__ = ["_output_dir", "_triage_study", "_pulse_data",
                  "_injury_scenarios_dir", "_injury_states_dir", "_injury_outputs_dir", "_injury_exec_status_filename",
                  "_intervention_scenarios_dir", "_intervention_outputs_dir", "_intervention_exec_status_filename",
-                 "_total_interventions"]
+                 "_total_visits"]
 
     def __init__(self, output_dir: Path):
         self._triage_study = {}
@@ -241,10 +242,10 @@ class TriageStudy:
         self._intervention_outputs_dir.mkdir(parents=True, exist_ok=True)
         # This tracks the status of the execution of these scenarios
         self._intervention_exec_status_filename = output_dir / "interventions/exec_status.json"
-        self._total_interventions = 0
+        self._total_visits = 0
 
     @property
-    def total_interventions(self): return self._total_interventions
+    def total_interventions(self): return self._total_visits
 
     def analyze_population_size(self, population_size: int):
         self._triage_study = {}
@@ -273,8 +274,8 @@ class TriageStudy:
         # Triage all the injury states
         self._triage_injured_states()
         # Simulate triaged patients
-        self._simulate_interventions(total_simulation_duration_min=0.5)
-        # Assess each intervention
+        self._simulate_interventions(total_simulation_duration_min=60)
+        # Assess final patient state after each visit
         self._assess_interventions()
         # Write out all the data we collected
         triage_study_file = self._output_dir/"triage_study.json"
@@ -363,6 +364,7 @@ class TriageStudy:
         executor.set_log_to_console(eSwitch.Off)  # Output can get pretty busy...
         executor.set_output_root_directory(str(self._injury_outputs_dir))
         executor.set_scenario_exec_list_filename(str(self._injury_exec_status_filename))
+        _log.info("Executing injury scenarios")
         if not executor.execute_scenario():
             # You can view the patient_states_exec to see what happened
             _log.fatal(f"Problem running {self._injury_exec_status_filename}")
@@ -417,28 +419,24 @@ class TriageStudy:
             # Data needed for tagging protocols for every triage time for this patient
             for time_s, injury_state in states.items():
                 if death_module.time_of_death and death_module.time_of_death <= time_s:
-                    continue  # Patient has died
+                    triage = {
+                        "state": injury_state,
+                        "death": {"time_s": death_module.time_of_death,
+                                  "cause": death_module.cause_of_death}
+                    }
+                else:
+                    self._pulse_data.set_values(r.get_values_at_time(time_s))
+                    # Get active events from the last minute of this triage time
+                    active_events = r.get_active_events_in_window(time_s - 60, time_s)
 
-                self._pulse_data.set_values(r.get_values_at_time(time_s))
-                # Get active events from the last minute of this triage time
-                active_events = r.get_active_events_in_window(time_s - 60, time_s)
-
-                vitals = self._calculate_triage_vitals(synthetic_injuries, active_events, self._pulse_data)
-                triage = {
-                    "state": injury_state,
-                    "vitals": vitals,
-                    "protocols": {}
-                }
-
-                triage["protocols"]["start"] = {
-                    "tag": self._start_tag(synthetic_injuries, pulse_injuries, vitals),
-                    "interventions": self._start_interventions(synthetic_injuries, pulse_injuries, vitals)}
-                triage["protocols"]["salt"] = {
-                    "tag": self._salt_tag(synthetic_injuries, pulse_injuries, vitals),
-                    "interventions": self._salt_interventions(synthetic_injuries, pulse_injuries, vitals)}
-                triage["protocols"]["bcd_sieve"] = {
-                    "tag": self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals),
-                    "interventions": self._bcd_sieve_interventions(synthetic_injuries, pulse_injuries, vitals)}
+                    vitals = self._calculate_triage_vitals(synthetic_injuries, active_events, self._pulse_data)
+                    triage = {
+                        "state": injury_state,
+                        "vitals": vitals,
+                        "tags": {"start": self._start_tag(synthetic_injuries, pulse_injuries, vitals),
+                                 "salt": self._salt_tag(synthetic_injuries, pulse_injuries, vitals),
+                                 "bcd_sieve": self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals)}
+                    }
                 data["visits"][time_s] = {"triage": triage}
 
     @staticmethod
@@ -499,17 +497,28 @@ class TriageStudy:
                 }
 
     @staticmethod
+    def _generate_pulse_interventions(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
+        interventions = []
+        # TODO Use some better logic here, Just turning off the major stuff
+        for injury in pulse_injuries:
+            if "Hemorrhage" in injury["PatientAction"]:
+                t = injury["PatientAction"]["Hemorrhage"]["Type"]
+                if t == "External":
+                    h = SEHemorrhage()
+                    h.set_compartment(injury["PatientAction"]["Hemorrhage"]["Compartment"])
+                    h.set_type(eHemorrhage_Type.External)
+                    h.get_severity().set_value(0)
+            elif "AirwayObstruction" in injury["PatientAction"]:
+                ao = SEAirwayObstruction()
+                ao.get_severity().set_value(0)
+                interventions.append(ao)
+
+        return interventions
+
+    @staticmethod
     def _start_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         #  TODO Implement tagging algorithm
         return TriageTag.Green
-
-    @staticmethod
-    def _start_interventions(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
-        interventions = []
-        #  TODO Add intervention actions
-        #  TODO   - ex. set airway obstruction or hemorrhage to 0
-
-        return interventions
 
     @staticmethod
     def _salt_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
@@ -517,25 +526,9 @@ class TriageStudy:
         return TriageTag.Green
 
     @staticmethod
-    def _salt_interventions(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
-        interventions = []
-        #  TODO Add intervention actions
-        #  TODO   - ex. set airway obstruction or hemorrhage to 0
-
-        return interventions
-
-    @staticmethod
     def _bcd_sieve_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         #  TODO Implement tagging algorithm
         return TriageTag.Green
-
-    @staticmethod
-    def _bcd_sieve_interventions(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
-        interventions = []
-        #  TODO Add intervention actions
-        #  TODO   - ex. set airway obstruction or hemorrhage to 0
-
-        return interventions
 
     def _simulate_interventions(self, total_simulation_duration_min: float):
 
@@ -548,33 +541,38 @@ class TriageStudy:
         # You could also edit exec_status to rerun particular scenarios
         if not self._intervention_exec_status_filename.exists():
             for i, patient in self._triage_study.items():
-                for time_s, triage in patient["triage"].items():
+                for time_s, visit in patient["visits"].items():
+                    triage = visit["triage"]
                     s_fn = ("intervention" + triage["state"][triage["state"].rfind('@'):])
                     o_fn = s_fn.replace(".json", ".csv")
-                    for protocol in ["start", "salt", "bcd_sieve"]:
-                        s = SEScenario()
-                        s.set_name(f"Patient {i}")
-                        s.set_description(f"{protocol} interventions")
-                        s.set_engine_state(triage["state"])
-                        s.get_data_request_manager().set_data_requests(self._pulse_data.data_requests)
-                        s.get_data_request_manager().set_results_filename(f"{self._intervention_outputs_dir}/"
-                                                                          f"patient_{i}/{protocol}/{o_fn}")
-                        # Add interventions
-                        for action in triage["protocols"][protocol]["interventions"]:
-                            s.get_actions().append(action)
-                        # Simulate the treated patient for an amount of time
-                        adv = SEAdvanceTime()
-                        adv.get_time().set_value(total_simulation_duration_min, TimeUnit.min)
-                        s.get_actions().append(adv)
-                        # Write out the scenario
-                        sce_path = Path(f"{self._intervention_scenarios_dir}/patient_{i}/{protocol}")
-                        sce_path.mkdir(parents=True, exist_ok=True)
-                        f = f"{sce_path}/{s_fn}"
-                        serialize_scenario_to_file(s, f)
-                        # Add this scenario to our exec status
-                        e = SEScenarioExecStatus()
-                        e.set_scenario_filename(f)
-                        intervention_scenarios.append(e)
+
+                    s = SEScenario()
+                    s.set_name(f"Patient {i}")
+                    s.set_description(f"Interventions for ")
+                    s.set_engine_state(triage["state"])
+                    s.get_data_request_manager().set_data_requests(self._pulse_data.data_requests)
+                    s.get_data_request_manager().set_results_filename(f"{self._intervention_outputs_dir}"
+                                                                      f"/patient_{i}/{o_fn}")
+                    # Add interventions
+                    for action in self._generate_pulse_interventions(patient["synthetic_patient"]["injuries"],
+                                                                     patient["pulse_injuries"],
+                                                                     triage["vitals"]):
+                        s.get_actions().append(action)
+                        # TODO add action action to our data structure
+
+                    # Simulate the treated patient for an amount of time
+                    adv = SEAdvanceTime()
+                    adv.get_time().set_value(total_simulation_duration_min, TimeUnit.min)
+                    s.get_actions().append(adv)
+                    # Write out the scenario
+                    sce_path = Path(f"{self._intervention_scenarios_dir}/patient_{i}/")
+                    sce_path.mkdir(parents=True, exist_ok=True)
+                    f = f"{sce_path}/{s_fn}"
+                    serialize_scenario_to_file(s, f)
+                    # Add this scenario to our exec status
+                    e = SEScenarioExecStatus()
+                    e.set_scenario_filename(f)
+                    intervention_scenarios.append(e)
 
             # Write out the exec status so we can run it
             serialize_scenario_exec_status_list_to_file(intervention_scenarios,
@@ -584,6 +582,7 @@ class TriageStudy:
         executor.set_log_to_console(eSwitch.Off)  # Output can get pretty busy...
         executor.set_output_root_directory(str(self._intervention_outputs_dir))
         executor.set_scenario_exec_list_filename(str(self._intervention_exec_status_filename))
+        _log.info("Executing intervention scenarios")
         if not executor.execute_scenario():
             # You can view the patient_states_exec to see what happened
             _log.fatal(f"Problem running {self._intervention_exec_status_filename}")
@@ -593,15 +592,14 @@ class TriageStudy:
         serialize_scenario_exec_status_list_from_file(str(self._intervention_exec_status_filename),
                                                       intervention_exec_status)
 
-        s = 0
+        v = 0
         for i, patient in self._triage_study.items():
             for time_s, visit in patient["visits"].items():
-                protocols = {}
-                for p in ["start", "salt", "bcd_sieve"]:
-                    protocols[p] = {"intervention_exec_status": _exec_status_to_dict(intervention_exec_status[s])}
-                    s += 1
-                visit["intervention"] = {"protocols": protocols}
-        self._total_interventions = s
+                if "death" in visit["triage"]:
+                    continue
+                visit["intervention"] = {"intervention_exec_status": _exec_status_to_dict(intervention_exec_status[v])}
+                v += 1
+        self._total_visits = v
 
     def _assess_interventions(self):
         p = 0
@@ -610,38 +608,34 @@ class TriageStudy:
             synthetic_injuries = patient["synthetic_patient"]["injuries"]
             for time_s, visit in patient["visits"].items():
                 intervention = visit["intervention"]
-                for protocol in ["start", "salt", "bcd_sieve"]:
-                    p += 1
-                    _log.info(f"[{p}/{self._total_interventions}]"
-                              f"Assessing patient {i} at time {time_s} treated with the {protocol} protocol")
+                p += 1
+                _log.info(f"[{p}/{self._total_visits}]"
+                          f"Assessing patient {i} treated at time {time_s}")
 
-                    data = intervention["protocols"][protocol]
-                    exec_status = data["intervention_exec_status"]
+                exec_status = intervention["intervention_exec_status"]
 
-                    # Pull the results from our exec status
-                    r = PulseEngineReprocessor(csv_files=[Path(exec_status["InitializationStatus"]["CSVFilename"])],
-                                               log_files=[Path(exec_status["InitializationStatus"]["LogFilename"])])
+                # Pull the results from our exec status
+                r = PulseEngineReprocessor(csv_files=[Path(exec_status["InitializationStatus"]["CSVFilename"])],
+                                           log_files=[Path(exec_status["InitializationStatus"]["LogFilename"])])
 
-                    # Check to see when/if the patient died
-                    death_module = DeathCheckModule(
-                        r.patient.get_heart_rate_maximum().get_value(FrequencyUnit.Per_min))
-                    r.replay([death_module])
-                    if death_module.cause_of_death:
-                        _log.info(f"{i} cause of death: {death_module.cause_of_death}")
-                        data["death"] = {"time_s": death_module.time_of_death,
-                                         "cause": death_module.cause_of_death}
-                    else:
-                        self._pulse_data.set_values(r.get_values_at_time(r.end_time_s))
-                        # Get active events from the last minute of this simulation
-                        active_events = r.get_active_events_in_window(r.end_time_s - 60, r.end_time_s)
-                        vitals = self._calculate_triage_vitals(synthetic_injuries, active_events, self._pulse_data)
-                        if protocol == "start":
-                            data["tag"] = self._start_tag(synthetic_injuries, pulse_injuries, vitals)
-                        elif protocol == "salt":
-                            data["tag"] = self._salt_tag(synthetic_injuries, pulse_injuries, vitals)
-                        elif protocol == "bcd_sieve":
-                            data["tag"] = self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals)
-                        data["vitals"] = vitals
+                # Check to see when/if the patient died
+                death_module = DeathCheckModule(
+                    r.patient.get_heart_rate_maximum().get_value(FrequencyUnit.Per_min))
+                r.replay([death_module])
+                if death_module.cause_of_death:
+                    _log.info(f"{i} cause of death: {death_module.cause_of_death}")
+                    intervention["death"] = {"time_s": death_module.time_of_death,
+                                             "cause": death_module.cause_of_death}
+                else:
+                    self._pulse_data.set_values(r.get_values_at_time(r.end_time_s))
+                    # Get active events from the last minute of this simulation
+                    active_events = r.get_active_events_in_window(r.end_time_s - 60, r.end_time_s)
+                    vitals = self._calculate_triage_vitals(synthetic_injuries, active_events, self._pulse_data)
+                    intervention["vitals"] = vitals
+                    tags = {"start": self._start_tag(synthetic_injuries, pulse_injuries, vitals),
+                            "salt": self._salt_tag(synthetic_injuries, pulse_injuries, vitals),
+                            "bcd_sieve": self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals)}
+                    intervention["tags"] = tags
 
 
 def main():
