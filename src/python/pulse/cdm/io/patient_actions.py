@@ -47,6 +47,7 @@ def serialize_airway_obstruction_to_bind(src: SEAirwayObstruction, dst: AirwayOb
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_severity():
         serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
+    dst.ResistanceType = src.get_resistance_type().value
 
 def serialize_airway_obstruction_from_bind(src:AirwayObstructionData, dst: SEAirwayObstruction):
     serialize_patient_action_from_bind(src.PatientAction, dst)

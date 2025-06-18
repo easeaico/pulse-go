@@ -3710,7 +3710,7 @@ namespace pulse
       }
 
       // Apply suctioning sawtooth pattern if secretions are present and during expiration
-      if (m_PatientActions->GetAirwayObstruction().GetHasSecretions() && !inhaling)
+      if (!inhaling && m_PatientActions->GetAirwayObstruction().GetResistanceType()==eAirwayObstruction_ResistanceType::Oscillating)
       {
         double currentFlow_L_Per_s = std::abs(m_PharynxToCarina->GetNextFlow(VolumePerTimeUnit::L_Per_s));
         tracheaResistance_cmH2O_s_Per_L = CalculateSuctioningPattern(tracheaResistance_cmH2O_s_Per_L, currentFlow_L_Per_s);

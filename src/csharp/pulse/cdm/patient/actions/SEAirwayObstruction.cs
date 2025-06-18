@@ -3,15 +3,22 @@
 
 namespace Pulse.CDM
 {
+
+  public enum eAirwayObstruction_ResistanceType : int
+  {
+    Constant = 0,
+    Oscillating
+  }
+
   public class SEAirwayObstruction : SEPatientAction
   {
     protected SEScalar0To1 severity;
-    protected bool hasSecretions;
+    protected eAirwayObstruction_ResistanceType resistance_type;
 
     public SEAirwayObstruction()
     {
       severity = null;
-      hasSecretions = false;
+      resistance_type = eAirwayObstruction_ResistanceType.Constant;
     }
 
     public override void Clear()
@@ -19,7 +26,7 @@ namespace Pulse.CDM
       base.Clear();
       if (severity != null)
         severity.Invalidate();
-      hasSecretions = false;
+      resistance_type = eAirwayObstruction_ResistanceType.Constant;
     }
 
     public override bool IsValid()
@@ -38,13 +45,13 @@ namespace Pulse.CDM
       return severity;
     }
 
-    public bool GetHasSecretions()
+    public eAirwayObstruction_ResistanceType GetResistanceType()
     {
-      return hasSecretions;
+      return resistance_type;
     }
-    public void SetHasSecretions(bool hasSecretions)
+    public void SetResistanceType(eAirwayObstruction_ResistanceType rt)
     {
-      this.hasSecretions = hasSecretions;
+      this.resistance_type = rt;
     }
   }
 }

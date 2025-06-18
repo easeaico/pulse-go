@@ -93,19 +93,23 @@ class SEAcuteStress(SEPatientAction):
         return ("Acute Stress\n"
                 "  Severity: {}").format(self._severity)
 
+class eAirwayObstructionResistanceType(Enum):
+    Constant = 0
+    Oscillating = 1
+
 class SEAirwayObstruction(SEPatientAction):
-    __slots__ = ["_severity", "_has_secretions"]
+    __slots__ = ["_severity", "_resistance_type"]
 
     def __init__(self):
         super().__init__()
         self._severity = None
-        self._has_secretions = False
+        self._resistance_type = eAirwayObstructionResistanceType.Constant
 
     def clear(self):
         super().clear()
         if self._severity is not None:
             self._severity.invalidate()
-        self._has_secretions = False
+        self._resistance_type = eAirwayObstructionResistanceType.Constant
 
     def is_valid(self):
         return self.has_severity()
@@ -118,16 +122,16 @@ class SEAirwayObstruction(SEPatientAction):
             self._severity = SEScalar0To1()
         return self._severity
 
-    def get_has_secretions(self):
-        return self._has_secretions
+    def get_resistance_type(self):
+        return self._resistance_type
 
-    def set_has_secretions(self, has_secretions):
-        self._has_secretions = has_secretions
+    def set_resistance_Type(self, rt):
+        self._resistance_type = rt
 
     def __repr__(self):
         return ("Airway Obstruction\n"
                 "  Severity: {}\n"
-                "  Has Secretions: {}").format(self._severity, self._has_secretions)
+                "  Resistance Type: {}").format(self._severity, self._resistance_type)
 
 class eHeartRhythm(Enum):
     NormalSinus = 0

@@ -4,6 +4,7 @@
 package com.kitware.pulse.cdm.patient.actions;
 
 import com.kitware.pulse.cdm.bind.PatientActions.AirwayObstructionData;
+import com.kitware.pulse.cdm.bind.PatientActions.AirwayObstructionData.eResistanceType;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 
 public class SEAirwayObstruction extends SEPatientAction
@@ -11,12 +12,12 @@ public class SEAirwayObstruction extends SEPatientAction
   private static final long serialVersionUID = 447938500845345205L;
   
   protected SEScalar0To1 severity;
-  protected boolean hasSecretions;
+  protected eResistanceType resistanceType;
   
   public SEAirwayObstruction()
   {
     severity = null;
-    hasSecretions = false;
+    resistanceType = eResistanceType.Constant;
   }
   
   @Override
@@ -25,7 +26,7 @@ public class SEAirwayObstruction extends SEPatientAction
     super.clear();
     if (severity != null)
       severity.invalidate();
-    hasSecretions = false;
+    resistanceType = eResistanceType.Constant;
   }
   
   public void copy(SEAirwayObstruction other)
@@ -37,7 +38,7 @@ public class SEAirwayObstruction extends SEPatientAction
       getSeverity().set(other.getSeverity());
     else if (severity != null)
       severity.invalidate();
-    hasSecretions = other.hasSecretions;
+    resistanceType = other.resistanceType;
   }
   
   @Override
@@ -51,7 +52,7 @@ public class SEAirwayObstruction extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
-    dst.setHasSecretions(src.getHasSecretions());
+    dst.setResistanceType(src.getResistanceType());
   }
   
   public static AirwayObstructionData unload(SEAirwayObstruction src)
@@ -66,7 +67,7 @@ public class SEAirwayObstruction extends SEPatientAction
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasSeverity())
       dst.setSeverity(SEScalar0To1.unload(src.severity));
-    dst.setHasSecretions(src.getHasSecretions());
+    dst.setResistanceType(src.getResistanceType());
   }
   
   public boolean hasSeverity()
@@ -80,13 +81,13 @@ public class SEAirwayObstruction extends SEPatientAction
     return severity;
   }
   
-  public boolean getHasSecretions()
+  public eResistanceType getResistanceType()
   {
-    return hasSecretions;
+    return resistanceType;
   }
-  public void setHasSecretions(boolean hasSecretions)
+  public void setResistanceType(eResistanceType rt)
   {
-    this.hasSecretions = hasSecretions;
+    this.resistanceType = rt;
   }
 
   @Override
@@ -95,7 +96,7 @@ public class SEAirwayObstruction extends SEPatientAction
     if (severity != null)
       return "Airway Obstruction" 
           + "\n\tSeverity: " + getSeverity()
-          + "\n\tHas Secretions: " + getHasSecretions();
+          + "\n\tResistance Type: " + getResistanceType();
     else
       return "Action not specified properly";
   }

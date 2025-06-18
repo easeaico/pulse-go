@@ -9,7 +9,7 @@
 SEAirwayObstruction::SEAirwayObstruction(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity=nullptr;
-  m_HasSecretions=false;
+  m_ResistanceType = eAirwayObstruction_ResistanceType::Constant;
 }
 
 SEAirwayObstruction::~SEAirwayObstruction()
@@ -21,7 +21,7 @@ void SEAirwayObstruction::Clear()
 {
   SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_Severity);
-  m_HasSecretions=false;
+  m_ResistanceType = eAirwayObstruction_ResistanceType::Constant;
 }
 
 void SEAirwayObstruction::Copy(const SEAirwayObstruction& src, bool /*preserveState*/)
@@ -72,11 +72,11 @@ double SEAirwayObstruction::GetSeverity() const
   return m_Severity->GetValue();
 }
 
-bool SEAirwayObstruction::GetHasSecretions() const
+eAirwayObstruction_ResistanceType SEAirwayObstruction::GetResistanceType() const
 {
-  return m_HasSecretions;
+  return m_ResistanceType;
 }
-void SEAirwayObstruction::SetHasSecretions(bool hasSecretions)
+void SEAirwayObstruction::SetResistanceType(eAirwayObstruction_ResistanceType rt)
 {
-  m_HasSecretions = hasSecretions;
+  m_ResistanceType = rt;
 }

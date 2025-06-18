@@ -4,6 +4,14 @@
 #pragma once
 #include "cdm/patient/actions/SEPatientAction.h"
 
+// Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
+enum class eAirwayObstruction_ResistanceType
+{
+  Constant = 0,
+  Oscillating = 1
+};
+extern CDM_DECL const std::string& eAirwayObstruction_ResistanceType_Name(eAirwayObstruction_ResistanceType c);
+
 class CDM_DECL SEAirwayObstruction : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
@@ -28,10 +36,10 @@ public:
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
-  virtual bool GetHasSecretions() const;
-  virtual void SetHasSecretions(bool hasSecretions);
+  virtual eAirwayObstruction_ResistanceType GetResistanceType() const;
+  virtual void SetResistanceType(eAirwayObstruction_ResistanceType rt);
 
 protected:
-  SEScalar0To1*           m_Severity;
-  bool                    m_HasSecretions;
+  SEScalar0To1*                     m_Severity;
+  eAirwayObstruction_ResistanceType m_ResistanceType;
 };

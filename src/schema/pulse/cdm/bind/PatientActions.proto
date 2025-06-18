@@ -83,9 +83,14 @@ message AcuteStressData
 /** @brief A blockage of the Airway leading to no respiration/air flow in or out of the body. */
 message AirwayObstructionData
 {
+  enum eResistanceType
+  {
+    Constant    = 0;/**<<@brief Obstruction provides a constant resistance. */
+    Oscillating = 1;/**<<@brief Obstruction provides an oscillating resistance. Indicating blockage due to presence of secretions resulting in intermittent expiratory flow through the obstruction. */
+  }
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-  bool                                      HasSecretions                   = 3;/**<<@brief Optional flag indicating presence of secretions. Default is false. */
+  eResistanceType                           ResistanceType                  = 3;/**<<@brief Resistance model to use. */
 }
 
 /** @brief An arrhythmia is a problem with the rate or rhythm of your heartbeat.
