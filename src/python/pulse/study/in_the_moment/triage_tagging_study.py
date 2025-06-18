@@ -413,7 +413,7 @@ class TriageStudy:
                 _log.info(f"{patient} cause of death: {death_module.cause_of_death}")
 
             # dict of triage times of interest for this patient to triage vitals
-            data["triage"] = {}
+            data["visits"] = {}
             # Data needed for tagging protocols for every triage time for this patient
             for time_s, injury_state in states.items():
                 if death_module.time_of_death and death_module.time_of_death <= time_s:
@@ -439,7 +439,7 @@ class TriageStudy:
                 triage["protocols"]["bcd_sieve"] = {
                     "tag": self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals),
                     "interventions": self._bcd_sieve_interventions(synthetic_injuries, pulse_injuries, vitals)}
-                data["triage"][time_s] = triage
+                data["visits"][time_s] = {"triage": triage}
 
     @staticmethod
     def _calculate_triage_vitals(synthetic_injuries: list, active_events: dict, pulse_data: PulseData):
@@ -595,14 +595,12 @@ class TriageStudy:
 
         s = 0
         for i, patient in self._triage_study.items():
-            intervention = {}
-            for time_s, triage in patient["triage"].items():
+            for time_s, visit in patient["visits"].items():
                 protocols = {}
-                for protocol in ["start", "salt", "bcd_sieve"]:
-                    protocols[protocol] = {"intervention_exec_status": _exec_status_to_dict(intervention_exec_status[s])}
+                for p in ["start", "salt", "bcd_sieve"]:
+                    protocols[p] = {"intervention_exec_status": _exec_status_to_dict(intervention_exec_status[s])}
                     s += 1
-                intervention[time_s] = {"protocols": protocols}
-            patient["intervention"] = intervention
+                visit["intervention"] = {"protocols": protocols}
         self._total_interventions = s
 
     def _assess_interventions(self):
@@ -610,7 +608,8 @@ class TriageStudy:
         for i, patient in self._triage_study.items():
             pulse_injuries = patient["pulse_injuries"]
             synthetic_injuries = patient["synthetic_patient"]["injuries"]
-            for time_s, intervention in patient["intervention"].items():
+            for time_s, visit in patient["visits"].items():
+                intervention = visit["intervention"]
                 for protocol in ["start", "salt", "bcd_sieve"]:
                     p += 1
                     _log.info(f"[{p}/{self._total_interventions}]"
