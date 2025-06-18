@@ -918,33 +918,6 @@
       },
       {
         "TableName": "Segment1SegmentTable",
-        "ScenarioName": "Scenario4_NoSpontaneous",
-        "Segment": 1,
-        "DataRequestFile": [
-          "EnRouteCareDataRequests.json"
-        ],
-        "Header": []
-      },
-      {
-        "TableName": "Segment2SegmentTable",
-        "ScenarioName": "Scenario4_NoSpontaneous",
-        "Segment": 2,
-        "DataRequestFile": [
-          "EnRouteCareDataRequests.json"
-        ],
-        "Header": []
-      },
-      {
-        "TableName": "Segment3SegmentTable",
-        "ScenarioName": "Scenario4_NoSpontaneous",
-        "Segment": 3,
-        "DataRequestFile": [
-          "EnRouteCareDataRequests.json"
-        ],
-        "Header": []
-      },
-      {
-        "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario5_NoSpontaneous",
         "Segment": 1,
         "DataRequestFile": [
