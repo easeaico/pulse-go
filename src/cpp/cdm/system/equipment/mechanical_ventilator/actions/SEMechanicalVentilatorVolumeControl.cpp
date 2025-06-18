@@ -178,13 +178,17 @@ bool SEMechanicalVentilatorVolumeControl::IsValid() const
   if (!IsActive())
     return true;
 
-  return SEMechanicalVentilatorMode::IsValid() &&
-    HasFlow() &&
-    HasFractionInspiredOxygen() &&
-    HasPositiveEndExpiratoryPressure() &&
-    HasRespirationRate() &&
-    HasTidalVolume();
+  if (m_MergeType == eMergeType::Replace)
+  {
+    return SEMechanicalVentilatorMode::IsValid() &&
+      HasFlow() &&
+      HasFractionInspiredOxygen() &&
+      HasPositiveEndExpiratoryPressure() &&
+      HasRespirationRate() &&
+      HasTidalVolume();
     // Everything else is optional
+  }
+  return true;
 }
 
 bool SEMechanicalVentilatorVolumeControl::IsActive() const

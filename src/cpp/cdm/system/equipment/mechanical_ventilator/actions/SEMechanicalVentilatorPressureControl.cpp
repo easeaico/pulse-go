@@ -176,12 +176,16 @@ bool SEMechanicalVentilatorPressureControl::IsValid() const
   if (!IsActive())
     return true;
 
-  return SEMechanicalVentilatorMode::IsValid() &&
-    HasFractionInspiredOxygen() &&
-    HasInspiratoryPressure() &&
-    HasPositiveEndExpiratoryPressure() &&
-    HasRespirationRate();
+  if (m_MergeType == eMergeType::Replace)
+  {
+    return SEMechanicalVentilatorMode::IsValid() &&
+      HasFractionInspiredOxygen() &&
+      HasInspiratoryPressure() &&
+      HasPositiveEndExpiratoryPressure() &&
+      HasRespirationRate();
     // Everything else is optional
+  }
+  return true;
 }
 
 bool SEMechanicalVentilatorPressureControl::IsActive() const

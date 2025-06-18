@@ -153,11 +153,15 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::IsValid() const
   if (!IsActive())
     return true;
 
-  return SEMechanicalVentilatorMode::IsValid() &&
-    HasDeltaPressureSupport() &&
-    HasFractionInspiredOxygen() &&
-    HasPositiveEndExpiratoryPressure();
+  if (m_MergeType == eMergeType::Replace)
+  {
+    return SEMechanicalVentilatorMode::IsValid() &&
+      HasDeltaPressureSupport() &&
+      HasFractionInspiredOxygen() &&
+      HasPositiveEndExpiratoryPressure();
     // Everything else is optional
+  }
+  return true;
 }
 
 bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::IsActive() const
