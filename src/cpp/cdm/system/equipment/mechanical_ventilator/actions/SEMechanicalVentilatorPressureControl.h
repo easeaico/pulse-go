@@ -20,6 +20,8 @@ public:
 
   void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorPressureControl& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
+  // Merges the mode parameters,and clears/copies the supplemental settings
+  virtual void MergeMode(const SEMechanicalVentilatorPressureControl& src, const SESubstanceManager& subMgr, eMergeType mt);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, SESubstanceManager& subMgr, eMergeType mt) override;
 
   bool IsValid() const override;

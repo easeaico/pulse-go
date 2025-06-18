@@ -9,6 +9,7 @@
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/io/protobuf/PBEquipmentActions.h"
+#include "cdm/io/protobuf/PBMechanicalVentilator.h"
 
 SEMechanicalVentilatorVolumeControl::SEMechanicalVentilatorVolumeControl(Logger* logger) : SEMechanicalVentilatorMode(logger)
 {
@@ -21,8 +22,8 @@ SEMechanicalVentilatorVolumeControl::SEMechanicalVentilatorVolumeControl(Logger*
   m_InspiratoryPeriod = nullptr;
   m_PositiveEndExpiratoryPressure = nullptr;
   m_RespirationRate = nullptr;
-  m_TidalVolume = nullptr;
   m_Slope = nullptr;
+  m_TidalVolume = nullptr;
 }
 
 SEMechanicalVentilatorVolumeControl::~SEMechanicalVentilatorVolumeControl()
@@ -36,8 +37,8 @@ SEMechanicalVentilatorVolumeControl::~SEMechanicalVentilatorVolumeControl()
   SAFE_DELETE(m_InspiratoryPeriod);
   SAFE_DELETE(m_PositiveEndExpiratoryPressure);
   SAFE_DELETE(m_RespirationRate);
-  SAFE_DELETE(m_TidalVolume);
   SAFE_DELETE(m_Slope);
+  SAFE_DELETE(m_TidalVolume);
 }
 
 void SEMechanicalVentilatorVolumeControl::Clear()
@@ -52,13 +53,48 @@ void SEMechanicalVentilatorVolumeControl::Clear()
   INVALIDATE_PROPERTY(m_InspiratoryPeriod);
   INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
   INVALIDATE_PROPERTY(m_RespirationRate);
-  INVALIDATE_PROPERTY(m_TidalVolume);
   INVALIDATE_PROPERTY(m_Slope);
+  INVALIDATE_PROPERTY(m_TidalVolume);
 }
 
 void SEMechanicalVentilatorVolumeControl::Copy(const SEMechanicalVentilatorVolumeControl& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
+}
+
+void SEMechanicalVentilatorVolumeControl::MergeMode(const SEMechanicalVentilatorVolumeControl& src, const SESubstanceManager& subMgr, eMergeType mt)
+{
+  if (mt == eMergeType::Replace)
+    PBEquipmentAction::Copy(src, *this, subMgr);
+  else
+  {
+    m_Mode = src.m_Mode;
+    if (src.HasFlow())
+      GetFlow().Set(*src.m_Flow);
+    if (src.HasFractionInspiredOxygen())
+      GetFractionInspiredOxygen().Set(*src.m_FractionInspiredOxygen);
+    if (src.HasInspirationWaveform())
+      SetInspirationWaveform(src.m_InspirationWaveform);
+    if (src.HasInspirationPatientTriggerFlow())
+      GetInspirationPatientTriggerFlow().Set(*src.m_InspirationPatientTriggerFlow);
+    if (src.HasInspirationPatientTriggerPressure())
+      GetInspirationPatientTriggerPressure().Set(*src.m_InspirationPatientTriggerPressure);
+    if (src.HasInspiratoryPeriod())
+      GetInspiratoryPeriod().Set(*src.m_InspiratoryPeriod);
+    if (src.HasPositiveEndExpiratoryPressure())
+      GetPositiveEndExpiratoryPressure().Set(*src.m_PositiveEndExpiratoryPressure);
+    if (src.HasRespirationRate())
+      GetRespirationRate().Set(*src.m_RespirationRate);
+    if (src.HasSlope())
+      GetSlope().Set(*src.m_Slope);
+    if (src.HasTidalVolume())
+      GetTidalVolume().Set(*src.m_TidalVolume);
+
+    if (src.HasSupplementalSettings())
+      PBMechanicalVentilator::Copy(*src.GetSupplementalSettings(), GetSupplementalSettings(), subMgr);
+    else if (HasSupplementalSettings())
+      m_SupplementalSettings->Clear();
+  }
 }
 
 bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSettings& s, SESubstanceManager& subMgr, eMergeType mt)

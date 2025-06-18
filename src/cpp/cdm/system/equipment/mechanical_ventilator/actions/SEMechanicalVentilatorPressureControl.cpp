@@ -8,6 +8,7 @@
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/io/protobuf/PBEquipmentActions.h"
+#include "cdm/io/protobuf/PBMechanicalVentilator.h"
 
 SEMechanicalVentilatorPressureControl::SEMechanicalVentilatorPressureControl(Logger* logger) : SEMechanicalVentilatorMode(logger)
 {
@@ -50,6 +51,39 @@ void SEMechanicalVentilatorPressureControl::Clear()
   INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
   INVALIDATE_PROPERTY(m_RespirationRate);
   INVALIDATE_PROPERTY(m_Slope);
+}
+
+void SEMechanicalVentilatorPressureControl::MergeMode(const SEMechanicalVentilatorPressureControl& src, const SESubstanceManager& subMgr, eMergeType mt)
+{
+  if (mt == eMergeType::Replace)
+    PBEquipmentAction::Copy(src, *this, subMgr);
+  else
+  {
+    m_Mode = src.m_Mode;
+    if (src.HasFractionInspiredOxygen())
+      GetFractionInspiredOxygen().Set(*src.m_FractionInspiredOxygen);
+    if (src.HasInspirationPatientTriggerFlow())
+      GetInspirationPatientTriggerFlow().Set(*src.m_InspirationPatientTriggerFlow);
+    if (src.HasInspirationPatientTriggerPressure())
+      GetInspirationPatientTriggerPressure().Set(*src.m_InspirationPatientTriggerPressure);
+    if (src.HasInspirationWaveform())
+      SetInspirationWaveform(src.m_InspirationWaveform);
+    if (src.HasInspiratoryPeriod())
+      GetInspiratoryPeriod().Set(*src.m_InspiratoryPeriod);
+    if (src.HasInspiratoryPressure())
+      GetInspiratoryPressure().Set(*src.m_InspiratoryPressure);
+    if (src.HasPositiveEndExpiratoryPressure())
+      GetPositiveEndExpiratoryPressure().Set(*src.m_PositiveEndExpiratoryPressure);
+    if (src.HasRespirationRate())
+      GetRespirationRate().Set(*src.m_RespirationRate);
+    if (src.HasSlope())
+      GetSlope().Set(*src.m_Slope);
+
+    if (src.HasSupplementalSettings())
+      PBMechanicalVentilator::Copy(*src.GetSupplementalSettings(), GetSupplementalSettings(), subMgr);
+    else if (HasSupplementalSettings())
+      m_SupplementalSettings->Clear();
+  }
 }
 
 void SEMechanicalVentilatorPressureControl::Copy(const SEMechanicalVentilatorPressureControl& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
