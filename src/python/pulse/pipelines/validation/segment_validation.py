@@ -116,7 +116,10 @@ def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str =
                     if not segment_durations:
                         segment_durations = log.get_active_events_in_window(seg_start_time, seg_end_time)
                     event = eEvent[header[1]]
-                    supplemental_results = segment_durations[event]
+                    if event not in segment_durations:
+                        supplemental_results = segment_durations[None]
+                    else:
+                        supplemental_results = segment_durations[event]
                 elif "Assessment" in tgt.get_header():
                     if len(results_files[2]) == 0:
                         _pulse_logger.error(f"No assessment files found, cannot Validate {tgt.get_header()}")
