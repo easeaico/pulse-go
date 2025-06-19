@@ -435,7 +435,10 @@ class TriageStudy:
                         "vitals": vitals,
                         "tags": {"start": self._start_tag(synthetic_injuries, pulse_injuries, vitals),
                                  "salt": self._salt_tag(synthetic_injuries, pulse_injuries, vitals),
-                                 "bcd_sieve": self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals)}
+                                 "bcd_sieve": self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals)},
+                        "triss": self._calculate_triss_score(synthetic_injuries, pulse_injuries, vitals),
+                        "news": self._calculate_news_score(synthetic_injuries, pulse_injuries, vitals),
+                        "description": self._generate_injury_description(synthetic_injuries, pulse_injuries, vitals)
                     }
                 data["visits"][time_s] = {"triage": triage}
 
@@ -495,6 +498,20 @@ class TriageStudy:
                 "heart_rate": pulse_data.get_hr(FrequencyUnit.Per_min),
                 "healthy_capillary_refill_time": healthy_capillary_refill_time,
                 }
+
+    @staticmethod
+    def _calculate_triss_score(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
+        # https://www.mdapp.co/trauma-injury-severity-score-triss-calculator-277/
+        return 0
+
+    @staticmethod
+    def _calculate_news_score(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
+        # https://www.mdcalc.com/calc/1873/national-early-warning-score-news#next-steps
+        return 0
+
+    @staticmethod
+    def _generate_injury_description(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
+        return ""
 
     @staticmethod
     def _generate_pulse_interventions(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
@@ -636,6 +653,8 @@ class TriageStudy:
                             "salt": self._salt_tag(synthetic_injuries, pulse_injuries, vitals),
                             "bcd_sieve": self._bcd_sieve_tag(synthetic_injuries, pulse_injuries, vitals)}
                     intervention["tags"] = tags
+                    intervention["triss"] = self._calculate_triss_score(synthetic_injuries, pulse_injuries, vitals)
+                    intervention["news"] = self._calculate_news_score(synthetic_injuries, pulse_injuries, vitals)
 
 
 def main():
