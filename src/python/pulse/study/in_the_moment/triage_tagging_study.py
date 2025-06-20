@@ -571,7 +571,51 @@ class TriageStudy:
     @staticmethod
     def _calculate_news_score(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         # https://www.mdcalc.com/calc/1873/national-early-warning-score-news#next-steps
-        return 0
+        NEWS = 0
+
+        #Respiration Rate
+        if vitals["respiratory_rate"] <= 8 or vitals["respiratory_rate"] >= 25:
+            NEWS = NEWS+3
+        elif vitals["respiratory_rate"] > 8 and vitals["respiratory_rate"] < 12:
+            NEWS = NEWS+1
+        elif vitals["respiratory_rate"] >= 21 and vitals["respiratory_rate"] < 25:
+            NEWS = NEWS+2
+
+        #O2 Saturation - #TODO: need O2 Saturation
+        O2 = 0.95
+        if O2 >= 0.94 and O2 < 0.96:
+            NEWS = NEWS+1
+        elif O2 >= 0.92 and O2 < 0.94:
+            NEWS = NEWS+2
+        elif O2 < 0.92:
+            NEWS = NEWS+3
+
+        #ignoring temperature for now
+
+        #Systolic Blood Pressure -  #TODO: Need the systolic blood pressure
+        SBP = 110
+        if SBP >= 220 or SBP <= 90:
+            NEWS = NEWS+3
+        elif SBP > 91 and SBP < 100:
+            NEWS = NEWS+2
+        elif SBP >=100 and SBP < 110:
+            NEWS = NEWS+1
+
+        #Heart Rate
+        if vitals["heart_rate"] <= 40 or vitals["heart_rate"] >= 131:
+            NEWS = NEWS+3
+        elif vitals["heart_rate"] < 131 and vitals["heart_rate"] >= 110:
+            NEWS = NEWS+2
+        elif vitals["heart_rate"] < 110 and vitals["heart_rate"] >= 90:
+            NEWS = NEWS+1
+        elif vitals["heart_rate"] < 90 and vitals["heart_rate"] > 40:
+            NEWS = NEWS+1
+
+        #AVPU
+        if not vitals["avpu"] == AVPU.Alert:
+            NEWS = NEWS+3
+
+        return NEWS
 
     @staticmethod
     def _generate_injury_description(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
@@ -599,15 +643,18 @@ class TriageStudy:
     @staticmethod
     def _start_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         tag = TriageTag.Green
+        airway_Intervention = 10.0  #10 means ignore
+        hemorrhage_Intervention = 10.0 #10 means ignore
         if vitals["ambulatory"]:
             return tag
 
         tag = TriageTag.Yellow
 
         if not vitals["breathing"]:
-            for injury in synthetic_injuries:
-                if "AirwayObstruction" in injury["type"] and injury["severity"]<5:
+            for injury in pulse_injuries:
+                if "AirwayObstruction" in injury["PatientAction"] and injury["severity"]<0.85:
                     tag = TriageTag.Red
+                    airway_Intervention = injury["severity"]/1.5
                 else:
                     tag = TriageTag.Black
                     return tag
@@ -626,22 +673,26 @@ class TriageStudy:
     @staticmethod
     def _salt_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         tag = TriageTag.Green
+        airway_Intervention = 10.0  # 10 means ignore
+        hemorrhage_Intervention = 10.0  # 10 means ignore
         if vitals["ambulatory"]:
             return tag
 
         if not vitals["breathing"]:
             for injury in synthetic_injuries:
-                if "AirwayObstruction" in injury["type"] and injury["severity"] < 5:
+                if "AirwayObstruction" in injury["PatientAction"] and injury["severity"] < 0.85:
                     tag = TriageTag.Red
+                    airway_Intervention = injury["severity"] / 1.5
                 else:
                     tag = TriageTag.Black
                     return tag
 
         if not vitals["controlled_hemorrhage"]:
             for injury in synthetic_injuries:
-                if "Extremity" in injury["location"] or injury["severity"] < 2:
+                if "Extremity" in injury["location"]:
                     if tag != TriageTag.Red:
                         tag = TriageTag.Yellow
+                        hemorrhage_Intervention = 0.05
                 elif injury["severity"] > 4:
                     tag = TriageTag.Black
                     return tag
@@ -667,17 +718,23 @@ class TriageStudy:
     @staticmethod
     def _bcd_sieve_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         tag = TriageTag.Green
+        airway_Intervention = 10.0  # 10 means ignore
+        hemorrhage_Intervention = 10.0  # 10 means ignore
 
         if vitals["ambulatory"]:
             return tag
 
         if not vitals["controlled_hemorrhage"]:
             tag = TriageTag.Red
+            for injury in synthetic_injuries:
+                if "Extremity" in injury["location"]:
+                    hemorrhage_Intervention = 0.05
 
         if not vitals["breathing"]:
             for injury in synthetic_injuries:
-                if "AirwayObstruction" in injury["type"] and injury["severity"] < 5:
+                if "AirwayObstruction" in injury["PatientAction"] and injury["severity"] < 0.85:
                     tag = TriageTag.Red
+                    airway_Intervention = injury["severity"] / 1.5
                 else:
                     tag = TriageTag.Black
                     return tag
@@ -685,7 +742,7 @@ class TriageStudy:
         if vitals["avpu"] == AVPU.Pain or AVPU.Unresponsive:
             tag = TriageTag.Red
 
-        if vitals["respiratory_respiratory"] > 23.0 or vitals["respiratory_respirator"] < 12.0:
+        if vitals["respiratory_rate"] > 23.0 or vitals["respiratory_rate"] < 12.0:
             tag = TriageTag.Red
 
         if vitals["heart_rate"] > 100:
