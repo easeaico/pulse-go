@@ -502,7 +502,71 @@ class TriageStudy:
     @staticmethod
     def _calculate_triss_score(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         # https://www.mdapp.co/trauma-injury-severity-score-triss-calculator-277/
-        return 0
+        #TODO: Need the patient age
+        #age
+        age = 23
+        age_index = 0
+        if age > 55:
+            age_index = 1
+
+        #Glascow Coma Scale
+        GCS = 0
+        GCS_code = 0
+        if vitals["avpu"] == AVPU.Unresponsive:
+            GCS = 5 #Assuming no eye opening, no verbal response, flexor and extensor reactions
+            GCS_code = 1
+        elif vitals["avpu"] == AVPU.Pain:
+            GCS = 9 #Assuming eye opening to pain stimulus, inappropriate words with no sentences, movement toward pressure/pain
+            GCS_code = 3
+        elif vitals["avpu"] == AVPU.Voice:
+            GCS = 14 #Assuming eye open to auditory stimulus, oriented responses, conscious obeying of motor commands
+            GCS_code = 4
+        else: #ALERT
+            GCS = 15 #Assuming spontaneous opening, oriented responses, conscious obeying of motor commands
+            GCS_code = 4
+
+        #Systolic Blood Pressure
+        #TODO: Need the systolic blood pressure
+        SBP = 110
+        SBP_code = 0
+        if SBP >= 89:
+            SBP_code = 4
+        elif SBP >= 76 and SBP < 89:
+            SBP_code = 3
+        elif SBP >=50 and SBP < 75:
+            SBP_code = 2
+        elif SBP >= 1 and SBP < 50:
+            SBP_code = 1
+        else:
+            SBP_code = 0
+
+        RR_code = 0
+        if vitals["respiratory_rate"] > 29 and vitals["respiratory_rate"] < 10:
+            RR_code = 4
+        elif vitals["respiratory_rate"] >= 29:
+            RR_code = 3
+        elif vitals["respiratory_rate"] >= 6 and vitals["respiratory_rate"] < 10:
+            RR_code = 2
+        elif vitals["respiratory_rate"] >= 1 and vitals["respiratory_rate"] < 6:
+            RR_code = 1
+        else:
+            RR_code = 0
+
+        Revised_Trauma_Score = GCS_code*0.9368 + SBP_code*0.7326 + RR_code*0.2908
+
+        ISS = 0
+        blunt = True #blunt force injury
+        for injury in synthetic_injuries:
+            ISS = ISS + injury["severity"]
+            if "Hemorrhage" in injury["type"]:
+                blunt = False #penetrating injury
+
+        if blunt:
+            TRISS = -0.4499 + 0.8505*Revised_Trauma_Score - 0.0835*ISS - 1.7430*age_index
+        else:
+            TRISS = -2.5355 + 0.9934*Revised_Trauma_Score - 0.0651*ISS - 1.1360*age_index
+
+        return TRISS
 
     @staticmethod
     def _calculate_news_score(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
@@ -534,18 +598,101 @@ class TriageStudy:
 
     @staticmethod
     def _start_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
-        #  TODO Implement tagging algorithm
-        return TriageTag.Green
+        tag = TriageTag.Green
+        if vitals["ambulatory"]:
+            return tag
+
+        tag = TriageTag.Yellow
+
+        if not vitals["breathing"]:
+            for injury in synthetic_injuries:
+                if "AirwayObstruction" in injury["type"] and injury["severity"]<5:
+                    tag = TriageTag.Red
+                else:
+                    tag = TriageTag.Black
+                    return tag
+
+        if vitals["respiratory_rate"] > 30.0:
+            tag = TriageTag.Red
+
+        if not vitals["healthy_capillary_refill_time"]:
+            tag = TriageTag.Red
+
+        if vitals["avpu"] != AVPU.Alert or vitals["avpu"] != AVPU.Voice:
+            tag = TriageTag.Red
+
+        return tag
 
     @staticmethod
     def _salt_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
-        #  TODO Implement tagging algorithm
-        return TriageTag.Green
+        tag = TriageTag.Green
+        if vitals["ambulatory"]:
+            return tag
+
+        if not vitals["breathing"]:
+            for injury in synthetic_injuries:
+                if "AirwayObstruction" in injury["type"] and injury["severity"] < 5:
+                    tag = TriageTag.Red
+                else:
+                    tag = TriageTag.Black
+                    return tag
+
+        if not vitals["controlled_hemorrhage"]:
+            for injury in synthetic_injuries:
+                if "Extremity" in injury["location"] or injury["severity"] < 2:
+                    if tag != TriageTag.Red:
+                        tag = TriageTag.Yellow
+                elif injury["severity"] > 4:
+                    tag = TriageTag.Black
+                    return tag
+                else:
+                    tag = TriageTag.Red
+
+        if not vitals["healthy_capillary_refill_time"]:
+            tag = TriageTag.Red
+
+        if vitals["respiratory_distress"]:
+            tag = TriageTag.Red
+
+        if vitals["avpu"] == AVPU.Pain or AVPU.Unresponsive:
+                tag = TriageTag.Red
+
+        if tag == TriageTag.Green:
+            for injury in synthetic_injuries:
+                if injury["severity"] >= 2:
+                    tag = TriageTag.Yellow
+
+        return tag
 
     @staticmethod
     def _bcd_sieve_tag(synthetic_injuries: list, pulse_injuries: list, vitals: dict):
-        #  TODO Implement tagging algorithm
-        return TriageTag.Green
+        tag = TriageTag.Green
+
+        if vitals["ambulatory"]:
+            return tag
+
+        if not vitals["controlled_hemorrhage"]:
+            tag = TriageTag.Red
+
+        if not vitals["breathing"]:
+            for injury in synthetic_injuries:
+                if "AirwayObstruction" in injury["type"] and injury["severity"] < 5:
+                    tag = TriageTag.Red
+                else:
+                    tag = TriageTag.Black
+                    return tag
+
+        if vitals["avpu"] == AVPU.Pain or AVPU.Unresponsive:
+            tag = TriageTag.Red
+
+        if vitals["respiratory_respiratory"] > 23.0 or vitals["respiratory_respirator"] < 12.0:
+            tag = TriageTag.Red
+
+        if vitals["heart_rate"] > 100:
+            tag = TriageTag.Red
+
+        tag = TriageTag.Yellow
+        return tag
 
     def _simulate_interventions(self, total_simulation_duration_min: float):
 
