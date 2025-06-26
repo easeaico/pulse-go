@@ -558,7 +558,7 @@ class ArmyDataset(TriageDataset):
         actions: List[SEAction] = []
 
         def to_pulse_severity(value: float,
-                              min_input: float = 1.0, max_input: float = 5.0,
+                              min_input: float = 0.0, max_input: float = 5.0,
                               min_output: float = 0.0, max_output: float = 1.0) -> float:
             return (value - min_input) / (max_input - min_input) * (max_output - min_output) + min_output
 
@@ -844,7 +844,8 @@ class ArmyDataset(TriageDataset):
                     _log.info("Applying tourniquet to external hemorrhage")
             elif "AirwayObstruction" in injury["PatientAction"]:
                 ao = SEAirwayObstruction()
-                ao.get_severity().set_value(injury["severity"]/1.5)
+                s = injury["PatientAction"]["AirwayObstruction"]["Severity"]["Scalar0To1"]["Value"]
+                ao.get_severity().set_value(s/1.5)  # TODO 2/3 is cleared?
                 interventions.append(ao)
                 _log.info("Clearing airway obstruction")
 

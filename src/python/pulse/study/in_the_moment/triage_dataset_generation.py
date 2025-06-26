@@ -295,10 +295,11 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
                         if list(injury).count(u) >= 3:
                             _log.fatal(f"Is this a good injury mix {injury}")
         else:
-            ledger[location]["injuries"] = _weighted_choices(
-                                                            choices=list(injury_types.keys()),
-                                                            percents=[injury_types[t]["percent"] for t in injury_types],
-                                                            size=num_injured)
+            weighted_severities = _weighted_choices(choices=list(injury_types.keys()),
+                                                    percents=[injury_types[t]["percent"] for t in injury_types],
+                                                    size=num_injured)
+            _log.info(f"{location} severity range [{(min(weighted_severities))},{(max(weighted_severities))}]")
+            ledger[location]["injuries"] = weighted_severities
         injuries = ledger[location]["injuries"]
         injury_severities = ledger[location]["injury_severities"]
         for injury_type, dist in injury_types.items():
