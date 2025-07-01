@@ -41,23 +41,34 @@ class TriageColor(str, Enum):
 
 
 class TriageTag:
-    __slots__ = ["_color"]
+    __slots__ = ["_color", "_reason"]
 
     def __init__(self):
-        self._color = TriageColor.Green
+        self._color = None
+        self._reason = None
 
-    def apply(self, t: TriageColor):
-        if self._color == TriageColor.Green:
+    def apply(self, t: TriageColor, reason: str):
+        if self._color is None:
             self._color = t
+            self._reason = reason
+            return
+
         elif self._color == TriageColor.Yellow:
             if t == TriageColor.Red or TriageColor.Black:
                 self._color = t
+                self._reason = reason
+            return
+
         elif self._color == TriageColor.Red:
             if t == TriageColor.Black:
                 self._color = t
+                self._reason = reason
 
     @property
     def color(self): return self._color
+
+    @property
+    def reason(self): return self._reason
 
 
 class PulseData:

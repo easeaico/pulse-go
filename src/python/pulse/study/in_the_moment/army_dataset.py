@@ -39,9 +39,10 @@ population_distributions = {
 
 injury_distributions = {  # Location -> Type -> Severity mean/std or explicit value/percent
     "head_and_neck": {"percent": 36.2, "severity_mean": 2.69, "types": {
-        "tbi": {"percent": 22, "severity": {"mean": 3.5, "std": 0.25}},
         "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.25}},
-        "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}}
+        "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}},
+        "tbi": {"percent": 22, "severity": {"mean": 3.5, "std": 0.25}}
+        # TODO Should we maybe do random.uniform(0, 1) rather than ALL values be the same?
     }},
     "thorax": {"percent": 8.6, "severity_mean": 2.85, "polytrauma": {"max": 4, "mean": 2.3}, "types": {
         "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.25}},
@@ -105,9 +106,9 @@ class ArmyDataset(TriageDataset):
 
             # This is our test dataset: Standard Male, with a spectrum of each injury (where applicable)
             # Head and Neck
-            _patient_set("head_and_neck", "tbi", max_steps)
             _patient_set("head_and_neck", "airway_obstruction", max_steps)
             _patient_set("head_and_neck", "superficial", [1.0])
+            _patient_set("head_and_neck", "tbi", max_steps)
             # Thorax
             _patient_set("thorax", "fracture", max_steps)
             _patient_set("thorax", "hemothorax", max_steps)
@@ -473,11 +474,19 @@ class ArmyDataset(TriageDataset):
     def calculate_triage_vitals(self, synthetic_patient: dict, active_events: dict, pulse_data: PulseData):
         synthetic_injuries = synthetic_patient["injuries"]
 
-        # Find the highest severity injury
+        # Find the iss and highest severity injury
+        iss = 0
         max_severity = 0
         for injury in synthetic_injuries:
+            iss = injury['severity'] + 1  # ISS is 1-6, where ours is 0-5
             if injury['severity'] > max_severity:
                 max_severity = injury['severity']
+
+        # TODO What is blunt trauma?
+        blunt_trauma = True
+        for injury in synthetic_injuries:
+            if injury["type"] == "hemorrhage":
+                blunt_trauma = False
 
         # Breathing
         obstruction = False
@@ -511,7 +520,7 @@ class ArmyDataset(TriageDataset):
                     controllable_hemorrhage = True
                 if injury["severity"] >= 3:
                     hemorrhage = Hemorrhage.Major
-                else:
+                elif not hemorrhage:
                     hemorrhage = Hemorrhage.Minor
 
         # AVPU
@@ -535,23 +544,35 @@ class ArmyDataset(TriageDataset):
         elif avpu != AVPU.Alert:
             ambulatory = False
 
+        # TODO Not sure how we want to do this
+        survivable_injuries = True
+        if max_severity >= 4.8:
+            survivable_injuries = False
+
         # Unhealthy CRT > 2s - we are associating with hypotension
         healthy_capillary_refill_time = True
         if pulse_data.get_map(PressureUnit.mmHg) < 60:
             healthy_capillary_refill_time = False
 
+        # TODO is this a good test for peripheral pulse
+        peripheral_pulse = healthy_capillary_refill_time
+
         return {"age": synthetic_patient["age"],
                 "avpu": avpu,
                 "ambulatory": ambulatory,
+                "blunt_trauma": blunt_trauma,
                 "breathing": {"type": breathing, "able_to_clear": clearable_airway},
                 "healthy_capillary_refill_time": healthy_capillary_refill_time,
                 "heart_rate": pulse_data.get_hr(FrequencyUnit.Per_min),
-                "major_injuries": True if max_severity > 2 else False,
                 "hemorrhage": {"type": hemorrhage, "controllable": controllable_hemorrhage},
+                "iss": iss,
+                "major_injuries": True if max_severity > 2 else False,
+                "peripheral_pulse": peripheral_pulse,
                 "respiratory_rate": pulse_data.get_rr(FrequencyUnit.Per_min),
                 "spO2": pulse_data.get_spo2(),
                 "systolic_pressure": pulse_data.get_systolic_pressure(PressureUnit.mmHg),
-                "diastolic_pressure": pulse_data.get_diastolic_pressure(PressureUnit.mmHg)
+                "diastolic_pressure": pulse_data.get_diastolic_pressure(PressureUnit.mmHg),
+                "survivable_injuries": survivable_injuries
                 }
 
     def injury_actions(self, injuries: list) -> List[SEAction]:
@@ -747,12 +768,16 @@ class ArmyDataset(TriageDataset):
                     if t == "hemorrhage":
                         skin = SEHemorrhage()
                         skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                        skin.get_severity().set_value(to_pulse_severity(severities[0]))
+                        skin.get_severity().set_value(to_pulse_severity(severities[0],
+                                                                          min_output=0.2,
+                                                                          max_output=0.7))
                         actions.append(skin)
 
                         muscle = SEHemorrhage()
                         muscle.set_compartment(eHemorrhage_Compartment.Muscle.value)
-                        muscle.get_severity().set_value(to_pulse_severity(severities[0]))
+                        muscle.get_severity().set_value(to_pulse_severity(severities[0],
+                                                                          min_output=0.2,
+                                                                          max_output=0.7))
                         actions.append(muscle)
                         continue
 
@@ -760,7 +785,7 @@ class ArmyDataset(TriageDataset):
                         stress = SEAcuteStress()
                         stress.get_severity().set_value(to_pulse_severity(severities[0],
                                                                           min_output=0.2,
-                                                                          max_output=0.4))
+                                                                          max_output=0.7))
                         actions.append(stress)
 
                         skin = SEHemorrhage()
@@ -792,6 +817,11 @@ class ArmyDataset(TriageDataset):
                             hemorrhage.set_compartment(eHemorrhage_Compartment.RightLeg.value)
                         hemorrhage.get_severity().set_value(to_pulse_severity(severities[0]))
                         actions.append(hemorrhage)
+
+                        stress = SEAcuteStress()
+                        stress.get_severity().set_value(to_pulse_severity(severities[0],
+                                                                          min_output=0.2,
+                                                                          max_output=0.7))
                         continue
 
                     if t == "fracture_dislocation":

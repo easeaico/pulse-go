@@ -259,7 +259,6 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
     # An array of injuries for each patient
     patient_injuries = []
 
-    # TODO Assuming only 1 injury for each patient
     injury_locations = _weighted_choices(
         choices=list(distributions.keys()),
         percents=[value["percent"] for value in distributions.values()],

@@ -128,7 +128,7 @@ class DeathCheckModule(PulseResultsProcessor):
 
 
 class TriageStudy:
-    __slots__ = ["_output_dir", "_triage_study", "_dataset", "_pulse_data",
+    __slots__ = ["_output_dir", "_triage_study", "_dataset", "_pulse_data", "_tgt_id",
                  "_injury_scenarios_dir", "_injury_states_dir", "_injury_outputs_dir", "_injury_exec_status_filename",
                  "_intervention_scenarios_dir", "_intervention_outputs_dir", "_intervention_exec_status_filename",
                  "_total_interventions"]
@@ -137,6 +137,7 @@ class TriageStudy:
         self._triage_study = {}
         self._output_dir = output_dir
         self._pulse_data = PulseData()
+        self._tgt_id = None
         # Directories and files associated with simulating injuries using Pulse
         self._injury_scenarios_dir = output_dir / "injuries/scenarios"
         self._injury_states_dir = output_dir / "injuries/states"
@@ -162,23 +163,25 @@ class TriageStudy:
     @property
     def total_interventions(self): return self._total_interventions
 
-    def analyze_population_size(self, population_size: int):
-        self._triage_study = {}
+    def analyze_population_size(self, population_size: int, study_file: Path = None, tgt_id: int = None):
         # Create synthetic patient file
         synthetic_patients = self._dataset.generate_dataset(population_size, self._output_dir/"synthetic")
-        self._analyze_synthetic_patients(synthetic_patients)
+        self._analyze_synthetic_patients(synthetic_patients, study_file, tgt_id)
 
-    def analyze_population_file(self, population_file: Path):
-        self._triage_study = {}
+    def analyze_population_file(self, population_file: Path, study_file: Path = None, tgt_id: int = None):
         if population_file.exists():
             with open(population_file, 'r') as file:
                 synthetic_patients = json.load(file)
-            self._analyze_synthetic_patients(synthetic_patients)
+            self._analyze_synthetic_patients(synthetic_patients, study_file, tgt_id)
         else:
             _log.fatal(f"Specified population file does not exist: {population_file}")
             exit(1)
 
-    def _analyze_synthetic_patients(self, synthetic_patients: dict):
+    def _analyze_synthetic_patients(self, synthetic_patients: dict, study_file: Path = None, tgt_id: int = None):
+        self._triage_study = {}
+        if study_file and study_file.exists():
+            _log.info(f"Loading and appending to existing study file: {study_file}")
+        self._tgt_id = tgt_id
         for i, sp in enumerate(synthetic_patients):
             self._triage_study[i] = {"synthetic_patient": sp}
 
@@ -299,6 +302,9 @@ class TriageStudy:
 
     def _triage_injured_states(self):
         for i, data in self._triage_study.items():
+            if self._tgt_id:
+                if i != self._tgt_id:
+                    continue
             _log.info(f"Triaging patient {i}")
 
             exec_status = data["injury_exec_status"]
@@ -350,20 +356,26 @@ class TriageStudy:
                     active_events = r.get_active_events_in_window(time_s - 60, time_s)
 
                     vitals = self._dataset.calculate_triage_vitals(synthetic_patient, active_events, self._pulse_data)
+                    start_color, start_reason = self._start_tag(vitals)
+                    salt_color, salt_reason = self._salt_tag(vitals)
+                    bcd_color, bcd_reason = self._bcd_sieve_tag(vitals)
                     triage = {
                         "state": injury_state,
                         "vitals": vitals,
-                        "tags": {"start": self._start_tag(vitals),
-                                 "salt": self._salt_tag(vitals),
-                                 "bcd_sieve": self._bcd_sieve_tag(vitals)},
-                        "triss": self._calculate_triss_score(synthetic_injuries, vitals),
+                        "tags": {"start": start_color,
+                                 "start_reason": start_reason,
+                                 "salt": salt_color,
+                                 "salt_reason": salt_reason,
+                                 "bcd_sieve": bcd_color,
+                                 "bcd_sieve_reason": bcd_reason},
+                        "triss": self._calculate_triss_score(vitals),
                         "news": self._calculate_news_score(vitals),
                         "description": self._dataset.injury_description(time_s, synthetic_injuries, pulse_injuries, vitals)
                     }
                 data["visits"][time_s] = {"triage": triage}
 
     @staticmethod
-    def _calculate_triss_score(synthetic_injuries: list, vitals: dict):
+    def _calculate_triss_score(vitals: dict):
         # https://www.mdapp.co/trauma-injury-severity-score-triss-calculator-277/
 
         # Age
@@ -420,16 +432,8 @@ class TriageStudy:
 
         revised_trauma_score = gcs_code*0.9368 + sbp_code*0.7326 + rr_code*0.2908
 
-        # TODO blunt and iss should be in the vitals calc
-        iss = 0
-        blunt = True  # blunt force injury
-        for injury in synthetic_injuries:
-            iss = iss + injury["severity"]
-            if "Hemorrhage" in injury["type"]:
-                blunt = False  # penetrating injury
-        # TODO 3 locations for hemorrhage are they all blunt?
-
-        if blunt:
+        iss = vitals["iss"]
+        if vitals["blunt_trauma"]:
             triss = -0.4499 + 0.8505*revised_trauma_score - 0.0835*iss - 1.7430*age_index
         else:
             triss = -2.5355 + 0.9934*revised_trauma_score - 0.0651*iss - 1.1360*age_index
@@ -487,91 +491,112 @@ class TriageStudy:
         return news
 
     @staticmethod
-    def _start_tag(vitals: dict):
-        tag = TriageTag()  # Starts off Green
+    def _start_tag(vitals: dict) -> (str, str):
+        tag = TriageTag()
 
         if vitals["ambulatory"]:
-            return TriageColor.Green
+            tag.apply(TriageColor.Green, "Casualty is ambulatory.")
+        else:
+            if vitals["breathing"]["type"] == Breathing.Obstructed:
+                if vitals["breathing"]["able_to_clear"]:
+                    tag.apply(TriageColor.Red, "Casualty airway was obstructed by now open.")
+                else:
+                    tag.apply(TriageColor.Black, "Unable to open obstructed casualty airway.")
 
-        if vitals["breathing"]["type"] == Breathing.Obstructed:
-            if vitals["breathing"]["able_to_clear"]:
-                tag.apply(TriageColor.Red)
+            if vitals["respiratory_rate"] > 30.0:
+                tag.apply(TriageColor.Red, "Casualty respiratory rate > 30 bpm.")
+
+            if not vitals["healthy_capillary_refill_time"]:
+                tag.apply(TriageColor.Red, "Casualty does not have a healthy capillary refill time.")
+
+            if vitals["avpu"] == AVPU.Pain or vitals["avpu"] == AVPU.Unresponsive:
+                tag.apply(TriageColor.Red, "Casualty is unable to follow commands.")
             else:
-                tag.apply(TriageColor.Black)
+                tag.apply(TriageColor.Yellow, "Casualty is unable to walk, but can follow commands.")
 
-        if vitals["respiratory_rate"] > 30.0:
-            tag.apply(TriageColor.Red)
-
-        if not vitals["healthy_capillary_refill_time"]:
-            tag.apply(TriageColor.Red)
-
-        if vitals["avpu"] == AVPU.Voice:
-            tag.apply(TriageColor.Yellow)
-        elif vitals["avpu"] == AVPU.Pain or vitals["avpu"] == AVPU.Unresponsive:
-            tag.apply(TriageColor.Red)
-
-        return tag.color
+        return tag.color, tag.reason
 
     @staticmethod
-    def _salt_tag(vitals: dict):
-        tag = TriageTag()  # Starts off Green
+    def _salt_tag(vitals: dict) -> (str, str):
+        tag = TriageTag()
 
-        if vitals["ambulatory"]:
-            return TriageColor.Green
+        if vitals["breathing"]["type"] is None:
+            tag.apply(TriageColor.Black, "Casualty is not breathing.")
 
-        if vitals["breathing"]["type"] == Breathing.Obstructed:
-            if vitals["breathing"]["able_to_clear"]:
-                tag.apply(TriageColor.Red)
-            else:
-                tag.apply(TriageColor.Black)
-        elif vitals["breathing"]["type"] == Breathing.Distressed:
-            tag.apply(TriageColor.Red)
-
+        breathing = vitals["breathing"]["type"]
         hemorrhage = vitals["hemorrhage"]["type"]
-        if hemorrhage == Hemorrhage.Major and not vitals["hemorrhage"]["controllable"]:
-            tag.apply(TriageColor.Red)
-
-        # TODO How would we black tag via limited resources?
-
-        # TODO Is this peripheral pulse?
-        if not vitals["healthy_capillary_refill_time"]:
-            tag.apply(TriageColor.Red)
-
+        survivable = vitals["survivable_injuries"]
+        # Does the casualty obey commands or make purposeful movements?
         if vitals["avpu"] == AVPU.Pain or vitals["avpu"] == AVPU.Unresponsive:
-            tag.apply(TriageColor.Red)
+            if survivable:
+                tag.apply(TriageColor.Red, "Casualty does not obey commands or make purposeful movements.\n"
+                                           "Casualty is likely to survive these injuries.")
+            else:
+                tag.apply(TriageColor.Black, "Casualty does not obey commands or make purposeful movements.\n"
+                                             "Casualty is NOT likely to survive these injuries.")
+        # Does the casualty have a peripheral pulse?
+        elif not vitals["peripheral_pulse"]:
+            if survivable:
+                tag.apply(TriageColor.Red, "Casualty does not have a peripheral pulse.\n"
+                                           "Casualty is likely to survive these injuries.")
+            else:
+                tag.apply(TriageColor.Black, "Casualty does not have a peripheral pulse.\n"
+                                             "Casualty is NOT likely to survive these injuries.")
+        # Is the casualty in respiratory distress?
+        elif breathing == Breathing.Distressed or breathing == Breathing.Obstructed:
+            if survivable:
+                tag.apply(TriageColor.Red, "Casualty is in respiratory distress.\n"
+                                           "Casualty is likely to survive these injuries.")
+            else:
+                tag.apply(TriageColor.Black, "Casualty is in respiratory distress.\n"
+                                             "Casualty is NOT likely to survive these injuries.")
+        # Does the casually have a major, uncontrollable hemorrhage?
+        elif hemorrhage == Hemorrhage.Major and not vitals["hemorrhage"]["controllable"]:
+            if survivable:
+                tag.apply(TriageColor.Red, "Casualty has a major, uncontrollable hemorrhage.\n"
+                                           "Casualty is likely to survive these injuries.")
+            else:
+                tag.apply(TriageColor.Black, "Casualty has a major, uncontrollable hemorrhage.\n"
+                                             "Casualty is NOT likely to survive these injuries.")
+        else:
+            if vitals["major_injuries"]:
+                tag.apply(TriageColor.Yellow, "Casualty injuries are stable, but has major injuries.")
+            else:
+                tag.apply(TriageColor.Green, "Casualty injuries are stable with only minor injuries.")
 
-        if vitals["major_injuries"]:
-            tag.apply(TriageColor.Yellow)
-
-        return tag.color
+        return tag.color, tag.reason
 
     @staticmethod
-    def _bcd_sieve_tag(vitals: dict):
-        tag = TriageTag()  # Starts off Green
+    def _bcd_sieve_tag(vitals: dict) -> (str, str):
+        tag = TriageTag()
 
         hemorrhage = vitals["hemorrhage"]["type"]
         if hemorrhage == Hemorrhage.Major:
-            tag.apply(TriageColor.Red)
+            tag.apply(TriageColor.Red, "Casualty has catastrophic hemorrhage.")
 
         if vitals["ambulatory"]:
-            return TriageColor.Green
+            tag.apply(TriageColor.Green, "Casualty is ambulatory.")
 
+        if vitals["breathing"]["type"] is None:
+            tag.apply(TriageColor.Black, "Casualty is not breathing.")
         if vitals["breathing"]["type"] == Breathing.Obstructed:
             if not vitals["breathing"]["able_to_clear"]:
-                tag.apply(TriageColor.Black)
+                tag.apply(TriageColor.Black, "Unable to open obstructed casualty airway.")
 
-        if vitals["avpu"] == AVPU.Pain or AVPU.Unresponsive:
-            tag.apply(TriageColor.Red)
+        if vitals["avpu"] == AVPU.Pain or vitals["avpu"] == AVPU.Unresponsive:
+            tag.apply(TriageColor.Red, "Casualty is not responding to voice.")
+
+        # TODO Should we put in specific values instead of general descriptions?
 
         if vitals["respiratory_rate"] > 23.0 or vitals["respiratory_rate"] < 12.0:
-            tag.apply(TriageColor.Red)
+            tag.apply(TriageColor.Red, "Casualty has abnormal breathing rate.")
 
         if vitals["heart_rate"] > 100:
-            tag.apply(TriageColor.Red)
+            tag.apply(TriageColor.Red, "Casualty has elevated heart rate.")
+        else:
+            tag.apply(TriageColor.Yellow, "Casualty has normal heart rate.")
 
-        tag.apply(TriageColor.Yellow)
-
-        return tag.color
+        return tag.color, tag.reason
 
     def _simulate_interventions(self, total_simulation_duration_min: float):
 
@@ -580,6 +605,9 @@ class TriageStudy:
 
         # Add an intervention dict to patients we can treat
         for i, patient in self._triage_study.items():
+            if self._tgt_id:
+                if i != self._tgt_id:
+                    continue
             if not self._dataset.can_perform_interventions(patient["synthetic_patient"]["injuries"]):
                 continue
             for time_s, visit in patient["visits"].items():
@@ -650,6 +678,10 @@ class TriageStudy:
 
         v = 0
         for i, patient in self._triage_study.items():
+            if self._tgt_id:
+                if i != self._tgt_id:
+                    v += 1
+                    continue
             for time_s, visit in patient["visits"].items():
                 if "intervention" not in visit:
                     continue
@@ -660,9 +692,11 @@ class TriageStudy:
     def _assess_interventions(self):
         p = 0
         for i, patient in self._triage_study.items():
-            pulse_injuries = patient["pulse_injuries"]
+            if self._tgt_id:
+                if i != self._tgt_id:
+                    continue
+
             synthetic_patient = patient["synthetic_patient"]
-            synthetic_injuries = synthetic_patient["injuries"]
             for time_s, visit in patient["visits"].items():
                 if "intervention" not in visit:
                     continue
@@ -692,11 +726,17 @@ class TriageStudy:
                     active_events = r.get_active_events_in_window(r.end_time_s - 60, r.end_time_s)
                     vitals = self._dataset.calculate_triage_vitals(synthetic_patient, active_events, self._pulse_data)
                     intervention["vitals"] = vitals
-                    tags = {"start": self._start_tag(vitals),
-                            "salt": self._salt_tag(vitals),
-                            "bcd_sieve": self._bcd_sieve_tag(vitals)}
+                    start_color, start_reason = self._start_tag(vitals)
+                    salt_color, salt_reason = self._salt_tag(vitals)
+                    bcd_color, bcd_reason = self._bcd_sieve_tag(vitals)
+                    tags = {"start": start_color,
+                            "start_reason": start_reason,
+                            "salt": salt_color,
+                            "salt_reason": salt_reason,
+                            "bcd_sieve": bcd_color,
+                            "bcd_sieve_reason": bcd_reason}
                     intervention["tags"] = tags
-                    intervention["triss"] = self._calculate_triss_score(synthetic_injuries, vitals)
+                    intervention["triss"] = self._calculate_triss_score(vitals)
                     intervention["news"] = self._calculate_news_score(vitals)
 
 
@@ -715,15 +755,27 @@ def main():
         default=None,
         help="Location to put all files related to this study"
     )
+    parser.add_argument(
+        "-a", "--study_file",
+        type=Path,
+        default=None,
+        help="Append to this study file"
+    )
+    parser.add_argument(
+        "-i", "--id",
+        type=int,
+        default=None,
+        help="specific id to execute"
+    )
     opts = parser.parse_args()
     output_dir = opts.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
     triage_study = TriageStudy(Dataset.Army, output_dir)
     if opts.population_file:
-        triage_study.analyze_population_file(opts.population_file)
+        triage_study.analyze_population_file(opts.population_file, opts.study_file, opts.id)
     else:
-        triage_study.analyze_population_size(0)
+        triage_study.analyze_population_size(0, opts.study_file, opts.id)
 
 
 if __name__ == "__main__":
