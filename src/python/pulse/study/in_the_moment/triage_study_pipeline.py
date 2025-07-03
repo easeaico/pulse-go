@@ -345,7 +345,10 @@ class TriageStudy:
             # dict of triage times of interest for this patient to triage vitals
             data["visits"] = {}
             # Data needed for tagging protocols for every triage time for this patient
-            for time_s, injury_state in states.items():
+            for time_min, injury_state in states.items():
+                time_s = time_min * 60
+                if death_module.time_of_death and time_s >= death_module.time_of_death:
+                    continue
                 self._pulse_data.set_values(r.get_values_at_time(time_s))
                 # Get active events from the last minute of this triage time
                 active_events = r.get_active_events_in_window(time_s - 60, time_s)
@@ -365,9 +368,9 @@ class TriageStudy:
                              "bcd_sieve_reason": bcd_reason},
                     "triss": self._calculate_triss_score(vitals),
                     "news": self._calculate_news_score(vitals),
-                    "description": self._dataset.injury_description(time_s, synthetic_injuries, pulse_injuries, vitals)
+                    "description": self._dataset.injury_description(time_min, synthetic_injuries, pulse_injuries, vitals)
                 }
-                data["visits"][time_s] = {"triage": triage}
+                data["visits"][time_min] = {"triage": triage}
 
     @staticmethod
     def _calculate_triss_score(vitals: dict):

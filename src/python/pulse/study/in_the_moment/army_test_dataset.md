@@ -26,6 +26,8 @@ TODO - Add description of injury
 
 @insert head_and_neck_tbi_table.md
 
+---
+
 #### Thorax
 
 The thorax can contain more than one injury type (polytrauma). 
@@ -67,6 +69,8 @@ TODO - Add description of injury
 
 @insert thorax_spinal_table.md
 
+---
+
 #### Abdomen
 
 ##### Hemorrhage
@@ -80,6 +84,8 @@ TODO - Add description of injury
 TODO - Add description of injury
 
 @insert abdomen_laceration_contusion_table.md
+
+---
 
 #### Extremities
 
