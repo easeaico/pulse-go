@@ -16,7 +16,7 @@ from triage_dataset_generation import (synthetic_population_generation, syntheti
                                        calculate_population_error, calculate_injury_error,
                                        plot_population_error, plot_injury_error)
 
-from pulse.cdm.engine import SEAction, eGate, eSide
+from pulse.cdm.engine import SEAction, eGate, eSide, eEvent
 from pulse.cdm.patient_actions import (SEAcuteRespiratoryDistressSyndromeExacerbation,
                                        SEAcuteStress, SEAirwayObstruction,
                                        SEBrainInjury, eBrainInjuryType,
@@ -181,6 +181,7 @@ class ArmyDataset(TriageDataset):
         # Check to see if the casualty can walk
         if vitals["ambulatory"]:
             description.append("The casualty is able to walk.")
+            return description
         else:
             description.append("The casualty is unable to walk.")
 
@@ -478,7 +479,7 @@ class ArmyDataset(TriageDataset):
         iss = 0
         max_severity = 0
         for injury in synthetic_injuries:
-            iss = injury['severity'] + 1  # ISS is 1-6, where ours is 0-5
+            iss = injury['severity'] + 1  # TODO ISS is 1-6, where ours is 0-5
             if injury['severity'] > max_severity:
                 max_severity = injury['severity']
 
@@ -490,7 +491,7 @@ class ArmyDataset(TriageDataset):
 
         # Breathing
         obstruction = False
-        clearable_airway = True
+        clearable_airway = None
         breathing = None
         for injury in synthetic_injuries:
             if injury["location"] == "head_and_neck" and injury["type"] == "airway_obstruction":
@@ -498,7 +499,7 @@ class ArmyDataset(TriageDataset):
                 clearable_airway = True if injury["severity"] >= 3.5 else False
                 breathing = Breathing.Obstructed
         if not obstruction:
-            if "" in active_events:
+            if eEvent.Tachypnea in active_events:
                 breathing = Breathing.Distressed
             else:
                 rr = pulse_data.get_rr(FrequencyUnit.Per_min)
@@ -553,8 +554,6 @@ class ArmyDataset(TriageDataset):
         healthy_capillary_refill_time = True
         if pulse_data.get_map(PressureUnit.mmHg) < 60:
             healthy_capillary_refill_time = False
-
-        # TODO is this a good test for peripheral pulse
         peripheral_pulse = healthy_capillary_refill_time
 
         return {"age": synthetic_patient["age"],
@@ -769,8 +768,8 @@ class ArmyDataset(TriageDataset):
                         skin = SEHemorrhage()
                         skin.set_compartment(eHemorrhage_Compartment.Skin.value)
                         skin.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.7))
+                                                                        min_output=0.2,
+                                                                        max_output=0.7))
                         actions.append(skin)
 
                         muscle = SEHemorrhage()
@@ -853,12 +852,14 @@ class ArmyDataset(TriageDataset):
         return actions
 
     def can_perform_interventions(self, synthetic_injuries: list) -> bool:
+        # TODO Should probably pass in vitals and only intervene under certain conditions (i.e. unable to walk)
         for injury in synthetic_injuries:
             if injury["location"] == "head_and_neck" and injury["type"] == "airway_obstruction":
                 return True
             if injury["location"] == "extremity" and injury["type"] == "hemorrhage":
                 return True
         return False
+        # TODO return a string describing what the intervention is, None if no intervention can be performed.
 
     def injury_interventions(self, synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         interventions = []
@@ -875,7 +876,7 @@ class ArmyDataset(TriageDataset):
             elif "AirwayObstruction" in injury["PatientAction"]:
                 ao = SEAirwayObstruction()
                 s = injury["PatientAction"]["AirwayObstruction"]["Severity"]["Scalar0To1"]["Value"]
-                ao.get_severity().set_value(s/1.5)  # TODO 2/3 is cleared?
+                ao.get_severity().set_value(s/1.5)
                 interventions.append(ao)
                 _log.info("Clearing airway obstruction")
 

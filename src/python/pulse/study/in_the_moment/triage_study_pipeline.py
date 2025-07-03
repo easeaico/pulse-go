@@ -70,18 +70,18 @@ class DeathCheckModule(PulseResultsProcessor):
         # Time is always index 0 of the data_slice
         curr_time_s = data_slice[0]
         hr_bpm = data_slice[1]
-        spO2 = data_slice[10]
+        sp_o2 = data_slice[10]
 
         # Generally, you should process event/action changes every time step
         for event_change in event_changes:
             if event_change.event == eEvent.IrreversibleState and event_change.active:
                 self._time_of_death = curr_time_s
-                self._cause_of_death = f"Patient died from irreversible state at {curr_time_s}s"
+                self._cause_of_death = f"Death from irreversible state."
                 raise StopIteration(self._cause_of_death)
 
             if event_change.event == eEvent.CardiovascularCollapse and event_change.active:
                 self._time_of_death = curr_time_s
-                self._cause_of_death = f"Patient died from cardiovascular collapse at {curr_time_s}s"
+                self._cause_of_death = f"Death from cardiovascular collapse."
                 raise StopIteration(self._cause_of_death)
 
             if event_change.event == eEvent.BrainOxygenDeficit:
@@ -91,7 +91,7 @@ class DeathCheckModule(PulseResultsProcessor):
                         self._start_brain_O2_deficit_s = curr_time_s
                     elif (curr_time_s - self._start_brain_O2_deficit_s) > 180:
                         self._time_of_death = curr_time_s
-                        self._cause_of_death = f"Patient died from brain O2 deficit of 180s at {curr_time_s}s"
+                        self._cause_of_death = f"Death from a brain O2 deficit lasting 180s."
                         raise StopIteration(self._cause_of_death)
                 else:
                     self._brain_O2_deficit = False
@@ -104,7 +104,7 @@ class DeathCheckModule(PulseResultsProcessor):
                         self._start_myocardium_O2_deficit_s = curr_time_s
                     elif (curr_time_s - self._start_myocardium_O2_deficit_s) > 180:
                         self._time_of_death = curr_time_s
-                        self._cause_of_death = f"Patient died from myocardium O2 deficit of 180s at {curr_time_s}s"
+                        self._cause_of_death = f"Death from a myocardium O2 deficit lasting 180s."
                         raise StopIteration(self._cause_of_death)
                 else:
                     self._myocardium_O2_deficit = False
@@ -112,16 +112,16 @@ class DeathCheckModule(PulseResultsProcessor):
 
         if hr_bpm >= self._max_hr_bpm:
             self._time_of_death = curr_time_s
-            self._cause_of_death = f"Patient died from reaching max hr of {self._max_hr_bpm} at {curr_time_s}s"
+            self._cause_of_death = f"Death from reaching max hr of {self._max_hr_bpm}."
             raise StopIteration(self._cause_of_death)
 
-        if spO2 < 0.85:
+        if sp_o2 < 0.85:
             if not self._spO2_deficit:
                 self._spO2_deficit = True
                 self._start_spO2_deficit_s = curr_time_s
             elif (curr_time_s - self._start_spO2_deficit_s) > 140:
                 self._time_of_death = curr_time_s
-                self._cause_of_death = f"Patient died from SpO2 < 85 for 140s at {curr_time_s}s"
+                self._cause_of_death = f"Death from SpO2 < 85 for 140s."
                 raise StopIteration(self._cause_of_death)
         else:
             self._spO2_deficit = False
@@ -194,7 +194,7 @@ class TriageStudy:
         # Simulate triaged patients
         self._simulate_interventions(total_simulation_duration_min=60)
         # Assess final patient state after each visit
-        self._assess_interventions()
+        self._assess_interventions(duration_min=60)
         # Write out all the data we collected
         triage_study_file = self._output_dir/"triage_study.json"
         with open(triage_study_file, 'w') as f:
@@ -339,39 +339,34 @@ class TriageStudy:
             r.replay([death_module])
             if death_module.cause_of_death:
                 _log.info(f"{patient} cause of death: {death_module.cause_of_death}")
+                data["death"] = {"time": death_module.time_of_death/60,
+                                 "cause": death_module.cause_of_death}
 
             # dict of triage times of interest for this patient to triage vitals
             data["visits"] = {}
             # Data needed for tagging protocols for every triage time for this patient
             for time_s, injury_state in states.items():
-                if death_module.time_of_death and death_module.time_of_death <= time_s:
-                    triage = {
-                        "state": injury_state,
-                        "death": {"time_s": death_module.time_of_death,
-                                  "cause": death_module.cause_of_death}
-                    }
-                else:
-                    self._pulse_data.set_values(r.get_values_at_time(time_s))
-                    # Get active events from the last minute of this triage time
-                    active_events = r.get_active_events_in_window(time_s - 60, time_s)
+                self._pulse_data.set_values(r.get_values_at_time(time_s))
+                # Get active events from the last minute of this triage time
+                active_events = r.get_active_events_in_window(time_s - 60, time_s)
 
-                    vitals = self._dataset.calculate_triage_vitals(synthetic_patient, active_events, self._pulse_data)
-                    start_color, start_reason = self._start_tag(vitals)
-                    salt_color, salt_reason = self._salt_tag(vitals)
-                    bcd_color, bcd_reason = self._bcd_sieve_tag(vitals)
-                    triage = {
-                        "state": injury_state,
-                        "vitals": vitals,
-                        "tags": {"start": start_color,
-                                 "start_reason": start_reason,
-                                 "salt": salt_color,
-                                 "salt_reason": salt_reason,
-                                 "bcd_sieve": bcd_color,
-                                 "bcd_sieve_reason": bcd_reason},
-                        "triss": self._calculate_triss_score(vitals),
-                        "news": self._calculate_news_score(vitals),
-                        "description": self._dataset.injury_description(time_s, synthetic_injuries, pulse_injuries, vitals)
-                    }
+                vitals = self._dataset.calculate_triage_vitals(synthetic_patient, active_events, self._pulse_data)
+                start_color, start_reason = self._start_tag(vitals)
+                salt_color, salt_reason = self._salt_tag(vitals)
+                bcd_color, bcd_reason = self._bcd_sieve_tag(vitals)
+                triage = {
+                    "state": injury_state,
+                    "vitals": vitals,
+                    "tags": {"start": start_color,
+                             "start_reason": start_reason,
+                             "salt": salt_color,
+                             "salt_reason": salt_reason,
+                             "bcd_sieve": bcd_color,
+                             "bcd_sieve_reason": bcd_reason},
+                    "triss": self._calculate_triss_score(vitals),
+                    "news": self._calculate_news_score(vitals),
+                    "description": self._dataset.injury_description(time_s, synthetic_injuries, pulse_injuries, vitals)
+                }
                 data["visits"][time_s] = {"triage": triage}
 
     @staticmethod
@@ -689,7 +684,7 @@ class TriageStudy:
                 v += 1
         self._total_interventions = v
 
-    def _assess_interventions(self):
+    def _assess_interventions(self, duration_min: float):
         p = 0
         for i, patient in self._triage_study.items():
             if self._tgt_id:
@@ -738,6 +733,8 @@ class TriageStudy:
                     intervention["tags"] = tags
                     intervention["triss"] = self._calculate_triss_score(vitals)
                     intervention["news"] = self._calculate_news_score(vitals)
+                    # TODO Do we want to change up the description?
+                    intervention["description"] = [f"Casualty has been waiting {duration_min} min for further care."]
 
 
 def main():

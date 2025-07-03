@@ -294,26 +294,29 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
                         if list(injury).count(u) >= 3:
                             _log.fatal(f"Is this a good injury mix {injury}")
         else:
-            weighted_severities = _weighted_choices(choices=list(injury_types.keys()),
-                                                    percents=[injury_types[t]["percent"] for t in injury_types],
-                                                    size=num_injured)
-            _log.info(f"{location} severity range [{(min(weighted_severities))},{(max(weighted_severities))}]")
-            ledger[location]["injuries"] = weighted_severities
+            injury_set = _weighted_choices(choices=list(injury_types.keys()),
+                                           percents=[injury_types[t]["percent"] for t in injury_types],
+                                           size=num_injured)
+            ledger[location]["injuries"] = injury_set
         injuries = ledger[location]["injuries"]
         injury_severities = ledger[location]["injury_severities"]
         for injury_type, dist in injury_types.items():
             severity_dist = dist["severity"]
             if "mean" in severity_dist:
-                injury_severities[injury_type] = {"index": 0,
-                                                  "severities": np.random.normal(loc=severity_dist["mean"],
-                                                                                 scale=severity_dist["std"],
-                                                                                 size=_count(injuries, injury_type))}
+                randomized_severities = np.random.normal(loc=severity_dist["mean"],
+                                                         scale=severity_dist["std"],
+                                                         size=_count(injuries, injury_type))
             elif "values" in severity_dist:
-                injury_severities[injury_type] = {"index": 0,
-                                                  "severities": _weighted_choices(
-                                                      choices=severity_dist["values"],
-                                                      percents=severity_dist["percents"],
-                                                      size=_count(injuries, injury_type))}
+                randomized_severities = _weighted_choices(choices=severity_dist["values"],
+                                                          percents=severity_dist["percents"],
+                                                          size=_count(injuries, injury_type))
+            else:
+                _log.error("Unsupported severity randomization specification")
+                exit(1)
+            _log.info(f"{location} severity range for {injury_type}: ["
+                      f"{(min(randomized_severities))},"
+                      f"{(max(randomized_severities))}]")
+            injury_severities[injury_type] = {"index": 0, "severities": randomized_severities}
 
     # Map the types and severities back to the injury locations
     for location in injury_locations:
