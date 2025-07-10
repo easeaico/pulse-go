@@ -18,7 +18,7 @@ from pulse.cdm.engine import eSwitch
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
 from pulse.cdm.plots import SEPlotConfig, SEPlotSource, SEMonitorPlotter
 from pulse.cdm.utils.file_utils import adjust_filepath
-from pulse.cdm.utils.logger import PulseLog
+from pulse.engine.PulseEngineResults import PulseLog
 
 _pulse_logger = logging.getLogger('pulse')
 

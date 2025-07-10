@@ -663,72 +663,73 @@ class SEPlotSource:
 
         return True
 
-    def get_actions_events(self, plot_actions: bool = True, plot_events: bool = True,
-                           allow_actions_with: Optional[List[str]] = None,
-                           allow_events_with: Optional[List[str]] = None,
-                           omit_actions_with: Optional[List[str]] = None,
-                           omit_events_with: Optional[List[str]] = None,
-                           count_limit: int = None) -> dict:
+    def get_actions(self,
+                    allow_actions_with: Optional[List[str]] = None,
+                    omit_actions_with: Optional[List[str]] = None,
+                    count_limit: int = None) -> list:
         if allow_actions_with is None:
             allow_actions_with = list()
-        if allow_events_with is None:
-            allow_events_with = list()
         if omit_actions_with is None:
             omit_actions_with = list()
-        if omit_events_with is None:
-            omit_events_with = list()
 
         filtered = []
-        ae_counts = {"Action": {}, "Event": {}}
-        for ae in self._actions_events:
-            if plot_actions and isinstance(ae, PulseLogAction):
+        for time, actions in self._actions.items():
+            for a in actions:
                 if allow_actions_with:
                     keep = False
                     for o in allow_actions_with:
-                        if o in ae.text:
+                        if o in a.text:
                             keep = True
                             break
                 else:
                     keep = True
 
                 for o in omit_actions_with:
-                    if o in ae.text:
+                    if o in a.text:
                         keep = False
                         break
 
                 if keep:
-                    filtered.append(ae)
-                    if ae.name not in ae_counts["Action"]:
-                        ae_counts["Action"][ae.name] = 0
-                    ae_counts["Action"][ae.name] += 1
-            elif plot_events and isinstance(ae, SEEventChange):
+                    if count_limit:
+                        if len(filtered) < count_limit:
+                            filtered.append(a)
+                    else:
+                        filtered.append(a)
+
+        return filtered
+
+    def get_events(self,
+                   allow_events_with: Optional[List[str]] = None,
+                   omit_events_with: Optional[List[str]] = None,
+                   count_limit: int = None) -> list:
+        if allow_events_with is None:
+            allow_events_with = list()
+        if omit_events_with is None:
+            omit_events_with = list()
+
+        filtered = []
+        for time, events in self._events.items():
+            for e in events:
                 if allow_events_with:
                     keep = False
                     for o in allow_events_with:
-                        if o in str(ae):
+                        if o in str(e):
                             keep = True
                             break
                 else:
                     keep = True
 
                 for o in omit_events_with:
-                    if o in str(ae):
+                    if o in str(e):
                         keep = False
                         break
-                if keep:
-                    filtered.append(ae)
-                    if ae.event not in ae_counts["Event"]:
-                        ae_counts["Event"][ae.event] = 0
-                    ae_counts["Event"][ae.event] += 1
 
-        if count_limit is not None:
-            limited = []
-            for ae in filtered:
-                if isinstance(ae, PulseLogAction) and ae_counts["Action"][ae.name] <= count_limit:
-                    limited.append(ae)
-                elif isinstance(ae, SEEventChange) and ae_counts["Event"][ae.event] <= count_limit:
-                    limited.append(ae)
-            filtered = limited  # [ae for ae in filtered if not ae_counts[ae.category][ae.name] > count_limit]
+                if keep:
+                    if count_limit:
+                        if len(filtered) < count_limit:
+                            filtered.append(e)
+                    else:
+                        filtered.append(e)
 
         return filtered
 
