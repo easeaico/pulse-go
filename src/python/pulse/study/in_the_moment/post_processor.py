@@ -5,10 +5,15 @@ import argparse
 import logging
 import io
 import json
-import shutil
 
 from pathlib import Path
 from json2html import *
+
+from casualty_generation import (calculate_population_error, calculate_injury_error,
+                                 plot_population_error, plot_injury_error, to_specification_lists)
+
+from army_dataset import population_distributions as army_population_distributions
+from army_dataset import injury_distributions as army_injury_distributions
 
 from pulse.cdm.utils.file_utils import get_root_dir
 from pulse.cdm.utils.markdown import process_file as process_markdown
@@ -47,7 +52,7 @@ def _create_table(triage: dict) -> str:
     return table_str
 
 
-def create_army_test_dataset_documentation(study_run: dict, output_dir):
+def create_documentation(study_run: dict, output_dir):
     itm_dir = output_dir / f"itm/army"
     itm_dir.mkdir(exist_ok=True, parents=True)
 
@@ -152,6 +157,60 @@ def create_army_test_dataset_documentation(study_run: dict, output_dir):
     process_markdown(src, itm_dir, itm_dir)
 
 
+def create_align_file(study_run: dict, filename: Path, include_reasonings: bool):
+    preamble = ("You are an army combat medic. "
+                "There has been an targeted strike on your base resulting in many wounded soldiers."
+                "You need to triage and tag each casualty as quickly as possible."
+                "You come to your first casualty.\n\n")
+    responses = ["Green (Minor)",
+                 "Yellow (Delayed)",
+                 "Red (Immediate)",
+                 "Black (Expectant)"]
+
+    cases = []
+
+    def _tag_index(color: str) -> int:
+        if color == "Green":
+            return 0
+        if color == "Yellow":
+            return 1
+        if color == "Red":
+            return 2
+        return 3
+
+    for pid, run in study_run.items():
+        for time, visit in run["visits"].items():
+            triage = visit["triage"]
+            prompt = preamble + "".join(triage["description"]) + "\n\nHow do you tag this casualty?"
+            tags = triage["tags"]
+            p_labels = {"START": 0.0, "SALT": 0.0, "BCD_SIEVE": 0.0}
+            p_reasonings = {"START": "", "SALT": "", "BCD_SIEVE": ""}
+            labels = []
+            reasonings = []
+            for i in range(4):
+                labels.append(p_labels.copy())
+                reasonings.append(p_reasonings.copy())
+            i = _tag_index(tags["start"])
+            labels[i]["START"] = 1.0
+            if include_reasonings:
+                reasonings[i]["START"] = tags["start_reason"]
+            i = _tag_index(tags["salt"])
+            labels[i]["SALT"] = 1.0
+            if include_reasonings:
+                reasonings[i]["SALT"] = tags["salt_reason"]
+            i = _tag_index(tags["bcd_sieve"])
+            labels[i]["BCD_SIEVE"] = 1.0
+            if include_reasonings:
+                reasonings[i]["BCD_SIEVE"] = tags["bcd_sieve_reason"]
+            case = {"prompt": prompt, "responses": responses, "labels": labels}
+            if include_reasonings:
+                case["reasonings"] = reasonings
+            cases.append(case)
+
+    with open(filename, 'w') as file:
+        json.dump(cases, file, indent=2)
+
+
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     parser = argparse.ArgumentParser(description="Process the full pipeline for segment validation")
@@ -162,19 +221,40 @@ def main():
         help="Location to put all files related to this study"
     )
     parser.add_argument(
-        "-p", "--population_file",
+        "-a", "--to_align_input",
         type=Path,
-        default=Path("./test_results/itm/triage_study/triage_study.json"),
-        help="Location to put all files related to this study"
+        default=Path("./test_results/itm/triage_study/triage_study_train.json"),
+        help="Location of a triage study file to convert into an align system input file"
+    )
+    parser.add_argument(
+        "-d", "--distribution_tables",
+        type=Path,
+        default=Path("./test_results/itm/triage_study/triage_study_eval.json"),
+        help="Location of a triage study file to generate distribution tables"
     )
     opts = parser.parse_args()
     output_dir = opts.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    with open(opts.population_file, 'r') as file:
-        study_run = json.load(file)
+    if opts.to_align_input.exists():
+        with open(opts.training_file, 'r') as file:
+            study = json.load(file)
+        create_documentation(study, Path("./docs/markdown"))
+        create_align_file(study, output_dir/"train.json", include_reasonings=True)
 
-    create_army_test_dataset_documentation(study_run, Path("./docs/markdown"))
+    if opts.distribution_tables.exists():
+        # Write out the error images for this generated dataset
+        with open(opts.distribution_tables, 'r') as file:
+            study = json.load(file)
+        spec = to_specification_lists(study)
+        results_dir = output_dir / opts.distribution_tables.stem
+        results_dir.mkdir(parents=True, exist_ok=True)
+        results_stem = str(results_dir/opts.distribution_tables.stem)
+        population_error = calculate_population_error(spec, army_population_distributions)
+        plot_population_error(population_error, results_stem)
+
+        injury_error = calculate_injury_error(spec["injuries"], army_injury_distributions)
+        plot_injury_error(injury_error, results_stem)
 
 
 if __name__ == "__main__":

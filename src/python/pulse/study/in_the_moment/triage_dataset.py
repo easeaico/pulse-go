@@ -151,7 +151,7 @@ class PulseData:
 class TriageDataset(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
-    def generate_dataset(self, population_size: int, output_dir: Path):
+    def generate_dataset(self, population_size: int):
         pass
 
     @abc.abstractmethod

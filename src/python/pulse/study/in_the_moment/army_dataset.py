@@ -1,20 +1,24 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-import json
 import logging
+import math
+
 import numpy as np
 import random
 import re
+import statistics
 
 from pathlib import Path
 from typing import List
 
+
 from pulse.cdm.scalars import FrequencyUnit, PressureUnit
+from pulse.cdm.utils.math_utils import percent_difference
 from pulse.study.in_the_moment.triage_dataset import Breathing, Hemorrhage, AVPU, TriageDataset, PulseData
-from triage_dataset_generation import (synthetic_population_generation, synthetic_injury_generation,
-                                       calculate_population_error, calculate_injury_error,
-                                       plot_population_error, plot_injury_error)
+from casualty_generation import (casualty_population_generation, population_injury_generation,
+                                 test_injury, measure_error, _bounded_random_normal, to_specification_lists,
+                                 to_severity_lists, InjurySeverityOpts)
 
 from pulse.cdm.engine import SEAction, eGate, eSide, eEvent
 from pulse.cdm.patient_actions import (SEAcuteRespiratoryDistressSyndromeExacerbation,
@@ -39,28 +43,27 @@ population_distributions = {
 
 injury_distributions = {  # Location -> Type -> Severity mean/std or explicit value/percent
     "head_and_neck": {"percent": 36.2, "severity_mean": 2.69, "types": {
-        "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.25}},
+        "airway_obstruction": {"percent": 18, "severity": {"mean": 4.0, "std": 0.70}},
         "superficial": {"percent": 60, "severity": {"values": [1.0], "percents": [100]}},
-        "tbi": {"percent": 22, "severity": {"mean": 3.5, "std": 0.25}}
-        # TODO Should we maybe do random.uniform(0, 1) rather than ALL values be the same?
+        "tbi": {"percent": 22, "severity": {"mean": 3.5, "std": 0.65}}
     }},
     "thorax": {"percent": 8.6, "severity_mean": 2.85, "polytrauma": {"max": 4, "mean": 2.3}, "types": {
-        "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.25}},
-        "hemothorax": {"percent": 30, "severity": {"mean": 2.85, "std": 0.25}},
-        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
-        "pneumothorax": {"percent": 51.8, "severity": {"mean": 2.85, "std": 0.25}},
-        "pulmonary_contusion": {"percent": 50.2, "severity": {"mean": 2.85, "std": 0.25}},
-        "spinal": {"percent": 14.6, "severity": {"mean": 2.85, "std": 0.25}}
+        "fracture": {"percent": 51.2, "severity": {"mean": 2.85, "std": 0.85}, "max": 2},
+        "hemothorax": {"percent": 30, "severity": {"mean": 2.85, "std": 0.85}, "max": 2},
+        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.85}, "max": 2},
+        "pneumothorax": {"percent": 51.8, "severity": {"mean": 2.85, "std": 0.85}, "max": 2},
+        "pulmonary_contusion": {"percent": 50.2, "severity": {"mean": 2.85, "std": 0.85}, "max": 2},
+        "spinal": {"percent": 14.6, "severity": {"mean": 2.85, "std": 0.25}, "max": 1}
     }},
     "abdomen": {"percent": 6.9, "severity_mean": 2.85, "types": {
-        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.25}},
-        "laceration_contusion": {"percent": 65.4, "severity": {"mean": 2.85, "std": 0.25}}
+        "hemorrhage": {"percent": 34.6, "severity": {"mean": 2.85, "std": 0.85}},
+        "laceration_contusion": {"percent": 65.4, "severity": {"mean": 2.85, "std": 0.85}}
     }},
     "extremity": {"percent": 49.4, "severity_mean": 2.05, "types": {
-        "burn_nerve": {"percent": 5, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
-        "contusion_sprain_strain": {"percent": 20, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
-        "fracture_dislocation": {"percent": 22, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}},
-        "hemorrhage": {"percent": 52, "severity": {"values": [1.0, 2.5, 3.5, 4.5], "percents": [56, 23, 17, 7]}}
+        "burn_nerve": {"percent": 5, "severity": {"values": [2.0, 3.0, 4.0, 5.0], "percents": [56, 23, 17, 7]}},
+        "contusion_sprain_strain": {"percent": 20, "severity": {"values": [2.0, 3.0, 4.0, 5.0], "percents": [56, 23, 17, 7]}},
+        "fracture_dislocation": {"percent": 22, "severity": {"values": [2.0, 3.0, 4.0, 5.0], "percents": [56, 23, 17, 7]}},
+        "hemorrhage": {"percent": 52, "severity": {"values": [2.0, 3.0, 4.0, 5.0], "percents": [56, 23, 17, 7]}}
     }}
 }
 
@@ -87,44 +90,41 @@ def _injury_list_to_dict(injuries: list):
 
 class ArmyDataset(TriageDataset):
 
-    def generate_dataset(self, population_size: int, output_dir: Path):
-        # TODO Could get this generic enough to put in base class
-        output_file = Path(f"{output_dir}/{population_size}_patients_with_injuries.json")
-        if output_file.exists():
-            with open(output_file, 'r') as file:
-                synthetic_patients = json.load(file)
-            return synthetic_patients
+    def generate_dataset(self, population_size: int, injury_opts: InjurySeverityOpts = None):
 
-        # Generate it
         if population_size <= 0:
+            _log.info("Creating training dataset")
             patient_injuries = []
-            max_steps = [0.9, 1.9, 2.9, 3.9, 5.0]
+            all_ais = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
 
-            def _patient_set(loc: str, typ: str, sev: List[float]):
+            def _patient_set(loc: str, typ: str, sev: List[float] = None):
+                if not sev:
+                    sev = injury_distributions[loc]["types"][typ]["severity"]["values"]
                 for s in sev:
                     patient_injuries.append([{"location": loc, "type": typ, "severity": s}])
 
-            # This is our test dataset: Standard Male, with a spectrum of each injury (where applicable)
+            # This is our training dataset: Standard Male, with all possible severities for each injury
             # Head and Neck
-            _patient_set("head_and_neck", "airway_obstruction", max_steps)
+            _patient_set("head_and_neck", "airway_obstruction", all_ais)
             _patient_set("head_and_neck", "superficial", [1.0])
-            _patient_set("head_and_neck", "tbi", max_steps)
+            _patient_set("head_and_neck", "tbi", all_ais)
             # Thorax
-            _patient_set("thorax", "fracture", max_steps)
-            _patient_set("thorax", "hemothorax", max_steps)
-            _patient_set("thorax", "hemorrhage", max_steps)
-            _patient_set("thorax", "pneumothorax", max_steps)
-            _patient_set("thorax", "pulmonary_contusion", max_steps)
-            _patient_set("thorax", "spinal", max_steps)
+            _patient_set("thorax", "fracture", all_ais)
+            _patient_set("thorax", "hemothorax", all_ais)
+            _patient_set("thorax", "hemorrhage", all_ais)
+            _patient_set("thorax", "pneumothorax", all_ais)
+            _patient_set("thorax", "pulmonary_contusion", all_ais)
+            _patient_set("thorax", "spinal", all_ais)
             # Abdomen
-            _patient_set("abdomen", "hemorrhage", max_steps)
-            _patient_set("abdomen", "laceration_contusion", max_steps)
+            _patient_set("abdomen", "hemorrhage", all_ais)
+            _patient_set("abdomen", "laceration_contusion", all_ais)
             # Extremities
-            _patient_set("extremity", "burn_nerve", [1.0, 2.5, 3.5, 4.5])
-            _patient_set("extremity", "contusion_sprain_strain", [1.0, 2.5, 3.5, 4.5])
-            _patient_set("extremity", "fracture_dislocation", [1.0, 2.5, 3.5, 4.5])
-            _patient_set("extremity", "hemorrhage", [1.0, 2.5, 3.5, 4.5])
-            #  Multiple Injuries
+
+            _patient_set("extremity", "burn_nerve")
+            _patient_set("extremity", "contusion_sprain_strain")
+            _patient_set("extremity", "fracture_dislocation")
+            _patient_set("extremity", "hemorrhage")
+            #  Polytraumas
             patient_injuries.append([{"location": "thorax", "type": "hemothorax", "severity": 2.85},
                                      {"location": "thorax", "type": "hemorrhage", "severity": 2.85}])
             patients = {"age": [], "state": []}
@@ -132,44 +132,33 @@ class ArmyDataset(TriageDataset):
                 patients["age"].append(44.0)
                 patients["state"].append("./states/StandardMale@0s.json")
         else:
-            patients = synthetic_population_generation(population_size, population_distributions)
-            patient_injuries = synthetic_injury_generation(population_size, injury_distributions)
+            _log.info(f"Creating dataset of {population_size} casualties")
+            patients = casualty_population_generation(population_size, population_distributions)
+            patient_injuries = population_injury_generation(population_size, injury_distributions, injury_opts)
 
-            # Write out the error images for this generated dataset
-            population_error = calculate_population_error(patients, population_distributions)
-            plot_population_error(population_error, f"{output_dir}/population_of_{population_size}")
-
-            injury_error = calculate_injury_error(patient_injuries, injury_distributions)
-            plot_injury_error(injury_error, f"{output_dir}/injuries_of_population_of_{population_size}")
-
-        # Check\count for injury combinations not currently supported in Pulse
-        num_hemopneumothorax = 0
-        for injuries in patient_injuries:
-            if len(injuries) > 1:
-                hemopneumothorax = 0
-                for injury in injuries:
-                    if injury["type"] == "pneumothorax" or injury["type"] == "hemothorax":
-                        hemopneumothorax += 1
-                if hemopneumothorax >= 3:
-                    num_hemopneumothorax += 1
-        if num_hemopneumothorax > 0:
-            _log.warning(f"Found {num_hemopneumothorax} hemopneumothorax(s), "
-                         f"Pulse currently does not support this type of injury")
+            # Check\count for injury combinations not currently supported in Pulse
+            num_hemopneumothorax = 0
+            for injuries in patient_injuries:
+                if len(injuries) > 1:
+                    hemopneumothorax = 0
+                    for injury in injuries:
+                        if injury["type"] == "pneumothorax" or injury["type"] == "hemothorax":
+                            hemopneumothorax += 1
+                    if hemopneumothorax >= 3:
+                        num_hemopneumothorax += 1
+            if num_hemopneumothorax > 0:
+                _log.warning(f"Found {num_hemopneumothorax} hemopneumothorax(s), "
+                             f"Pulse currently does not support this type of injury")
 
         # Combine the patients and their injuries to a dict
-        data = []
+        casualties = {}
         for i in range(len(patient_injuries)):
-            patient = {}
+            casualty = {}
             for field, values in patients.items():
-                patient[field] = values[i]
-            patient["injuries"] = patient_injuries[i]
-            data.append(patient)
-
-        output_dir.mkdir(parents=True, exist_ok=True)
-        with open(f"{output_dir}/{population_size}_patients_with_injuries.json", 'w') as f:
-            json.dump(data, f, indent=2)
-
-        return data
+                casualty[field] = values[i]
+            casualty["injuries"] = patient_injuries[i]
+            casualties[i] = {"specification": casualty}
+        return casualties
 
     def injury_description(self,
                            duration_min: float,
@@ -475,13 +464,27 @@ class ArmyDataset(TriageDataset):
     def calculate_triage_vitals(self, synthetic_patient: dict, active_events: dict, pulse_data: PulseData):
         synthetic_injuries = synthetic_patient["injuries"]
 
-        # Find the iss and highest severity injury
-        iss = 0
+        # Find the highest severity injury
         max_severity = 0
         for injury in synthetic_injuries:
-            iss = injury['severity'] + 1  # TODO ISS is 1-6, where ours is 0-5
             if injury['severity'] > max_severity:
                 max_severity = injury['severity']
+
+        # ref: Schluter et al.
+        # ISS has values from 0 to 75
+        # Only the highest AIS score in each body region is used. The
+        # three most severely injured body regions have their score
+        # squared and added together to produce the ISS. An AIS of 6 in
+        # any anatomic region represents a fatal injury and automatically
+        # scores an ISS of 75, regardless of other injuries
+        # This data set does not separate head and neck and facial injuries
+        # This data set also only supports poly trauma on the thorax
+        # Meaning we can just square the max severity for our ISS score
+        # since our severity is AIS
+        iss = max_severity * max_severity
+        # Override iss if severity is high enough
+        if max_severity >= 4.5:
+            iss = 75
 
         # TODO What is blunt trauma?
         blunt_trauma = True
@@ -528,9 +531,9 @@ class ArmyDataset(TriageDataset):
         avpu = AVPU.Alert
         # Check max severity and oxygen partial pressure in the brain
         brain_o2_pp = pulse_data.get_brain_o2_pp(PressureUnit.mmHg)
-        if max_severity == 5.0 or brain_o2_pp < 15:
+        if max_severity == 6.0 or brain_o2_pp < 15:
             avpu = AVPU.Unresponsive
-        elif max_severity == 4.0:
+        elif max_severity >= 4.0:
             if 15 <= brain_o2_pp <= 25:
                 avpu = AVPU.Pain
             else:
@@ -540,15 +543,13 @@ class ArmyDataset(TriageDataset):
 
         # Ambulatory
         ambulatory = True
-        if max_severity >= 2.5:
+        if max_severity > 3.0:
             ambulatory = False
         elif avpu != AVPU.Alert:
             ambulatory = False
 
-        # TODO Not sure how we want to do this
+        # NOTE: We always assume we can save the casualty (SALT Protocol)
         survivable_injuries = True
-        if max_severity >= 4.8:
-            survivable_injuries = False
 
         # Unhealthy CRT > 2s - we are associating with hypotension
         healthy_capillary_refill_time = True
@@ -565,7 +566,7 @@ class ArmyDataset(TriageDataset):
                 "heart_rate": pulse_data.get_hr(FrequencyUnit.Per_min),
                 "hemorrhage": {"type": hemorrhage, "controllable": controllable_hemorrhage},
                 "iss": iss,
-                "major_injuries": True if max_severity > 2 else False,
+                "major_injuries": True if max_severity > 3 else False,
                 "peripheral_pulse": peripheral_pulse,
                 "respiratory_rate": pulse_data.get_rr(FrequencyUnit.Per_min),
                 "spO2": pulse_data.get_spo2(),
@@ -577,9 +578,9 @@ class ArmyDataset(TriageDataset):
     def injury_actions(self, injuries: list) -> List[SEAction]:
         actions: List[SEAction] = []
 
-        def to_pulse_severity(value: float,
-                              min_input: float = 0.0, max_input: float = 5.0,
-                              min_output: float = 0.0, max_output: float = 1.0) -> float:
+        def _ais_2_pulse(value: float,
+                         min_input: float = 1.0, max_input: float = 6.0,
+                         min_output: float = 0.15, max_output: float = 1.0) -> float:
             return (value - min_input) / (max_input - min_input) * (max_output - min_output) + min_output
 
         def get_action(action_class) -> any:
@@ -594,260 +595,311 @@ class ArmyDataset(TriageDataset):
         # This will make supporting polytraumas easier
         injury_dict = _injury_list_to_dict(injuries)
 
-        # TODO this is written with the assumption all injuries in list are at the same location
-        # TODO this is going to need a lot of work...
+        # Create a ledger to for AIS polytraumas to pulse
+        # We will sum AIS score and join pulse severity ranges
+        # We will use the highest min, and the highest max
+        # ex. (0, 1) + (0.2, 0.7) = (0.2, 1.0)
+        ledger = {"airway_obstruction": {"ais": 0, "low": 0, "high": 0},
+                  "ards": {"left_lung": {"ais": 0, "low": 0, "high": 0},
+                           "right_lung": {"ais": 0, "low": 0, "high": 0}},
+                  "hemorrhage": {"left_arm": {"ais": 0, "low": 0, "high": 0},
+                                 "left_leg": {"ais": 0, "low": 0, "high": 0},
+                                 "liver": {"ais": 0, "low": 0, "high": 0},
+                                 "muscle": {"ais": 0, "low": 0, "high": 0},
+                                 "right_arm": {"ais": 0, "low": 0, "high": 0},
+                                 "right_leg": {"ais": 0, "low": 0, "high": 0},
+                                 "skin": {"ais": 0, "low": 0, "high": 0},
+                                 "spleen": {"ais": 0, "low": 0, "high": 0}},
+                  "pneumothorax": {"left_lung": {"ais": 0, "low": 0, "high": 0},
+                                   "right_lung": {"ais": 0, "low": 0, "high": 0}},
+                  "stress": {"ais": 0, "low": 0, "high": 0},
+                  "tbi": {"ais": 0, "low": 0, "high": 0},
+                  }
+
+        def _post(injury: str, cmpt: str = None, ais: int = 1, low: float = 0.0, high: float = 1.0):
+            if cmpt:
+                ledger[injury][cmpt]["ais"] = min(ledger[injury][cmpt]["ais"]+ais, 6)
+                ledger[injury][cmpt]["low"] = max(low, ledger[injury][cmpt]["low"])
+                ledger[injury][cmpt]["high"] = max(high, ledger[injury][cmpt]["high"])
+            else:
+                ledger[injury]["ais"] = min(ledger[injury]["ais"]+ais, 6)
+                ledger[injury]["low"] = max(low, ledger[injury]["low"])
+                ledger[injury]["high"] = max(high, ledger[injury]["high"])
 
         for location, types in injury_dict.items():
             for t, severities in types.items():
+                ais = sum(severities)
                 num = len(severities)
 
                 if location == "head_and_neck":
-                    if num > 1:
-                        _log.error(f"Multiple {t} injuries on the {location}, is currently unsupported")
+
+                    if num > 1 or len(types) > 1:
+                        _log.fatal(f"More than one {location} injury is unsupported")
                         exit(1)
 
+                    if t == "airway_obstruction":
+                        _post(injury="airway_obstruction", ais=ais, low=0.15, high=1.0)
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
+                        continue
+
+                    if t == "superficial":
+                        # 5-15 mL/min
+                        _post(injury="hemorrhage", cmpt="skin", ais=ais, low=0.03, high=0.08)
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
+                        continue
+
                     if t == "tbi":
-                        tbi = SEBrainInjury()
-                        tbi.get_severity().set_value(to_pulse_severity(severities[0]))
-                        tbi_type = np.random.randint(0, 2)
-                        if tbi_type == 0:
-                            tbi.set_injury_type(eBrainInjuryType.Diffuse)
-                        elif tbi_type == 1:
-                            tbi.set_injury_type(eBrainInjuryType.LeftFocal)
-                        elif tbi_type == 2:
-                            tbi.set_injury_type(eBrainInjuryType.RightFocal)
-                        actions.append(tbi)
-                        continue
-
-                    elif t == "airway_obstruction":
-                        obs = SEAirwayObstruction()
-                        obs.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(obs)
-                        continue
-
-                    elif t == "superficial":
-                        stress = SEAcuteStress()
-                        stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.4))
-                        actions.append(stress)
-
-                        skin = SEHemorrhage()
-                        skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                        skin.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(skin)
+                        _post(injury="tbi", ais=ais, low=0.15, high=1.0)
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 
                 if location == "thorax":
-                    if num > 2:
-                        _log.error(f"More than 2 {t} injuries on the {location}, is currently unsupported")
-                        exit(1)
 
                     if t == "pneumothorax":
+
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         if num == 1:
-                            pneumo = SETensionPneumothorax()
                             side = np.random.randint(0, 1)
                             if side == 0:
-                                pneumo.set_side(eSide.Left)
+                                _post(injury="pneumothorax", cmpt="left_lung", ais=ais, low=0.15, high=1.0)
                             elif side == 1:
-                                pneumo.set_side(eSide.Right)
-                            gate = np.random.randint(0, 1)
-                            if gate == 0:
-                                pneumo.set_type(eGate.Open)
-                            elif gate == 1:
-                                pneumo.set_type(eGate.Closed)
-                            pneumo.get_severity().set_value(to_pulse_severity(severities[0]))
-                            actions.append(pneumo)
+                                _post(injury="pneumothorax", cmpt="right_lung", ais=ais, low=0.15, high=1.0)
                             continue
 
                         elif num == 2:
-                            left = SETensionPneumothorax()
-                            left.set_side(eSide.Left)
-                            gate = np.random.randint(0, 1)
-                            if gate == 0:
-                                left.set_type(eGate.Open)
-                            elif gate == 1:
-                                left.set_type(eGate.Closed)
-                            left.get_severity().set_value(to_pulse_severity(severities[0]))
-                            actions.append(left)
-
-                            right = SETensionPneumothorax()
-                            right.set_side(eSide.Right)
-                            gate = np.random.randint(0, 1)
-                            if gate == 0:
-                                right.set_type(eGate.Open)
-                            elif gate == 1:
-                                right.set_type(eGate.Closed)
-                            right.get_severity().set_value(to_pulse_severity(severities[1]))
-                            actions.append(right)
+                            _post(injury="pneumothorax", cmpt="left_lung", ais=severities[0], low=0.15, high=1.0)
+                            _post(injury="pneumothorax", cmpt="right_lung", ais=severities[1], low=0.15, high=1.0)
                             continue
+
+                        else:
+                            _log.fatal(f"More than two {location} pneumothorax is unsupported")
+                            exit(1)
 
                     if t == "pulmonary_contusion":
+
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         if num == 1:
-                            ards = SEAcuteRespiratoryDistressSyndromeExacerbation()
-                            cmpt = np.random.randint(0, 1)
-                            if cmpt == 0:
-                                ards.get_severity(eLungCompartment.LeftLung).set_value(to_pulse_severity(severities[0]))
-                            elif cmpt == 1:
-                                ards.get_severity(eLungCompartment.RightLung).set_value(to_pulse_severity(severities[0]))
-                            actions.append(ards)
-                            continue
-
-                        elif num == 2:
-                            left = SEAcuteRespiratoryDistressSyndromeExacerbation()
-                            left.get_severity(eLungCompartment.LeftLung).set_value(to_pulse_severity(severities[0]))
-                            actions.append(left)
-
-                            right = SEAcuteRespiratoryDistressSyndromeExacerbation()
-                            right.get_severity(eLungCompartment.RightLung).set_value(to_pulse_severity(severities[1]))
-                            actions.append(right)
-                            continue
-
-                    if t == "hemothorax":
-                        if num == 1:
-                            hemo = SEHemothorax()
                             side = np.random.randint(0, 1)
                             if side == 0:
-                                hemo.set_side(eSide.Left)
+                                _post(injury="ards", cmpt="left_lung", ais=ais, low=0.15, high=1.0)
                             elif side == 1:
-                                hemo.set_side(eSide.Right)
-                            hemo.get_severity().set_value(to_pulse_severity(severities[0]))
-                            actions.append(hemo)
+                                _post(injury="ards", cmpt="right_lung", ais=ais, low=0.15, high=1.0)
                             continue
-                        elif num == 2:
-                            left = SEHemothorax()
-                            left.set_side(eSide.Left)
-                            left.get_severity().set_value(to_pulse_severity(severities[0]))
-                            actions.append(left)
 
-                            right = SEHemothorax()
-                            right.set_side(eSide.Right)
-                            right.get_severity().set_value(to_pulse_severity(severities[1]))
-                            actions.append(right)
+                        elif num == 2:
+                            _post(injury="ards", cmpt="left_lung", ais=severities[0], low=0.15, high=1.0)
+                            _post(injury="ards", cmpt="right_lung", ais=severities[1], low=0.15, high=1.0)
                             continue
+
+                        else:
+                            _log.fatal(f"More than two {location} pulmonary_contusion is unsupported")
+                            exit(1)
+
+                    if t == "hemothorax":
+
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
+                        _post(injury="hemorrhage", cmpt="muscle", ais=ais, low=0.05, high=0.19)  # 28-115 mL/min
+                        if num == 1:
+                            side = np.random.randint(0, 1)
+                            if side == 0:
+                                _post(injury="pneumothorax", cmpt="left_lung", ais=ais, low=0.15, high=1.0)
+                            elif side == 1:
+                                _post(injury="pneumothorax", cmpt="right_lung", ais=ais, low=0.15, high=1.0)
+                            continue
+
+                        elif num == 2:
+                            _post(injury="pneumothorax", cmpt="left_lung", ais=severities[0], low=0.15, high=1.0)
+                            _post(injury="pneumothorax", cmpt="right_lung", ais=severities[1], low=0.15, high=1.0)
+                            continue
+
+                        else:
+                            _log.fatal(f"More than two {location} hemothorax is unsupported")
+                            exit(1)
 
                     if t == "hemorrhage":
-                        severity = severities[0]
-                        if num == 2:
-                            # Average the severities
-                            severity += severities[1]
-                            severity /= 2
-                        skin = SEHemorrhage()
-                        skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                        skin.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(skin)
 
-                        muscle = SEHemorrhage()
-                        muscle.set_compartment(eHemorrhage_Compartment.Muscle.value)
-                        muscle.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(muscle)
+                        if num > 2:
+                            _log.fatal(f"More than two {location} hemorrhage is unsupported")
+                            exit(1)
+
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
+                        # 15-100 mL/min combined
+                        _post(injury="hemorrhage", cmpt="muscle", ais=ais, low=0.02, high=0.13)
+                        _post(injury="hemorrhage", cmpt="skin", ais=ais, low=0.02, high=0.13)
                         continue
 
-                    if t == "fracture" or t == "spinal":
-                        # Going to keep adding stress severities and cap at 1
-                        # Create/Grab a stress action
-                        stress = get_action(SEAcuteStress)
-                        severity = 0
-                        if stress.has_severity():
-                            severity = stress.get_severity().get_value()
-                        for s in severities:
-                            severity += to_pulse_severity(s,
-                                                          min_output=0.2,
-                                                          max_output=0.7)
-                        if severity > 1.0:
-                            severity = 1.0
-                        stress.get_severity().set_value(severity)
+                    if t == "fracture":
+
+                        if num > 2:
+                            _log.fatal(f"More than two {location} fracture is unsupported")
+                            exit(1)
+
+                        _post(injury="stress", ais=ais, low=0.20, high=0.70)
+                        continue
+
+                    if t == "spinal":
+
+                        if num > 1:
+                            _log.fatal(f"More than one {location} spinal injury is unsupported")
+                            exit(1)
+
+                        _post(injury="stress", ais=ais, low=0.20, high=0.70)
                         continue
 
                 if location == "abdomen":
-                    if num > 1:
-                        _log.error(f"Multiple {t} injuries on the {location}, is currently unsupported")
+                    if num > 1 or len(types) > 1:
+                        _log.fatal(f"More than one {location} injury is unsupported")
                         exit(1)
 
                     if t == "hemorrhage":
-                        skin = SEHemorrhage()
-                        skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                        skin.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                        min_output=0.2,
-                                                                        max_output=0.7))
-                        actions.append(skin)
-
-                        muscle = SEHemorrhage()
-                        muscle.set_compartment(eHemorrhage_Compartment.Muscle.value)
-                        muscle.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.7))
-                        actions.append(muscle)
+                        c = np.random.randint(0, 1)
+                        if c == 0:
+                            _post(injury="hemorrhage", cmpt="liver", ais=ais, low=0.15, high=1.0)
+                        else:
+                            _post(injury="hemorrhage", cmpt="spleen", ais=ais, low=0.15, high=1.0)
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 
                     if t == "laceration_contusion":
-                        stress = SEAcuteStress()
-                        stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.7))
-                        actions.append(stress)
-
-                        skin = SEHemorrhage()
-                        skin.set_compartment(eHemorrhage_Compartment.Skin.value)
-                        skin.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(skin)
-
-                        muscle = SEHemorrhage()
-                        muscle.set_compartment(eHemorrhage_Compartment.Muscle.value)
-                        muscle.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(muscle)
+                        # Laceration 9-40 mL/min
+                        _post(injury="hemorrhage", cmpt="skin", ais=ais, low=0.05, high=0.20)
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 
                 if location == "extremity":
-                    if num > 1:
-                        _log.error(f"Multiple {t} injuries on the {location}, is currently unsupported")
+                    if num > 1 or len(types) > 1:
+                        _log.fatal(f"More than one {location} injury is unsupported")
                         exit(1)
 
                     if t == "hemorrhage":
-                        hemorrhage = SEHemorrhage()
                         cmpt = np.random.randint(0, 3)
                         if cmpt == 0:
-                            hemorrhage.set_compartment(eHemorrhage_Compartment.LeftArm.value)
+                            _post(injury="hemorrhage", cmpt="left_arm", ais=ais, low=0.15, high=1.0)
                         elif cmpt == 1:
-                            hemorrhage.set_compartment(eHemorrhage_Compartment.LeftLeg.value)
+                            _post(injury="hemorrhage", cmpt="left_leg", ais=ais, low=0.15, high=1.0)
                         elif cmpt == 2:
-                            hemorrhage.set_compartment(eHemorrhage_Compartment.RightArm.value)
+                            _post(injury="hemorrhage", cmpt="right_arm", ais=ais, low=0.15, high=1.0)
                         elif cmpt == 3:
-                            hemorrhage.set_compartment(eHemorrhage_Compartment.RightLeg.value)
-                        hemorrhage.get_severity().set_value(to_pulse_severity(severities[0]))
-                        actions.append(hemorrhage)
-
-                        stress = SEAcuteStress()
-                        stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.7))
+                            _post(injury="hemorrhage", cmpt="right_leg", ais=ais, low=0.15, high=1.0)
+                        _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 
                     if t == "fracture_dislocation":
-                        stress = SEAcuteStress()
-                        stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.7))
-                        actions.append(stress)
+                        _post(injury="stress", ais=ais, low=0.20, high=0.70)
                         continue
 
                     if t == "contusion_sprain_strain":
-                        stress = SEAcuteStress()
-                        stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.7))
-                        actions.append(stress)
+                        _post(injury="stress", ais=ais, low=0.20, high=0.70)
                         continue
 
                     if t == "burn_nerve":
-                        stress = SEAcuteStress()
-                        stress.get_severity().set_value(to_pulse_severity(severities[0],
-                                                                          min_output=0.2,
-                                                                          max_output=0.7))
-                        actions.append(stress)
+                        _post(injury="stress", ais=ais, low=0.20, high=0.70)
                         continue
 
                 _log.error(f"Unsupported injury: {location} {t}")
+
+        # Create Pulse actions
+
+        injury = ledger["airway_obstruction"]
+        if injury["ais"] > 0:
+            obs = SEAirwayObstruction()
+            obs.get_severity().set_value(_ais_2_pulse(value=injury["ais"],
+                                                      min_output=injury["low"],
+                                                      max_output=injury["high"]))
+            actions.append(obs)
+
+        injury = ledger["ards"]["left_lung"]
+        if injury["ais"] > 0:
+            ards = SEAcuteRespiratoryDistressSyndromeExacerbation()
+            ards.get_severity(eLungCompartment.LeftLung).set_value(_ais_2_pulse(value=injury["ais"],
+                                                                                min_output=injury["low"],
+                                                                                max_output=injury["high"]))
+            actions.append(ards)
+
+        injury = ledger["ards"]["right_lung"]
+        if injury["ais"] > 0:
+            ards = SEAcuteRespiratoryDistressSyndromeExacerbation()
+            ards.get_severity(eLungCompartment.RightLung).set_value(_ais_2_pulse(value=injury["ais"],
+                                                                                 min_output=injury["low"],
+                                                                                 max_output=injury["high"]))
+            actions.append(ards)
+
+        def _create_hemorrhage(_injury: dict, _cmpt: str):
+            h = SEHemorrhage()
+            h.set_compartment(_cmpt)
+            h.set_type(eHemorrhage_Type.External)
+            h.get_severity().set_value(_ais_2_pulse(value=_injury["ais"],
+                                                    min_output=_injury["low"],
+                                                    max_output=_injury["high"]))
+            return h
+
+        injury = ledger["hemorrhage"]["left_arm"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+        injury = ledger["hemorrhage"]["left_leg"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+        injury = ledger["hemorrhage"]["liver"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+        injury = ledger["hemorrhage"]["muscle"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+        injury = ledger["hemorrhage"]["right_arm"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+        injury = ledger["hemorrhage"]["right_leg"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+        injury = ledger["hemorrhage"]["skin"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+        injury = ledger["hemorrhage"]["spleen"]
+        if injury["ais"] > 0:
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+
+        injury = ledger["pneumothorax"]["left_lung"]
+        if injury["ais"] > 0:
+            pneumo = SETensionPneumothorax()
+            pneumo.set_side(eSide.Left)
+            pneumo.set_type(eGate.Closed)
+            pneumo.get_severity().set_value(_ais_2_pulse(value=injury["ais"],
+                                                         min_output=injury["low"],
+                                                         max_output=injury["high"]))
+            actions.append(pneumo)
+
+        injury = ledger["pneumothorax"]["right_lung"]
+        if injury["ais"] > 0:
+            pneumo = SETensionPneumothorax()
+            pneumo.set_side(eSide.Right)
+            pneumo.set_type(eGate.Closed)
+            pneumo.get_severity().set_value(_ais_2_pulse(value=injury["ais"],
+                                                         min_output=injury["low"],
+                                                         max_output=injury["high"]))
+            actions.append(pneumo)
+
+        injury = ledger["stress"]
+        if injury["ais"] > 0:
+            stress = SEAcuteStress()
+            stress.get_severity().set_value(_ais_2_pulse(value=injury["ais"],
+                                                         min_output=injury["low"],
+                                                         max_output=injury["high"]))
+            actions.append(stress)
+
+        injury = ledger["tbi"]
+        if injury["ais"] > 0:
+            tbi = SEBrainInjury()
+            tbi_type = np.random.randint(0, 2)
+            if tbi_type == 0:
+                tbi.set_injury_type(eBrainInjuryType.Diffuse)
+            elif tbi_type == 1:
+                tbi.set_injury_type(eBrainInjuryType.LeftFocal)
+            elif tbi_type == 2:
+                tbi.set_injury_type(eBrainInjuryType.RightFocal)
+            tbi.get_severity().set_value(_ais_2_pulse(value=injury["ais"],
+                                                      min_output=injury["low"],
+                                                      max_output=injury["high"]))
+            actions.append(tbi)
 
         return actions
 
@@ -885,22 +937,56 @@ class ArmyDataset(TriageDataset):
 
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-
-    # TODO argparse
     output_dir = Path("./test_results/itm/army")
-    army_dir = Path(output_dir / "army")
-    army_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    """
+    Python stats are wierd....
+    Order of how/what random distribution seems to impact its results....
+    I am doing the same amount of calls, just in a different order...
+    And get more failures one way than with another...
+
+    mode = 5
+    for population 5000 -> 10000
+      test 1000 airway obst arrays
+        if > 5% fail, move to next population
+      test 1000 tbi array
+        if > 5% fail, move to next population
+      test 1000 hemorrhage arrays
+        if > 5% fail move to next population
+      If you get here, we found a good population
+    This stops with a population of 7000
+
+    Is different than
+
+    mode = 6
+    for population 5000 -> 10000
+      for 1 to 1000
+        test 1 airway obst arrays
+            if fail, count and continue
+        test 1 tbi array
+            if fail, count and continue
+        test 1 hemorrhage arrays
+            if fail, count and continue
+        if > 5% fail move to next population else stop
+        
+    This stops with a population of 9000
+    
+    The successful 7000 mode 5 run should have the same # of calls to random that 7000 mode 6 has....
+    """
+    mode = 4
 
     # Test specific injury
-    if False:
-        test_injury(injury_distributions=army_injury_distributions["thorax"],
+    if mode == 1:
+        test_injury(injury_distributions=injury_distributions["thorax"],
                     num_patients_injured=1000,
                     log=True)
-    if False:
+
+    elif mode == 2:
         for p in range(100, 10001, 100):
             max_error = 0
             for i in range(50):
-                err = test_injury(injury_distributions=army_injury_distributions["abdomen"],
+                err = test_injury(injury_distributions=injury_distributions["thorax"],
                                   num_patients_injured=p,
                                   log=False)
                 if err > max_error:
@@ -908,19 +994,159 @@ def main():
             _log.info(f"Max Error of {max_error} for {p} patients")
 
     # Run a measurement study
-    if False:
+    elif mode == 3:
         # Measure error for various population sizes
         for p in [100, 500, 1000, 2000, 3000]:
             i = 25
             _log.info(f"Measuring error for a population size of {p} using {i} iterations")
             measure_error(iterations=i, population_size=p,
-                          population_distributions=army_population_distributions,
-                          injury_distributions=army_injury_distributions,
-                          results_stem=f"{army_dir}/measurements/{p}")
+                          population_distributions=population_distributions,
+                          injury_distributions=injury_distributions,
+                          results_stem=f"{output_dir}/measurements/{p}")
 
     # Generate a data set
-    if True:
-        generate_dataset(population_size=2000, output_dir=output_dir)
+    elif mode == 4:
+        # This is pretty much the closest to a full run
+        num_casualties = 9000
+        injury_opts = InjurySeverityOpts()
+        injury_opts.halt_on_error = False
+
+        failures = 0
+        max_diff = 5  # percent
+        num_runs = 1000
+        for i in range(1, num_runs+1):
+            fail = False
+            spec = to_specification_lists(ArmyDataset().generate_dataset(population_size=num_casualties, injury_opts=injury_opts))
+            severities = to_severity_lists(spec)
+            for location, injuries in severities.items():
+                for injury, severities in injuries.items():
+                    severity_dist = injury_distributions[location]["types"][injury]["severity"]
+                    if "mean" in severity_dist:
+                        mean = statistics.mean(severities)
+                        mean_pd = percent_difference(severity_dist["mean"], mean)
+                        if mean_pd > max_diff:
+                            failures += 1
+                            _log.info(f"\tRun {i} FAILED from {location}-{injury} cnt={len(severities)}")
+                            fail = True
+                            break
+                if fail:
+                    break
+            if not fail:
+                _log.info(f"\tRun {i} passed")
+
+        _log.info(f"Generating {num_runs} datasets with {num_casualties} casualties, "
+                  f"we had {failures} sets ({failures/num_runs*100:.2f}%) "
+                  f"produce a severity array with > than {max_diff}% error")
+
+    elif mode == 5:
+
+        samples = 100
+        diff_maximum = 5  # percent
+        specific = None  # [(2.85, 0.85, 189, "test")]
+
+        for num_casualties in range(5000, 50001, 1000):
+            _log.info(f"Running {num_casualties} casualties")
+            distributions = []
+            if specific:
+                distributions = specific
+            else:
+                for location, location_dist in injury_distributions.items():
+                    for injury, injury_dist in location_dist["types"].items():
+                        severity_dist = injury_dist["severity"]
+                        if "mean" in severity_dist:
+                            size = math.floor(num_casualties*location_dist["percent"]*injury_dist["percent"]*0.0001)
+                            distributions.append((severity_dist["mean"],
+                                                  severity_dist["std"],
+                                                  size,
+                                                  f"{location}-{injury}"))
+
+            keep_going = False
+            for dist in distributions:
+                diffs = []
+                maxs = []
+                mins = []
+                sixes = 0
+                ones = 0
+                for i in range(1, samples):
+                    bound = _bounded_random_normal(mean=dist[0], stdev=dist[1], size=int(dist[2]))
+                    bounded_mean = statistics.mean(bound)
+                    bounded_mean_pd = percent_difference(dist[0], bounded_mean)
+                    #_log.info(f"\t"
+                    #          f"1: {bound.count(1.0)} "
+                    #          f"2: {bound.count(2.0)} "
+                    #          f"3: {bound.count(3.0)} "
+                    #          f"4: {bound.count(4.0)} "
+                    #          f"5: {bound.count(5.0)} "
+                    #          f"6: {bound.count(6.0)} "
+                    #          f"- bounded {bounded} ({bounded/len(bound)}%)values "
+                    #          f"- %diff {bounded_mean_pd}")
+                    diffs.append(bounded_mean_pd)
+                    if min(bound) == 1.0:
+                        ones += 1
+                    if max(bound) == 6.0:
+                        sixes += 1
+                    maxs.append(max(bound))
+                    mins.append(min(bound))
+                failed_diffs = 0
+                for diff in diffs:
+                    if diff > diff_maximum:
+                        failed_diffs += 1
+                percent_failed = failed_diffs/len(diffs)*100
+                percent_ones = ones/len(diffs)*100
+                percent_sixes = sixes/len(diffs)*100
+                _log.info(f"\t{samples} arrays were generated with a mean:{dist[0]}, std:{dist[1]}, length {dist[2]}: "
+                          f"- {failed_diffs} had a mean greater than {diff_maximum}% ({percent_failed:.2f}%) "
+                          f"- {percent_ones:.2f}% had 1's "
+                          f"- {percent_sixes:.2f}% had 6's "
+                          f"- {dist[3]}")
+                if percent_failed > diff_maximum:
+                    keep_going = True
+                    break
+
+            if keep_going:
+                _log.info(f"{num_casualties} is NOT enough")
+            else:
+                _log.info(f"{num_casualties} is enough")
+                break
+
+    elif mode == 6:
+
+        samples = 1000
+        diff_maximum = 5  # percent
+
+        for num_casualties in range(9000, 50001, 1000):
+            _log.info(f"Running {num_casualties} casualties")
+
+            failed_diffs = 0
+            for i in range(1, samples):
+                failed = False
+                for location, location_dist in injury_distributions.items():
+                    for injury, injury_dist in location_dist["types"].items():
+                        severity_dist = injury_dist["severity"]
+                        if "mean" in severity_dist:
+                            mean = severity_dist["mean"]
+                            stdev = severity_dist["std"]
+                            size = math.floor(num_casualties*location_dist["percent"]*injury_dist["percent"]*0.0001)
+                            size += np.random.randint(-3, 3)
+
+                            bound = _bounded_random_normal(mean=mean, stdev=stdev, size=int(size))
+                            bounded_mean = statistics.mean(bound)
+                            bounded_mean_pd = percent_difference(mean, bounded_mean)
+                            if bounded_mean_pd > diff_maximum:
+                                failed_diffs += 1
+                                failed = True
+                                _log.info(f"\t{i}-{location}-{injury} failed with diff {bounded_mean_pd}%")
+                                break
+                    if failed:
+                        break
+                if failed_diffs/samples*100 > diff_maximum:
+                    _log.info(f"Aborting {num_casualties}")
+                    break
+
+            if failed_diffs/samples*100 < diff_maximum:
+                _log.info(f"{num_casualties} was enough, "
+                          f"failed {failed_diffs} out of {samples} ({failed_diffs/samples*100})%")
+                break
 
 
 if __name__ == "__main__":

@@ -13,13 +13,47 @@ import statistics
 from itertools import combinations
 from pathlib import Path
 from pulse.cdm.utils.markdown import table
-from scipy.stats import truncnorm
+from scipy.stats import truncnorm, norm
+
+from pulse.cdm.utils.math_utils import percent_difference
 
 _log = logging.getLogger("pulse")
 
 
-def synthetic_population_generation(size: int, distributions: dict) -> dict:
-    _log.info(f"Generate data with {size} samples")
+class InjurySeverityOpts:
+    force_valid_distributions = False
+    max_valid_percent_difference = 5.0
+    halt_on_error = True
+
+
+def to_specification_lists(study: dict) -> dict:
+    # Turn the study map (id->casualty) to a map of specification parameter->[values of that parameter]
+    spec = {}
+    for casualty in study.values():
+        s = casualty["specification"]
+        for key, value in s.items():
+            if key not in spec:
+                spec[key] = []
+            spec[key].append(value)
+    return spec
+
+
+def to_severity_lists(spec: dict) -> dict:
+    severities = {}
+    for injuries in spec["injuries"]:
+        for injury in injuries:
+            loc = injury["location"]
+            typ = injury["type"]
+            sev = injury["severity"]
+            if loc not in severities:
+                severities[loc] = {}
+            if typ not in severities[loc]:
+                severities[loc][typ] = []
+            severities[loc][typ].append(sev)
+    return severities
+
+
+def casualty_population_generation(size: int, distributions: dict) -> dict:
 
     population_data = {}
     
@@ -194,8 +228,6 @@ def calculate_population_error(population: dict, distributions: dict) -> dict:
 
 
 def plot_population_error(population_error: dict, results_stem: str):
-    out_dir = Path(results_stem).parent
-    out_dir.mkdir(exist_ok=True)
 
     # Age
     age_bins = population_error["age"]["bins"]
@@ -254,7 +286,9 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
     return {"location": location_, "type": type_, "severity": severity_}
 
 
-def synthetic_injury_generation(population_size: int, distributions: dict) -> list:
+def population_injury_generation(population_size: int, distributions: dict, opts: InjurySeverityOpts = None):
+    if not opts:
+        opts = InjurySeverityOpts()
     # Array or arrays
     # An array of injuries for each patient
     patient_injuries = []
@@ -284,7 +318,7 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
                                             size=sum(num_polytrauma_injuries))
             ledger[location]["injuries"] = _random_grouping(polytraumas,
                                                             num_polytrauma_injuries,
-                                                            list(injury_types.keys()))
+                                                            injury_types)
 
             # Check that our tuples don't have more than 2 of any 1 injury
             for injury in ledger[location]["injuries"]:
@@ -301,11 +335,40 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
         injuries = ledger[location]["injuries"]
         injury_severities = ledger[location]["injury_severities"]
         for injury_type, dist in injury_types.items():
+            randomized_severities = None
             severity_dist = dist["severity"]
             if "mean" in severity_dist:
-                randomized_severities = np.random.normal(loc=severity_dist["mean"],
-                                                         scale=severity_dist["std"],
-                                                         size=_count(injuries, injury_type))
+                mean = None
+                pdiff = None
+                acceptable_distribution = False
+                for i in range(10):
+                    randomized_severities = _bounded_random_normal(mean=severity_dist["mean"],
+                                                                   stdev=severity_dist["std"],
+                                                                   size=_count(injuries, injury_type))
+                    mean = statistics.mean(randomized_severities)
+                    if not opts.force_valid_distributions:
+                        pdiff = percent_difference(severity_dist["mean"], mean)
+                        if pdiff <= opts.max_valid_percent_difference:
+                            acceptable_distribution = True
+                        break
+                    else:
+                        if i == 0:
+                            _log.info(f"Iterating _bounded_random_normal for acceptable random severity distribution")
+                        pdiff = percent_difference(severity_dist["mean"], mean)
+                        if pdiff <= opts.max_valid_percent_difference:
+                            _log.info(f"Acceptable mean generated on iteration {i+2}")
+                            acceptable_distribution = True
+                            break
+                if not acceptable_distribution:
+                    _log.error(f"DId not generate valid random severity distribution for {location}-{injury_type}:")
+                    _log.error(f"\t% Diff of {pdiff:.2f}% for len={len(randomized_severities)}; "
+                               f"Expected: {severity_dist['mean']}, Generated: {mean}")
+                    if opts.halt_on_error:
+                        exit(1)
+                else:
+                    _log.info(f"% diff for {location}-{injury_type} severities {pdiff:.2f}% "
+                              f"(len={len(randomized_severities)})")
+
             elif "values" in severity_dist:
                 randomized_severities = _weighted_choices(choices=severity_dist["values"],
                                                           percents=severity_dist["percents"],
@@ -313,9 +376,6 @@ def synthetic_injury_generation(population_size: int, distributions: dict) -> li
             else:
                 _log.error("Unsupported severity randomization specification")
                 exit(1)
-            _log.info(f"{location} severity range for {injury_type}: ["
-                      f"{(min(randomized_severities))},"
-                      f"{(max(randomized_severities))}]")
             injury_severities[injury_type] = {"index": 0, "severities": randomized_severities}
 
     # Map the types and severities back to the injury locations
@@ -396,33 +456,31 @@ def calculate_injury_error(patients_injuries: list, injury_distributions: dict) 
             if "mean" in injury_severity:
                 injury_error["synthetic_severity_mean"] = np.mean(injury_error["severities"])
                 injury_error["actual_severity_mean"] = injury_severity["mean"]
-                injury_error["severity_mean_error"] = (injury_error["synthetic_severity_mean"] -
-                                                       injury_error["actual_severity_mean"])
+                injury_error["severity_mean_error"] = percent_difference(injury_error["synthetic_severity_mean"],
+                                                                         injury_error["actual_severity_mean"])
 
             if "std" in injury_severity:
                 injury_error["synthetic_severity_std"] = np.std(injury_error["severities"])
                 injury_error["actual_severity_std"] = injury_severity["std"]
-                injury_error["severity_std_error"] = (injury_error["synthetic_severity_std"] -
-                                                      injury_error["actual_severity_std"])
+                injury_error["severity_std_error"] = percent_difference(injury_error["synthetic_severity_std"],
+                                                                        injury_error["actual_severity_std"])
 
         if "mean" in location_distributions:
             location_error["synthetic_severity_mean"] = np.mean(location_severities)
             location_error["actual_severity_mean"] = location_distributions["mean"]
-            location_error["severity_mean_error"] = (location_error["synthetic_severity_mean"] -
-                                                     location_error["actual_severity_mean"])
+            location_error["severity_mean_error"] = percent_difference(location_error["synthetic_severity_mean"],
+                                                                       location_error["actual_severity_mean"])
 
         if "std" in location_distributions:
             location_error["synthetic_severity_std"] = np.std(location_severities)
             location_error["actual_severity_std"] = location_distributions["std"]
-            location_error["severity_std_error"] = (location_error["synthetic_severity_std"] -
-                                                    location_error["actual_severity_std"])
+            location_error["severity_std_error"] = percent_difference(location_error["synthetic_severity_std"],
+                                                                      location_error["actual_severity_std"])
 
     return error
 
 
 def plot_injury_error(injury_error: dict, results_stem: str):
-    out_dir = Path(results_stem).parent
-    out_dir.mkdir(exist_ok=True)
 
     def _dict_field_value(d: dict, f: str, fmt: str):
         if f in d:
@@ -444,16 +502,12 @@ def plot_injury_error(injury_error: dict, results_stem: str):
                 _dict_field_value(error, "distribution_error", ".1f"),
                 _dict_field_value(error, "synthetic_severity_mean", ".3f"),
                 _dict_field_value(error, "actual_severity_mean", ".3f"),
-                _dict_field_value(error, "severity_mean_error", ".3f"),
-                _dict_field_value(error, "synthetic_severity_std", ".3f"),
-                _dict_field_value(error, "actual_severity_std", ".3f"),
-                _dict_field_value(error, "severity_std_error", ".3f"))
+                _dict_field_value(error, "severity_mean_error", ".3f"))
     data = []
     headings = ["Injury Location", "Injury Type", "Count",
                 "Synthetic Distribution %", "Actual Distribution %", "Distribution % Error",
-                "Synthetic Severity Mean", "Actual Severity Mean", "Severity Mean Error",
-                "Synthetic Severity SD", "Actual Severity SD", "Severity SD Error"]
-    fields = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]  # All headings
+                "Synthetic Severity Mean", "Actual Severity Mean", "Severity Mean % Error"]
+    fields = [0, 1, 2, 3, 4, 5, 6, 7, 8]  # All headings
     for location in sorted(injury_error.keys()):
         data.append(_error_row(location, injury_error[location], True))
         injuries = injury_error[location]["injuries"]
@@ -487,7 +541,7 @@ def measure_error(iterations: int, population_size: int,
     demographics = error["demographics"]
     injuries = error["injuries"]
     for i in range(iterations):
-        patients = synthetic_population_generation(population_size, population_distributions)
+        patients = casualty_population_generation(population_size, population_distributions)
         population_error = calculate_population_error(patients, population_distributions)
 
         demographics["female_distribution"]["errors"].append(population_error["sex"]["female"]["count"]["error"])
@@ -503,7 +557,7 @@ def measure_error(iterations: int, population_size: int,
         demographics["heart_rate_mean"]["errors"].append(population_error["heart_rate"]["mean_error"])
         demographics["heart_rate_std"]["errors"].append(population_error["heart_rate"]["std_error"])
 
-        patient_injuries = synthetic_injury_generation(population_size, injury_distributions)
+        patient_injuries = population_injury_generation(population_size, injury_distributions)
         injury_error = calculate_injury_error(patient_injuries, injury_distributions)
 
         for location, location_stats in injury_error.items():
@@ -645,20 +699,19 @@ def _create_report(basename: str, data, fields, headings, widths=None):
     dfi.export(df_styler, img_filename, table_conversion='playwright', dpi=600)
 
 
-def _random_grouping(pool: list, groups: list, choices: list) -> list:
-    seed = random.Random()
+def _random_grouping(pool: list, groups: list, choices: dict) -> list:
     grouped_list = []
     for group in groups:
         if group == 1:
             # Just pick something random from the pool
-            pick = seed.choice(pool)
+            pick = random.choice(pool)
             # And remove it from the pool
             pool.remove(pick)
             # That's all in this group
             grouped_list.append(pick)
         else:
             # Count up how many of each choice we have
-            counts = [(c, pool.count(c)) for c in choices]
+            counts = [(c, pool.count(c)) for c in choices.keys()]
             # Remove any counts of choices no longer in the pool
             i = 0
             while i < len(counts):
@@ -674,22 +727,35 @@ def _random_grouping(pool: list, groups: list, choices: list) -> list:
             # Take one of those choices out of the pool
             pool.remove(g[0])
             # If this was the last of this choice in the pool, remove it from our counts
-            if sorted_counts[0][1] == 1:
+            # If we can only have 1 of these injuries, remove it from our counts
+            if sorted_counts[0][1] == 1 or choices[sorted_counts[0][0]]["max"] == 1:
                 sorted_counts.remove(sorted_counts[0])
             for _ in range(group-1):
                 if len(sorted_counts) == 0:
-                    _log.error("We are all out of choices...")  # We shouldn't ever get here....
+                    if len(pool) == 1:
+                        _log.warning(f"We have 1 {pool[0]} left over.")
+                        break
+                    else:
+                        _log.error("We are all out of choices...")  # We shouldn't ever get here....
+                        exit(1)
                 # Pick a random choice from our counts
-                i = random.randint(0, len(sorted_counts)-1)
+                if len(sorted_counts) == 1:
+                    i = 0
+                else:
+                    i = random.randint(0, len(sorted_counts)-1)
                 # Add it to this group
-                g.append(sorted_counts[i][0])
+                c = sorted_counts[i][0]
+                g.append(c)
                 try:
-                    # Remove an instance of this choice from the pool
-                    pool.remove(g[-1])
+                    pool.remove(c)
                 except ValueError as e:
                     _log.error(f"Nuts {e}")
-                # Now remove this choice from our counts, so we don't pick it again
-                del sorted_counts[i]
+                    exit(1)
+                sorted_counts[i] = (sorted_counts[i][0], sorted_counts[i][1]-1)
+                if sorted_counts[i][1] == 0 or g.count(c) >= choices[c]["max"]:
+                    # We have enough of these choices.
+                    # Now remove this choice from our counts, so we don't pick it again
+                    del sorted_counts[i]
             # Add this group to our list
             grouped_list.append(tuple(g))
 
@@ -751,6 +817,48 @@ def _bounded_random_choices(mean: float, sd: float, low: int, upp: int, size: in
         (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd).rvs(size)
 
 
+def _proper_round(num, dec=0):
+    num = str(num)[:str(num).index('.') + dec + 2]
+    if num[-1] >= '5':
+        return float(num[:-2 - (not dec)] + str(int(num[-2 - (not dec)]) + 1))
+    return float(num[:-1])
+
+
+def _bounded_random_normal(mean: float, stdev: float, size: int,
+                           lower: float = 1.0, upper: float = 6.0, gen: int = 0):
+    if gen == 0:
+        random_distribution = np.random.normal(loc=mean, scale=stdev, size=size)
+    elif gen == 1:
+        random_distribution = norm.rvs(loc=mean, scale=stdev, size=size)
+    elif gen == 2:
+        a = (lower - mean) / stdev
+        b = (upper - mean) / stdev
+        truncated_normal = truncnorm(a=a, b=b, loc=mean, scale=stdev)
+        random_distribution = truncated_normal.rvs(size=size)
+    else:
+        _log.error("Unknown mode in _bounded_random_normal")
+        exit(1)
+    # mean = statistics.mean(random_distribution)
+
+    # Convert real values to whole number floats
+    random_rounded_distribution = []
+    for v in random_distribution:
+        random_rounded_distribution.append(_proper_round(v))
+    # rounded_mean = statistics.mean(random_rounded_distribution)
+
+    bound = []
+    bounded = 0
+    for s in random_rounded_distribution:
+        if s < lower:
+            s = lower
+            bounded += 1
+        elif s > upper:
+            s = upper
+            bounded += 1
+        bound.append(s)
+    return bound
+
+
 def generate_combinations(choices: list, max_in_a_choice: int) -> list:
 
     selections = copy.deepcopy(choices)
@@ -805,7 +913,7 @@ def test_injury(injury_distributions: dict, num_patients_injured: int, log: bool
         injuries = _weighted_choices(choices=list(injury_types.keys()),
                                      percents=[t["percent"] for t in injury_types.values()],
                                      size=num_location_injuries)
-        injuries = _random_grouping(injuries, num_patient_injuries, list(injury_types.keys()))
+        injuries = _random_grouping(injuries, num_patient_injuries, injury_types)
 
         polytrauma_patients = [0] * polytrauma["max"]
         if log:
@@ -827,8 +935,8 @@ def test_injury(injury_distributions: dict, num_patients_injured: int, log: bool
                         max_polytrauma_counts[t] = 0
                     if num > max_polytrauma_counts[t]:
                         max_polytrauma_counts[t] = num
-                    if num >= 3:
-                        _log.fatal(f"This polytrauma has more than 2 {t}s")
+                    if num > injury_types[t]["max"]:
+                        _log.fatal(f"Polytrauma has more than the maximum specified ({injury_types[t]['max']}) {t}s")
         _log.info(f"Max number in a polytrauma: {max_polytrauma_counts}")
 
     else:
