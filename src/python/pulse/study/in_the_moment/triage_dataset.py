@@ -4,12 +4,12 @@
 import abc
 
 from enum import Enum
-from pathlib import Path
 from typing import List
 
 
 import PyPulse
 from pulse.cdm.engine import SEAction, SEDataRequest
+from pulse.cdm.physiology import eHeartRhythm
 from pulse.cdm.scalars import PressureUnit, FrequencyUnit, VolumePerTimeUnit, VolumeUnit
 
 
@@ -20,17 +20,16 @@ class AVPU(str, Enum):
     Unresponsive = "Unresponsive"
 
 
-class Breathing(str, Enum):
-    Obstructed = "Obstructed"
-    Distressed = "Distressed"
-    Slow = "Slow"
-    Normal = "Normal"
-    Fast = "Fast"
-
-
 class Hemorrhage(str, Enum):
     Minor = "Minor"
     Major = "Major"
+
+
+class Intervention(str, Enum):
+    NeedleDecompress = "needle_decompression"
+    RepositionAirway = "reposition_airway"
+    Tourniquet = "tourniquet"
+    WoundPack = "wound_pack"
 
 
 class TriageColor(str, Enum):
@@ -77,15 +76,18 @@ class PulseData:
     def __init__(self):
         self._values = None
         # Make sure the accessor methods below are in sync with this order and units
+        # !!! ALSO UPDATE THE DEATH CHECKER !!!
         self._data_requests = [
             SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
+            SEDataRequest.create_physiology_request("HeartRhythm"),
             SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
             SEDataRequest.create_physiology_request("ArterialPressure", unit=PressureUnit.mmHg),
             SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
             SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
             SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
             SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
-            SEDataRequest.create_physiology_request("TotalHemorrhageRate", unit=VolumePerTimeUnit.L_Per_min),
+            SEDataRequest.create_physiology_request("TotalHemorrhageRate", unit=VolumePerTimeUnit.mL_Per_min),
+            SEDataRequest.create_physiology_request("TotalHemorrhagedVolume", unit=VolumeUnit.mL),
             SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
             SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
             SEDataRequest.create_physiology_request("OxygenSaturation"),
@@ -111,41 +113,47 @@ class PulseData:
     def get_hr(self, unit: FrequencyUnit):
         return self._get_value(1, FrequencyUnit.Per_min, unit)
 
+    def get_heart_rhythm(self):
+        return eHeartRhythm(self._values[2])
+
     def get_cardiac_output(self, unit: VolumePerTimeUnit):
-        return self._get_value(2, VolumePerTimeUnit.L_Per_min, unit)
+        return self._get_value(3, VolumePerTimeUnit.L_Per_min, unit)
 
     def get_arterial_pressure(self, unit: PressureUnit):
-        return self._get_value(3, PressureUnit.mmHg, unit)
-
-    def get_map(self, unit: PressureUnit):
         return self._get_value(4, PressureUnit.mmHg, unit)
 
-    def get_systolic_pressure(self, unit: PressureUnit):
+    def get_map(self, unit: PressureUnit):
         return self._get_value(5, PressureUnit.mmHg, unit)
 
-    def get_diastolic_pressure(self, unit: PressureUnit):
+    def get_systolic_pressure(self, unit: PressureUnit):
         return self._get_value(6, PressureUnit.mmHg, unit)
 
+    def get_diastolic_pressure(self, unit: PressureUnit):
+        return self._get_value(7, PressureUnit.mmHg, unit)
+
     def get_blood_volume(self, unit: VolumeUnit):
-        return self._get_value(7, VolumeUnit.mL, unit)
+        return self._get_value(8, VolumeUnit.mL, unit)
 
     def get_hemorrhage_rate(self, unit: VolumePerTimeUnit):
-        return self._get_value(8, VolumePerTimeUnit.L_Per_min, unit)
+        return self._get_value(9, VolumePerTimeUnit.mL_Per_min, unit)
+
+    def get_hemorrhaged_volume(self, unit: VolumeUnit):
+        return self._get_value(10, VolumeUnit.mL, unit)
 
     def get_rr(self, unit: FrequencyUnit):
-        return self._get_value(9, FrequencyUnit.Per_min, unit)
+        return self._get_value(11, FrequencyUnit.Per_min, unit)
 
     def get_etco2(self, unit: PressureUnit):
-        return self._get_value(10, PressureUnit.mmHg, unit)
+        return self._get_value(12, PressureUnit.mmHg, unit)
 
     def get_spo2(self):
-        return self._values[11]
+        return self._values[13]
 
     def get_ppi(self):
-        return self._values[12]
+        return self._values[14]
 
     def get_brain_o2_pp(self, unit: PressureUnit):
-        return self._get_value(13, PressureUnit.mmHg, unit)
+        return self._get_value(15, PressureUnit.mmHg, unit)
 
 
 class TriageDataset(metaclass=abc.ABCMeta):
@@ -163,6 +171,14 @@ class TriageDataset(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def vitals_description(self,
+                           duration_min: float,
+                           injuries: List[dict],
+                           actions: List[dict],
+                           vitals: dict) -> List[str]:
+        pass
+
+    @abc.abstractmethod
     def injury_actions(self, injuries: list) -> List[SEAction]:
         pass
 
@@ -171,7 +187,7 @@ class TriageDataset(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def can_perform_interventions(self, synthetic_injuries: list) -> bool:
+    def can_perform_interventions(self, synthetic_injuries: list, vitals: dict) -> bool:
         pass
 
     @abc.abstractmethod

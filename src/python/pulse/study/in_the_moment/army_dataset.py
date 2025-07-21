@@ -5,27 +5,28 @@ import logging
 import math
 
 import numpy as np
-import random
 import re
 import statistics
 
 from pathlib import Path
 from typing import List
 
-
+from pulse.cdm.physiology import eHeartRhythm
 from pulse.cdm.scalars import FrequencyUnit, PressureUnit
 from pulse.cdm.utils.math_utils import percent_difference
-from pulse.study.in_the_moment.triage_dataset import Breathing, Hemorrhage, AVPU, TriageDataset, PulseData
+from pulse.study.in_the_moment.triage_dataset import Hemorrhage, AVPU, TriageDataset, PulseData, Intervention
 from casualty_generation import (casualty_population_generation, population_injury_generation,
                                  test_injury, measure_error, _bounded_random_normal, to_specification_lists,
                                  to_severity_lists, InjurySeverityOpts)
 
-from pulse.cdm.engine import SEAction, eGate, eSide, eEvent
+from pulse.cdm.enums import eGate, eSide, eSwitch
+from pulse.cdm.engine import SEAction, eEvent
 from pulse.cdm.patient_actions import (SEAcuteRespiratoryDistressSyndromeExacerbation,
                                        SEAcuteStress, SEAirwayObstruction,
                                        SEBrainInjury, eBrainInjuryType,
                                        SEHemorrhage, eHemorrhage_Compartment,
-                                       SEHemothorax, eLungCompartment, SETensionPneumothorax, eHemorrhage_Type)
+                                       SEHemothorax, eLungCompartment, SETensionPneumothorax, eHemorrhage_Type,
+                                       SENeedleDecompression, SEChestOcclusiveDressing)
 
 _log = logging.getLogger("pulse")
 
@@ -83,8 +84,10 @@ def _injury_list_to_dict(injuries: list):
             injury_dict[i["location"]] = {}
         locations = injury_dict[i["location"]]
         if i["type"] not in locations:
-            locations[i["type"]] = []
-        locations[i["type"]].append(i["severity"])
+            locations[i["type"]] = {"severities": [], "sub_types": [], "cmpts": []}
+        locations[i["type"]]["severities"].append(i["severity"])
+        locations[i["type"]]["sub_types"].append(i["sub_type"])
+        locations[i["type"]]["cmpts"].append(i["cmpt"])
     return injury_dict
 
 
@@ -93,52 +96,148 @@ class ArmyDataset(TriageDataset):
     def generate_dataset(self, population_size: int, injury_opts: InjurySeverityOpts = None):
 
         if population_size <= 0:
-            _log.info("Creating training dataset")
-            patient_injuries = []
-            all_ais = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
-
-            def _patient_set(loc: str, typ: str, sev: List[float] = None):
-                if not sev:
-                    sev = injury_distributions[loc]["types"][typ]["severity"]["values"]
-                for s in sev:
-                    patient_injuries.append([{"location": loc, "type": typ, "severity": s}])
-
             # This is our training dataset: Standard Male, with all possible severities for each injury
+            _log.info("Creating training dataset")
+            casualty_injuries = []
+
+            def _add_injury(loc: str, typ: str, sev: float, intervene: bool, styp: str = None, cmpt: str = None):
+                casualty_injuries.append([{"location": loc, "type": typ, "sub_type": styp, "cmpt": cmpt,
+                                           "severity": sev, "can_intervene": intervene}])
+
             # Head and Neck
-            _patient_set("head_and_neck", "airway_obstruction", all_ais)
-            _patient_set("head_and_neck", "superficial", [1.0])
-            _patient_set("head_and_neck", "tbi", all_ais)
+
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=1.0, intervene=True)
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=2.0, intervene=True)
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=3.0, intervene=True)
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=4.0, intervene=True)
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=5.0, intervene=True)
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=6.0, intervene=True)
+
+            _add_injury(loc="head_and_neck", typ="superficial", sev=1.0, intervene=False)
+
+            _add_injury(loc="head_and_neck", typ="tbi", sev=1.0, intervene=False)
+            _add_injury(loc="head_and_neck", typ="tbi", sev=2.0, intervene=False)
+            _add_injury(loc="head_and_neck", typ="tbi", sev=3.0, intervene=False)
+            _add_injury(loc="head_and_neck", typ="tbi", sev=4.0, intervene=False)
+            _add_injury(loc="head_and_neck", typ="tbi", sev=5.0, intervene=False)
+            _add_injury(loc="head_and_neck", typ="tbi", sev=6.0, intervene=False)
+
             # Thorax
-            _patient_set("thorax", "fracture", all_ais)
-            _patient_set("thorax", "hemothorax", all_ais)
-            _patient_set("thorax", "hemorrhage", all_ais)
-            _patient_set("thorax", "pneumothorax", all_ais)
-            _patient_set("thorax", "pulmonary_contusion", all_ais)
-            _patient_set("thorax", "spinal", all_ais)
+
+            _add_injury(loc="thorax", typ="fracture", sev=1.0, intervene=False)
+            _add_injury(loc="thorax", typ="fracture", sev=2.0, intervene=False)
+            _add_injury(loc="thorax", typ="fracture", sev=3.0, intervene=False)
+            _add_injury(loc="thorax", typ="fracture", sev=4.0, intervene=False)
+            _add_injury(loc="thorax", typ="fracture", sev=5.0, intervene=False)
+            _add_injury(loc="thorax", typ="fracture", sev=6.0, intervene=False)
+
+            _add_injury(loc="thorax", typ="hemothorax", sev=1.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemothorax", sev=2.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemothorax", sev=3.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemothorax", sev=4.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemothorax", sev=5.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemothorax", sev=6.0, intervene=False)
+
+            _add_injury(loc="thorax", typ="hemorrhage", sev=1.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemorrhage", sev=2.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemorrhage", sev=3.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemorrhage", sev=4.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemorrhage", sev=5.0, intervene=False)
+            _add_injury(loc="thorax", typ="hemorrhage", sev=6.0, intervene=False)
+
+            _add_injury(loc="thorax", typ="pneumothorax", sev=1.0, intervene=True)
+            _add_injury(loc="thorax", typ="pneumothorax", sev=2.0, intervene=True)
+            _add_injury(loc="thorax", typ="pneumothorax", sev=3.0, intervene=True)
+            _add_injury(loc="thorax", typ="pneumothorax", sev=4.0, intervene=True)
+            _add_injury(loc="thorax", typ="pneumothorax", sev=5.0, intervene=True)
+            _add_injury(loc="thorax", typ="pneumothorax", sev=6.0, intervene=True)
+
+            _add_injury(loc="thorax", typ="pulmonary_contusion", sev=1.0, intervene=False)
+            _add_injury(loc="thorax", typ="pulmonary_contusion", sev=2.0, intervene=False)
+            _add_injury(loc="thorax", typ="pulmonary_contusion", sev=3.0, intervene=False)
+            _add_injury(loc="thorax", typ="pulmonary_contusion", sev=4.0, intervene=False)
+            _add_injury(loc="thorax", typ="pulmonary_contusion", sev=5.0, intervene=False)
+            _add_injury(loc="thorax", typ="pulmonary_contusion", sev=6.0, intervene=False)
+
+            _add_injury(loc="thorax", typ="spinal", sev=1.0, intervene=False)
+            _add_injury(loc="thorax", typ="spinal", sev=2.0, intervene=False)
+            _add_injury(loc="thorax", typ="spinal", sev=3.0, intervene=False)
+            _add_injury(loc="thorax", typ="spinal", sev=4.0, intervene=False)
+            _add_injury(loc="thorax", typ="spinal", sev=5.0, intervene=False)
+            _add_injury(loc="thorax", typ="spinal", sev=6.0, intervene=False)
+
             # Abdomen
-            _patient_set("abdomen", "hemorrhage", all_ais)
-            _patient_set("abdomen", "laceration_contusion", all_ais)
+
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=1.0, cmpt="liver", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=1.0, cmpt="spleen", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=2.0, cmpt="liver", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=2.0, cmpt="spleen", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=3.0, cmpt="liver", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=3.0, cmpt="spleen", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=4.0, cmpt="liver", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=4.0, cmpt="spleen", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=5.0, cmpt="liver", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=5.0, cmpt="spleen", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=6.0, cmpt="liver", intervene=True)
+            _add_injury(loc="abdomen", typ="hemorrhage", sev=6.0, cmpt="spleen", intervene=True)
+
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=1.0, styp="contusion", intervene=False)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=1.0, styp="laceration", intervene=True)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=2.0, styp="contusion", intervene=False)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=2.0, styp="laceration", intervene=True)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=3.0, styp="contusion", intervene=False)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=3.0, styp="laceration", intervene=True)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=4.0, styp="contusion", intervene=False)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=4.0, styp="laceration", intervene=True)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=5.0, styp="contusion", intervene=False)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=5.0, styp="laceration", intervene=True)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=6.0, styp="contusion", intervene=False)
+            _add_injury(loc="abdomen", typ="laceration_contusion", sev=6.0, styp="laceration", intervene=True)
+
             # Extremities
 
-            _patient_set("extremity", "burn_nerve")
-            _patient_set("extremity", "contusion_sprain_strain")
-            _patient_set("extremity", "fracture_dislocation")
-            _patient_set("extremity", "hemorrhage")
+            _add_injury(loc="extremity", typ="burn_nerve", sev=2.0, cmpt="right_leg", intervene=False)
+            _add_injury(loc="extremity", typ="burn_nerve", sev=3.0, cmpt="left_leg", intervene=False)
+            _add_injury(loc="extremity", typ="burn_nerve", sev=4.0, cmpt="right_arm", intervene=False)
+            _add_injury(loc="extremity", typ="burn_nerve", sev=5.0, cmpt="left_arm", intervene=False)
+
+            _add_injury(loc="extremity", typ="contusion_sprain_strain", sev=2.0, cmpt="right_leg", styp="contusion", intervene=False)
+            _add_injury(loc="extremity", typ="contusion_sprain_strain", sev=3.0, cmpt="left_leg", styp="sprain", intervene=False)
+            _add_injury(loc="extremity", typ="contusion_sprain_strain", sev=4.0, cmpt="right_arm", styp="strain", intervene=False)
+            _add_injury(loc="extremity", typ="contusion_sprain_strain", sev=5.0, cmpt="left_arm", styp="contusion", intervene=False)
+
+            _add_injury(loc="extremity", typ="fracture_dislocation", sev=2.0, cmpt="right_leg", styp="fracture", intervene=False)
+            _add_injury(loc="extremity", typ="fracture_dislocation", sev=3.0, cmpt="left_leg", styp="dislocation", intervene=False)
+            _add_injury(loc="extremity", typ="fracture_dislocation", sev=4.0, cmpt="right_arm", styp="fracture", intervene=False)
+            _add_injury(loc="extremity", typ="fracture_dislocation", sev=5.0, cmpt="left_arm", styp="dislocation", intervene=False)
+
+            _add_injury(loc="extremity", typ="hemorrhage", sev=2.0, cmpt="right_arm", intervene=True)
+            _add_injury(loc="extremity", typ="hemorrhage", sev=2.0, cmpt="right_leg", intervene=True)
+            _add_injury(loc="extremity", typ="hemorrhage", sev=3.0, cmpt="left_arm", intervene=True)
+            _add_injury(loc="extremity", typ="hemorrhage", sev=3.0, cmpt="left_leg", intervene=True)
+            _add_injury(loc="extremity", typ="hemorrhage", sev=4.0, cmpt="right_arm", intervene=True)
+            _add_injury(loc="extremity", typ="hemorrhage", sev=4.0, cmpt="left_leg", intervene=True)
+            _add_injury(loc="extremity", typ="hemorrhage", sev=5.0, cmpt="right_leg", intervene=True)
+
             #  Polytraumas
-            patient_injuries.append([{"location": "thorax", "type": "hemothorax", "severity": 2.85},
-                                     {"location": "thorax", "type": "hemorrhage", "severity": 2.85}])
-            patients = {"age": [], "state": []}
-            for i in range(len(patient_injuries)):
-                patients["age"].append(44.0)
-                patients["state"].append("./states/StandardMale@0s.json")
+
+            casualty_injuries.append([{"location": "thorax", "type": "hemothorax", "sub_type": None, "cmpt": None,
+                                       "severity": 2.0, "can_intervene": False},
+                                      {"location": "thorax", "type": "hemorrhage", "sub_type": None, "cmpt": None,
+                                       "severity": 3.0, "can_intervene": False}])
+
+            casualties = {"age": [], "state": []}
+            for _ in range(len(casualty_injuries)):
+                casualties["age"].append(44.0)
+                casualties["state"].append("./states/StandardMale@0s.json")
         else:
             _log.info(f"Creating dataset of {population_size} casualties")
-            patients = casualty_population_generation(population_size, population_distributions)
-            patient_injuries = population_injury_generation(population_size, injury_distributions, injury_opts)
+            casualties = casualty_population_generation(population_size, population_distributions)
+            casualty_injuries = population_injury_generation(population_size, injury_distributions, injury_opts)
 
             # Check\count for injury combinations not currently supported in Pulse
             num_hemopneumothorax = 0
-            for injuries in patient_injuries:
+            for injuries in casualty_injuries:
                 if len(injuries) > 1:
                     hemopneumothorax = 0
                     for injury in injuries:
@@ -151,16 +250,16 @@ class ArmyDataset(TriageDataset):
                              f"Pulse currently does not support this type of injury")
 
         # Combine the patients and their injuries to a dict
-        casualties = {}
-        for i in range(len(patient_injuries)):
+        combined_casualties = {}
+        for i in range(len(casualty_injuries)):
             casualty = {}
-            for field, values in patients.items():
+            for field, values in casualties.items():
                 casualty[field] = values[i]
-            casualty["injuries"] = patient_injuries[i]
-            casualties[i] = {"specification": casualty}
-        return casualties
+            casualty["injuries"] = casualty_injuries[i]
+            combined_casualties[i] = {"specification": casualty}
+        return combined_casualties
 
-    def injury_description(self,
+    def vitals_description(self,
                            duration_min: float,
                            injuries: List[dict],
                            actions: List[dict],
@@ -174,40 +273,68 @@ class ArmyDataset(TriageDataset):
         else:
             description.append("The casualty is unable to walk.")
 
-        breathing_type = vitals["breathing"]["type"]
-        if breathing_type == Breathing.Obstructed:
-            if vitals["breathing"]["able_to_clear"]:
-                description.append("The casualty's airway was obstructed by something,"
-                                   "but you were able to clear it out.")
-            else:
-                description.append("The casualty's airway is obstructed by something and you are unable to correct it.")
-        elif breathing_type == Breathing.Distressed:
-            description.append("The patient breathing is distressed.")
-        else:
-            rr = vitals["respiratory_rate"]
-            if rr < 12:
-                description.append("The casualty is breathing slowly.")
-            elif rr < 20:
-                description.append("The casualty is breathing normally.")
-            elif rr < 30:
-                description.append("The casualty is breathing fast.")
-            else:
-                description.append("The casualty is breathing in very short and rapid breaths.")
-
         if vitals["avpu"] == AVPU.Alert:
             description.append("The casualty is alert.")
         elif vitals["avpu"] == AVPU.Voice:
-            description.append("The casualty's eyes are closed, but they are responding to your voice.")
+            description.append("The casualty's eyes are closed.\n"
+                               "They are responding to your voice.")
         elif vitals["avpu"] == AVPU.Pain:
-            description.append("The casualty's eyes are closed and only respond when you pinch them.")
+            description.append("The casualty's eyes are closed.\n"
+                               "They are not responding to your voice, but they are responding to pain stimuli.")
         else:  # AVPU.Unresponsive
             description.append("The casualty is unconscious and unresponsive to any stimuli.")
 
+        rr = vitals["respiratory_rate"]
+        if not vitals["breathing"]:
+            if "reposition_airway" in vitals["interventions"]:
+                description.append("Casualty was not breathing.")
+                description.append("Repositioning their airway resulted in spontaneous breathing.")
+            else:
+                description.append("Casualty is not breathing.")
+                description.append("Repositioning their airway did not help breathing.")
+        elif rr < 12:
+            description.append("The casualty is breathing slowly.")
+        elif rr < 18:
+            description.append("The casualty is breathing normally.")
+        elif rr < 30:
+            description.append("The casualty is breathing rapidly.")
+        else:
+            description.append("The casualty's breathing is very rapid and shallow.")
+        if vitals["breathing_distressed"]:
+            description.append("The casualty's breathing is distressed.")
+
+        hr = vitals["heart_rate"]
+        if not vitals["peripheral_pulse"]:
+            description.append("Casualty does not have a peripheral pulse.")
+        else:
+            rhythm = vitals["heart_rhythm"]
+            # TODO Support all other abnormal heart rhythms
+            if rhythm == eHeartRhythm.SinusBradycardia.name:
+                description.append("The casualty is experiencing bradycardia.")
+            elif rhythm == eHeartRhythm.SinusTachycardia.name:
+                description.append("The casualty is experiencing tachycardia.")
+            else:
+                description.append("The casualty has a normal heart rate.")
+        if vitals["healthy_capillary_refill_time"]:
+            description.append("The casualty has a healthy capillary refill time.")
+        else:
+            description.append("The casualty has a poor capillary refill time.")
+
+        return description
+
+    def injury_description(self,
+                           duration_min: float,
+                           injuries: List[dict],
+                           actions: List[dict],
+                           vitals: dict) -> List[str]:
+
+        description = []
         # TODO Mental State, based on duration since injury?
 
         injury_dict = _injury_list_to_dict(injuries)
         for loc, types in injury_dict.items():
-            for typ, severities in types.items():
+            for typ, items in types.items():
+                severities = items["severities"]
                 num = len(severities)
                 if num == 1:
                     sev = severities[0]
@@ -224,14 +351,12 @@ class ArmyDataset(TriageDataset):
                         exit(1)
                     if typ == "tbi":
                         if vitals["avpu"] == AVPU.Alert:
-                            if sev < 1:
+                            if sev == 1.0:
                                 description.append(f"The casualty is complaining of a headache.")
-                            elif sev < 2:
+                            elif sev == 2.0:
                                 description.append(f"The casualty says they have a headache and feel nauseous.")
-                            elif sev < 3:
-                                description.append(f"The casualty is complaining of a headache and is slurring their words.")
-                            elif sev < 4:
-                                description.append(f"The casualty has dilated pupils and has been vomiting.")
+                            elif sev == 3.0:
+                                description.append(f"The casualty is complaining of a headache and slurring words.")
                             else:
                                 _log.error("We shouldn't be here and alert....")
                                 exit(1)
@@ -242,7 +367,7 @@ class ArmyDataset(TriageDataset):
                         continue
 
                     if typ == "airway_obstruction":
-                        # Should be covered above in the breathing section
+                        # Should be covered above in vitals description
                         continue
 
                     if typ == "superficial":
@@ -255,84 +380,41 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if typ == "fracture":
-                        if max_sev < 1:
-                            pass
-                        elif sev < 2:
-                            description.append(f"The casualty is complaining of chest pain.")
-                        elif sev < 3:
-                            description.append(f"The casualty is complaining of chest pain and is wheezing.")
-                        elif sev < 4:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
-                        else:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
+                        # Vitals info is good
                         continue
 
                     if typ == "hemorrhage":
-                        # TODO Improve
-                        if max_sev < 1:
-                            pass
-                        elif sev < 2:
-                            description.append(f"The casualty is complaining of chest pain.")
-                        elif sev < 3:
-                            description.append(f"The casualty is complaining of chest pain and is wheezing.")
-                        elif sev < 4:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
+                        if max_sev == 1.0:
+                            description.append(f"There is minor hemorrhaging on the torso.")
+                        elif max_sev == 2.0:
+                            description.append(f"There is moderate hemorrhaging on the torso.")
+                        elif max_sev == 3.0:
+                            description.append(f"There is serious hemorrhaging on the torso.")
+                        elif max_sev == 4.0:
+                            description.append(f"There is severe hemorrhaging on the torso.")
                         else:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
+                            description.append(f"There is critical hemorrhaging on the torso.")
                         continue
 
                     if typ == "hemothorax":
-                        # TODO Improve
-                        if max_sev < 1:
-                            pass
-                        elif sev < 2:
-                            description.append(f"The casualty is complaining of chest pain.")
-                        elif sev < 3:
-                            description.append(f"The casualty is complaining of chest pain and is wheezing.")
-                        elif sev < 4:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
-                        else:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
+                        # Vitals info is good
                         continue
 
                     if typ == "pneumothorax":
                         if num == 1:
-                            # Defer to normal breathing description for <2
-                            side = actions[0]['PatientAction']['TensionPneumothorax']['Side'].lower()
-                            if 2 < sev < 3:
-                                description.append(f"The {side} side of their chest seems to be moving less during breathing.")
-                            elif sev < 4:
-                                description.append(f"The casualty's {side} chest is showing clear signs of reduced expansion")
-                            elif sev < 5:
-                                description.append(f"The casualty's {side} chest is not moving when breathing.")
+                            # Vitals info is good
                             continue
 
                         elif num == 2:
-                            if 2 < min_sev < 3:
-                                description.append(
-                                    f"Both side of their chest seems to be moving less during breathing.")
-                            elif min_sev < 4:
-                                description.append(
-                                    f"Both sides of the casualty's chest are showing clear signs of reduced expansion")
-                            elif min_sev < 5:
-                                description.append(f"The casualty's chest is not moving when breathing.")
+                            # Vitals info is good
                             continue
 
                     if typ == "pulmonary_contusion":
-                        if max_sev < 1:
-                            pass
-                        elif sev < 2:
-                            description.append(f"The casualty is complaining of chest pain.")
-                        elif sev < 3:
-                            description.append(f"The casualty is complaining of chest pain and is wheezing.")
-                        elif sev < 4:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
-                        else:
-                            description.append(f"The casualty is in obvious chest pain and wheezing when breathing.")
+                        # Vitals info is good
                         continue
 
                     if typ == "spinal":
-                        # TODO Not sure how to describe this
+                        # Vitals info is good
                         continue
 
                 if loc == "abdomen":
@@ -341,32 +423,35 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if typ == "hemorrhage":
-                        if sev < 1:
+                        if max_sev == 1.0:
                             sev_mod = "minor"
-                        elif sev < 2:
-                            sev_mod = "mild"
-                        elif sev < 3:
-                            sev_mod = "substantial"
-                        elif sev < 4:
-                            sev_mod = "massive"
-                        else:
-                            sev_mod = "catastrophic"
-                        description.append(f"The casualty has a {sev_mod} {typ} to their {loc}.")
-                        continue
-
-                    if typ == "laceration_contusion":
-                        if sev < 1:
-                            sev_mod = "minor"
-                        elif sev < 2:
-                            sev_mod = "mild"
-                        elif sev < 3:
-                            sev_mod = "substantial"
-                        elif sev < 4:
+                        elif max_sev == 2.0:
+                            sev_mod = "moderate"
+                        elif max_sev == 3.0:
+                            sev_mod = "serious"
+                        elif max_sev == 4.0:
                             sev_mod = "severe"
                         else:
                             sev_mod = "critical"
-                        t = random.choice(typ.split('_'))
-                        description.append(f"The casualty has a {sev_mod} {t} to their {loc}.")
+                        description.append(f"The casualty has a {sev_mod} {typ} from their {loc}.")
+                        continue
+
+                    if typ == "laceration_contusion":
+                        if max_sev == 1.0:
+                            sev_mod = "minor"
+                        elif max_sev == 2.0:
+                            sev_mod = "moderate"
+                        elif max_sev == 3.0:
+                            sev_mod = "serious"
+                        elif max_sev == 4.0:
+                            sev_mod = "severe"
+                        else:
+                            sev_mod = "critical"
+                        styp = items["sub_types"][0]
+                        if styp == "laceration":
+                            description.append(f"The casualty has a {sev_mod} skin {styp} to their {loc}.")
+                        else:
+                            description.append(f"The casualty has a {sev_mod} abdominal bruising.")
                         continue
 
                 if loc == "extremity":
@@ -375,82 +460,65 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if typ == "hemorrhage":
-                        cmpt = actions[0]["PatientAction"]["Hemorrhage"]["Compartment"]
-                        cmpt = " ".join(_camel_case_split(cmpt)).lower()
-                        if sev < 1:
-                            description.append(f"The casualty has some minor bleeding on their {cmpt}.")
-                        elif sev < 2:
-                            sev_mod = "mild"
-                            description.append(f"The casualty has {sev_mod} hemorrhage on their {cmpt}.")
-                        elif sev < 3:
-                            sev_mod = "substantial"
-                            description.append(f"The casualty has {sev_mod} hemorrhage on their {cmpt}.")
-                        elif sev < 4:
+                        cmpt = items["cmpts"][0].replace('_', ' ')
+                        if max_sev == 1.0:
+                            sev_mod = "minor"
+                        elif max_sev == 2.0:
+                            sev_mod = "moderate"
+                        elif max_sev == 3.0:
+                            sev_mod = "serious"
+                        elif max_sev == 4.0:
                             sev_mod = "severe"
-                            description.append(f"The casualty has {sev_mod} hemorrhage on their {cmpt}.")
                         else:
                             sev_mod = "critical"
-                            description.append(f"The casualty lost their {cmpt} and is hemorrhaging blood.")
+                        description.append(f"The casualty has a {sev_mod} {typ} on their {cmpt}.")
                         continue
 
                     if typ == "fracture_dislocation":
-                        t = random.choice(typ.split('_'))
-                        if t == "fracture":
-                            if sev < 1:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            elif sev < 2:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            elif sev < 3:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            elif sev < 4:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            else:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            description.append(f"The casualty has a burns on their {b}")
-                        else:  # dislocation
-                            if sev < 1:
-                                b = random.choice(["finger", "toe"])
-                            elif sev < 2:
-                                b = random.choice(["wrist", "jaw", "elbow"])
-                            elif sev < 3:
-                                b = "shoulder"
-                            elif sev < 4:
-                                b = random.choice(["knee", "ankle"])
-                            else:
-                                b = "hip"
-                            description.append(f"The casualty has a dislocated {b}.")
-                        continue
-
-                    if typ == "contusion_sprain_strain":
-                        if sev < 1:
+                        if max_sev == 1.0:
                             sev_mod = "minor"
-                        elif sev < 2:
-                            sev_mod = "mild"
-                        elif sev < 3:
-                            sev_mod = "substantial"
-                        elif sev < 4:
+                        elif max_sev == 2.0:
+                            sev_mod = "moderate"
+                        elif max_sev == 3.0:
+                            sev_mod = "serious"
+                        elif max_sev == 4.0:
                             sev_mod = "severe"
                         else:
                             sev_mod = "critical"
-                        t = random.choice(typ.split('_'))
-                        description.append(f"The casualty has a {sev_mod} {t} to their {loc}.")
+                        cmpt = items["cmpts"][0].replace('_', ' ')
+                        description.append(f"The casualty has a {sev_mod} injury to their {cmpt}.")
+                        continue
+
+                    if typ == "contusion_sprain_strain":
+                        if max_sev == 1.0:
+                            sev_mod = "minor"
+                        elif max_sev == 2.0:
+                            sev_mod = "moderate"
+                        elif max_sev == 3.0:
+                            sev_mod = "serious"
+                        elif max_sev == 4.0:
+                            sev_mod = "severe"
+                        else:
+                            sev_mod = "critical"
+                        cmpt = items["cmpts"][0].replace('_', ' ')
+                        description.append(f"The casualty has a {sev_mod} injury to their {cmpt}.")
                         continue
 
                     if typ == "burn_nerve":
-                        # TODO For now, just assume burn
-                        t = "burn"  # random.choice(typ.split('_'))
-                        if t == "burn":
-                            if sev < 1:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            elif sev < 2:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            elif sev < 3:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            elif sev < 4:
-                                b = random.choice(["forearm", "lower leg", "hands"])
+                        styp = "burn"  # TODO items["sub_types"][0]
+                        if styp == "burn":
+                            if max_sev == 1.0:
+                                sev_mod = "minor"
+                            elif max_sev == 2.0:
+                                sev_mod = "moderate"
+                            elif max_sev == 3.0:
+                                sev_mod = "serious"
+                            elif max_sev == 4.0:
+                                sev_mod = "severe"
                             else:
-                                b = random.choice(["forearm", "lower leg", "hands"])
-                            description.append(f"The casualty has a burns on their {b}.")
+                                sev_mod = "critical"
+                            cmpt = items["cmpts"][0].replace('_', ' ')
+                            description.append(f"The casualty has {sev_mod} burns to their {cmpt}.")
                         else:  # nerve
                             # TODO Not sure what description we want for nerve...
                             pass
@@ -463,8 +531,17 @@ class ArmyDataset(TriageDataset):
 
     def calculate_triage_vitals(self, synthetic_patient: dict, active_events: dict, pulse_data: PulseData):
         synthetic_injuries = synthetic_patient["injuries"]
+        interventions = []
+
+        def _can_intervene(loc: str, inj: str):
+            for i in synthetic_injuries:
+                if i["can_intervene"] and i["location"] == loc and i["type"] == inj:
+                    return True
+            return False
 
         # Find the highest severity injury
+        # TODO Current implementation is limited when used to calculate vitals of a intervened casualty
+        # TODO We really need to get the max_severity of an untreated injury
         max_severity = 0
         for injury in synthetic_injuries:
             if injury['severity'] > max_severity:
@@ -483,7 +560,7 @@ class ArmyDataset(TriageDataset):
         # since our severity is AIS
         iss = max_severity * max_severity
         # Override iss if severity is high enough
-        if max_severity >= 4.5:
+        if max_severity == 6.0:
             iss = 75
 
         # TODO What is blunt trauma?
@@ -493,52 +570,29 @@ class ArmyDataset(TriageDataset):
                 blunt_trauma = False
 
         # Breathing
-        obstruction = False
-        clearable_airway = None
-        breathing = None
-        for injury in synthetic_injuries:
-            if injury["location"] == "head_and_neck" and injury["type"] == "airway_obstruction":
-                obstruction = True
-                clearable_airway = True if injury["severity"] >= 3.5 else False
-                breathing = Breathing.Obstructed
-        if not obstruction:
-            if eEvent.Tachypnea in active_events:
-                breathing = Breathing.Distressed
-            else:
-                rr = pulse_data.get_rr(FrequencyUnit.Per_min)
-                if rr < 1.0:
-                    breathing = None
-                elif rr < 12:
-                    breathing = Breathing.Slow
-                elif rr < 18:
-                    breathing = Breathing.Normal
-                else:
-                    breathing = Breathing.Fast
-
-        # Hemorrhage
-        hemorrhage = None
-        controllable_hemorrhage = False
-        for injury in synthetic_injuries:
-            if injury["type"] == "hemorrhage":
-                if injury["location"] == "extremity":
-                    controllable_hemorrhage = True
-                if injury["severity"] >= 3:
-                    hemorrhage = Hemorrhage.Major
-                elif not hemorrhage:
-                    hemorrhage = Hemorrhage.Minor
+        breathing_distressed = False
+        rr = pulse_data.get_rr(FrequencyUnit.Per_min)
+        if eEvent.Tachypnea in active_events or rr < 6:
+            breathing_distressed = True
+            if _can_intervene("thorax", "pneumothorax"):
+                interventions.append(Intervention.NeedleDecompress)
+        if rr < 1.0:
+            breathing = False
+            breathing_distressed = None
+            if _can_intervene("head_and_neck", "airway_obstruction"):
+                interventions.append(Intervention.RepositionAirway)
+        else:
+            breathing = True
 
         # AVPU
         avpu = AVPU.Alert
         # Check max severity and oxygen partial pressure in the brain
         brain_o2_pp = pulse_data.get_brain_o2_pp(PressureUnit.mmHg)
-        if max_severity == 6.0 or brain_o2_pp < 15:
+        if max_severity == 6.0 or brain_o2_pp < 15 or not breathing:
             avpu = AVPU.Unresponsive
-        elif max_severity >= 4.0:
-            if 15 <= brain_o2_pp <= 25:
-                avpu = AVPU.Pain
-            else:
-                avpu = AVPU.Voice
-        elif 25 < brain_o2_pp < 35:
+        elif 15 <= brain_o2_pp <= 25:
+            avpu = AVPU.Pain
+        elif 25 < brain_o2_pp < 35 or max_severity >= 4.0:
             avpu = AVPU.Voice
 
         # Ambulatory
@@ -547,13 +601,41 @@ class ArmyDataset(TriageDataset):
             ambulatory = False
         elif avpu != AVPU.Alert:
             ambulatory = False
+        if rr <= 1.0:
+            ambulatory = False
 
-        # NOTE: We always assume we can save the casualty (SALT Protocol)
+        # Check for leg wounds
+        for injury in synthetic_injuries:
+            if (injury["location"] == "extremity" and injury["severity"] > 2 and
+                    (injury["cmpt"] and "leg" in injury["cmpt"])):
+                ambulatory = False
+
+        # Hemorrhage
+        hemorrhage = None
+        for injury in synthetic_injuries:
+            if injury["type"] == "hemorrhage":
+                if injury["severity"] > 3:
+                    hemorrhage = Hemorrhage.Major
+                elif not hemorrhage:
+                    hemorrhage = Hemorrhage.Minor
+                if "abdominal" in synthetic_injuries:
+                    # TODO Support a contusion: is still walkable
+                    if injury["severity"] > 1:
+                        ambulatory = False
+                    if _can_intervene("abdomen", "hemorrhage"):
+                        interventions.append(Intervention.WoundPack)
+                    elif _can_intervene("abdomen", "laceration_contusion"):
+                        interventions.append(Intervention.WoundPack)
+                elif _can_intervene("extremity", "hemorrhage"):
+                    interventions.append(Intervention.Tourniquet)
+
+        # NOTE: SALT Protocol
         survivable_injuries = True
+        if max_severity == 6.0:
+            survivable_injuries = False
 
-        # Unhealthy CRT > 2s - we are associating with hypotension
         healthy_capillary_refill_time = True
-        if pulse_data.get_map(PressureUnit.mmHg) < 60:
+        if pulse_data.get_ppi() < 0.003:
             healthy_capillary_refill_time = False
         peripheral_pulse = healthy_capillary_refill_time
 
@@ -561,10 +643,14 @@ class ArmyDataset(TriageDataset):
                 "avpu": avpu,
                 "ambulatory": ambulatory,
                 "blunt_trauma": blunt_trauma,
-                "breathing": {"type": breathing, "able_to_clear": clearable_airway},
+                "brain_o2_pp": brain_o2_pp,
+                "breathing": breathing,
+                "breathing_distressed": breathing_distressed,
                 "healthy_capillary_refill_time": healthy_capillary_refill_time,
                 "heart_rate": pulse_data.get_hr(FrequencyUnit.Per_min),
-                "hemorrhage": {"type": hemorrhage, "controllable": controllable_hemorrhage},
+                "heart_rhythm": pulse_data.get_heart_rhythm().name,
+                "hemorrhage": hemorrhage,
+                "interventions": interventions,
                 "iss": iss,
                 "major_injuries": True if max_severity > 3 else False,
                 "peripheral_pulse": peripheral_pulse,
@@ -616,18 +702,21 @@ class ArmyDataset(TriageDataset):
                   "tbi": {"ais": 0, "low": 0, "high": 0},
                   }
 
-        def _post(injury: str, cmpt: str = None, ais: int = 1, low: float = 0.0, high: float = 1.0):
+        def _post(injury: str, cmpt: str = None, ais: int = 1, low: float = 0.0, high: float = 1.0, sev: float = None):
             if cmpt:
                 ledger[injury][cmpt]["ais"] = min(ledger[injury][cmpt]["ais"]+ais, 6)
                 ledger[injury][cmpt]["low"] = max(low, ledger[injury][cmpt]["low"])
                 ledger[injury][cmpt]["high"] = max(high, ledger[injury][cmpt]["high"])
+                ledger[injury][cmpt]["sev"] = sev
             else:
                 ledger[injury]["ais"] = min(ledger[injury]["ais"]+ais, 6)
                 ledger[injury]["low"] = max(low, ledger[injury]["low"])
                 ledger[injury]["high"] = max(high, ledger[injury]["high"])
+                ledger[injury]["sev"] = sev
 
         for location, types in injury_dict.items():
-            for t, severities in types.items():
+            for t, items in types.items():
+                severities = items["severities"]
                 ais = sum(severities)
                 num = len(severities)
 
@@ -638,7 +727,7 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if t == "airway_obstruction":
-                        _post(injury="airway_obstruction", ais=ais, low=0.15, high=1.0)
+                        _post(injury="airway_obstruction", ais=ais, low=0.15, high=0.9)
                         _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 
@@ -661,14 +750,14 @@ class ArmyDataset(TriageDataset):
                         if num == 1:
                             side = np.random.randint(0, 1)
                             if side == 0:
-                                _post(injury="pneumothorax", cmpt="left_lung", ais=ais, low=0.15, high=1.0)
+                                _post(injury="pneumothorax", cmpt="left_lung", ais=ais, low=0.05, high=0.6)
                             elif side == 1:
-                                _post(injury="pneumothorax", cmpt="right_lung", ais=ais, low=0.15, high=1.0)
+                                _post(injury="pneumothorax", cmpt="right_lung", ais=ais, low=0.05, high=0.6)
                             continue
 
                         elif num == 2:
-                            _post(injury="pneumothorax", cmpt="left_lung", ais=severities[0], low=0.15, high=1.0)
-                            _post(injury="pneumothorax", cmpt="right_lung", ais=severities[1], low=0.15, high=1.0)
+                            _post(injury="pneumothorax", cmpt="left_lung", ais=severities[0], low=0.05, high=0.6)
+                            _post(injury="pneumothorax", cmpt="right_lung", ais=severities[1], low=0.05, high=0.6)
                             continue
 
                         else:
@@ -698,18 +787,18 @@ class ArmyDataset(TriageDataset):
                     if t == "hemothorax":
 
                         _post(injury="stress", ais=ais, low=0.15, high=0.35)
-                        _post(injury="hemorrhage", cmpt="muscle", ais=ais, low=0.05, high=0.19)  # 28-115 mL/min
+                        _post(injury="hemorrhage", cmpt="muscle", ais=ais, low=0.02, high=0.10)  # 11-60 mL/min
                         if num == 1:
                             side = np.random.randint(0, 1)
                             if side == 0:
-                                _post(injury="pneumothorax", cmpt="left_lung", ais=ais, low=0.15, high=1.0)
+                                _post(injury="pneumothorax", cmpt="left_lung", ais=ais, low=0.05, high=0.6)
                             elif side == 1:
-                                _post(injury="pneumothorax", cmpt="right_lung", ais=ais, low=0.15, high=1.0)
+                                _post(injury="pneumothorax", cmpt="right_lung", ais=ais, low=0.05, high=0.6)
                             continue
 
                         elif num == 2:
-                            _post(injury="pneumothorax", cmpt="left_lung", ais=severities[0], low=0.15, high=1.0)
-                            _post(injury="pneumothorax", cmpt="right_lung", ais=severities[1], low=0.15, high=1.0)
+                            _post(injury="pneumothorax", cmpt="left_lung", ais=severities[0], low=0.05, high=0.6)
+                            _post(injury="pneumothorax", cmpt="right_lung", ais=severities[1], low=0.05, high=0.6)
                             continue
 
                         else:
@@ -723,9 +812,9 @@ class ArmyDataset(TriageDataset):
                             exit(1)
 
                         _post(injury="stress", ais=ais, low=0.15, high=0.35)
-                        # 15-100 mL/min combined
-                        _post(injury="hemorrhage", cmpt="muscle", ais=ais, low=0.02, high=0.13)
-                        _post(injury="hemorrhage", cmpt="skin", ais=ais, low=0.02, high=0.13)
+                        # 15-75 mL/min combined
+                        _post(injury="hemorrhage", cmpt="muscle", ais=ais, low=0.02, high=0.10)
+                        _post(injury="hemorrhage", cmpt="skin", ais=ais, low=0.02, high=0.10)
                         continue
 
                     if t == "fracture":
@@ -752,11 +841,37 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if t == "hemorrhage":
-                        c = np.random.randint(0, 1)
-                        if c == 0:
-                            _post(injury="hemorrhage", cmpt="liver", ais=ais, low=0.15, high=1.0)
-                        else:
-                            _post(injury="hemorrhage", cmpt="spleen", ais=ais, low=0.15, high=1.0)
+                        cmpt = items["cmpts"][0]
+                        if ais == 1:  # ~13 mL/min
+                            if cmpt == "spleen":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.11)
+                            elif cmpt == "liver":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.02)
+                        elif ais == 2:  # ~27 mL/min
+                            if cmpt == "spleen":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.21)
+                            elif cmpt == "liver":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.04)
+                        elif ais == 3:  # ~38 mL/min
+                            if cmpt == "spleen":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.28)
+                            elif cmpt == "liver":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.05)
+                        elif ais == 4:  # ~50 mL/min
+                            if cmpt == "spleen":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.35)
+                            elif cmpt == "liver":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.06)
+                        elif ais == 5:  # ~63 mL/min
+                            if cmpt == "spleen":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.42)
+                            elif cmpt == "liver":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.07)
+                        elif ais == 6:  # ~75 mL/min
+                            if cmpt == "spleen":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.48)
+                            elif cmpt == "liver":
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.09)
                         _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 
@@ -772,15 +887,40 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if t == "hemorrhage":
-                        cmpt = np.random.randint(0, 3)
-                        if cmpt == 0:
-                            _post(injury="hemorrhage", cmpt="left_arm", ais=ais, low=0.15, high=1.0)
-                        elif cmpt == 1:
-                            _post(injury="hemorrhage", cmpt="left_leg", ais=ais, low=0.15, high=1.0)
-                        elif cmpt == 2:
-                            _post(injury="hemorrhage", cmpt="right_arm", ais=ais, low=0.15, high=1.0)
-                        elif cmpt == 3:
-                            _post(injury="hemorrhage", cmpt="right_leg", ais=ais, low=0.15, high=1.0)
+                        cmpt = items["cmpts"][0]
+                        # Use explicit severities for a specific flow rate
+                        if ais == 1:  # ~13 mL/min
+                            if "arm" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.24)
+                            elif "leg" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.07)
+                        elif ais == 2:  # ~27 mL/min
+                            if "arm" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.45)
+                            elif "leg" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.14)
+                        elif ais == 3:  # ~38 mL/min
+                            if "arm" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.63)
+                            elif "leg" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.19)
+                        elif ais == 4:  # ~50 mL/min
+                            if "arm" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.84)
+                            elif "leg" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.25)
+                        elif ais == 5:  # ~63 mL/min
+                            if "arm" in cmpt:
+                                _log.fatal(f"AIS of {ais} does not support arm hemorrhages")
+                                exit(1)
+                            elif "leg" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.30)
+                        elif ais == 6:  # ~75 mL/min
+                            if "arm" in cmpt:
+                                _log.fatal(f"AIS of {ais} does not support arm hemorrhages")
+                                exit(1)
+                            elif "leg" in cmpt:
+                                _post(injury="hemorrhage", cmpt=cmpt, sev=0.35)
                         _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 
@@ -824,13 +964,18 @@ class ArmyDataset(TriageDataset):
                                                                                  max_output=injury["high"]))
             actions.append(ards)
 
-        def _create_hemorrhage(_injury: dict, _cmpt: str):
+        def _create_hemorrhage(_injury: dict, _cmpt: str, min_input: float = 1.0, max_input: float = 6.0):
             h = SEHemorrhage()
             h.set_compartment(_cmpt)
             h.set_type(eHemorrhage_Type.External)
-            h.get_severity().set_value(_ais_2_pulse(value=_injury["ais"],
-                                                    min_output=_injury["low"],
-                                                    max_output=_injury["high"]))
+            if _injury["sev"]:
+                h.get_severity().set_value(_injury["sev"])
+            else:
+                h.get_severity().set_value(_ais_2_pulse(value=_injury["ais"],
+                                                        min_input=min_input,
+                                                        max_input=max_input,
+                                                        min_output=_injury["low"],
+                                                        max_output=_injury["high"]))
             return h
 
         injury = ledger["hemorrhage"]["left_arm"]
@@ -838,25 +983,25 @@ class ArmyDataset(TriageDataset):
             actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
         injury = ledger["hemorrhage"]["left_leg"]
         if injury["ais"] > 0:
-            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftLeg.value))
         injury = ledger["hemorrhage"]["liver"]
         if injury["ais"] > 0:
-            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.Liver.value))
         injury = ledger["hemorrhage"]["muscle"]
         if injury["ais"] > 0:
-            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.Muscle.value))
         injury = ledger["hemorrhage"]["right_arm"]
         if injury["ais"] > 0:
-            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.RightArm.value))
         injury = ledger["hemorrhage"]["right_leg"]
         if injury["ais"] > 0:
-            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.RightLeg.value))
         injury = ledger["hemorrhage"]["skin"]
         if injury["ais"] > 0:
-            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.Skin.value))
         injury = ledger["hemorrhage"]["spleen"]
         if injury["ais"] > 0:
-            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.LeftArm.value))
+            actions.append(_create_hemorrhage(injury, eHemorrhage_Compartment.Spleen.value))
 
         injury = ledger["pneumothorax"]["left_lung"]
         if injury["ais"] > 0:
@@ -903,34 +1048,68 @@ class ArmyDataset(TriageDataset):
 
         return actions
 
-    def can_perform_interventions(self, synthetic_injuries: list) -> bool:
-        # TODO Should probably pass in vitals and only intervene under certain conditions (i.e. unable to walk)
-        for injury in synthetic_injuries:
-            if injury["location"] == "head_and_neck" and injury["type"] == "airway_obstruction":
-                return True
-            if injury["location"] == "extremity" and injury["type"] == "hemorrhage":
-                return True
+    def can_perform_interventions(self, synthetic_injuries: list, vitals: dict) -> bool:
+        if vitals["ambulatory"]:
+            return False
+        if len(vitals["interventions"]) > 1:
+            for injury in synthetic_injuries:
+                return injury["can_intervene"]
         return False
-        # TODO return a string describing what the intervention is, None if no intervention can be performed.
 
     def injury_interventions(self, synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         interventions = []
         for injury in pulse_injuries:
+            if "AirwayObstruction" in injury["PatientAction"]:
+                ao = SEAirwayObstruction()
+                s = injury["PatientAction"]["AirwayObstruction"]["Severity"]["Scalar0To1"]["Value"]
+                ao.get_severity().set_value(s*0.6666)  # Remove 1/3 of the obstruction
+                ao.set_comment(f"Reposition Airway. Reduce severity from {s} to {s*0.6666}")
+                interventions.append(ao)
+                _log.info("Clearing airway obstruction")
             if "Hemorrhage" in injury["PatientAction"]:
-                t = injury["PatientAction"]["Hemorrhage"]["Type"]
-                if t == "External":
+                if synthetic_injuries[0]["location"] == "extremity":
                     h = SEHemorrhage()
                     h.set_compartment(injury["PatientAction"]["Hemorrhage"]["Compartment"])
                     h.set_type(eHemorrhage_Type.External)
                     h.get_severity().set_value(0.05)
+                    h.set_comment(f"Apply Tourniquet. Reduce severity to 0.05")
                     interventions.append(h)
                     _log.info("Applying tourniquet to external hemorrhage")
-            elif "AirwayObstruction" in injury["PatientAction"]:
-                ao = SEAirwayObstruction()
-                s = injury["PatientAction"]["AirwayObstruction"]["Severity"]["Scalar0To1"]["Value"]
-                ao.get_severity().set_value(s/1.5)
-                interventions.append(ao)
-                _log.info("Clearing airway obstruction")
+                elif synthetic_injuries[0]["location"] == "abdomen":
+                    h = SEHemorrhage()
+                    h.set_compartment(injury["PatientAction"]["Hemorrhage"]["Compartment"])
+                    h.set_type(eHemorrhage_Type.External)
+                    s = injury["PatientAction"]["Hemorrhage"]["Severity"]["Scalar0To1"]["Value"]
+                    h.get_severity().set_value(s * 0.5)
+                    h.set_comment(f"Pack wound. Reduce severity from {s} to {s * 0.5}")
+                    interventions.append(h)
+                    _log.info("Packing abdominal hemorrhage")
+                else:
+                    _log.error(f"Cannot intervene a hemorrhage at {synthetic_injuries[0]['location']}")
+                    exit(1)
+            if "TensionPneumothorax" in injury["PatientAction"]:
+                s = injury["PatientAction"]["TensionPneumothorax"]["Side"]
+                t = injury["PatientAction"]["TensionPneumothorax"]["Type"]
+                if t == "Closed":
+                    nde = SENeedleDecompression()
+                    nde.set_state(eSwitch.On)
+                    if s == "Left":
+                        nde.set_side(eSide.Left)
+                    else:
+                        nde.set_side(eSide.Right)
+                    nde.set_comment(f"Decompress the plural space")
+                    interventions.append(nde)
+                    _log.info("Applying Needle Decompression")
+                else:
+                    cod = SEChestOcclusiveDressing()
+                    cod.set_state(eSwitch.On)
+                    if s == "Left":
+                        cod.set_side(eSide.Left)
+                    else:
+                        cod.set_side(eSide.Right)
+                    cod.set_comment(f"Wrapping chest with occlusive dressing")
+                    interventions.append(cod)
+                    _log.info("Applying Chest Occlusive Dressing")
 
         return interventions
 

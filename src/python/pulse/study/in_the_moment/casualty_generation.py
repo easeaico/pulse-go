@@ -283,7 +283,102 @@ def plot_population_error(population_error: dict, results_stem: str):
 
 
 def _injury(location_: str, type_: str, severity_: float) -> dict:
-    return {"location": location_, "type": type_, "severity": severity_}
+    injury = {"location": location_,
+              "severity": severity_,
+              "type": type_,
+              "sub_type": None,
+              "cmpt": None,
+              "can_intervene": False}
+
+    # Randomize if injuries interventions can be applied to this injury
+    if type_ == "airway_obstruction":
+        # Flip a coin to see if the airway can be repositioned or not
+        injury["can_intervene"] = np.random.randint(0, 1) == 1
+        return injury
+
+    if injury["location"] == "thorax":
+        if type_ == "pneumothorax":
+            injury["can_intervene"] = True
+
+    if injury["location"] == "abdominal":
+        if type_ == "hemorrhage":  # External Liver/Spleen Hemorrhage
+            injury["can_intervene"] = True
+            if np.random.randint(0, 1) == 1:
+                injury["cmpt"] = "liver"
+            else:
+                injury["cmpt"] = "spleen"
+        else:  # Flip a coin if an external laceration or internal bruise/bleed
+            if np.random.randint(0, 1) == 1:
+                injury["sub_type"] = "laceration"
+                injury["can_intervene"] = True
+            else:
+                injury["sub_type"] = "contusion"
+                injury["can_intervene"] = False
+
+    if injury["location"] == "extremity":
+        if ["type"] == "burn_nerve":
+            if np.random.randint(0, 1) == 1:
+                injury["sub_type"] = "burn"
+            else:
+                injury["sub_type"] = "nerve"
+            cmpt = np.random.randint(0, 3)
+            if cmpt == 0:
+                injury["cmpt"] = "left_arm"
+            elif cmpt == 1:
+                injury["cmpt"] = "right_arm"
+            elif cmpt == 2:
+                injury["cmpt"] = "left_leg"
+            elif cmpt == 3:
+                injury["cmpt"] = "right_leg"
+        elif ["type"] == "contusion_sprain_strain":
+            t = np.random.randint(0, 2)
+            if t == 0:
+                injury["sub_type"] = "contusion"
+            elif t == 1:
+                injury["sub_type"] = "sprain"
+            elif t == 2:
+                injury["sub_type"] = "strain"
+            cmpt = np.random.randint(0, 3)
+            if cmpt == 0:
+                injury["cmpt"] = "left_arm"
+            elif cmpt == 1:
+                injury["cmpt"] = "right_arm"
+            elif cmpt == 2:
+                injury["cmpt"] = "left_leg"
+            elif cmpt == 3:
+                injury["cmpt"] = "right_leg"
+        if ["type"] == "fracture_dislocation":
+            if np.random.randint(0, 1) == 1:
+                injury["sub_type"] = "fracture"
+            else:
+                injury["sub_type"] = "dislocation"
+            cmpt = np.random.randint(0, 3)
+            if cmpt == 0:
+                injury["cmpt"] = "left_arm"
+            elif cmpt == 1:
+                injury["cmpt"] = "right_arm"
+            elif cmpt == 2:
+                injury["cmpt"] = "left_leg"
+            elif cmpt == 3:
+                injury["cmpt"] = "right_leg"
+        elif ["type"] == "hemorrhage":
+            injury["can_intervene"] = True
+            if severity_ <= 4:
+                cmpt = np.random.randint(0, 3)
+                if cmpt == 0:
+                    injury["cmpt"] = "left_arm"
+                elif cmpt == 1:
+                    injury["cmpt"] = "right_arm"
+                elif cmpt == 2:
+                    injury["cmpt"] = "left_leg"
+                elif cmpt == 3:
+                    injury["cmpt"] = "right_leg"
+            else:
+                if np.random.randint(0, 1) == 1:
+                    injury["cmpt"] = "left_leg"
+                else:
+                    injury["cmpt"] = "right_leg"
+    return injury
 
 
 def population_injury_generation(population_size: int, distributions: dict, opts: InjurySeverityOpts = None):
@@ -389,9 +484,9 @@ def population_injury_generation(population_size: int, distributions: dict, opts
             severity_ledger["index"] += 1
 
             patient_injuries.append([_injury(
-                location,
-                injury_type,
-                injury_severity)])
+                location_=location,
+                type_=injury_type,
+                severity_=injury_severity)])
         else:
             patient_injuries.append([])
             for injury_type_str in injury_type:
@@ -400,9 +495,9 @@ def population_injury_generation(population_size: int, distributions: dict, opts
                 severity_ledger["index"] += 1
 
                 patient_injuries[-1].append(_injury(
-                    location,
-                    injury_type_str,
-                    injury_severity))
+                    location_=location,
+                    type_=injury_type_str,
+                    severity_=injury_severity))
 
     # Randomize the injuries a few times
     for _ in range(5):
