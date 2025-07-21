@@ -397,7 +397,7 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_heartejectionfraction(PBProperty::Unload(*src.m_HeartEjectionFraction));
   if (src.HasHeartRate())
     dst.set_allocated_heartrate(PBProperty::Unload(*src.m_HeartRate));
-  dst.set_heartrhythm((CDM_BIND::eHeartRhythm)src.m_HeartRhythm);
+  dst.set_heartrhythm((CDM_BIND::eHeartRhythm)src.m_HeartRhythm.GetEnum());
   if (src.HasHeartStrokeVolume())
     dst.set_allocated_heartstrokevolume(PBProperty::Unload(*src.m_HeartStrokeVolume));
   if (src.HasIntracranialPressure())

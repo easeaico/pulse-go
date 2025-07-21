@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSwitch
+from pulse.cdm.enums import eSwitch
 from pulse.cdm.scalars import SEScalarTime
 
 

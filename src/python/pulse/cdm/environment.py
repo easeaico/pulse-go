@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from pulse.cdm.engine import eSwitch
+from pulse.cdm.enums import eSwitch
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, \
                               SEScalarHeatResistanceArea, SEScalarLengthPerTime, \
                               SEScalarMassPerVolume, MassPerVolumeUnit, SEScalarPower, \

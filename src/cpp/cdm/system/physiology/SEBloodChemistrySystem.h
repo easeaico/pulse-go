@@ -18,21 +18,6 @@ public:
 
   const SEScalar* GetScalar(const std::string& name) override;                                /**< @copydoc DOXY_CDM_GET_SCALAR */
 
-  /**  @name BloodDensity *///@{ @copybrief Physiology_BloodChemistrySystemData_BloodDensity
-  virtual bool HasBloodDensity() const;                                                               /**< @copydoc DOXY_CDM_HAS */
-  virtual SEScalarMassPerVolume& GetBloodDensity();                                                   /**< @copydoc DOXY_CDM_GET */
-  virtual double GetBloodDensity(const MassPerVolumeUnit& unit) const;                                /**< @copydoc DOXY_CDM_GET_VALUE *///@}
-
-  /** @name ClinicalShuntFraction
- *  @brief @copybrief Physiology_BloodChemistrySystemData_ClinicalShuntFraction
- *  @{*/
- /// %Test if member has been allocated
-  virtual bool HasClinicalShuntFraction() const;
-  /// Get member class, allocate if nullptr
-  virtual SEScalar0To1& GetClinicalShuntFraction();
-  virtual double GetClinicalShuntFraction() const;
-  //@}
-
   /** @name ArterialOxygenContent
   *  @brief The total oxygen content in arterial blood, including dissolved and hemoglobin-bound oxygen.
   *  @{*/
@@ -62,6 +47,11 @@ public:
   virtual SEScalarAmountPerVolume& GetBaseExcess();
   virtual double GetBaseExcess(const AmountPerVolumeUnit& unit) const;
   //@}
+
+  /**  @name BloodDensity *///@{ @copybrief Physiology_BloodChemistrySystemData_BloodDensity
+  virtual bool HasBloodDensity() const;                                                               /**< @copydoc DOXY_CDM_HAS */
+  virtual SEScalarMassPerVolume& GetBloodDensity();                                                   /**< @copydoc DOXY_CDM_GET */
+  virtual double GetBloodDensity(const MassPerVolumeUnit& unit) const;                                /**< @copydoc DOXY_CDM_GET_VALUE *///@}
 
   /** @name BloodPH
   *  @brief @copybrief Physiology_BloodChemistrySystemData_BloodPH
@@ -111,6 +101,16 @@ public:
   /// Get member class, allocate if nullptr
   virtual SEScalar0To1& GetCarbonMonoxideSaturation();
   virtual double GetCarbonMonoxideSaturation() const;
+  //@}
+
+  /** @name ClinicalShuntFraction
+  *  @brief @copybrief Physiology_BloodChemistrySystemData_ClinicalShuntFraction
+  *  @{*/
+  /// %Test if member has been allocated
+  virtual bool HasClinicalShuntFraction() const;
+  /// Get member class, allocate if nullptr
+  virtual SEScalar0To1& GetClinicalShuntFraction();
+  virtual double GetClinicalShuntFraction() const;
   //@}
 
   /** @name Hematocrit
@@ -372,9 +372,8 @@ public:
 
 
 protected:
-  SEScalar0To1*                   m_ClinicalShuntFraction;
   SEScalar*                       m_ArterialOxygenContent;
-  SEScalar*                       m_ArteriovenousOxygenDifference;  
+  SEScalar*                       m_ArteriovenousOxygenDifference;
   SEScalarAmountPerVolume*        m_BaseExcess;
   SEScalarMassPerVolume*          m_BloodDensity;
   SEScalar*                       m_BloodPH;
@@ -382,6 +381,7 @@ protected:
   SEScalarMassPerVolume*          m_BloodUreaNitrogenConcentration;
   SEScalar0To1*                   m_CarbonDioxideSaturation;
   SEScalar0To1*                   m_CarbonMonoxideSaturation;
+  SEScalar0To1*                   m_ClinicalShuntFraction;
   SEScalar0To1*                   m_Hematocrit;
   SEScalarMass*                   m_HemoglobinContent;
   SEScalar*                       m_MixedVenousOxygenContent;

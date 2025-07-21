@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.scalars import SEScalarTime, TimeUnit, SEScalar0To1
 from pulse.cdm.patient_actions import SEConsciousRespiration
 from pulse.engine.PulseEngine import PulseEngine

@@ -594,4 +594,3 @@ bool SEScenarioExecStatus::SerializeFromFile(const std::string& filename, std::v
 {
   return PBScenario::SerializeFromFile(filename, dst, logger);
 }
-

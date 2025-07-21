@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from enum import Enum
 from pathlib import Path
 
-from pulse.cdm.engine import eSwitch
+from pulse.cdm.enums import eSwitch
 from pulse.cdm.scenario import SEScenarioExecStatus
 from pulse.cdm.io.scenario import serialize_scenario_exec_status_list_to_file
 from pulse.cdm.validation import SESegmentValidationPipelineConfig

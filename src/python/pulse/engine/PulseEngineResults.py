@@ -10,7 +10,8 @@ from json import JSONDecodeError
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Set
 
-from pulse.cdm.engine import eSerializationFormat, eEvent, eSwitch, SEEventChange
+from pulse.cdm.enums import eSerializationFormat, eSwitch
+from pulse.cdm.engine import SEEventChange, eEvent
 from pulse.cdm.patient import SEPatient
 from pulse.cdm.scalars import SEScalarTime, TimeUnit
 from pulse.cdm.utils.csv_utils import read_csv_into_df, concat_dataframes

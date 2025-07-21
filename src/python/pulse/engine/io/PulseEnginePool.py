@@ -3,7 +3,7 @@
 
 from pulse.engine.PulseEnginePool import SEEnginePoolEngine
 
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.io.engine import serialize_engine_initialization_to_bind, \
                                 serialize_actions_to_bind
 from pulse.cdm.bind.Engine_pb2 import EngineInitializationData, EngineInitializationListData, \

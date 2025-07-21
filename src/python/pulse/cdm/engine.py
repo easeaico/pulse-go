@@ -6,55 +6,10 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
+from pulse.cdm.enums import eEngineInitializationState
 from pulse.cdm.scalars import SEScalarTime, SEScalarUnit, TimeUnit
 
-
-class eEngineInitializationState(Enum):
-    Uninitialized = 0
-    FailedState = 1
-    FailedPatientSetup = 2
-    FailedStabilization = 3
-    Initialized = 4
-
-
-class eSerializationFormat(Enum):
-    JSON = 0
-    BINARY = 1
-    VERBOSE_JSON = 2
-    TEXT = 3
-
-
-class eCharge(Enum):
-    NullCharge = 0
-    Negative = 1
-    Neutral = 2
-    Positive = 3
-
-
-class eGate(Enum):
-    NullGate = 0
-    Open = 1
-    Closed = 2
-
-
-class eMergeType(Enum):
-    Append = 0
-    Replace = 1
-
-
-class eSide(Enum):
-    NullSide = 0
-    Left = 1
-    Right = 2
-
-
-class eSwitch(Enum):
-    NullSwitch = 0
-    Off = 1
-    On = 2
-
-
-class eEvent(Enum):
+class eEvent(int, Enum):
     Antidiuresis = 0
     Bradycardia = 1
     Bradypnea = 2
@@ -294,8 +249,13 @@ class SECondition(ABC):
     def is_active(self):
         pass
 
+
 from pulse.cdm.environment_conditions import SEInitialEnvironmentalConditions
-from pulse.cdm.patient_conditions import *
+from pulse.cdm.patient_conditions import (SEAcuteRespiratoryDistressSyndrome, SEChronicAnemia, SEChronicHeartFailure,
+                                          SEChronicObstructivePulmonaryDisease, SEChronicPericardialEffusion,
+                                          SEChronicRenalStenosis, SEChronicVentricularSystolicDysfunction,
+                                          SEDehydration, SEImpairedAlveolarExchange, SEPneumonia, SEPulmonaryFibrosis,
+                                          SEPulmonaryShunt, SESepsis)
 
 class SEConditionManager():
     __slots__ = ["_ards", "_anemia", "_copd", "_cvsd", "_impaired_alveolar_exchange",

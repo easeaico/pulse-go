@@ -6,8 +6,8 @@ from enum import Enum
 from typing import Dict, List
 
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.engine import eEngineInitializationState, eSerializationFormat, eSwitch, SEAction, \
-                             SEDataRequestManager, SEEngineInitializationStatus
+from pulse.cdm.enums import eEngineInitializationState, eSerializationFormat, eSwitch
+from pulse.cdm.engine import SEAction, SEDataRequestManager, SEEngineInitializationStatus
 
 
 _pulse_logger = logging.getLogger('pulse')

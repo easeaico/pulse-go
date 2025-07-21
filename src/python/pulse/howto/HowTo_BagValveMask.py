@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat, eSwitch
+from pulse.cdm.enums import eSerializationFormat, eSwitch
 from pulse.cdm.scalars import FrequencyUnit, PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 from pulse.engine.PulseEngine import PulseEngine
 

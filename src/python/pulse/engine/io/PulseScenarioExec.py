@@ -3,7 +3,7 @@
 
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
 
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.io.scenario import serialize_scenario_exec_to_bind
 from pulse.engine.bind.Scenario_pb2 import ScenarioExecData
 from google.protobuf import json_format

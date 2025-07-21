@@ -4,7 +4,8 @@
 from enum import Enum
 import PyPulse
 from pulse.cdm.patient import SEPatient, SEPatientConfiguration
-from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
+from pulse.cdm.enums import eSerializationFormat
+from pulse.cdm.engine import SEAction, SEDataRequestManager, SEDataRequest
 from pulse.cdm.engine import IEventHandler, ILoggerForward
 from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_patient_configuration_to_string, \

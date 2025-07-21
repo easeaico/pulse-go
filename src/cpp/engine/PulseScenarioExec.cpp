@@ -279,7 +279,7 @@ void PulseScenarioExec::ControllerLoop(const std::string copy,
       if (status.GetScenarioExecutionState() == eScenarioExecutionState::Waiting)
       {
         found = &status;
-        found->SetScenarioExecutionState(eScenarioExecutionState::Executing);
+        found->SetScenarioExecutionState(eScenarioExecutionState::Running);
         break;
       }
     }

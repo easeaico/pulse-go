@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSwitch, eSerializationFormat
+from pulse.cdm.enums import eSwitch, eSerializationFormat
 from pulse.cdm.io.scalars import *
 from pulse.engine.PulseConfiguration import PulseConfiguration
 from pulse.engine.bind.Configuration_pb2 import ConfigurationData

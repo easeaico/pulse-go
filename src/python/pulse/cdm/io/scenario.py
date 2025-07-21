@@ -5,7 +5,7 @@ from google.protobuf import json_format
 from typing import List
 
 from pulse.cdm.io.engine import serialize_action_to_bind
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.scenario import SEScenario, SEScenarioExec, SEScenarioExecStatus, eScenarioExecutionState
 from pulse.cdm.bind.Scenario_pb2 import ScenarioData, ScenarioExecData, ScenarioExecStatusData, \
                                         ScenarioExecStatusListData

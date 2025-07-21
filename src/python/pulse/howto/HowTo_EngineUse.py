@@ -4,10 +4,9 @@
 import sys
 import logging
 from enum import Enum
-from pulse.cdm.engine import eSerializationFormat, SEDataRequestManager, SEDataRequest
-from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward, eEvent
+from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward, eEvent, SEDataRequest, SEDataRequestManager
 
-from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
+from pulse.cdm.patient import SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEExercise
 from pulse.engine.PulseEngine import PulseEngine, version, hash
 from pulse.cdm.scalars import ElectricPotentialUnit, FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \

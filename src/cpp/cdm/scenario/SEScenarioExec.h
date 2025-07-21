@@ -213,7 +213,7 @@ protected:
   std::stringstream          m_SerializationActions;
 };
 
-enum class eScenarioExecutionState { Waiting = 0, Executing, Complete };
+enum class eScenarioExecutionState { Waiting = 0, Running, Complete };
 extern CDM_DECL const std::string& eScenarioExecutionState_Name(eScenarioExecutionState s);
 
 class CDM_DECL SEScenarioExecStatus : public SEEngineInitializationStatus
