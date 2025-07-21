@@ -604,30 +604,34 @@ class ArmyDataset(TriageDataset):
         if rr <= 1.0:
             ambulatory = False
 
-        # Check for leg wounds
+        # Check for abdominal or leg wounds, hard to walk with these
         for injury in synthetic_injuries:
-            if (injury["location"] == "extremity" and injury["severity"] > 2 and
-                    (injury["cmpt"] and "leg" in injury["cmpt"])):
-                ambulatory = False
+            if injury["location"] == "extremity":
+                if injury["severity"] > 2 and injury["cmpt"] and "leg" in injury["cmpt"]:
+                    ambulatory = False
+            if injury["location"] == "abdomen":
+                if injury["severity"] >= 2:
+                    ambulatory = False
 
-        # Hemorrhage
+        # Hemorrhage / Laceration
         hemorrhage = None
         for injury in synthetic_injuries:
-            if injury["type"] == "hemorrhage":
+            if injury["type"] == "hemorrhage" or injury["type"] == "laceration_contusion":
+                # TODO support gauze or pressure bandage on thorax hemorrhages?
                 if injury["severity"] > 3:
                     hemorrhage = Hemorrhage.Major
                 elif not hemorrhage:
                     hemorrhage = Hemorrhage.Minor
-                if "abdominal" in synthetic_injuries:
-                    # TODO Support a contusion: is still walkable
-                    if injury["severity"] > 1:
-                        ambulatory = False
+
+                if injury["location"] == "abdomen":
                     if _can_intervene("abdomen", "hemorrhage"):
                         interventions.append(Intervention.WoundPack)
-                    elif _can_intervene("abdomen", "laceration_contusion"):
-                        interventions.append(Intervention.WoundPack)
-                elif _can_intervene("extremity", "hemorrhage"):
-                    interventions.append(Intervention.Tourniquet)
+                    elif injury["sub_type"] and injury["sub_type"] == "laceration":
+                        if _can_intervene("abdomen", "laceration_contusion"):
+                            interventions.append(Intervention.WoundPack)
+                elif injury["location"] == "extremity":
+                    if _can_intervene("extremity", "hemorrhage"):
+                        interventions.append(Intervention.Tourniquet)
 
         # NOTE: SALT Protocol
         survivable_injuries = True
@@ -1047,14 +1051,6 @@ class ArmyDataset(TriageDataset):
             actions.append(tbi)
 
         return actions
-
-    def can_perform_interventions(self, synthetic_injuries: list, vitals: dict) -> bool:
-        if vitals["ambulatory"]:
-            return False
-        if len(vitals["interventions"]) > 1:
-            for injury in synthetic_injuries:
-                return injury["can_intervene"]
-        return False
 
     def injury_interventions(self, synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         interventions = []

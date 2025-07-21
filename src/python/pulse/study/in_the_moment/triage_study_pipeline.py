@@ -772,8 +772,7 @@ class TriageStudy:
                 if i != self._tgt_id:
                     continue
             for time_min, visit in casualty["visits"].items():
-                if self._dataset.can_perform_interventions(casualty["specification"]["injuries"],
-                                                           visit["triage"]["vitals"]):
+                if len(visit["triage"]["vitals"]["interventions"]) > 0:
                     visit["intervention"] = {}
 
         # Let's create a set of scenarios that apply protocol interventions to injured casualties

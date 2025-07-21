@@ -187,9 +187,5 @@ class TriageDataset(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def can_perform_interventions(self, synthetic_injuries: list, vitals: dict) -> bool:
-        pass
-
-    @abc.abstractmethod
     def injury_interventions(self, synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         pass
