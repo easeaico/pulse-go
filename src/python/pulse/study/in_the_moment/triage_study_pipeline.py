@@ -192,7 +192,8 @@ class TriageStudy:
     @property
     def total_interventions(self): return self._total_interventions
 
-    def triage(self, num_casualties: int, tgt_id: int = None, skip_visited: bool = False):
+    def triage(self, num_casualties: int, tgt_id: int = None, skip_visited: bool = False,
+               untreated_injury_time_min: int = 5, state_interval_min: int = 5, total_injury_duration_min: int = 60):
         start_time = timer()
         if num_casualties == 0:
             file = self._output_dir / f"training_casualties.json"
@@ -221,7 +222,10 @@ class TriageStudy:
             self._triage_study = self._dataset.generate_dataset(num_casualties, injury_opts=self.injury_opts)
             with open(file, 'w') as f:
                 json.dump(self._triage_study, f, indent=2)
-        self._triage(file, tgt_id, skip_visited)
+        self._triage(file, tgt_id, skip_visited,
+                     untreated_injury_time_min=untreated_injury_time_min,
+                     state_interval_min=state_interval_min,
+                     total_injury_duration_min=total_injury_duration_min)
         elapsed_time = timer() - start_time
         _log.info(f"Execution took {elapsed_time/60:.1f} min")
 
@@ -249,26 +253,41 @@ class TriageStudy:
         elapsed_time = timer() - start_time
         _log.info(f"Execution took {elapsed_time/60:.1f} min")
 
-    def _triage(self, out_file: Path, tgt_id: int = None, skip_visited: bool = False):
+    def _triage(self, out_file: Path, tgt_id: int = None, skip_visited: bool = False,
+                untreated_injury_time_min: int = 15, state_interval_min: int = 45, total_injury_duration_min: int = 60):
         self._tgt_id = tgt_id
 
         # Add a subdir to the output dir for this population size
         self._set_artifact_folder_name(out_file.stem)
 
         # Simulate the injuries and create states
-        self._generate_initial_injury_states(untreated_injury_time_min=5,
-                                             state_interval_min=5,
-                                             total_injury_duration_min=60)
+        start_time = timer()
+        self._generate_initial_injury_states(untreated_injury_time_min=untreated_injury_time_min,
+                                             state_interval_min=state_interval_min,
+                                             total_injury_duration_min=total_injury_duration_min)
+        elapsed_time = timer() - start_time
+        _log.info(f"It took {elapsed_time / 60:.1f} min to simulate injuries")
+
         # Triage all the injury states
+        start_time = timer()
         self._triage_injured_states()
+        elapsed_time = timer() - start_time
+        _log.info(f"It took {elapsed_time / 60:.1f} min to triage injuries")
 
         with open(out_file, 'w') as f:
             json.dump(self._triage_study, f, indent=2)
 
         # Simulate intervened casualties
-        self._simulate_interventions(total_simulation_duration_min=60)
+        start_time = timer()
+        self._simulate_interventions(total_simulation_duration_min=total_injury_duration_min)
+        elapsed_time = timer() - start_time
+        _log.info(f"It took {elapsed_time / 60:.1f} min to simulate interventions")
+
         # Assess final casualty state after each visit
-        self._assess_interventions(duration_min=60)
+        start_time = timer()
+        self._assess_interventions(duration_min=total_injury_duration_min)
+        elapsed_time = timer() - start_time
+        _log.info(f"It took {elapsed_time / 60:.1f} min to assess interventions")
 
         # Write out all the data we collected
         with open(out_file, 'w') as f:
@@ -376,7 +395,7 @@ class TriageStudy:
                 s.get_actions().append(state)
 
                 # Simulate casualty saving new states at specified intervals
-                while injury_duration_min <= total_injury_duration_min:
+                while injury_duration_min < total_injury_duration_min:
                     adv = SEAdvanceTime()
                     adv.get_time().set_value(state_interval_min, TimeUnit.min)
                     s.get_actions().append(adv)
@@ -456,6 +475,7 @@ class TriageStudy:
                     else:
                         pulse_injuries.append(action.data)
             data["pulse_injuries"] = pulse_injuries
+            final_time = next(reversed(states.keys()))
 
             # Check to see when/if the casualty died
             death_module = DeathCheckModule(r.patient.get_heart_rate_maximum().get_value(FrequencyUnit.Per_min))
@@ -501,6 +521,11 @@ class TriageStudy:
                     "vitals_description": self._dataset.vitals_description(time_min, injuries, pulse_injuries, vitals)
                 }
                 data["visits"][time_min] = {"triage": triage}
+            # Take the last visit out, and it will be our final state (no intervention)
+            if final_time in data["visits"]:
+                final_visit = data["visits"].pop(final_time)
+                final_visit["time"] = final_time
+                data["final"] = final_visit
 
     @staticmethod
     def _calculate_triss_score(vitals: dict):
@@ -980,7 +1005,7 @@ def main():
     output_dir = opts.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    file_handler = logging.FileHandler(output_dir/"triage_study_pipeline.log")
+    file_handler = logging.FileHandler(output_dir/"triage_study_pipeline.log", mode='w')
     file_handler.setLevel(logging.INFO)
     _log.addHandler(file_handler)
 
@@ -988,11 +1013,13 @@ def main():
     if opts.train:
         triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
-        triage_study.triage(num_casualties=0, tgt_id=opts.id, skip_visited=opts.skip_visited)
+        triage_study.triage(num_casualties=0, tgt_id=opts.id, skip_visited=opts.skip_visited,
+                            untreated_injury_time_min=5, state_interval_min=5, total_injury_duration_min=60)
     elif opts.num_casualties:
         triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
-        triage_study.triage(num_casualties=opts.num_casualties, tgt_id=opts.id, skip_visited=opts.skip_visited)
+        triage_study.triage(num_casualties=opts.num_casualties, tgt_id=opts.id, skip_visited=opts.skip_visited,
+                            untreated_injury_time_min=15, state_interval_min=45, total_injury_duration_min=60)
     elif opts.triage_file:
         triage_study.triage_file(file=opts.triage_file, tgt_id=opts.id, skip_visited=opts.skip_visited)
 

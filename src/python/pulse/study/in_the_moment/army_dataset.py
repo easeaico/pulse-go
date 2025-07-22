@@ -380,7 +380,10 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if typ == "fracture":
-                        # Vitals info is good
+                        if vitals["avpu"] == AVPU.Alert:
+                            description.append("Casualty is complaining about chest pain.")
+                        else:
+                            description.append("There is no visible injury to the casualty.")
                         continue
 
                     if typ == "hemorrhage":
@@ -402,19 +405,28 @@ class ArmyDataset(TriageDataset):
 
                     if typ == "pneumothorax":
                         if num == 1:
-                            # Vitals info is good
+                            if vitals["avpu"] == AVPU.Alert:
+                                description.append("Casualty is complaining about chest pain.")
+                            else:
+                                description.append("There is no visible injury to the casualty.")
                             continue
 
                         elif num == 2:
-                            # Vitals info is good
+                            if vitals["avpu"] == AVPU.Alert:
+                                description.append("Casualty is complaining about chest pain.")
+                            else:
+                                description.append("There is no visible injury to the casualty.")
                             continue
 
                     if typ == "pulmonary_contusion":
-                        # Vitals info is good
+                        if vitals["avpu"] == AVPU.Alert:
+                            description.append("Casualty is complaining about chest pain.")
+                        else:
+                            description.append("There is no visible injury to the casualty.")
                         continue
 
                     if typ == "spinal":
-                        # Vitals info is good
+                        description.append("There is no visible injury to the casualty.")
                         continue
 
                 if loc == "abdomen":
