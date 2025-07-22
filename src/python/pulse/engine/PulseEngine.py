@@ -13,7 +13,7 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_event_change_list_from_string, \
                                 serialize_active_event_list_from_string, \
                                 serialize_log_messages_from_string
-from pulse.cdm.io.patient import serialize_patient_from_string
+from pulse.cdm.io.patient import serialize_patient_from_string, serialize_patient_to_string
 from pulse.engine.io.PulseConfiguration import serialize_pulse_configuration_to_string
 from pulse.cdm.scalars import ElectricPotentialUnit, FrequencyUnit, \
                               PressureUnit, TemperatureUnit, VolumeUnit, VolumePerTimeUnit
@@ -74,6 +74,10 @@ class PulseEngine:
 
         ])
         return data_request_mgr
+
+    def is_valid_patient(self, patient: SEPatient):
+        json = serialize_patient_to_string(patient, eSerializationFormat.JSON)
+        return self.__pulse.is_valid_patient(json, PyPulse.serialization_format.json)
 
     def serialize_from_file(self, state_file: str,
                             data_request_mgr: Optional[SEDataRequestManager] = None):

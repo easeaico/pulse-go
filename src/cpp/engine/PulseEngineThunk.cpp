@@ -6,6 +6,7 @@
 #include "engine/human_adult/whole_body/Engine.h"
 #include "engine/human_adult/hemodynamics/Engine.h"
 #include "engine/human_adult/ventilation_mechanics/Engine.h"
+#include "cdm/patient/SEPatient.h"
 
 PulseEngineThunk::PulseEngineThunk(eModelType t, const std::string& dataDir) : PhysiologyEngineThunk(dataDir)
 {
@@ -18,6 +19,15 @@ PulseEngineThunk::PulseEngineThunk(eModelType t, const std::string& dataDir) : P
 PulseEngineThunk::~PulseEngineThunk()
 {
   delete m_cfg;
+}
+
+bool PulseEngineThunk::IsValidPatient(std::string const& patient, eSerializationFormat format)
+{
+  SEPatient p(m_engine->GetLogger());
+  if (!p.SerializeFromString(patient, format))
+    return false;
+  // All engines as of now use this patient check
+  return pulse::human_adult_whole_body::SetupPatient(p);
 }
 
 bool PulseEngineThunk::SetConfigurationOverride(std::string const& cfg, eSerializationFormat format)
