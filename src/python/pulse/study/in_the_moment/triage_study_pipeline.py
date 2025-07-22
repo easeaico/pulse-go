@@ -5,7 +5,6 @@ import argparse
 import json
 import logging
 import math
-import timeit
 
 from enum import Enum
 from pathlib import Path
@@ -16,7 +15,7 @@ from army_dataset import ArmyDataset
 
 from pulse.cdm.engine import SEAdvanceTime, SESerializeState, SEEventChange, eEvent
 from pulse.cdm.enums import eSwitch, eSerializationFormat
-from pulse.cdm.patient import eSex
+from pulse.cdm.patient import eSex, SEPatient
 from pulse.cdm.physiology import eHeartRhythm
 from pulse.cdm.scenario import SEScenario, SEScenarioExecStatus
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, TimeUnit
@@ -24,6 +23,7 @@ from pulse.cdm.io.scenario import serialize_scenario_to_file, \
                                   serialize_scenario_exec_status_list_to_file, \
                                   serialize_scenario_exec_status_list_from_file, \
                                   serialize_scenario_exec_status_to_string
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.engine.PulseEngineResults import PulseEngineReprocessor, PulseResultsProcessor, PulseLogAction
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
 from pulse.study.in_the_moment.casualty_generation import InjurySeverityOpts
@@ -220,6 +220,27 @@ class TriageStudy:
                 _log.error(f"Unable to load file {file}: {e}")
         else:
             self._triage_study = self._dataset.generate_dataset(num_casualties, injury_opts=self.injury_opts)
+            if num_casualties > 0:
+                invalid = []
+                p = SEPatient()
+                pulse = PulseEngine()
+                pulse.log_to_console(False)
+                for i, casualty in self._triage_study.items():
+                    p.clear()
+                    spec = casualty["specification"]
+                    if spec["sex"] == "female":
+                        p.set_sex(eSex.Female)
+                    p.get_age().set_value(spec["age"], TimeUnit.yr)
+                    p.get_height().set_value(spec["height"], LengthUnit.cm)
+                    p.get_body_mass_index().set_value(spec["bmi"])
+                    # HR range is too wide, not using it for now
+                    # p.get_heart_rate_baseline().set_value(spec["heart_rate"], FrequencyUnit.Per_min)
+                    if not pulse.is_valid_patient(p):
+                        invalid.append(i)
+                _log.info(f"Removing {len(invalid)}/{num_casualties} invalid Pulse patients from this population.")
+                for i in invalid:
+                    self._triage_study.pop(i)
+
             with open(file, 'w') as f:
                 json.dump(self._triage_study, f, indent=2)
         self._triage(file, tgt_id, skip_visited,
@@ -363,7 +384,8 @@ class TriageStudy:
                     p.get_age().set_value(sp["age"], TimeUnit.yr)
                     p.get_height().set_value(sp["height"], LengthUnit.cm)
                     p.get_body_mass_index().set_value(sp["bmi"])
-                    p.get_heart_rate_baseline().set_value(sp["heart_rate"], FrequencyUnit.Per_min)
+                    # HR demographic range causing invalid patients
+                    # p.get_heart_rate_baseline().set_value(sp["heart_rate"], FrequencyUnit.Per_min)
                     _log.info(f"Creating casualty {i}: "
                               f"{sp['sex']}-{sp['age']}yr-{sp['height']}cm-{sp['bmi']}bmi-{sp['heart_rate']}bpm")
 
