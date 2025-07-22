@@ -152,7 +152,7 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
             if len(tgt_injuries) == 1:
                 file.write(f"Casualty has a {typ} on the {loc} with severity {sev}\n\n")
             else:
-                file.write(f"Casualty found with multiple injuries")
+                file.write(f"Casualty found with multiple injuries.\n")
                 for i in tgt_injuries:
                     file.write(f"Casualty has a {i['type']} on the {i['location']} with severity {i['severity']}\n")
                 file.write(f"\n")
@@ -183,8 +183,12 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
                         file.write(f"Casualty state an hour after the intervention is performed.\n\n")
                         table = _create_table(final_triage)
                     elif "death" in final_triage:
-                        table = (f"Casualty does not survive with intervention. "
-                                 f"{final_triage['death']['cause']} at time {final_triage['death']['time_s']}")
+                        file.write(f"Casualty dies at time {final_triage['death']['time']:.1f} min. "
+                                   f"{final_triage['death']['cause']}")
+                                   #f"Intervention extended life {final_triage['death']['time']-run['death']['time']:.1f} min.")
+                        file.write("\n\n")
+                        triage = final_triage["death"]["triage"]
+                        table = _create_table(triage)
                     else:
                         _logger.fatal("Casualty has not vitals and did not die???")
                         exit(1)

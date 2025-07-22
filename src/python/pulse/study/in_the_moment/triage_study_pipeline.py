@@ -295,8 +295,6 @@ class TriageStudy:
         vitals["survivable_injuries"] = False
 
         # interventions will not work
-        for injury in injuries:
-            injury["can_intervene"] = False
         vitals["interventions"].clear()
 
         start_color, start_reason = self._start_tag(vitals)
@@ -881,8 +879,16 @@ class TriageStudy:
                 if death_module.cause_of_death:
                     _log.info(f"Intervened casualty {i} died.")
                     _log.info(f"Cause of death: {death_module.cause_of_death}")
-                    intervention["death"] = {"time_s": death_module.time_of_death,
-                                             "cause": death_module.cause_of_death}
+                    # Grab some vitals from the time of death
+                    self._pulse_data.set_values(r.get_values_at_time(r.end_time_s - 1))
+                    active_events = r.get_active_events_in_window(r.start_time_s, r.end_time_s)
+                    vitals = self._dataset.calculate_triage_vitals(spec, active_events, self._pulse_data)
+                    triage = self._death_triage(death_module.time_of_death / 60,
+                                                casualty["specification"]["injuries"],
+                                                casualty["pulse_injuries"], vitals)
+                    intervention["death"] = {"time": death_module.time_of_death / 60,
+                                             "cause": death_module.cause_of_death,
+                                             "triage": triage}
                 else:
                     self._pulse_data.set_values(r.get_values_at_time(r.end_time_s))
                     # Get active events from the last minute of this simulation
