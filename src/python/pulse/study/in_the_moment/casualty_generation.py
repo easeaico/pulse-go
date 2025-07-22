@@ -316,7 +316,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
                 injury["can_intervene"] = False
 
     if injury["location"] == "extremity":
-        if ["type"] == "burn_nerve":
+        if type_ == "burn_nerve":
             if np.random.randint(0, 1) == 1:
                 injury["sub_type"] = "burn"
             else:
@@ -330,7 +330,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
                 injury["cmpt"] = "left_leg"
             elif cmpt == 3:
                 injury["cmpt"] = "right_leg"
-        elif ["type"] == "contusion_sprain_strain":
+        elif type_ == "contusion_sprain_strain":
             t = np.random.randint(0, 2)
             if t == 0:
                 injury["sub_type"] = "contusion"
@@ -347,7 +347,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
                 injury["cmpt"] = "left_leg"
             elif cmpt == 3:
                 injury["cmpt"] = "right_leg"
-        if ["type"] == "fracture_dislocation":
+        elif type_ == "fracture_dislocation":
             if np.random.randint(0, 1) == 1:
                 injury["sub_type"] = "fracture"
             else:
@@ -361,7 +361,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
                 injury["cmpt"] = "left_leg"
             elif cmpt == 3:
                 injury["cmpt"] = "right_leg"
-        elif ["type"] == "hemorrhage":
+        elif type_ == "hemorrhage":
             injury["can_intervene"] = True
             if severity_ <= 4:
                 cmpt = np.random.randint(0, 3)

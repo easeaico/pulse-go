@@ -971,8 +971,7 @@ def main():
     )
     parser.add_argument(
         "-fp", "--force_injury_severity_distributions",
-        type=float,
-        default=-1,
+        action='store_true',
         help="Iterate np.random.normal to attempt to find passing injury severity distributions.\n"
              "This option is only used when -num is provided and a new file/dataset is created.\n"
              "Using this option can invalidate the representative accuracy of your dataset."
@@ -991,6 +990,8 @@ def main():
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
         triage_study.triage(num_casualties=0, tgt_id=opts.id, skip_visited=opts.skip_visited)
     elif opts.num_casualties:
+        triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
+        triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
         triage_study.triage(num_casualties=opts.num_casualties, tgt_id=opts.id, skip_visited=opts.skip_visited)
     elif opts.triage_file:
         triage_study.triage_file(file=opts.triage_file, tgt_id=opts.id, skip_visited=opts.skip_visited)
