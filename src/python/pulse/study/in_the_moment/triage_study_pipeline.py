@@ -461,7 +461,9 @@ class TriageStudy:
             _log.fatal(f"Number of scenarios executed ({len(casualty_states_exec_status)}) "
                        f"does not equal the number of triage study casualties ({len(self._triage_study)})")
             exit(1)
-        for i, status in enumerate(casualty_states_exec_status):
+        for status in casualty_states_exec_status:
+            sce = Path(status.get_scenario_filename()).parts[-2]
+            i = int(sce[sce.find('_')+1:])
             self._triage_study[i]["injury_exec_status"] = _exec_status_to_dict(status)
 
     def _triage_injured_states(self):
@@ -686,7 +688,7 @@ class TriageStudy:
                                              "Repositioning their airway did not help breathing.")
 
         if vitals["respiratory_rate"] > 30.0:
-            tag.apply(TriageColor.Red, "Casualty respiratory rate > 30 bpm.")
+            tag.apply(TriageColor.Red, "Casualty respiratory rate greater than 30 breaths per minute.")
 
         if not vitals["healthy_capillary_refill_time"]:
             tag.apply(TriageColor.Red, "Casualty does not have a healthy capillary refill time.")
@@ -892,6 +894,11 @@ class TriageStudy:
             for time_s, visit in casualty["visits"].items():
                 if "intervention" not in visit:
                     continue
+                sce = Path(intervention_exec_status[v].get_scenario_filename()).parts[-2]
+                sce_id = int(sce[sce.find('_') + 1:])
+                if sce_id != i:
+                    _log.error("Mismatch of intervention exec status to casualty status")
+                    exit(1)
                 visit["intervention"]["intervention_exec_status"] = _exec_status_to_dict(intervention_exec_status[v])
                 v += 1
         self._total_interventions = v
