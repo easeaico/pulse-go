@@ -300,7 +300,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
         if type_ == "pneumothorax":
             injury["can_intervene"] = True
 
-    if injury["location"] == "abdominal":
+    if injury["location"] == "abdomen":
         if type_ == "hemorrhage":  # External Liver/Spleen Hemorrhage
             injury["can_intervene"] = True
             if np.random.randint(0, 1) == 1:

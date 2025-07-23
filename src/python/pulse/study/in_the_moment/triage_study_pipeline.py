@@ -767,7 +767,7 @@ class TriageStudy:
         # Nothing too crazy...
         else:
             if vitals["major_injuries"]:
-                tag.apply(TriageColor.Yellow, "Casualty injuries major.")
+                tag.apply(TriageColor.Yellow, "Casualty injuries are major.")
             else:
                 tag.apply(TriageColor.Green, "Casualty injuries are minor.")
 
