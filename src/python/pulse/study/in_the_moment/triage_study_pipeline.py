@@ -828,6 +828,9 @@ class TriageStudy:
         # You could also edit exec_status to rerun particular scenarios
         if not self._intervention_exec_status_filename.exists():
             for i, casualty in self._triage_study.items():
+                if self._tgt_id:
+                    if i != self._tgt_id:
+                        continue
                 for time_s, visit in casualty["visits"].items():
 
                     # Only simulate the injuries we can perform interventions on

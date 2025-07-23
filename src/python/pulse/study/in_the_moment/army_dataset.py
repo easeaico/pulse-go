@@ -34,7 +34,7 @@ _log = logging.getLogger("pulse")
 population_distributions = {
     "heart_rate": {"mean": 72, "std": 11},
     "sex": {
-              "male": {"height": {"mean": 177, "std": 7.1}, "bmi": {"mean": 26.4, "std": 3.4}},
+              "male": {"percent": 84.6, "height": {"mean": 177, "std": 7.1}, "bmi": {"mean": 26.4, "std": 3.4}},
               "female": {"percent": 15.4, "height": {"mean": 163.5, "std": 7.7}, "bmi": {"mean": 24.7, "std": 2.8}}
             },
     "age": {"bins": [18, 25, 30, 35, 40, 55],
@@ -1065,61 +1065,67 @@ class ArmyDataset(TriageDataset):
         return actions
 
     def injury_interventions(self, synthetic_injuries: list, pulse_injuries: list, vitals: dict):
-        interventions = []
+        # TODO Figure out a way map interventions to specific actions, like treat 1 of 2 hemorrhages
+        actions = []
+        interventions = vitals["interventions"]
         for injury in pulse_injuries:
-            if "AirwayObstruction" in injury["PatientAction"]:
-                ao = SEAirwayObstruction()
-                s = injury["PatientAction"]["AirwayObstruction"]["Severity"]["Scalar0To1"]["Value"]
-                ao.get_severity().set_value(s*0.6666)  # Remove 1/3 of the obstruction
-                ao.set_comment(f"Reposition Airway. Reduce severity from {s} to {s*0.6666}")
-                interventions.append(ao)
-                _log.info("Clearing airway obstruction")
-            if "Hemorrhage" in injury["PatientAction"]:
-                if synthetic_injuries[0]["location"] == "extremity":
+            if Intervention.RepositionAirway in interventions:
+                if "AirwayObstruction" in injury["PatientAction"]:
+                    ao = SEAirwayObstruction()
+                    s = injury["PatientAction"]["AirwayObstruction"]["Severity"]["Scalar0To1"]["Value"]
+                    ao.get_severity().set_value(s*0.6666)  # Remove 1/3 of the obstruction
+                    ao.set_comment(f"Reposition Airway. Reduce severity from {s} to {s*0.6666}")
+                    actions.append(ao)
+                    _log.info("Clearing airway obstruction")
+            if Intervention.WoundPack in interventions:
+                if "Hemorrhage" in injury["PatientAction"] and synthetic_injuries[0]["location"] == "abdomen":
                     h = SEHemorrhage()
-                    h.set_compartment(injury["PatientAction"]["Hemorrhage"]["Compartment"])
-                    h.set_type(eHemorrhage_Type.External)
-                    h.get_severity().set_value(0.05)
-                    h.set_comment(f"Apply Tourniquet. Reduce severity to 0.05")
-                    interventions.append(h)
-                    _log.info("Applying tourniquet to external hemorrhage")
-                elif synthetic_injuries[0]["location"] == "abdomen":
-                    h = SEHemorrhage()
-                    h.set_compartment(injury["PatientAction"]["Hemorrhage"]["Compartment"])
+                    cmpt = injury["PatientAction"]["Hemorrhage"]["Compartment"]
+                    h.set_compartment(cmpt)
                     h.set_type(eHemorrhage_Type.External)
                     s = injury["PatientAction"]["Hemorrhage"]["Severity"]["Scalar0To1"]["Value"]
                     h.get_severity().set_value(s * 0.5)
                     h.set_comment(f"Pack wound. Reduce severity from {s} to {s * 0.5}")
-                    interventions.append(h)
-                    _log.info("Packing abdominal hemorrhage")
-                else:
-                    _log.error(f"Cannot intervene a hemorrhage at {synthetic_injuries[0]['location']}")
-                    exit(1)
-            if "TensionPneumothorax" in injury["PatientAction"]:
-                s = injury["PatientAction"]["TensionPneumothorax"]["Side"]
-                t = injury["PatientAction"]["TensionPneumothorax"]["Type"]
-                if t == "Closed":
-                    nde = SENeedleDecompression()
-                    nde.set_state(eSwitch.On)
-                    if s == "Left":
-                        nde.set_side(eSide.Left)
+                    actions.append(h)
+                    _log.info(f"Packing abdominal {cmpt} hemorrhage")
+            if Intervention.Tourniquet in interventions and synthetic_injuries[0]["location"] == "extremity":
+                if "Hemorrhage" in injury["PatientAction"]:
+                    h = SEHemorrhage()
+                    cmpt = injury["PatientAction"]["Hemorrhage"]["Compartment"]
+                    h.set_compartment(cmpt)
+                    h.set_type(eHemorrhage_Type.External)
+                    h.get_severity().set_value(0.05)
+                    h.set_comment(f"Apply Tourniquet. Reduce severity to 0.05")
+                    actions.append(h)
+                    _log.info(f"Applying tourniquet to external {cmpt} hemorrhage")
+            if Intervention.NeedleDecompress in interventions:
+                if "TensionPneumothorax" in injury["PatientAction"]:
+                    s = injury["PatientAction"]["TensionPneumothorax"]["Side"]
+                    t = injury["PatientAction"]["TensionPneumothorax"]["Type"]
+                    if t == "Closed":
+                        nde = SENeedleDecompression()
+                        nde.set_state(eSwitch.On)
+                        if s == "Left":
+                            nde.set_side(eSide.Left)
+                        else:
+                            nde.set_side(eSide.Right)
+                        nde.set_comment(f"Decompress the plural space")
+                        actions.append(nde)
+                        _log.info(f"Applying Needle Decompression to {s} side")
                     else:
-                        nde.set_side(eSide.Right)
-                    nde.set_comment(f"Decompress the plural space")
-                    interventions.append(nde)
-                    _log.info("Applying Needle Decompression")
-                else:
-                    cod = SEChestOcclusiveDressing()
-                    cod.set_state(eSwitch.On)
-                    if s == "Left":
-                        cod.set_side(eSide.Left)
-                    else:
-                        cod.set_side(eSide.Right)
-                    cod.set_comment(f"Wrapping chest with occlusive dressing")
-                    interventions.append(cod)
-                    _log.info("Applying Chest Occlusive Dressing")
-
-        return interventions
+                        cod = SEChestOcclusiveDressing()
+                        cod.set_state(eSwitch.On)
+                        if s == "Left":
+                            cod.set_side(eSide.Left)
+                        else:
+                            cod.set_side(eSide.Right)
+                        cod.set_comment(f"Wrapping chest with occlusive dressing")
+                        actions.append(cod)
+                        _log.info(f"Applying Chest Occlusive Dressing to the {s} side")
+        if len(actions) == 0:
+            _log.error(f"Was told there were to be interventions done to this casualty, but not sure what to do...")
+            exit(1)
+        return actions
 
 
 def main():
