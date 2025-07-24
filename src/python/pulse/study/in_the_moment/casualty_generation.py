@@ -837,7 +837,7 @@ def _random_grouping(pool: list, groups: list, choices: dict) -> list:
                 if len(sorted_counts) == 1:
                     i = 0
                 else:
-                    i = random.randint(0, len(sorted_counts))
+                    i = np.random.randint(0, len(sorted_counts))
                 # Add it to this group
                 c = sorted_counts[i][0]
                 g.append(c)
