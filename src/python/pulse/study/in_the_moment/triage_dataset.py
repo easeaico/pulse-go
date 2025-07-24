@@ -189,3 +189,13 @@ class TriageDataset(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def injury_interventions(self, synthetic_injuries: list, pulse_injuries: list, vitals: dict):
         pass
+
+
+def convert_keys_to_int(obj):
+    new_obj = {}
+    for k, v in obj.items():
+        try:
+            new_obj[int(k)] = v
+        except ValueError:
+            new_obj[k] = v
+    return new_obj

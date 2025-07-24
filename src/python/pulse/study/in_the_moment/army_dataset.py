@@ -111,7 +111,9 @@ class ArmyDataset(TriageDataset):
             _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=3.0, intervene=True)
             _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=4.0, intervene=True)
             _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=5.0, intervene=True)
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=5.0, intervene=False)
             _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=6.0, intervene=True)
+            _add_injury(loc="head_and_neck", typ="airway_obstruction", sev=6.0, intervene=False)
 
             _add_injury(loc="head_and_neck", typ="superficial", sev=1.0, intervene=False)
 
@@ -259,11 +261,8 @@ class ArmyDataset(TriageDataset):
             combined_casualties[i] = {"specification": casualty}
         return combined_casualties
 
-    def vitals_description(self,
-                           duration_min: float,
-                           injuries: List[dict],
-                           actions: List[dict],
-                           vitals: dict) -> List[str]:
+    @staticmethod
+    def vitals_description(vitals: dict) -> List[str]:
         description = []
 
         # Check to see if the casualty can walk
@@ -743,7 +742,7 @@ class ArmyDataset(TriageDataset):
                         exit(1)
 
                     if t == "airway_obstruction":
-                        _post(injury="airway_obstruction", ais=ais, low=0.15, high=0.9)
+                        _post(injury="airway_obstruction", ais=ais, low=0.15, high=0.83)
                         _post(injury="stress", ais=ais, low=0.15, high=0.35)
                         continue
 

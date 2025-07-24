@@ -28,7 +28,7 @@ from pulse.engine.PulseEngineResults import PulseEngineReprocessor, PulseResults
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
 from pulse.study.in_the_moment.casualty_generation import InjurySeverityOpts
 from pulse.study.in_the_moment.triage_dataset import AVPU, TriageTag, TriageColor, Hemorrhage, PulseData, \
-    Intervention
+    Intervention, convert_keys_to_int
 
 _log = logging.getLogger("pulse")
 
@@ -40,16 +40,6 @@ class Dataset(str, Enum):
 
 def _exec_status_to_dict(status: SEScenarioExecStatus):
     return json.loads(serialize_scenario_exec_status_to_string(status, eSerializationFormat.JSON))
-
-
-def _convert_keys_to_int(obj):
-    new_obj = {}
-    for k, v in obj.items():
-        try:
-            new_obj[int(k)] = v
-        except ValueError:
-            new_obj[k] = v
-    return new_obj
 
 
 class DeathCheckModule(PulseResultsProcessor):
@@ -203,7 +193,7 @@ class TriageStudy:
             _log.info(f"Loading an existing file ({file}) for this number of casualties.")
             try:
                 with open(file, 'r') as f:
-                    self._triage_study = json.load(f, object_hook=_convert_keys_to_int)
+                    self._triage_study = json.load(f, object_hook=convert_keys_to_int)
                 # Only keep patient specifications, everything else will be regenerated
                 for i, casualty in self._triage_study.items():
                     if self._tgt_id:
@@ -254,7 +244,7 @@ class TriageStudy:
         start_time = timer()
         if file.exists():
             with open(file, 'r') as f:
-                self._triage_study = json.load(f, object_hook=_convert_keys_to_int)
+                self._triage_study = json.load(f, object_hook=convert_keys_to_int)
                 # Only keep patient specifications, everything else will be regenerated
                 for i, casualty in self._triage_study.items():
                     if self._tgt_id:
@@ -337,9 +327,9 @@ class TriageStudy:
         # interventions will not work
         vitals["interventions"].clear()
 
-        start_color, start_reason = self._start_tag(vitals)
-        salt_color, salt_reason = self._salt_tag(vitals)
-        bcd_color, bcd_reason = self._bcd_sieve_tag(vitals)
+        start_color, start_reason = self.start_tag(vitals)
+        salt_color, salt_reason = self.salt_tag(vitals)
+        bcd_color, bcd_reason = self.bcd_sieve_tag(vitals)
         triage = {
             "state": None,
             "vitals": vitals,
@@ -352,7 +342,7 @@ class TriageStudy:
             "triss": 0.0,
             "news": 0.0,
             "injury_description": self._dataset.injury_description(time_min, injuries, pulse_injuries, vitals),
-            "vitals_description": self._dataset.vitals_description(time_min, injuries, pulse_injuries, vitals)
+            "vitals_description": self._dataset.vitals_description(vitals)
         }
         return triage
 
@@ -527,9 +517,9 @@ class TriageStudy:
                 active_events = r.get_active_events_in_window(time_s - 60, time_s)
 
                 vitals = self._dataset.calculate_triage_vitals(spec, active_events, self._pulse_data)
-                start_color, start_reason = self._start_tag(vitals)
-                salt_color, salt_reason = self._salt_tag(vitals)
-                bcd_color, bcd_reason = self._bcd_sieve_tag(vitals)
+                start_color, start_reason = self.start_tag(vitals)
+                salt_color, salt_reason = self.salt_tag(vitals)
+                bcd_color, bcd_reason = self.bcd_sieve_tag(vitals)
                 triage = {
                     "state": injury_state,
                     "vitals": vitals,
@@ -539,10 +529,10 @@ class TriageStudy:
                              "salt_reason": salt_reason,
                              "bcd_sieve": bcd_color,
                              "bcd_sieve_reason": bcd_reason},
-                    "triss": self._calculate_triss_score(vitals),
-                    "news": self._calculate_news_score(vitals),
+                    "triss": self.calculate_triss_score(vitals),
+                    "news": self.calculate_news_score(vitals),
                     "injury_description": self._dataset.injury_description(time_min, injuries, pulse_injuries, vitals),
-                    "vitals_description": self._dataset.vitals_description(time_min, injuries, pulse_injuries, vitals)
+                    "vitals_description": self._dataset.vitals_description(vitals)
                 }
                 data["visits"][time_min] = {"triage": triage}
             # Take the last visit out, and it will be our final state (no intervention)
@@ -552,7 +542,7 @@ class TriageStudy:
                 data["final"] = final_visit
 
     @staticmethod
-    def _calculate_triss_score(vitals: dict):
+    def calculate_triss_score(vitals: dict):
         # https://www.mdapp.co/trauma-injury-severity-score-triss-calculator-277/
 
         # Age
@@ -622,7 +612,7 @@ class TriageStudy:
         return pd_survival
 
     @staticmethod
-    def _calculate_news_score(vitals: dict):
+    def calculate_news_score(vitals: dict):
         # https://www.mdcalc.com/calc/1873/national-early-warning-score-news#next-steps
         news = 0
 
@@ -672,7 +662,7 @@ class TriageStudy:
         return news
 
     @staticmethod
-    def _start_tag(vitals: dict) -> (str, str):
+    def start_tag(vitals: dict) -> (str, str):
         tag = TriageTag()
 
         if vitals["ambulatory"]:
@@ -680,7 +670,7 @@ class TriageStudy:
             return tag.color, tag.reason
 
         if not vitals["breathing"]:
-            if "reposition_airway" in vitals["interventions"]:
+            if Intervention.RepositionAirway in vitals["interventions"]:
                 tag.apply(TriageColor.Red, "Casualty was not breathing.\n"
                                            "Repositioning their airway resulted in spontaneous breathing.")
             else:
@@ -701,7 +691,7 @@ class TriageStudy:
         return tag.color, tag.reason
 
     @staticmethod
-    def _salt_tag(vitals: dict) -> (str, str):
+    def salt_tag(vitals: dict) -> (str, str):
         tag = TriageTag()
 
         if vitals["ambulatory"]:
@@ -713,7 +703,7 @@ class TriageStudy:
 
         # Is the casualty not breathing?
         if not vitals["breathing"]:
-            if "reposition_airway" in vitals["interventions"]:
+            if Intervention.RepositionAirway in vitals["interventions"]:
                 tag.apply(TriageColor.Red, "Casualty was not breathing.\n"
                                            "Repositioning their airway resulted in spontaneous breathing.")
             else:
@@ -750,10 +740,10 @@ class TriageStudy:
 
         # Does the casually have a major, uncontrollable hemorrhage?
         elif hemorrhage == Hemorrhage.Major:
-            if "wound_pack" in vitals["interventions"]:
+            if Intervention.WoundPack in vitals["interventions"]:
                 tag.apply(TriageColor.Red, "Casualty has a major hemorrhage.\n"
                                            "You were able to pack the wound with gauze to reduce the bleeding.")
-            elif "tourniquet" in vitals["interventions"]:
+            elif Intervention.Tourniquet in vitals["interventions"]:
                 tag.apply(TriageColor.Red, "Casualty has a major hemorrhage.\n"
                                            "You were able to apply a tourniquet to reduce the bleeding.")
             else:
@@ -774,7 +764,7 @@ class TriageStudy:
         return tag.color, tag.reason
 
     @staticmethod
-    def _bcd_sieve_tag(vitals: dict) -> (str, str):
+    def bcd_sieve_tag(vitals: dict) -> (str, str):
         tag = TriageTag()
 
         if vitals["ambulatory"]:
@@ -952,9 +942,9 @@ class TriageStudy:
                     active_events = r.get_active_events_in_window(r.end_time_s - 60, r.end_time_s)
                     vitals = self._dataset.calculate_triage_vitals(spec, active_events, self._pulse_data)
                     intervention["vitals"] = vitals
-                    start_color, start_reason = self._start_tag(vitals)
-                    salt_color, salt_reason = self._salt_tag(vitals)
-                    bcd_color, bcd_reason = self._bcd_sieve_tag(vitals)
+                    start_color, start_reason = self.start_tag(vitals)
+                    salt_color, salt_reason = self.salt_tag(vitals)
+                    bcd_color, bcd_reason = self.bcd_sieve_tag(vitals)
                     tags = {"start": start_color,
                             "start_reason": start_reason,
                             "salt": salt_color,
@@ -962,8 +952,8 @@ class TriageStudy:
                             "bcd_sieve": bcd_color,
                             "bcd_sieve_reason": bcd_reason}
                     intervention["tags"] = tags
-                    intervention["triss"] = self._calculate_triss_score(vitals)
-                    intervention["news"] = self._calculate_news_score(vitals)
+                    intervention["triss"] = self.calculate_triss_score(vitals)
+                    intervention["news"] = self.calculate_news_score(vitals)
                     intervention["injury_description"] = [f"Casualty has been waiting {duration_min} min for further care."]
                     intervention["vitals_description"] = [""]  # TODO Need to improve vitals to handle interventions
 
