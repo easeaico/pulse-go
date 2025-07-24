@@ -17,7 +17,8 @@ from pulse.cdm.enums import eSwitch, eGate, eSide
 from pulse.cdm.io.scenario import serialize_scenario_to_file, serialize_scenario_exec_status_list_to_file, \
     serialize_scenario_exec_status_list_from_file
 from pulse.cdm.patient_actions import (SEAcuteRespiratoryDistressSyndromeExacerbation,
-                                       SEHemorrhage, eHemorrhage_Compartment, SETensionPneumothorax)
+                                       SEHemorrhage, eHemorrhage_Compartment, SETensionPneumothorax,
+                                       SEAirwayObstruction)
 from pulse.cdm.physiology import eLungCompartment
 from pulse.cdm.scenario import SEScenario, SEScenarioExecStatus
 from pulse.cdm.scalars import VolumePerTimeUnit, FrequencyUnit, PressureUnit, VolumeUnit, TimeUnit
@@ -57,7 +58,7 @@ class SeverityAnalysis(metaclass=abc.ABCMeta):
         self._cmpt_groups_idx = None
         self._data_requests = None
         self._name = name
-        self._severity_range = severity_ranges
+        self._severity_range = [int(f * 100) / 100 for f in severity_ranges]
 
     def add_compartment_group(self, cmpts):
         name = ""
@@ -157,6 +158,86 @@ class SeverityAnalysis(metaclass=abc.ABCMeta):
             self._execute_scenarios(duration_min, out_dir)
 
         self.write_table(out_dir)
+
+
+class SimpleAnalysis(SeverityAnalysis):
+    __slots__ = ["_abbrev", "_action", "_ledger", "sample_min"]
+
+    def __init__(self, name, action, severity_ranges: list, data_requests: list):
+        super().__init__(name, severity_ranges)
+        self._abbrev = []
+        self._action = action
+        self._ledger = {}
+        self.sample_min = 5
+        self._data_requests = data_requests
+
+        for dr in self._data_requests:
+            prop = dr.get_property_name()
+            caps = [char for char in prop if char.isupper()]
+            self._abbrev.append("".join(caps).lower())
+
+        for name in self._abbrev:
+            self._ledger[name] = {}
+            for severity in self._severity_range:
+                self._ledger[name][f"{severity:.2f}"] = {}
+
+    def create_actions(self, severity: float):
+        a = self._action()
+        a.get_severity().set_value(severity)
+        return [a]
+
+    def pull_dependent_variables(self, exec_status):
+        # Get which casualty this is
+        parts = Path(exec_status.get_scenario_filename()).stem.split('sev')
+        severity = parts[1].replace('_', '')
+
+        r = PulseEngineReprocessor(csv_files=[Path(exec_status.get_csv_filename())],
+                                   log_files=[Path(exec_status.get_log_filename())])
+        actions = r.actions
+        if len(actions) != 1:
+            _log.fatal("We should have 1 and only 1 time of actions")
+            exit(1)
+        start_time_s = next(iter(actions))
+
+        end_time_s = r.end_time_s
+        if r.events:
+            for time_s, events in r.events.items():
+                for event in events:
+                    if event.event == eEvent.IrreversibleState:
+                        end_time_s = time_s
+        duration_min = (r.end_time_s - start_time_s) / 60
+
+        for i, name in enumerate(self._abbrev):
+            time_min = self.sample_min
+            while time_min < duration_min:
+                results = r.get_values_at_time(time_min*60)
+                if time_min not in self._ledger[name][severity]:
+                    self._ledger[name][severity][time_min] = {}
+                self._ledger[name][severity][time_min] = results[i+1]
+                time_min += self.sample_min
+                if time_min > end_time_s:  # Patient Died
+                    # TODO pad the ledger
+                    _log.fatal("Unhandled death in analysis")
+                    exit(1)
+
+    def write_table(self, out_dir: Path):
+
+        for prop, severities in self._ledger.items():
+            headings = ["Time (min)"]
+            _rows = {}
+            for severity, times in severities.items():
+                headings.append(severity)
+                for time, value in times.items():
+                    if time not in _rows:
+                        _rows[time] = []
+                    _rows[time].append(value)
+            _data = []
+            for time, dd in _rows.items():
+                _row = [time]
+                for d in dd:
+                    _row.append(f"{d:.1f}")
+                _data.append(_row)
+            write_table_image(out_dir/f"{self._name}_{prop}.png", headings, _data)
 
 
 class LungAnalysis(SeverityAnalysis):
@@ -352,16 +433,24 @@ def main():
 
     class Mode(Enum):
         ALL = 0
-        ARDS = 1
-        HEMORRHAGE_THORAX = 2
-        HEMORRHAGE_ABDOMINAL = 3
-        HEMORRHAGE_EXTREMITY = 4
-        PNEUMOTHORAX = 5
-    mode = Mode.HEMORRHAGE_EXTREMITY
+        AIRWAY_OBSTRUCTION = 1
+        ARDS = 2
+        HEMORRHAGE_THORAX = 3
+        HEMORRHAGE_ABDOMINAL = 4
+        HEMORRHAGE_EXTREMITY = 5
+        PNEUMOTHORAX = 6
+    mode = Mode.AIRWAY_OBSTRUCTION
 
     tenth_ranges = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
     hundredth_ranges = list(np.arange(0.01, 1.01, 0.01))
     three_hundredth_ranges = list(np.arange(0.03, 1.01, 0.03))
+    high_detail = list(np.arange(0.8, 1.01, 0.01))
+
+    if mode == Mode.ALL or mode == Mode.AIRWAY_OBSTRUCTION:
+        ao_analysis = SimpleAnalysis("airway_obstruction", SEAirwayObstruction, high_detail,
+                                     data_requests=[SEDataRequest.create_physiology_request("RespirationRate",
+                                                                                            unit=FrequencyUnit.Per_min)])
+        ao_analysis.execute(60, out_dir)
 
     if mode == Mode.ALL or mode == Mode.ARDS:
         ards_analysis = PneumothoraxAnalysis("ards", three_hundredth_ranges)
