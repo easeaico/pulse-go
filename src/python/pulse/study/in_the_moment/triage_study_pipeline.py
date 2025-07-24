@@ -196,7 +196,7 @@ class TriageStudy:
                untreated_injury_time_min: int = 5, state_interval_min: int = 5, total_injury_duration_min: int = 60):
         start_time = timer()
         if num_casualties == 0:
-            file = self._output_dir / f"training_casualties.json"
+            file = self._output_dir / f"example_casualties.json"
         else:
             file = self._output_dir / f"{num_casualties}_casualties.json"
         if file.exists():
@@ -977,14 +977,14 @@ def main():
         default="./test_results/itm/triage_study",
         help="Location to put all files related to this study"
     )
-    # Training related arguments
+    # Example dataset related arguments
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument(
-        "-t", "--train",
+        "-ex", "--example",
         action='store_true',
-        help="Generate the training study file\n"
-             "The population file will be written here: <output_dir>/populations/training_casualties.json\n"
-             "The study file will be written here: <output_dir>/triage_study_training.json"
+        help="Generate the example study file\n"
+             "The population file will be written here: <output_dir>/populations/example_casualties.json\n"
+             "The study file will be written here: <output_dir>/triage_study_example.json"
     )
     dataset_group.add_argument(
         "-num", "--num_casualties",
@@ -1042,7 +1042,7 @@ def main():
     _log.addHandler(file_handler)
 
     triage_study = TriageStudy(Dataset.Army, output_dir)
-    if opts.train:
+    if opts.example:
         triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
         triage_study.triage(num_casualties=0, tgt_id=opts.id, skip_visited=opts.skip_visited,

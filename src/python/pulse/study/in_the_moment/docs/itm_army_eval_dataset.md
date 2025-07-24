@@ -1,7 +1,14 @@
 In The Moment - Army Eval Dataset {#itm_army_eval_dataset}
 ==========================================================
 
-The following links provide data associated with a casualty with one or more army injuries.
+The following dataset was used for our study.
+
+Naming convention:
+
+Casualty # (AISi) \[sub_type\] \[anatomic location\]\[Time of Death\]
+- The `i` next to the AIS indicates that an intervention could be used to treat an injury, if the vitals indicate to do so.
+- Injuries such as `laceration_contusion` can be modelled differently, `the sub_type` indicates which model was used.
+- The `anatomic location` specifies which Pulse compartment is affected by this injury.
 
 #### Head and Neck
 

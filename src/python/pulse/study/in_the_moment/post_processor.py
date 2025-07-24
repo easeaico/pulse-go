@@ -7,6 +7,7 @@ import io
 import json
 
 from pathlib import Path
+
 from json2html import *
 
 from casualty_generation import (calculate_population_error, calculate_injury_error,
@@ -199,7 +200,15 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
             if "death" in run:
                 triage = run["death"]["triage"]
                 table = _create_table(triage)
-                file.write(f"### Time of Death: {run['death']['time']:.1f} min from point of injury\n\n")
+                file.write(f"### Final State if no interventions are applied: "
+                           f"Death occurs {run['death']['time']:.1f} min from point of injury\n\n")
+                file.write(table)
+                file.write("\n\n")
+            elif "final" in run:
+                triage = run["final"]["triage"]
+                table = _create_table(triage)
+                file.write(f"### Final State if no interventions are applied: "
+                           f"{run['final']['time']:.1f} min from point of injury\n\n")
                 file.write(table)
                 file.write("\n\n")
 
@@ -233,8 +242,6 @@ def create_align_file(study_run: dict, filename: Path, include_reasonings: bool)
                  "Red (Immediate)",
                  "Black (Expectant)"]
 
-    cases = []
-
     def _tag_index(color: str) -> int:
         if color == "Green":
             return 0
@@ -244,6 +251,7 @@ def create_align_file(study_run: dict, filename: Path, include_reasonings: bool)
             return 2
         return 3
 
+    cases = []
     for pid, run in study_run.items():
         for time, visit in run["visits"].items():
             triage = visit["triage"]
@@ -290,15 +298,15 @@ def main():
         help="Location to put all files related to this study"
     )
     parser.add_argument(
-        "-tf", "--train_file",
+        "-ex", "--example_file",
         type=Path,
-        default=Path("./test_results/itm/triage_study/training_casualties.json"),
-        help="Triage study training file"
+        default=Path("./test_results/itm/triage_study/example_casualties.json"),
+        help="Triage study example file"
     )
     parser.add_argument(
-        "-ef", "--eval_file",
+        "-ev", "--eval_file",
         type=Path,
-        default=Path("./test_results/itm/triage_study/training_casualties.json"),
+        default=Path("./test_results/itm/triage_study/1000_casualties.json"),
         help="Triage study evaluation file"
     )
     parser.add_argument(
@@ -328,6 +336,81 @@ def main():
     if opts.markdown:
         output_md_dir = Path("./docs/markdown/itm")
         output_md_dir.mkdir(parents=True, exist_ok=True)
+
+        def _severity(d: dict):
+            return f"mean: {d['mean']:.1f}<br> stdev: {d['std']:.1f}"
+        # Generate demographic table
+        pop = army_population_distributions
+        hr = _severity(pop['heart_rate'])
+        male_p = f"{pop['sex']['male']['percent']:.1f}"
+        male_ht = _severity(pop['sex']['male']['height'])
+        male_bmi = _severity(pop['sex']['male']['bmi'])
+        female_p = f"{pop['sex']['female']['percent']:.1f}"
+        female_ht = _severity(pop['sex']['female']['height'])
+        female_bmi = _severity(pop['sex']['female']['bmi'])
+        with open(output_md_dir / "army_population_table.md", 'w') as file:
+            file.write(f"|             |  Male     | Female     |\n")
+            file.write(f"|-------------|:---------:|:----------:|\n")
+            file.write(f"| Percent     | {male_p}% |{female_p}% |\n")
+            file.write(f"| Height (cm) | {male_ht} |{female_ht} |\n")
+            file.write(f"| BMI         | {male_bmi}|{female_bmi}|\n")
+            file.write(f"| Heart Rate  | {hr}      |{hr}        |\n")
+
+        # Generate injury table
+        def _percent_severity(d: dict):
+            percent = d["percent"]
+            severity = d["severity"]
+            if "mean" in severity:
+                return percent, f"mean: {severity['mean']:.1f}<br> stdev: {severity['std']:.1f}"
+            elif "values" in severity:
+                dist = ""
+                for i, sp in enumerate(severity["percents"]):
+                    v = severity["values"][i]
+                    dist += f"{sp}% are {v}<br>"
+                return percent, dist
+        inj = army_injury_distributions
+        hn_p = inj["head_and_neck"]["percent"]
+        hn_ao_p, hn_ao_s = _percent_severity(inj["head_and_neck"]["types"]["airway_obstruction"])
+        hn_s_p, hn_s_s = _percent_severity(inj["head_and_neck"]["types"]["superficial"])
+        hn_tbi_p, hn_tbi_s = _percent_severity(inj["head_and_neck"]["types"]["tbi"])
+        t_p = inj["thorax"]["percent"]
+        t_f_p, t_f_s = _percent_severity(inj["thorax"]["types"]["fracture"])
+        t_hg_p, t_hg_s = _percent_severity(inj["thorax"]["types"]["hemorrhage"])
+        t_hx_p, t_hx_s = _percent_severity(inj["thorax"]["types"]["hemothorax"])
+        t_px_p, t_px_s = _percent_severity(inj["thorax"]["types"]["pneumothorax"])
+        t_pc_p, t_pc_s = _percent_severity(inj["thorax"]["types"]["pulmonary_contusion"])
+        t_s_p, t_s_s = _percent_severity(inj["thorax"]["types"]["spinal"])
+        a_p = inj["abdomen"]["percent"]
+        a_hg_p, a_hg_s = _percent_severity(inj["abdomen"]["types"]["hemorrhage"])
+        a_lc_p, a_lc_s = _percent_severity(inj["abdomen"]["types"]["laceration_contusion"])
+        e_p = inj["extremity"]["percent"]
+        e_bn_p, e_bn_s = _percent_severity(inj["extremity"]["types"]["burn_nerve"])
+        e_css_p, e_css_s = _percent_severity(inj["extremity"]["types"]["contusion_sprain_strain"])
+        e_fd_p, e_fd_s = _percent_severity(inj["extremity"]["types"]["fracture_dislocation"])
+        e_hg_p, e_hg_s = _percent_severity(inj["extremity"]["types"]["hemorrhage"])
+        with open(output_md_dir / "army_injury_table.md", 'w') as file:
+            file.write(f"| Location    | Type                        | Proportion |   AIS    |\n")
+            file.write(f"| ----------- |-----------------------------|:----------:|:--------:|\n")
+            file.write(f"| Head / Neck |                             |{hn_p}%     |          |\n")
+            file.write(f"|             | Airway Obstruction          |{hn_ao_p}%  |{hn_ao_s} |\n")
+            file.write(f"|             | Superficial                 |{hn_s_p}%   |{hn_s_s}  |\n")
+            file.write(f"|             | Traumatic Brain Injury      |{hn_tbi_p}% |{hn_tbi_s}|\n")
+            file.write(f"| Thorax      |                             |{t_p}%      |          |\n")
+            file.write(f"|             | Fracture                    |{t_f_p}%    |{t_f_s}   |\n")
+            file.write(f"|             | Hemorrhage                  |{t_hg_p}%   |{t_hg_s}  |\n")
+            file.write(f"|             | Hemothorax                  |{t_hx_p}%   |{t_hx_s}  |\n")
+            file.write(f"|             | Pneumothorax                |{t_px_p}%   |{t_px_s}  |\n")
+            file.write(f"|             | Pulmonary Contusion         |{t_pc_p}%   |{t_pc_s}  |\n")
+            file.write(f"|             | Spinal                      |{t_s_p}%    |{t_s_s}   |\n")
+            file.write(f"| Abdomen     |                             |{a_p}%      |          |\n")
+            file.write(f"|             | Hemorrhage                  |{a_hg_p}%   |{a_hg_s}  |\n")
+            file.write(f"|             | Laceration / Contusion      |{a_lc_p}%   |{a_lc_s}  |\n")
+            file.write(f"| Extremity   |                             |{e_p}%      |          |\n")
+            file.write(f"|             | Burn / Nerve                |{e_bn_p}%   |{e_bn_s}  |\n")
+            file.write(f"|             | Contusion / Sprain / Strain |{e_css_p}%  |{e_css_s} |\n")
+            file.write(f"|             | Fracture / Dislocation      |{e_fd_p}%   |{e_fd_s}  |\n")
+            file.write(f"|             | Hemorrhage                  |{e_hg_p}%   |{e_hg_s}  |\n")
+
         # Update our landing page with all these runs
         src = Path(get_root_dir()) / "src/python/pulse/study/in_the_moment/docs/itm_triage_datasets.md"
         if src.exists():
@@ -335,15 +418,15 @@ def main():
         else:
             _logger.error(f"Unable to find markdown file: {src}")
 
-    if opts.train_file.exists():
-        with open(opts.train_file, 'r') as file:
+    if opts.example_file.exists():
+        with open(opts.example_file, 'r') as file:
             study = json.load(file)
 
         if opts.markdown:
-            create_markdown(dataset.value, "train", study, output_md_dir)
+            create_markdown(dataset.value, "example", study, output_md_dir)
 
         if opts.to_align_input:
-            create_align_file(study, output_dir/f"align_{opts.train_file.stem}.json", include_reasonings=True)
+            create_align_file(study, output_dir/f"align_{opts.example_file.stem}.json", include_reasonings=True)
 
     if opts.eval_file.exists():
         with open(opts.eval_file, 'r') as file:

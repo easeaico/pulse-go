@@ -133,7 +133,7 @@ def casualty_population_generation(size: int, distributions: dict) -> dict:
         high = distributions["age"]["bins"][idx+1]
         if idx > 0:
             low += 1
-        ages.append(np.random.randint(low, high))
+        ages.append(np.random.randint(low, high+1))
 
     population_data["sex"] = sexes
     population_data["age"] = ages
@@ -293,7 +293,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
     # Randomize if injuries interventions can be applied to this injury
     if type_ == "airway_obstruction":
         # Flip a coin to see if the airway can be repositioned or not
-        injury["can_intervene"] = np.random.randint(0, 1) == 1
+        injury["can_intervene"] = np.random.randint(0, 2) == 1
         return injury
 
     if injury["location"] == "thorax":
@@ -303,12 +303,12 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
     if injury["location"] == "abdomen":
         if type_ == "hemorrhage":  # External Liver/Spleen Hemorrhage
             injury["can_intervene"] = True
-            if np.random.randint(0, 1) == 1:
+            if np.random.randint(0, 2) == 1:
                 injury["cmpt"] = "liver"
             else:
                 injury["cmpt"] = "spleen"
         else:  # Flip a coin if an external laceration or internal bruise/bleed
-            if np.random.randint(0, 1) == 1:
+            if np.random.randint(0, 2) == 1:
                 injury["sub_type"] = "laceration"
                 injury["can_intervene"] = True
             else:
@@ -317,11 +317,11 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
 
     if injury["location"] == "extremity":
         if type_ == "burn_nerve":
-            if np.random.randint(0, 1) == 1:
+            if np.random.randint(0, 2) == 1:
                 injury["sub_type"] = "burn"
             else:
                 injury["sub_type"] = "nerve"
-            cmpt = np.random.randint(0, 3)
+            cmpt = np.random.randint(0, 4)
             if cmpt == 0:
                 injury["cmpt"] = "left_arm"
             elif cmpt == 1:
@@ -331,14 +331,14 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
             elif cmpt == 3:
                 injury["cmpt"] = "right_leg"
         elif type_ == "contusion_sprain_strain":
-            t = np.random.randint(0, 2)
+            t = np.random.randint(0, 3)
             if t == 0:
                 injury["sub_type"] = "contusion"
             elif t == 1:
                 injury["sub_type"] = "sprain"
             elif t == 2:
                 injury["sub_type"] = "strain"
-            cmpt = np.random.randint(0, 3)
+            cmpt = np.random.randint(0, 4)
             if cmpt == 0:
                 injury["cmpt"] = "left_arm"
             elif cmpt == 1:
@@ -348,11 +348,11 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
             elif cmpt == 3:
                 injury["cmpt"] = "right_leg"
         elif type_ == "fracture_dislocation":
-            if np.random.randint(0, 1) == 1:
+            if np.random.randint(0, 2) == 1:
                 injury["sub_type"] = "fracture"
             else:
                 injury["sub_type"] = "dislocation"
-            cmpt = np.random.randint(0, 3)
+            cmpt = np.random.randint(0, 4)
             if cmpt == 0:
                 injury["cmpt"] = "left_arm"
             elif cmpt == 1:
@@ -364,7 +364,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
         elif type_ == "hemorrhage":
             injury["can_intervene"] = True
             if severity_ <= 4:
-                cmpt = np.random.randint(0, 3)
+                cmpt = np.random.randint(0, 4)
                 if cmpt == 0:
                     injury["cmpt"] = "left_arm"
                 elif cmpt == 1:
@@ -374,7 +374,7 @@ def _injury(location_: str, type_: str, severity_: float) -> dict:
                 elif cmpt == 3:
                     injury["cmpt"] = "right_leg"
             else:
-                if np.random.randint(0, 1) == 1:
+                if np.random.randint(0, 2) == 1:
                     injury["cmpt"] = "left_leg"
                 else:
                     injury["cmpt"] = "right_leg"
@@ -837,7 +837,7 @@ def _random_grouping(pool: list, groups: list, choices: dict) -> list:
                 if len(sorted_counts) == 1:
                     i = 0
                 else:
-                    i = random.randint(0, len(sorted_counts)-1)
+                    i = random.randint(0, len(sorted_counts))
                 # Add it to this group
                 c = sorted_counts[i][0]
                 g.append(c)

@@ -3,9 +3,11 @@ In The Moment - Triage Datasets {#itm_datasets}
 
 #### Army Demographics and Injury Dataset 
 
-TODO - Add army demographics and injury statistics and descriptions
+The following datasets were derived to meet the following army distribution requirements.
 
-An injury set consists of a casualty set each injury, with at least 1 AIS (Abbreviated Injury Scale) severity score.
+@insert army_population_table.md
+
+Injury severities use the AIS (Abbreviated Injury Scale) severity score.
 AIS values are: 
 - 1.0: Minor
 - 2.0: Moderate
@@ -14,7 +16,9 @@ AIS values are:
 - 5.0: Critical
 - 6.0: Fatal
 
+@insert army_injury_table.md
+
 @secreflist
-	@refitem itm_army_train_dataset "Training"
+	@refitem itm_army_example_dataset "Example"
 	@refitem itm_army_eval_dataset "Evaluation"
 @endsecreflist

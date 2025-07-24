@@ -96,8 +96,8 @@ class ArmyDataset(TriageDataset):
     def generate_dataset(self, population_size: int, injury_opts: InjurySeverityOpts = None):
 
         if population_size <= 0:
-            # This is our training dataset: Standard Male, with all possible severities for each injury
-            _log.info("Creating training dataset")
+            # This is our example dataset: Standard Male, with all possible severities for each injury
+            _log.info("Creating example dataset")
             casualty_injuries = []
 
             def _add_injury(loc: str, typ: str, sev: float, intervene: bool, styp: str = None, cmpt: str = None):
