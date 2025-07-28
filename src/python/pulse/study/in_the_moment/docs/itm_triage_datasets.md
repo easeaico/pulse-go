@@ -3,7 +3,7 @@ In The Moment - Triage Datasets {#itm_datasets}
 
 #### Army Demographics and Injury Dataset 
 
-The following datasets were derived to meet the following army distribution requirements.
+The eval dataset was created to meet the following army distribution requirements.
 
 @insert army_population_table.md
 
@@ -21,4 +21,5 @@ AIS values are:
 @secreflist
 	@refitem itm_army_example_dataset "Example"
 	@refitem itm_army_eval_dataset "Evaluation"
+	@refitem itm_align_army_icl "ICL"
 @endsecreflist

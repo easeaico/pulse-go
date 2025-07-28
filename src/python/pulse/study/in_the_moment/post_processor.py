@@ -5,6 +5,7 @@ import argparse
 import logging
 import io
 import json
+import shutil
 
 from pathlib import Path
 
@@ -232,11 +233,7 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
         _logger.error(f"Unable to find markdown file: {src}")
 
 
-def create_align_file(study_run: dict, filename: Path, include_reasonings: bool):
-    preamble = ("You are an army combat medic. "
-                "There has been an targeted strike on your base resulting in many wounded soldiers."
-                "You need to triage and tag each casualty as quickly as possible."
-                "You come to your first casualty.")
+def create_align_file(study_run: dict, filename: Path):
     responses = ["Green (Minor)",
                  "Yellow (Delayed)",
                  "Red (Immediate)",
@@ -255,37 +252,103 @@ def create_align_file(study_run: dict, filename: Path, include_reasonings: bool)
     for pid, run in study_run.items():
         for time, visit in run["visits"].items():
             triage = visit["triage"]
-            prompt = (preamble +
-                      "\n\n".join(triage["injury_description"]) +
-                      "\n\n".join(triage["vitals_description"]) +
-                      "\n\nHow do you tag this casualty?")
+            prompt = ("".join(triage["injury_description"]) +
+                      "\n\n".join(triage["vitals_description"]))
             tags = triage["tags"]
-            p_labels = {"START": 0.0, "SALT": 0.0, "BCD_SIEVE": 0.0}
-            p_reasonings = {"START": "", "SALT": "", "BCD_SIEVE": ""}
-            labels = []
-            reasonings = []
-            for i in range(4):
-                labels.append(p_labels.copy())
-                reasonings.append(p_reasonings.copy())
+            choices = [{}, {}, {}, {}]
+            for i, choice in enumerate(choices):
+                choice["action_id"] = i
+                choice["unstructured"] = responses[i]
+                choice["kdma_association"] = {}
+            labels = [{}, {}, {}, {}]
+            reasonings = [{}, {}, {}, {}]
+            # START
             i = _tag_index(tags["start"])
+            choices[i]["kdma_association"]["START"] = 1.0
             labels[i]["START"] = 1.0
-            if include_reasonings:
-                reasonings[i]["START"] = tags["start_reason"]
+            reasonings[i]["START"] = tags["start_reason"]
+            # SALT
             i = _tag_index(tags["salt"])
+            choices[i]["kdma_association"]["SALT"] = 1.0
             labels[i]["SALT"] = 1.0
-            if include_reasonings:
-                reasonings[i]["SALT"] = tags["salt_reason"]
+            reasonings[i]["SALT"] = tags["salt_reason"]
+            # BCD Sieve
             i = _tag_index(tags["bcd_sieve"])
+            choices[i]["kdma_association"]["BCD_SIEVE"] = 1.0
             labels[i]["BCD_SIEVE"] = 1.0
-            if include_reasonings:
-                reasonings[i]["BCD_SIEVE"] = tags["bcd_sieve_reason"]
-            case = {"prompt": prompt, "responses": responses, "labels": labels}
-            if include_reasonings:
-                case["reasonings"] = reasonings
+            reasonings[i]["BCD_SIEVE"] = tags["bcd_sieve_reason"]
+
+            case = {"input": {
+                       "scenario_id": filename.stem,
+                       "full_state": {
+                           "unstructured": prompt,
+                           "meta_info": { "scene_id": f"Casualty_{pid}_at_{time}min"},
+                           "scenario_complete": False},
+                       "state": prompt,
+                       "choices": choices,
+                       "label": labels,
+                       "reasoning": reasonings}}
             cases.append(case)
 
     with open(filename, 'w') as file:
         json.dump(cases, file, indent=2)
+
+
+def _create_align_table(scenario: dict) -> str:
+    fields = [0, 1, 2, 3]
+    headings = ["Description", "START", "SALT", "BCD"]
+    alignment = []
+    for i in range(len(fields)):
+        alignment.append(('^', '^'))
+
+    colors = ["Green",
+              "Yellow",
+              "Red",
+              "Black"]
+
+    start_tag = "Green"
+    start_reason = "Missing"
+    salt_tag = "Green"
+    salt_reason = "Missing"
+    bcd_sieve_tag = "Green"
+    bcd_sieve_reason = "Missing"
+    for i, reasons in enumerate(scenario["input"]["reasoning"]):
+        if "START" in reasons:
+            start_tag = colors[i]
+            start_reason = reasons["START"].replace('\n', '<br>')
+        if "SALT" in reasons:
+            salt_tag = colors[i]
+            salt_reason = reasons["SALT"].replace('\n', '<br>')
+        if "BCD_SIEVE" in reasons:
+            bcd_sieve_tag = colors[i]
+            bcd_sieve_reason = reasons["BCD_SIEVE"].replace('\n', '<br>')
+
+    data = [(scenario["input"]["state"].replace('\n', '<br>'),
+             f"{start_tag}<br>&nbsp;<br>{start_reason}",
+             f"{salt_tag}<br>&nbsp;<br>{salt_reason}",
+             f"{bcd_sieve_tag}<br>&nbsp;<br>{bcd_sieve_reason}")]
+
+    table_io = io.StringIO()
+    markdown_table(table_io, data, fields, headings, alignment)
+    table_str = table_io.getvalue()
+    table_io.close()
+    return table_str
+
+
+def create_align_markdown(set_name: str, set_type: str, align: dict, output_dir):
+    anchor = f"itm_align_{set_name}_{set_type}"
+    filename = output_dir / f"{anchor}.md"
+    _logger.info(f"Writing documentation to {filename}")
+
+    with open(filename, 'w') as file:
+        file.write(f"\\anchor {anchor}\n\n")
+        file.write(f"Each section below is independent and represents a single injured casualty and how we tag it.\n\n")
+        file.write("<a href=\"./files/itm/army/itm_align_icl.json\">Download this dataset</a>\n\n")
+
+        for scenario in align:
+            file.write(f"#####{scenario['input']['full_state']['meta_info']['scene_id']}\n\n")
+            file.write(_create_align_table(scenario))
+            file.write(f"\n\n")
 
 
 def main():
@@ -301,6 +364,12 @@ def main():
         "-ex", "--example_file",
         type=Path,
         default=Path("./test_results/itm/triage_study/example_casualties.json"),
+        help="Triage study example file"
+    )
+    parser.add_argument(
+        "-icl", "--icl_file",
+        type=Path,
+        default=Path("./test_results/itm/triage_study/post_processing/align_icl.json"),
         help="Triage study example file"
     )
     parser.add_argument(
@@ -331,6 +400,15 @@ def main():
 
     output_dir = opts.output_dir / dataset.value
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    downloads_dir = Path(f"./docs/html/files/itm/{dataset.value}")
+    downloads_dir.mkdir(parents=True, exist_ok=True)
+    if opts.example_file.exists():
+        shutil.copyfile(opts.example_file, downloads_dir / "itm_example_dataset.json")
+    if opts.eval_file.exists():
+        shutil.copyfile(opts.eval_file, downloads_dir / "itm_eval_dataset.json")
+    if opts.icl_file.exists():
+        shutil.copyfile(opts.icl_file, downloads_dir / "itm_align_icl.json")
 
     output_md_dir = None
     if opts.markdown:
@@ -426,29 +504,36 @@ def main():
             create_markdown(dataset.value, "example", study, output_md_dir)
 
         if opts.to_align_input:
-            create_align_file(study, output_dir/f"align_{opts.example_file.stem}.json", include_reasonings=True)
+            create_align_file(study, output_dir/f"align_{opts.example_file.stem}.json")
+
+    if opts.icl_file.exists():
+        with open(opts.icl_file, 'r') as file:
+            study = json.load(file)
+
+        if opts.markdown:
+            create_align_markdown(dataset.value, "icl", study, output_md_dir)
 
     if opts.eval_file.exists():
         with open(opts.eval_file, 'r') as file:
             study = json.load(file)
 
-        if opts.markdown:
-            create_markdown(dataset.value, "eval", study, output_md_dir)
-
-        if opts.to_align_input:
-            create_align_file(study, output_dir/f"align_{opts.eval_file.stem}.json", include_reasonings=False)
-
         if opts.distribution_tables:
+            output_tb_dir = Path("./docs/html/Images/itm")
+            output_tb_dir.mkdir(parents=True, exist_ok=True)
             # Write out the error images for this generated dataset
             spec = to_specification_lists(study)
-            results_dir = output_dir / opts.distribution_tables.stem
-            results_dir.mkdir(parents=True, exist_ok=True)
-            results_stem = str(results_dir/opts.distribution_tables.stem)
+            results_stem = str(output_tb_dir / "eval_casualties")
             population_error = calculate_population_error(spec, army_population_distributions)
             plot_population_error(population_error, results_stem)
 
             injury_error = calculate_injury_error(spec["injuries"], army_injury_distributions)
             plot_injury_error(injury_error, results_stem)
+
+        if opts.markdown:
+            create_markdown(dataset.value, "eval", study, output_md_dir)
+
+        if opts.to_align_input:
+            create_align_file(study, output_dir/f"align_{opts.eval_file.stem}.json")
 
 
 if __name__ == "__main__":

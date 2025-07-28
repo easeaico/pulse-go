@@ -608,7 +608,7 @@ def plot_injury_error(injury_error: dict, results_stem: str):
         injuries = injury_error[location]["injuries"]
         for injury in sorted(injuries.keys()):
             data.append(_error_row(injury, injuries[injury], False))
-    _create_report(f"{results_stem}_statistics", data, fields, headings)
+    _create_report(f"{results_stem}_injury_statistics", data, fields, headings)
 
 
 def measure_error(iterations: int, population_size: int,

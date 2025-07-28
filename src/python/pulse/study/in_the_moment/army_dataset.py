@@ -329,6 +329,8 @@ class ArmyDataset(TriageDataset):
 
         description = []
         # TODO Mental State, based on duration since injury?
+        #if vitals["survivable_injuries"]:
+        #    description.append("The casualty looks to have {ais} injuries.")
 
         injury_dict = _injury_list_to_dict(injuries)
         for loc, types in injury_dict.items():
@@ -646,7 +648,7 @@ class ArmyDataset(TriageDataset):
 
         # NOTE: SALT Protocol
         survivable_injuries = True
-        if max_severity == 6.0:
+        if max_severity == 6.0 and len(interventions) == 0:
             survivable_injuries = False
 
         healthy_capillary_refill_time = True

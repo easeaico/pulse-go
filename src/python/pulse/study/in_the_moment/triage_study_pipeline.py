@@ -701,6 +701,9 @@ class TriageStudy:
         hemorrhage = vitals["hemorrhage"]
         survivable = vitals["survivable_injuries"]
 
+        # For gathering ICL examples, keep the red/black survivable/not survivable descriptions the same
+        # The only difference should be the NOT. That is looked for in the tagging icl logic
+
         # Is the casualty not breathing?
         if not vitals["breathing"]:
             if Intervention.RepositionAirway in vitals["interventions"]:
@@ -708,8 +711,7 @@ class TriageStudy:
                                            "Repositioning their airway resulted in spontaneous breathing.")
             else:
                 tag.apply(TriageColor.Black, "Casualty is not breathing.\n"
-                                             "Repositioning their airway did not result in spontaneous breathing.\n"
-                                             "Casualty is NOT likely to survive these injuries.")
+                                             "Repositioning their airway did not result in spontaneous breathing.")
 
         # Does the casualty obey commands or make purposeful movements?
         if vitals["avpu"] == AVPU.Pain or vitals["avpu"] == AVPU.Unresponsive:

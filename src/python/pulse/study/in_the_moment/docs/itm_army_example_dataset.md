@@ -15,6 +15,8 @@ Casualty # (AISi) \[sub_type\] \[anatomic location\]\[Time of Death\]
 
 Each casualty is generated using the Pulse StandardMale patient as the casualty.
 
+<a href="./files/itm/army/itm_example_dataset.json">Download this dataset</a>
+
 #### Head and Neck
 
 ##### Airway Obstruction

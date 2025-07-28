@@ -10,7 +10,7 @@ from typing import List
 import PyPulse
 from pulse.cdm.engine import SEAction, SEDataRequest
 from pulse.cdm.physiology import eHeartRhythm
-from pulse.cdm.scalars import PressureUnit, FrequencyUnit, VolumePerTimeUnit, VolumeUnit
+from pulse.cdm.scalars import PressureUnit, FrequencyUnit, VolumePerTimeUnit, VolumeUnit, TimeUnit
 
 
 class AVPU(str, Enum):
@@ -33,10 +33,10 @@ class Intervention(str, Enum):
 
 
 class TriageColor(str, Enum):
-    Black = "Black"
-    Red = "Red"
-    Yellow = "Yellow"
     Green = "Green"
+    Yellow = "Yellow"
+    Red = "Red"
+    Black = "Black"
 
 
 class TriageTag:
@@ -110,6 +110,9 @@ class PulseData:
                                dr_unit.get_string(),
                                to_unit.get_string())
 
+    def get_time(self, unit: TimeUnit):
+        return self._get_value(0, TimeUnit.s, unit)
+
     def get_hr(self, unit: FrequencyUnit):
         return self._get_value(1, FrequencyUnit.Per_min, unit)
 
@@ -170,12 +173,8 @@ class TriageDataset(metaclass=abc.ABCMeta):
                            vitals: dict) -> List[str]:
         pass
 
-    @abc.abstractmethod
-    def vitals_description(self,
-                           duration_min: float,
-                           injuries: List[dict],
-                           actions: List[dict],
-                           vitals: dict) -> List[str]:
+    @staticmethod
+    def vitals_description(vitals: dict) -> List[str]:
         pass
 
     @abc.abstractmethod
