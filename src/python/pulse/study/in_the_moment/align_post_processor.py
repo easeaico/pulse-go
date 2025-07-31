@@ -3,6 +3,7 @@
 
 import logging
 import json
+import shutil
 
 from pathlib import Path
 
@@ -11,9 +12,9 @@ from pulse.cdm.patient_actions import SEAirwayObstruction
 from pulse.cdm.scalars import FrequencyUnit, TimeUnit
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.study.in_the_moment.army_dataset import ArmyDataset
-from pulse.study.in_the_moment.post_processor import create_align_file
+from pulse.study.in_the_moment.triage_post_processor import create_align_dataset, create_align_markdown
 from pulse.study.in_the_moment.triage_dataset import convert_keys_to_int, PulseData
-from triage_study_pipeline import TriageStudy
+from triage_study_pipeline import TriageStudy, Dataset
 
 _log = logging.getLogger('log')
 
@@ -58,6 +59,8 @@ def _find_recoverable_airway_obstruction_vitals(dataset, can_intervene: bool) ->
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
+
+
     # For our training set, we want to gather a set of casualties that contain all tag colors and all tag reasons
     # First we start by programmatically pulling out cases from our example casualty set with unique tag color/reasons
     # Manually examining these sets, we created the following cases for tag color/reasons not in this dataset
@@ -69,7 +72,9 @@ def main():
     salt_survivability = ["Casualty is likely to survive these injuries.",
                           "Casualty is NOT likely to survive these injuries."]
 
+    # TODO Add dataset arg when we add more datasets, we need to know what dataset the casualty file is from
     dataset = ArmyDataset()
+    dataset_name = Dataset.Army
 
     icl_vitals = []
     start_reasons = {}
@@ -108,22 +113,23 @@ def main():
                 unique_bcd_reason = True
             if unique_start_reason or unique_salt_reason or unique_bcd_reason:
                 vitals = triage["vitals"]
-                icl_vitals.append((pid, time, vitals))
+                desc = triage["injury_description"]
+                icl_vitals.append((pid, time, vitals, desc))
                 if salt_survivability[0] in salt_reason or salt_survivability[1] in salt_reason:
                     other_vitals = vitals.copy()
                     other_vitals["survivable_injuries"] = not other_vitals["survivable_injuries"]
-                    icl_vitals.append((pid, f"!{time}", other_vitals))
+                    icl_vitals.append((pid, f"!{time}", other_vitals, desc))
                 break  # We take, at most, 1 visit from a casualty
 
     # The example set does not have a triage state where an airway obstruction is recoverable
     # So let's do this manually and get the vitals for it
     ao_vitals = _find_recoverable_airway_obstruction_vitals(dataset, True)
-    icl_vitals.append((len(study_run)+1, "ao-i", ao_vitals))
+    icl_vitals.append((len(study_run)+1, "ao-i", ao_vitals, ""))
     not_ao_vitals = ao_vitals.copy()
     not_ao_vitals["survivable_injuries"] = not not_ao_vitals["survivable_injuries"]
-    icl_vitals.append((len(study_run)+1, "!ao-i", not_ao_vitals))
+    icl_vitals.append((len(study_run)+1, "!ao-i", not_ao_vitals, ""))
     ao_vitals = _find_recoverable_airway_obstruction_vitals(dataset, False)
-    icl_vitals.append((len(study_run) + 1, "ao", ao_vitals))
+    icl_vitals.append((len(study_run) + 1, "ao", ao_vitals, ""))
 
     _log.info(f"Found {len(start_reasons)} START reasons")
     for reason, pid in start_reasons.items():
@@ -142,6 +148,7 @@ def main():
         pid = items[0]
         time = items[1]
         vitals: dict = items[2]
+        desc = items[3]
 
         start_color, start_reason = TriageStudy.start_tag(vitals)
         salt_color, salt_reason = TriageStudy.salt_tag(vitals)
@@ -154,7 +161,7 @@ def main():
                      "salt_reason": salt_reason,
                      "bcd_sieve": bcd_color,
                      "bcd_sieve_reason": bcd_reason},
-            "injury_description": "",
+            "injury_description": desc,
             "vitals_description": dataset.vitals_description(vitals)
         }
         if pid not in icl_casualties:
@@ -162,7 +169,18 @@ def main():
         visits = icl_casualties[pid]["visits"]
         if time not in visits:
             visits[time] = {"triage": triage}
-    create_align_file(icl_casualties, Path("./test_results/itm/triage_study/post_processing/align_icl.json"))
+
+    align = create_align_dataset(icl_casualties, "example_icl")
+    out_file = Path("./test_results/itm/triage_study/post_processing/align_example_icl.json")
+    _log.info(f"Writing {out_file}")
+    with open(out_file, 'w') as file:
+        json.dump(align, file, indent=2)
+    dl_file = Path("./docs/html/files/itm/army/itm_align_example_icl.json")
+    _log.info(f"Copying to {dl_file}")
+    shutil.copyfile(out_file, dl_file)
+    output_md_dir = Path("./docs/markdown/itm")
+    output_md_dir.mkdir(parents=True, exist_ok=True)
+    create_align_markdown(dataset_name.value, "ex_icl", align, output_md_dir)
 
 
 if __name__ == "__main__":

@@ -20,6 +20,6 @@ AIS values are:
 
 @secreflist
 	@refitem itm_army_example_dataset "Example"
-	@refitem itm_army_eval_dataset "Evaluation"
-	@refitem itm_align_army_icl "ICL"
+	@refitem itm_army_eval1k_dataset "1000 Casualty Evaluation"
+	@refitem itm_army_eval10k_dataset "10000 Casualty Evaluation"
 @endsecreflist

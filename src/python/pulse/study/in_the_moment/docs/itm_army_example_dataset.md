@@ -15,7 +15,11 @@ Casualty # (AISi) \[sub_type\] \[anatomic location\]\[Time of Death\]
 
 Each casualty is generated using the Pulse StandardMale patient as the casualty.
 
-<a href="./files/itm/army/itm_example_dataset.json">Download this dataset</a>
+<a href="./files/itm/army/itm_example_dataset.json">Download the Pulse dataset</a>
+
+<a href="./files/itm/army/itm_example_align.json">Download the Align dataset</a>
+
+<a href="./files/itm/army/itm_align_example_icl.json">Download the Align ICL dataset</a>
 
 #### Head and Neck
 
@@ -42,13 +46,13 @@ Casualties are sorted below into the injury type with the greatest severity.
 
 @insert itm_army_example_thorax_fracture_table.md
 
-##### Hemothorax
-
-@insert itm_army_example_thorax_hemothorax_table.md
-
 ##### Hemorrhage
 
 @insert itm_army_example_thorax_hemorrhage_table.md
+
+##### Hemothorax
+
+@insert itm_army_example_thorax_hemothorax_table.md
 
 ##### Pneumothorax
 

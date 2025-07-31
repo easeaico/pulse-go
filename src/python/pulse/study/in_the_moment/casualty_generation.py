@@ -2,20 +2,18 @@
 # See accompanying NOTICE file for details.
 
 import copy
-import dataframe_image as dfi
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import random
 import statistics
 
 from itertools import combinations
 from pathlib import Path
-from pulse.cdm.utils.markdown import table
 from scipy.stats import truncnorm, norm
 
 from pulse.cdm.utils.math_utils import percent_difference
+from pulse.study.in_the_moment.triage_dataset import create_report
 
 _log = logging.getLogger("pulse")
 
@@ -265,7 +263,7 @@ def plot_population_error(population_error: dict, results_stem: str):
     data.append(_error_row("Male Height", population_error["sex"]["male"]["height"]))
     data.append(_error_row("Male BMI", population_error["sex"]["male"]["bmi"]))
     data.append(_error_row("Heart Rate", population_error["heart_rate"]))
-    _create_report(f"{results_stem}_statistics", data, fields, headings)
+    create_report(f"{results_stem}_statistics", data, fields, headings)
 
     # Sex Count Table
     def _count_row(name: str, error: dict):
@@ -279,7 +277,7 @@ def plot_population_error(population_error: dict, results_stem: str):
     fields = [0, 1, 2, 3]  # All headings
     data.append(_count_row("Female", population_error["sex"]["female"]["count"]))
     data.append(_count_row("Male", population_error["sex"]["male"]["count"]))
-    _create_report(f"{results_stem}_sex", data, fields, headings)
+    create_report(f"{results_stem}_sex", data, fields, headings)
 
 
 def _injury(location_: str, type_: str, severity_: float) -> dict:
@@ -608,7 +606,7 @@ def plot_injury_error(injury_error: dict, results_stem: str):
         injuries = injury_error[location]["injuries"]
         for injury in sorted(injuries.keys()):
             data.append(_error_row(injury, injuries[injury], False))
-    _create_report(f"{results_stem}_injury_statistics", data, fields, headings)
+    create_report(f"{results_stem}_injury_statistics", data, fields, headings)
 
 
 def measure_error(iterations: int, population_size: int,
@@ -724,7 +722,7 @@ def measure_error(iterations: int, population_size: int,
                                  f"{stats['max']:{fmt}}",
                                  f"{stats['mean']:{fmt}}"))
     _log.info(f"\tGenerating demographic reports...")
-    _create_report(f"{results_stem}_demographics", demographic_rows, demographic_fields, demographic_headings)
+    create_report(f"{results_stem}_demographics", demographic_rows, demographic_fields, demographic_headings)
 
     def _injury_dict_field_value(d: dict, f1: str, f2: str, fmt: str):
         if f1 in d and d[f1][f2]:
@@ -762,36 +760,9 @@ def measure_error(iterations: int, population_size: int,
         for type_ in sorted(types.keys()):
             injury_rows.append(_injury_row(type_, types[type_], False))
     _log.info(f"\tGenerating injury reports...")
-    _create_report(f"{results_stem}_injuries", injury_rows, injury_fields, injury_headings)
+    create_report(f"{results_stem}_injuries", injury_rows, injury_fields, injury_headings)
 
     return error
-
-
-def _create_report(basename: str, data, fields, headings, widths=None):
-    align = []
-    for i in range(len(fields)):
-        align.append(('^', '^'))
-    f = open(str(basename) + ".md", "w")
-    table(f, data, fields, headings, align)
-    f.close()
-
-    # Write out table as png
-    wrapped_headers = headings  # ["<br>".join(textwrap.wrap(h, width=20)) for h in headings]
-    df = pd.DataFrame(data, columns=wrapped_headers)
-    df.style.format(escape="html")  # Actually wrap column names
-    df_styler = df.style.hide(axis="index") \
-        .set_properties(subset=wrapped_headers[1:], **{'text-align': 'center'}) \
-        .set_properties(subset=[wrapped_headers[0]], **{'text-align': 'left'}) \
-        .set_properties(**{'border': '1px black solid'})
-    if widths:
-        for i, width in enumerate(widths):
-            df_styler = df_styler.set_properties(subset=wrapped_headers[i], **{'width': width})
-    df_styler.set_table_styles(table_styles=[
-        {'selector': 'th.col_heading', 'props': 'text-align: center; border: 1px black solid;'},
-    ], overwrite=False)
-    img_filename = str(basename) + ".png"
-    _log.info(f"Writing {img_filename}")
-    dfi.export(df_styler, img_filename, table_conversion='playwright', dpi=600)
 
 
 def _random_grouping(pool: list, groups: list, choices: dict) -> list:

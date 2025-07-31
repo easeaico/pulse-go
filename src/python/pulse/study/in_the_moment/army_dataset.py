@@ -14,7 +14,7 @@ from typing import List
 from pulse.cdm.physiology import eHeartRhythm
 from pulse.cdm.scalars import FrequencyUnit, PressureUnit
 from pulse.cdm.utils.math_utils import percent_difference
-from pulse.study.in_the_moment.triage_dataset import Hemorrhage, AVPU, TriageDataset, PulseData, Intervention
+from pulse.study.in_the_moment.triage_dataset import AVPU, TriageDataset, PulseData, Intervention
 from casualty_generation import (casualty_population_generation, population_injury_generation,
                                  test_injury, measure_error, _bounded_random_normal, to_specification_lists,
                                  to_severity_lists, InjurySeverityOpts)
@@ -74,7 +74,7 @@ def _camel_case_split(s: str):
     return [m.group(0) for m in matches]
 
 
-def _injury_list_to_dict(injuries: list):
+def injury_list_to_dict(injuries: list):
     # Collapse injuries to a dict:
     #  location -> type -> [severities]
     # This will make supporting polytraumas easier
@@ -275,13 +275,13 @@ class ArmyDataset(TriageDataset):
         if vitals["avpu"] == AVPU.Alert:
             description.append("The casualty is alert.")
         elif vitals["avpu"] == AVPU.Voice:
-            description.append("The casualty's eyes are closed.\n"
-                               "They are responding to your voice.")
+            description.append("The casualty is not alert.\n"
+                               "They do move in response to your voice.")
         elif vitals["avpu"] == AVPU.Pain:
-            description.append("The casualty's eyes are closed.\n"
+            description.append("The casualty is not alert.\n"
                                "They are not responding to your voice, but they are responding to pain stimuli.")
         else:  # AVPU.Unresponsive
-            description.append("The casualty is unconscious and unresponsive to any stimuli.")
+            description.append("The casualty is unresponsive to any stimuli.")
 
         rr = vitals["respiratory_rate"]
         if not vitals["breathing"]:
@@ -332,7 +332,7 @@ class ArmyDataset(TriageDataset):
         #if vitals["survivable_injuries"]:
         #    description.append("The casualty looks to have {ais} injuries.")
 
-        injury_dict = _injury_list_to_dict(injuries)
+        injury_dict = injury_list_to_dict(injuries)
         for loc, types in injury_dict.items():
             for typ, items in types.items():
                 severities = items["severities"]
@@ -383,8 +383,6 @@ class ArmyDataset(TriageDataset):
                     if typ == "fracture":
                         if vitals["avpu"] == AVPU.Alert:
                             description.append("Casualty is complaining about chest pain.")
-                        else:
-                            description.append("There is no visible injury to the casualty.")
                         continue
 
                     if typ == "hemorrhage":
@@ -408,26 +406,19 @@ class ArmyDataset(TriageDataset):
                         if num == 1:
                             if vitals["avpu"] == AVPU.Alert:
                                 description.append("Casualty is complaining about chest pain.")
-                            else:
-                                description.append("There is no visible injury to the casualty.")
                             continue
 
                         elif num == 2:
                             if vitals["avpu"] == AVPU.Alert:
                                 description.append("Casualty is complaining about chest pain.")
-                            else:
-                                description.append("There is no visible injury to the casualty.")
                             continue
 
                     if typ == "pulmonary_contusion":
                         if vitals["avpu"] == AVPU.Alert:
                             description.append("Casualty is complaining about chest pain.")
-                        else:
-                            description.append("There is no visible injury to the casualty.")
                         continue
 
                     if typ == "spinal":
-                        description.append("There is no visible injury to the casualty.")
                         continue
 
                 if loc == "abdomen":
@@ -447,6 +438,8 @@ class ArmyDataset(TriageDataset):
                         else:
                             sev_mod = "critical"
                         description.append(f"The casualty has a {sev_mod} {typ} from their {loc}.")
+                        if Intervention.WoundPack in vitals["interventions"]:
+                            description.append(f"You were able to pack the wound with gauze to reduce the bleeding.")
                         continue
 
                     if typ == "laceration_contusion":
@@ -463,6 +456,8 @@ class ArmyDataset(TriageDataset):
                         styp = items["sub_types"][0]
                         if styp == "laceration":
                             description.append(f"The casualty has a {sev_mod} skin {styp} to their {loc}.")
+                            if Intervention.WoundPack in vitals["interventions"]:
+                                description.append(f"You were able to pack the wound to reduce the bleeding.")
                         else:
                             description.append(f"The casualty has a {sev_mod} abdominal bruising.")
                         continue
@@ -485,6 +480,8 @@ class ArmyDataset(TriageDataset):
                         else:
                             sev_mod = "critical"
                         description.append(f"The casualty has a {sev_mod} {typ} on their {cmpt}.")
+                        if Intervention.Tourniquet in vitals["interventions"]:
+                            description.append(f"You were able to apply a tourniquet to reduce the bleeding.")
                         continue
 
                     if typ == "fracture_dislocation":
@@ -539,6 +536,11 @@ class ArmyDataset(TriageDataset):
 
                 _log.error(f"Unsupported injury: {loc} {typ}")
                 exit(1)
+
+        if len(description) == 0:
+            description.append("There is no visible injury to the casualty.")
+        if vitals["visible_hemorrhage_severity"] == 0:
+            description.append("There is not a visible hemorrhage.")
 
         return description
 
@@ -627,24 +629,27 @@ class ArmyDataset(TriageDataset):
                     ambulatory = False
 
         # Hemorrhage / Laceration
-        hemorrhage = None
+        visible_hemorrhage_severity = 0
         for injury in synthetic_injuries:
             if injury["type"] == "hemorrhage" or injury["type"] == "laceration_contusion":
                 # TODO support gauze or pressure bandage on thorax hemorrhages?
-                if injury["severity"] > 3:
-                    hemorrhage = Hemorrhage.Major
-                elif not hemorrhage:
-                    hemorrhage = Hemorrhage.Minor
+                if injury["location"] == "thorax":
+                    visible_hemorrhage_severity = max(visible_hemorrhage_severity, injury["severity"])
 
-                if injury["location"] == "abdomen":
+                elif injury["location"] == "abdomen":
+                    if injury["type"] == "hemorrhage":
+                        visible_hemorrhage_severity = max(visible_hemorrhage_severity, injury["severity"])
                     if _can_intervene("abdomen", "hemorrhage"):
                         interventions.append(Intervention.WoundPack)
                     elif injury["sub_type"] and injury["sub_type"] == "laceration":
                         if _can_intervene("abdomen", "laceration_contusion"):
                             interventions.append(Intervention.WoundPack)
+                        visible_hemorrhage_severity = max(visible_hemorrhage_severity, injury["severity"])
+
                 elif injury["location"] == "extremity":
                     if _can_intervene("extremity", "hemorrhage"):
                         interventions.append(Intervention.Tourniquet)
+                    visible_hemorrhage_severity = max(visible_hemorrhage_severity, injury["severity"])
 
         # NOTE: SALT Protocol
         survivable_injuries = True
@@ -666,7 +671,6 @@ class ArmyDataset(TriageDataset):
                 "healthy_capillary_refill_time": healthy_capillary_refill_time,
                 "heart_rate": pulse_data.get_hr(FrequencyUnit.Per_min),
                 "heart_rhythm": pulse_data.get_heart_rhythm().name,
-                "hemorrhage": hemorrhage,
                 "interventions": interventions,
                 "iss": iss,
                 "major_injuries": True if max_severity > 3 else False,
@@ -675,7 +679,8 @@ class ArmyDataset(TriageDataset):
                 "spO2": pulse_data.get_spo2(),
                 "systolic_pressure": pulse_data.get_systolic_pressure(PressureUnit.mmHg),
                 "diastolic_pressure": pulse_data.get_diastolic_pressure(PressureUnit.mmHg),
-                "survivable_injuries": survivable_injuries
+                "survivable_injuries": survivable_injuries,
+                "visible_hemorrhage_severity": visible_hemorrhage_severity,
                 }
 
     def injury_actions(self, injuries: list) -> List[SEAction]:
@@ -696,7 +701,7 @@ class ArmyDataset(TriageDataset):
         # Collapse injuries to a dict:
         #  location -> type -> [severities]
         # This will make supporting polytraumas easier
-        injury_dict = _injury_list_to_dict(injuries)
+        injury_dict = injury_list_to_dict(injuries)
 
         # Create a ledger to for AIS polytraumas to pulse
         # We will sum AIS score and join pulse severity ranges

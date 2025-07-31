@@ -2,15 +2,21 @@
 # See accompanying NOTICE file for details.
 
 import abc
+import dataframe_image as dfi
+import logging
+import pandas as pd
 
 from enum import Enum
 from typing import List
-
 
 import PyPulse
 from pulse.cdm.engine import SEAction, SEDataRequest
 from pulse.cdm.physiology import eHeartRhythm
 from pulse.cdm.scalars import PressureUnit, FrequencyUnit, VolumePerTimeUnit, VolumeUnit, TimeUnit
+from pulse.cdm.utils.markdown import table
+
+
+_log = logging.getLogger("pulse")
 
 
 class AVPU(str, Enum):
@@ -18,11 +24,6 @@ class AVPU(str, Enum):
     Voice = "Voice"
     Pain = "Pain"
     Unresponsive = "Unresponsive"
-
-
-class Hemorrhage(str, Enum):
-    Minor = "Minor"
-    Major = "Major"
 
 
 class Intervention(str, Enum):
@@ -198,3 +199,30 @@ def convert_keys_to_int(obj):
         except ValueError:
             new_obj[k] = v
     return new_obj
+
+
+def create_report(basename: str, data, fields, headings, widths=None):
+    align = []
+    for i in range(len(fields)):
+        align.append(('^', '^'))
+    f = open(str(basename) + ".md", "w")
+    table(f, data, fields, headings, align)
+    f.close()
+
+    # Write out table as png
+    wrapped_headers = headings  # ["<br>".join(textwrap.wrap(h, width=20)) for h in headings]
+    df = pd.DataFrame(data, columns=wrapped_headers)
+    df.style.format(escape="html")  # Actually wrap column names
+    df_styler = df.style.hide(axis="index") \
+        .set_properties(subset=wrapped_headers[1:], **{'text-align': 'center'}) \
+        .set_properties(subset=[wrapped_headers[0]], **{'text-align': 'left'}) \
+        .set_properties(**{'border': '1px black solid'})
+    if widths:
+        for i, width in enumerate(widths):
+            df_styler = df_styler.set_properties(subset=wrapped_headers[i], **{'width': width})
+    df_styler.set_table_styles(table_styles=[
+        {'selector': 'th.col_heading', 'props': 'text-align: center; border: 1px black solid;'},
+    ], overwrite=False)
+    img_filename = str(basename) + ".png"
+    _log.info(f"Writing {img_filename}")
+    dfi.export(df_styler, img_filename, table_conversion='chrome', chrome_path=None, fontsize=4, max_cols=200, max_rows=200, dpi=600)

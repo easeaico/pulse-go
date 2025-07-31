@@ -27,7 +27,7 @@ from pulse.engine.PulseEngine import PulseEngine
 from pulse.engine.PulseEngineResults import PulseEngineReprocessor, PulseResultsProcessor, PulseLogAction
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
 from pulse.study.in_the_moment.casualty_generation import InjurySeverityOpts
-from pulse.study.in_the_moment.triage_dataset import AVPU, TriageTag, TriageColor, Hemorrhage, PulseData, \
+from pulse.study.in_the_moment.triage_dataset import AVPU, TriageTag, TriageColor, PulseData, \
     Intervention, convert_keys_to_int
 
 _log = logging.getLogger("pulse")
@@ -210,24 +210,27 @@ class TriageStudy:
                 _log.error(f"Unable to load file {file}: {e}")
         else:
             self._triage_study = self._dataset.generate_dataset(num_casualties, injury_opts=self.injury_opts)
-            if num_casualties > 0:
-                invalid = []
-                p = SEPatient()
-                pulse = PulseEngine()
-                pulse.log_to_console(False)
-                for i, casualty in self._triage_study.items():
-                    p.clear()
-                    spec = casualty["specification"]
-                    if spec["sex"] == "female":
-                        p.set_sex(eSex.Female)
-                    p.get_age().set_value(spec["age"], TimeUnit.yr)
-                    p.get_height().set_value(spec["height"], LengthUnit.cm)
-                    p.get_body_mass_index().set_value(spec["bmi"])
-                    # HR range is too wide, not using it for now
-                    # p.get_heart_rate_baseline().set_value(spec["heart_rate"], FrequencyUnit.Per_min)
-                    if not pulse.is_valid_patient(p):
-                        invalid.append(i)
-                _log.info(f"Removing {len(invalid)}/{num_casualties} invalid Pulse patients from this population.")
+
+            # Check Pulse can simulate patients
+            invalid = []
+            p = SEPatient()
+            pulse = PulseEngine()
+            pulse.log_to_console(False)
+            for i, casualty in self._triage_study.items():
+                p.clear()
+                spec = casualty["specification"]
+                if spec["sex"] == "female":
+                    p.set_sex(eSex.Female)
+                p.get_age().set_value(spec["age"], TimeUnit.yr)
+                p.get_height().set_value(spec["height"], LengthUnit.cm)
+                p.get_body_mass_index().set_value(spec["bmi"])
+                # HR range is too wide, not using it for now
+                # p.get_heart_rate_baseline().set_value(spec["heart_rate"], FrequencyUnit.Per_min)
+                if not pulse.is_valid_patient(p):
+                    invalid.append(i)
+                    _log.warning(f"Pulse cannot simulate casualty {i}\n{spec}")
+            if len(invalid) > 0:
+                _log.info(f"Removed {len(invalid)}/{num_casualties} invalid Pulse patients from this population.")
                 for i in invalid:
                     self._triage_study.pop(i)
 
@@ -698,7 +701,6 @@ class TriageStudy:
             tag.apply(TriageColor.Green, "Casualty is ambulatory.")
             return tag.color, tag.reason
 
-        hemorrhage = vitals["hemorrhage"]
         survivable = vitals["survivable_injuries"]
 
         # For gathering ICL examples, keep the red/black survivable/not survivable descriptions the same
@@ -740,21 +742,14 @@ class TriageStudy:
                 tag.apply(TriageColor.Black, "Casualty is in respiratory distress.\n"
                                              "Casualty is NOT likely to survive these injuries.")
 
-        # Does the casually have a major, uncontrollable hemorrhage?
-        elif hemorrhage == Hemorrhage.Major:
-            if Intervention.WoundPack in vitals["interventions"]:
+        # Does the casualty have a major hemorrhage?
+        elif vitals["visible_hemorrhage_severity"] >= 4:
+            if survivable:
                 tag.apply(TriageColor.Red, "Casualty has a major hemorrhage.\n"
-                                           "You were able to pack the wound with gauze to reduce the bleeding.")
-            elif Intervention.Tourniquet in vitals["interventions"]:
-                tag.apply(TriageColor.Red, "Casualty has a major hemorrhage.\n"
-                                           "You were able to apply a tourniquet to reduce the bleeding.")
+                                           "Casualty is likely to survive these injuries.")
             else:
-                if survivable:
-                    tag.apply(TriageColor.Red, "Casualty has a major hemorrhage.\n"
-                                               "Casualty is likely to survive these injuries.")
-                else:
-                    tag.apply(TriageColor.Black, "Casualty has a major hemorrhage.\n"
-                                                 "Casualty is NOT likely to survive these injuries.")
+                tag.apply(TriageColor.Black, "Casualty has a major hemorrhage.\n"
+                                             "Casualty is NOT likely to survive these injuries.")
 
         # Nothing too crazy...
         else:
@@ -773,8 +768,7 @@ class TriageStudy:
             tag.apply(TriageColor.Green, "Casualty is ambulatory.")
             return tag.color, tag.reason
 
-        hemorrhage = vitals["hemorrhage"]
-        if hemorrhage and hemorrhage == Hemorrhage.Major:
+        if vitals["visible_hemorrhage_severity"] >= 4:
             tag.apply(TriageColor.Red, "Casualty has catastrophic hemorrhage.")
 
         if not vitals["breathing"]:
