@@ -539,7 +539,7 @@ class TriageStudy:
                 }
                 data["visits"][time_min] = {"triage": triage}
             # Take the last visit out, and it will be our final state (no intervention)
-            if final_time in data["visits"]:
+            if "death" not in data and final_time in data["visits"]:
                 final_visit = data["visits"].pop(final_time)
                 final_visit["time"] = final_time
                 data["final"] = final_visit
