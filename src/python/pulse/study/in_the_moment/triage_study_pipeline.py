@@ -138,7 +138,7 @@ class TriageStudy:
                  "_injury_scenarios_dir", "_injury_states_dir", "_injury_outputs_dir", "_injury_exec_status_filename",
                  "_intervention_scenarios_dir", "_intervention_outputs_dir", "_intervention_exec_status_filename",
                  "_total_interventions",
-                 "injury_opts"
+                 "injury_opts", "keep_triage"
                  ]
 
     def __init__(self, dataset: Dataset, output_dir: Path):
@@ -160,6 +160,7 @@ class TriageStudy:
         self._intervention_outputs_dir = None
         self._intervention_exec_status_filename = None
         self.injury_opts = InjurySeverityOpts()
+        self.keep_triage = True
 
     def _set_artifact_folder_name(self, folder: str):
         # Directories and files associated with simulating injuries using Pulse
@@ -182,6 +183,16 @@ class TriageStudy:
     @property
     def total_interventions(self): return self._total_interventions
 
+    @staticmethod
+    def _clear_casualty(casualty: dict):
+        keys_to_remove = []
+        for key, item in casualty.items():
+            if key == "specification":
+                continue
+            keys_to_remove.append(key)
+        for key in keys_to_remove:
+            casualty.pop(key)
+
     def triage(self, num_casualties: int, tgt_id: int = None, skip_visited: bool = False,
                untreated_injury_time_min: int = 5, state_interval_min: int = 5, total_injury_duration_min: int = 60):
         start_time = timer()
@@ -194,18 +205,13 @@ class TriageStudy:
             try:
                 with open(file, 'r') as f:
                     self._triage_study = json.load(f, object_hook=convert_keys_to_int)
-                # Only keep patient specifications, everything else will be regenerated
-                for i, casualty in self._triage_study.items():
-                    if self._tgt_id:
-                        if i != self._tgt_id:
-                            continue
-                    keys_to_remove = []
-                    for key, item in casualty.items():
-                        if key == "specification":
-                            continue
-                        keys_to_remove.append(key)
-                    for key in keys_to_remove:
-                        casualty.pop(key)
+                if not self.keep_triage:
+                    # Only keep patient specifications, everything else will be regenerated
+                    for i, casualty in self._triage_study.items():
+                        if self._tgt_id:
+                            if i != self._tgt_id:
+                                continue
+                        self._clear_casualty(casualty)
             except Exception as e:
                 _log.error(f"Unable to load file {file}: {e}")
         else:
@@ -284,7 +290,7 @@ class TriageStudy:
 
         # Triage all the injury states
         start_time = timer()
-        self._triage_injured_states()
+        self._triage_injured_states(out_file)
         elapsed_time = timer() - start_time
         _log.info(f"It took {elapsed_time / 60:.1f} min to triage injuries")
 
@@ -386,11 +392,6 @@ class TriageStudy:
                 s.get_data_request_manager().set_results_filename(f"{self._injury_outputs_dir}/"
                                                                   f"casualty_{i}/initial_injury.csv")
 
-                # Add a bit of buffer to show casualty baseline
-                adv = SEAdvanceTime()
-                adv.get_time().set_value(0.5, TimeUnit.min)
-                s.get_actions().append(adv)
-
                 injury_duration_min = 0.0
                 # Add the injuries
                 _log.info(f"Translating injuries to Pulse: {sp['injuries']}")
@@ -459,11 +460,20 @@ class TriageStudy:
             i = int(sce[sce.find('_')+1:])
             self._triage_study[i]["injury_exec_status"] = _exec_status_to_dict(status)
 
-    def _triage_injured_states(self):
+    def _triage_injured_states(self, out_file: Path):
+        _log.info("Triaging injured casualties")
         for i, data in self._triage_study.items():
             if self._tgt_id:
                 if i != self._tgt_id:
                     continue
+
+            if self.keep_triage:
+                if ("injury_exec_status" in data and
+                        "pulse_injuries" in data and
+                        "visits" in data and ("final" in data or "death" in data)):
+                    # Check to see if there is triage data already for this run
+                    continue
+
             _log.info(f"Triaging casualty {i} - {data['specification']['injuries']}")
 
             exec_status = data["injury_exec_status"]
@@ -543,6 +553,11 @@ class TriageStudy:
                 final_visit = data["visits"].pop(final_time)
                 final_visit["time"] = final_time
                 data["final"] = final_visit
+
+            if self.keep_triage:
+                # Save out the study file to preserve our triage data
+                with open(out_file, 'w') as f:
+                    json.dump(self._triage_study, f, indent=2)
 
     @staticmethod
     def calculate_triss_score(vitals: dict):
@@ -880,13 +895,13 @@ class TriageStudy:
                 if i != self._tgt_id:
                     v += 1
                     continue
-            for time_s, visit in casualty["visits"].items():
+            for time, visit in casualty["visits"].items():
                 if "intervention" not in visit:
                     continue
                 sce = Path(intervention_exec_status[v].get_scenario_filename()).parts[-2]
                 sce_id = int(sce[sce.find('_') + 1:])
                 if sce_id != i:
-                    _log.error("Mismatch of intervention exec status to casualty status")
+                    _log.error(f"Mismatch of intervention status for casualty {i}@{time}, found status for {sce_id}")
                     exit(1)
                 visit["intervention"]["intervention_exec_status"] = _exec_status_to_dict(intervention_exec_status[v])
                 v += 1
@@ -1001,6 +1016,11 @@ def main():
         default=None,
         help="Specific casualty id to triage"
     )
+    parser.add_argument(
+        "-kt", "--keep_triage",
+        action='store_true',
+        help="Keep the triage data preserved and only triage casualties who have not been visited.\n"
+    )
 
     # Special arguments
     parser.add_argument(
@@ -1029,11 +1049,13 @@ def main():
 
     triage_study = TriageStudy(Dataset.Army, output_dir)
     if opts.example:
+        triage_study.keep_triage = opts.keep_triage
         triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
         triage_study.triage(num_casualties=0, tgt_id=opts.id, skip_visited=opts.skip_visited,
                             untreated_injury_time_min=5, state_interval_min=5, total_injury_duration_min=60)
     elif opts.num_casualties:
+        triage_study.keep_triage = opts.keep_triage
         triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
         triage_study.triage(num_casualties=opts.num_casualties, tgt_id=opts.id, skip_visited=opts.skip_visited,
