@@ -13,7 +13,7 @@ If you have a publication that you would like added to this list, please email <
 
 Relevant Publications:
 
-- Webb, Jeffrey, Aaron Bray, Satish Chimakurthi, and Rachel B. Clipp. “A Heterogeneous Bronchopulmonary Computational Physiology Model for Multiphysics Analysis of Primary Blast Lung Injury.” Preprint available on SSRN, posted July 8, 2025. http://dx.doi.org/10.2139/ssrn.5337027.
+- Webb, Jeffrey, Aaron Bray, Satish Chimakurthi, and Rachel B. Clipp. "A Heterogeneous Bronchopulmonary Computational Physiology Model for Multiphysics Analysis of Primary Blast Lung Injury." Preprint available on SSRN, posted July 8, 2025. http://dx.doi.org/10.2139/ssrn.5337027.
 - Clipp, Rachel B., PhD, Jeffery B. Webb, Aaron Bray, Matthew D. Bacchetta, MD, Rei Ukita, PhD, and Steve Keller, MD, PhD. "Improved Hemorrhage and Resuscitation Simulations Validated with Swine Data." Presented at the Military Health System Research Symposium (MHSRS), 2025.
 - Webb, Jeffery B., Aaron Bray, Rachel B. Clipp, PhD, Rei Ukita, PhD, Matthew D. Bacchetta, MD, and Steve Keller, MD, PhD. "Advancing Life Support with an Open Source ECMO Simulation Model." Presented at the Military Health System Research Symposium (MHSRS), 2025.
 - Veenhuis, Emily, Aaron Bray, David Joy, Jadie Adams, PhD, Rachel B. Clipp, PhD, Jeffrey B. Webb, Brian Hu, PhD, and Arslan Basharat, PhD. "Aligning a Large Language Model to Protocol-Based Medical Triage Decision-Making." Presented at the Military Health System Research Symposium (MHSRS), 2025.
