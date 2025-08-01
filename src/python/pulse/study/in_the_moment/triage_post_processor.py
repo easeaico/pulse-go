@@ -921,8 +921,9 @@ def main():
 
     def _process_eval_file(eval_file: Path, set_name: str):
         if eval_file.exists():
-            with open(eval_file, 'r') as eval_file:
-                eval_study = json.load(eval_file)
+            with open(eval_file, 'r') as ef:
+                eval_study = json.load(ef)
+            _log.info(f"There are {len(eval_study)} casualties in {eval_file}")
 
             if opts.create_plots:
                 output_tb_dir = Path(f"./docs/html/Images/itm/{set_name}")
