@@ -158,9 +158,9 @@ def calculate_population_error(population: dict, distributions: dict) -> dict:
         _log.error("Must provide the percent percentage of either male's or female's")
         return {}
     female_count["synthetic"] = 100 * population["sex"].count("female") / len(population["sex"])
-    female_count["error"] = female_count["synthetic"] - female_count["actual"]
+    female_count["error"] = percent_difference(female_count["synthetic"], female_count["actual"])
     male_count["synthetic"] = 100 * population["sex"].count("male") / len(population["sex"])
-    male_count["error"] = male_count["synthetic"] - male_count["actual"]
+    male_count["error"] = percent_difference(male_count["synthetic"], male_count["actual"])
 
     # Height and BMI
     female_heights = []
@@ -179,29 +179,29 @@ def calculate_population_error(population: dict, distributions: dict) -> dict:
                      "actual_mean": distributions["sex"]["female"]["height"]["mean"],
                      "synthetic_std": np.std(female_heights),
                      "actual_std": distributions["sex"]["female"]["height"]["std"]}
-    female_height["mean_error"] = female_height["synthetic_mean"] - female_height["actual_mean"]
-    female_height["std_error"] = female_height["synthetic_std"] - female_height["actual_std"]
+    female_height["mean_error"] = percent_difference(female_height["synthetic_mean"], female_height["actual_mean"])
+    female_height["std_error"] = percent_difference(female_height["synthetic_std"], female_height["actual_std"])
 
     male_height = {"synthetic_mean": np.mean(male_heights),
                    "actual_mean": distributions["sex"]["male"]["height"]["mean"],
                    "synthetic_std": np.std(male_heights),
                    "actual_std": distributions["sex"]["male"]["height"]["std"]}
-    male_height["mean_error"] = male_height["synthetic_mean"] - male_height["actual_mean"]
-    male_height["std_error"] = male_height["synthetic_std"] - male_height["actual_std"]
+    male_height["mean_error"] = percent_difference(male_height["synthetic_mean"], male_height["actual_mean"])
+    male_height["std_error"] = percent_difference(male_height["synthetic_std"], male_height["actual_std"])
 
     female_bmi = {"synthetic_mean": np.mean(female_bmis),
                   "actual_mean": distributions["sex"]["female"]["bmi"]["mean"],
                   "synthetic_std": np.std(female_bmis),
                   "actual_std": distributions["sex"]["female"]["bmi"]["std"]}
-    female_bmi["mean_error"] = female_bmi["synthetic_mean"] - female_bmi["actual_mean"]
-    female_bmi["std_error"] = female_bmi["synthetic_std"] - female_bmi["actual_std"]
+    female_bmi["mean_error"] = percent_difference(female_bmi["synthetic_mean"], female_bmi["actual_mean"])
+    female_bmi["std_error"] = percent_difference(female_bmi["synthetic_std"], female_bmi["actual_std"])
 
     male_bmi = {"synthetic_mean": np.mean(male_bmis),
                 "actual_mean": distributions["sex"]["male"]["bmi"]["mean"],
                 "synthetic_std": np.std(male_bmis),
                 "actual_std": distributions["sex"]["male"]["bmi"]["std"]}
-    male_bmi["mean_error"] = male_bmi["synthetic_mean"] - male_bmi["actual_mean"]
-    male_bmi["std_error"] = male_bmi["synthetic_std"] - male_bmi["actual_std"]
+    male_bmi["mean_error"] = percent_difference(male_bmi["synthetic_mean"], male_bmi["actual_mean"])
+    male_bmi["std_error"] = percent_difference(male_bmi["synthetic_std"], male_bmi["actual_std"])
 
     error["sex"] = {"female": {"count": female_count, "height": female_height, "bmi": female_bmi},
                     "male": {"count": male_count, "height": male_height, "bmi": male_bmi}}
@@ -211,8 +211,8 @@ def calculate_population_error(population: dict, distributions: dict) -> dict:
                            "actual_mean": distributions["heart_rate"]["mean"],
                            "synthetic_std": np.std(population["heart_rate"]),
                            "actual_std": distributions["heart_rate"]["std"]}
-    error["heart_rate"]["mean_error"] = error["heart_rate"]["synthetic_mean"] - error["heart_rate"]["actual_mean"]
-    error["heart_rate"]["std_error"] = error["heart_rate"]["synthetic_std"] - error["heart_rate"]["actual_std"]
+    error["heart_rate"]["mean_error"] = percent_difference(error["heart_rate"]["synthetic_mean"], error["heart_rate"]["actual_mean"])
+    error["heart_rate"]["std_error"] = percent_difference(error["heart_rate"]["synthetic_std"], error["heart_rate"]["actual_std"])
 
     # Age
     age_bins = distributions["age"]["bins"]
@@ -243,6 +243,8 @@ def plot_population_error(population_error: dict, results_stem: str):
     axes[1].set_xlabel("Age")
     axes[1].set_ylabel("Normalized Frequency")
     plt.savefig(f"{results_stem}_age_histogram.jpg", format="jpeg")
+    plt.clf()  # Clears the entire figure
+    plt.close()
 
     # Error Table
     def _error_row(name: str, error: dict):
@@ -255,8 +257,8 @@ def plot_population_error(population_error: dict, results_stem: str):
                 f"{error['std_error']:.3f}")
     data = []
     headings = ["Descriptor",
-                "Synthetic Mean", "Actual Mean", "Mean Error",
-                "Synthetic SD", "Actual SD", "SD Error"]
+                "Synthetic Mean", "Actual Mean", "Mean % Difference",
+                "Synthetic SD", "Actual SD", "SD % Difference"]
     fields = [0, 1, 2, 3, 4, 5, 6]  # All headings
     data.append(_error_row("Female Height", population_error["sex"]["female"]["height"]))
     data.append(_error_row("Female BMI", population_error["sex"]["female"]["bmi"]))
@@ -532,16 +534,16 @@ def calculate_injury_error(patients_injuries: list, injury_distributions: dict) 
         location_error = error[location]
         location_error["synthetic_distribution"] = 100 * location_error["count"] / len(patients_injuries)
         location_error["actual_distribution"] = location_distributions["percent"]
-        location_error["distribution_error"] = (location_error["synthetic_distribution"] -
-                                                location_error["actual_distribution"])
+        location_error["distribution_error"] = percent_difference(location_error["synthetic_distribution"],
+                                                                  location_error["actual_distribution"])
         # Injury Type Distributions
         location_severities = []
         injury_distributions = location_distributions["types"]
         for injury, injury_error in location_error["injuries"].items():
             injury_error["synthetic_distribution"] = 100 * injury_error["count"] / location_error["count"]
             injury_error["actual_distribution"] = injury_distributions[injury]["percent"]
-            injury_error["distribution_error"] = (injury_error["synthetic_distribution"] -
-                                                  injury_error["actual_distribution"])
+            injury_error["distribution_error"] = percent_difference(injury_error["synthetic_distribution"],
+                                                                    injury_error["actual_distribution"])
 
             location_severities.extend(injury_error["severities"])
             injury_severity = injury_distributions[injury]["severity"]
@@ -598,8 +600,8 @@ def plot_injury_error(injury_error: dict, results_stem: str):
                 _dict_field_value(error, "severity_mean_error", ".3f"))
     data = []
     headings = ["Injury Location", "Injury Type", "Count",
-                "Synthetic Distribution %", "Actual Distribution %", "Distribution % Error",
-                "Synthetic Severity Mean", "Actual Severity Mean", "Severity Mean % Error"]
+                "Synthetic Distribution %", "Actual Distribution %", "Distribution % Difference",
+                "Synthetic Severity Mean", "Actual Severity Mean", "Severity Mean % Difference"]
     fields = [0, 1, 2, 3, 4, 5, 6, 7, 8]  # All headings
     for location in sorted(injury_error.keys()):
         data.append(_error_row(location, injury_error[location], True))

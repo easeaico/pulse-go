@@ -157,6 +157,11 @@ class PulseLog:
                         while (idx + 1) < len(lines) and len(lines[idx + 1].strip()) != 0:
                             idx += 1
                             line = lines[idx]
+                            if '[' in line:
+                                # This should not be here, something corrupted the log
+                                # If you want to use [ ] in a comment, we'd need to strengthen this logic
+                                _pulse_logger.error("Action json is corrupted")
+                                break
                             action_text = ''.join([action_text, line])
 
                         # Attempt to determine action name

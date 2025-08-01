@@ -1,6 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
-
+import copy
 import logging
 import json
 import shutil
@@ -13,7 +13,7 @@ from pulse.cdm.scalars import FrequencyUnit, TimeUnit
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.study.in_the_moment.army_dataset import ArmyDataset
 from pulse.study.in_the_moment.triage_post_processor import create_align_dataset, create_align_markdown
-from pulse.study.in_the_moment.triage_dataset import convert_keys_to_int, PulseData
+from pulse.study.in_the_moment.triage_dataset import convert_keys_to_int, PulseData, TriageColor
 from triage_study_pipeline import TriageStudy, Dataset
 
 _log = logging.getLogger('log')
@@ -56,10 +56,7 @@ def _find_recoverable_airway_obstruction_vitals(dataset, can_intervene: bool) ->
     return vitals
 
 
-def main():
-    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-
-
+def generate_icl_examples():
 
     # For our training set, we want to gather a set of casualties that contain all tag colors and all tag reasons
     # First we start by programmatically pulling out cases from our example casualty set with unique tag color/reasons
@@ -124,10 +121,10 @@ def main():
     # The example set does not have a triage state where an airway obstruction is recoverable
     # So let's do this manually and get the vitals for it
     ao_vitals = _find_recoverable_airway_obstruction_vitals(dataset, True)
-    icl_vitals.append((len(study_run)+1, "ao-i", ao_vitals, ""))
+    icl_vitals.append((len(study_run) + 1, "ao-i", ao_vitals, ""))
     not_ao_vitals = ao_vitals.copy()
     not_ao_vitals["survivable_injuries"] = not not_ao_vitals["survivable_injuries"]
-    icl_vitals.append((len(study_run)+1, "!ao-i", not_ao_vitals, ""))
+    icl_vitals.append((len(study_run) + 1, "!ao-i", not_ao_vitals, ""))
     ao_vitals = _find_recoverable_airway_obstruction_vitals(dataset, False)
     icl_vitals.append((len(study_run) + 1, "ao", ao_vitals, ""))
 
@@ -181,6 +178,103 @@ def main():
     output_md_dir = Path("./docs/markdown/itm")
     output_md_dir.mkdir(parents=True, exist_ok=True)
     create_align_markdown(dataset_name.value, "ex_icl", align, output_md_dir)
+
+
+def compare_results():
+
+    triage_study = Path("./test_results/itm/triage_study/1000_casualties.json")
+    with open(triage_study, 'r') as f:
+        study_run = json.load(f, object_hook=convert_keys_to_int)
+
+    align_output_dir = Path("./test_results/itm/triage_study/align/outputs_20250731")
+    eval_type = "fewshot"
+    protocol = "bcd"
+    align_results = align_output_dir / f"eval_{eval_type}/{protocol}/input_output.json"
+    with open(align_results, 'r') as f:
+        align_run = json.load(f)
+
+    num_study_runs = len(study_run)
+    num_align_runs = len(align_run)
+    if num_study_runs != num_align_runs:
+        _log.warning(f"Number of casualties does not match. Triage: {num_study_runs} vs Align: {num_align_runs}")
+
+        if num_study_runs > num_align_runs:
+            align_casualties = []
+            # Get all the casualty id's in align
+            for align in align_run:
+                probe_id = align["input"]["full_state"]["meta_info"][0].split('_')
+                casualty_id = int(probe_id[1])
+                time = probe_id[3][:4]
+                align_casualties.append(casualty_id)
+            missing = []
+            for tid, run in study_run.items():
+                if tid not in align_casualties:
+                    missing.append(tid)
+                    if len(run["visits"]) == 0:
+                        if "death" in run:
+                            if run["death"]["time"] < 15:
+                                missing.pop(-1)
+            if len(missing):
+                for missed in missing:
+                    _log.error(f"Align is missing casualty {missed}")
+            else:  # TODO Could work on getting align to recognize deceased casualty descriptions
+                _log.info(f"\tIt's ok, missing patients died before our triage time and were not included for eval.")
+        else:
+            _log.fatal("There are more probes than casualties, (probably multiple times per casualty). "
+                       "This code id not set up for that yet.")
+            exit(1)
+
+    if protocol == "bcd":
+        protocol = protocol + "_sieve"
+    triage_colors = list(TriageColor)
+
+    align_tag_counts = {TriageColor.Green: 0, TriageColor.Yellow: 0, TriageColor.Red: 0, TriageColor.Black: 0}
+    triage_tag_counts = copy.deepcopy(align_tag_counts)
+
+    num_missed = 0
+    missed_injuries = {}
+    for align in align_run:
+        probe_id = align["input"]["full_state"]["meta_info"][0].split('_')
+        casualty_id = int(probe_id[1])
+        time = probe_id[3][:4]
+        expected_align_tag = None
+        for i, label in enumerate(align["label"]):
+            if protocol.upper() in label:
+                expected_align_tag = triage_colors[i]
+        align_tag = triage_colors[align["output"]["action"]["action_id"]]
+        align_reason = align["output"]["action"]["justification"]
+
+        triage = study_run[casualty_id]["visits"][time]["triage"]
+        triage_tag = triage["tags"][protocol]
+
+        if expected_align_tag != triage_tag:
+            _log.error(f"Uh-oh")
+        align_tag_counts[align_tag] += 1
+        triage_tag_counts[triage_tag] += 1
+
+        if triage_tag != align_tag:
+            num_missed += 1
+            _log.warning(f"Casualty {casualty_id} tag does not match")
+            _log.warning(f"\t Triage: {triage_tag}: {triage['tags'][f'{protocol}_reason']}")
+            _log.warning(f"\t Align: {align_tag}: {align_reason}")
+            for injury in study_run[casualty_id]["specification"]["injuries"]:
+                inj = f"{injury['location']}-{injury['type']}"
+                _log.warning(f"\t\t{inj} {injury['severity']}")
+                if inj not in missed_injuries:
+                    missed_injuries[inj] = 0
+                missed_injuries[inj] += 1
+            _log.warning(f"Description:\n{align['input']['state']}")
+
+    _log.info(f"Align missed {num_missed} tags out of {num_align_runs} ({num_missed/num_align_runs*100}%)")
+    for inj, cnt in missed_injuries.items():
+        _log.info(f"{inj}: {cnt}")
+
+def main():
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
+    # generate_icl_examples()
+
+    compare_results()
 
 
 if __name__ == "__main__":

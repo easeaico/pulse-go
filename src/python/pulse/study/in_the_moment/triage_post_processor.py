@@ -286,7 +286,7 @@ def create_align_dataset(study_run: dict, scenario_id: str) -> list:
                        "scenario_id": scenario_id,
                        "full_state": {
                            "unstructured": prompt,
-                           "meta_info": { "scene_id": f"Casualty_{pid}_at_{time}min"},
+                           "meta_info": {"scene_id": f"Casualty_{pid}_at_{time}min"},
                            "scenario_complete": False},
                        "state": prompt,
                        "choices": choices
@@ -374,19 +374,22 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
             values = []
             for count in survivability_counts[p][key]["time_counts"].values():
                 values.append(count / total_casualties * 100)
-            plt.plot(times, values, label=p, color=styles[s][0], linestyle=styles[s][1], linewidth=8)
+            plt.plot(times, values, label=p, color=styles[s][0], linestyle=styles[s][1], linewidth=4)
 
         # Add plot enhancements
         plt_file = f"{output_dir}_{key}_survivability.png"
         _log.info(f"Writing plot {plt_file}")
-        plt.title(f"{key} survivability", fontsize=54)
-        plt.xlabel("Time (min)", fontsize=32)
-        plt.ylabel("Survival Rate (%)", fontsize=32)
-        plt.xticks(fontsize=18)  # For x-axis tick labels
-        plt.yticks(fontsize=18)  # For y-axis tick labels
-        plt.legend(fontsize=18)
-        plt.savefig(plt_file, dpi=64)
+        plt.title(f"{key} survivability", fontsize=24)
+        plt.xlabel("Time (min)", fontsize=14)
+        plt.ylabel("Survival Rate (%)", fontsize=14)
+        plt.ylim(top=101.0, bottom=0.0)
+        plt.xticks(fontsize=12)  # For x-axis tick labels
+        plt.yticks(fontsize=12)  # For y-axis tick labels
+        plt.legend(fontsize=12)
+        # dpi of 72 is good poster size
+        plt.savefig(plt_file, dpi=72)
         plt.clf()  # Clears the entire figure
+        plt.close()
 
     # Counting structure
     plots = set()
@@ -716,7 +719,7 @@ def _plot_sankey_tag_flows(flows: list, protocol: str, filename: str):
     # Remove flows with 0 tags
     flows = [flow for flow in flows if flow[2] > 0]
 
-    plt.figure(figsize=(20, 15), dpi=144)
+    plt.figure(figsize=(10, 8), dpi=96)
     s = Sankey(flows=flows)
     # Adjust tag node colors
     for node in s.nodes[1]:
@@ -744,11 +747,13 @@ def _plot_sankey_tag_flows(flows: list, protocol: str, filename: str):
         node.label = node.name[1:]
         node.label_pos = "right"
         node.label_format = "{label} {value:,.0f}"
+        node.label_opts = {"fontsize": 7}
 
     s.draw()
     _log.info(f"Writing {filename}")
-    plt.savefig(filename, dpi=300)
+    plt.savefig(filename)
     plt.clf()  # Clears the entire figure
+    plt.close()
 
 
 def main():
@@ -924,14 +929,6 @@ def main():
                 output_tb_dir.mkdir(parents=True, exist_ok=True)
                 results_stem = str(output_tb_dir / "eval_casualties")
 
-                # Result plots/tables
-                tag_counts = count_tags(eval_study)
-                plot_sankey_hemorrhage_ais_tag_count(tag_counts, results_stem)
-                plot_sankey_overall_ais_tag_count(tag_counts, results_stem)
-                plot_sankey_location_tag_count(tag_counts, results_stem)
-                plot_tag_count_tables(tag_counts, results_stem)
-                plot_kaplan_meier(eval_study, results_stem)
-
                 # Write out the error images for this generated dataset
                 spec = to_specification_lists(eval_study)
                 population_error = calculate_population_error(spec, army_population_distributions)
@@ -940,6 +937,14 @@ def main():
                 injury_error = calculate_injury_error(spec["injuries"], army_injury_distributions)
                 plot_injury_error(injury_error, results_stem)
 
+                # Result plots/tables
+                tag_counts = count_tags(eval_study)
+                plot_kaplan_meier(eval_study, results_stem)
+                plot_tag_count_tables(tag_counts, results_stem)
+                plot_sankey_location_tag_count(tag_counts, results_stem)
+                plot_sankey_overall_ais_tag_count(tag_counts, results_stem)
+                plot_sankey_hemorrhage_ais_tag_count(tag_counts, results_stem)
+
             if opts.markdown:
                 create_markdown(dataset.value, f"eval{set_name}", eval_study, output_md_dir)
 
@@ -947,11 +952,11 @@ def main():
                 eval_align = create_align_dataset(eval_study, "")
                 eval_out = output_dir/f"align_eval{set_name}.json"
                 _log.info(f"Writing {eval_out}")
-                with open(filename, 'w') as eval_file:
+                with open(eval_out, 'w') as eval_file:
                     json.dump(eval_align, eval_file, indent=2)
                 eval_dl_file = downloads_dir / f"itm_eval{set_name}_align.json"
                 _log.info(f"Copying to {eval_dl_file}")
-                shutil.copyfile(filename, eval_dl_file)
+                shutil.copyfile(eval_out, eval_dl_file)
 
     if opts.eval_1k_file.exists():
         _process_eval_file(opts.eval_1k_file, "1k")

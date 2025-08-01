@@ -20,9 +20,9 @@ from pulse.cdm.physiology import eHeartRhythm
 from pulse.cdm.scenario import SEScenario, SEScenarioExecStatus
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, TimeUnit
 from pulse.cdm.io.scenario import serialize_scenario_to_file, \
-                                  serialize_scenario_exec_status_list_to_file, \
-                                  serialize_scenario_exec_status_list_from_file, \
-                                  serialize_scenario_exec_status_to_string
+    serialize_scenario_exec_status_list_to_file, \
+    serialize_scenario_exec_status_list_from_file, \
+    serialize_scenario_exec_status_to_string, serialize_scenario_from_file
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.engine.PulseEngineResults import PulseEngineReprocessor, PulseResultsProcessor, PulseLogAction
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
@@ -483,24 +483,25 @@ class TriageStudy:
             # Pull the results from our exec status
             r = PulseEngineReprocessor(csv_files=[Path(exec_status["InitializationStatus"]["CSVFilename"])],
                                        log_files=[Path(exec_status["InitializationStatus"]["LogFilename"])])
-            # Get which casualty this is
-            casualty = Path(exec_status["ScenarioFilename"]).parts[-2]
 
             states = {}
             pulse_injuries = []
+            # Get which casualty this is
+            casualty = Path(exec_status["ScenarioFilename"]).parts[-2]
+            with open(exec_status["ScenarioFilename"], 'r') as f:
+                sce = json.load(f)
+
             # Get actions provided to the scenario, they are the Pulse injury actions
-            # These are provided as a dict, and the key is the time provided
-            # We may want to get the active actions in API format
-            # It really depends on how much we need the action info here
-            for time_s, actions in r.actions.items():
-                for action in actions:
-                    if action.name == "SerializeState":
-                        # Our scenarios will have serialization actions with a comment containing injury duration
-                        comment = action.data["SerializeState"]["Action"]["Comment"]
-                        duration_min = float(comment[comment.find(':')+1:comment.find("min")].strip())
-                        states[duration_min] = action.data["SerializeState"]["Filename"]
-                    else:
-                        pulse_injuries.append(action.data)
+            for action in sce["AnyAction"]:
+                if "AdvanceTime" in action:
+                    continue
+                if "SerializeState" in action:
+                    # Our scenarios will have serialization actions with a comment containing injury duration
+                    comment = action["SerializeState"]["Action"]["Comment"]
+                    duration_min = float(comment[comment.find(':')+1:comment.find("min")].strip())
+                    states[duration_min] = action["SerializeState"]["Filename"]
+                else:
+                    pulse_injuries.append(action)
             data["pulse_injuries"] = pulse_injuries
             final_time = next(reversed(states.keys()))
 
@@ -758,12 +759,14 @@ class TriageStudy:
                                              "Casualty is NOT likely to survive these injuries.")
 
         # Does the casualty have a major hemorrhage?
-        elif vitals["visible_hemorrhage_severity"] >= 4:
+        elif (vitals["visible_hemorrhage_severity"] >= 3 and
+                Intervention.WoundPack not in vitals["interventions"] and
+                Intervention.Tourniquet not in vitals["interventions"]):
             if survivable:
-                tag.apply(TriageColor.Red, "Casualty has a major hemorrhage.\n"
+                tag.apply(TriageColor.Red, "Casualty has an uncontrolled major hemorrhage.\n"
                                            "Casualty is likely to survive these injuries.")
             else:
-                tag.apply(TriageColor.Black, "Casualty has a major hemorrhage.\n"
+                tag.apply(TriageColor.Black, "Casualty has a uncontrolled major hemorrhage.\n"
                                              "Casualty is NOT likely to survive these injuries.")
 
         # Nothing too crazy...
