@@ -146,6 +146,9 @@ public class HowTo_MechanicalVentilator
     vc_ac.getPositiveEndExpiratoryPressure().setValue(5.0, PressureUnit.cmH2O);
     vc_ac.getRespirationRate().setValue(12.0, FrequencyUnit.Per_min);
     vc_ac.getTidalVolume().setValue(900.0, VolumeUnit.mL);
+    // Add an alarm that will cycle from inhale to exhale when it is reached
+    vc_ac.getSupplementalSettings().getAlarms().getHighPressureThreshold().setValue(20.0, PressureUnit.cmH2O);
+    vc_ac.getSupplementalSettings().getAlarms().setHighPressureCycleOption(eSwitch.On);
     pulse.processAction(vc_ac);
     pulse.advanceTime_s(10);
     // get the values of the data you requested at this time

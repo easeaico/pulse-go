@@ -20,7 +20,9 @@ public:
 
   void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorVolumeControl& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
-  virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
+  // Merges the mode parameters,and clears/copies the supplemental settings
+  virtual void MergeMode(const SEMechanicalVentilatorVolumeControl& src, const SESubstanceManager& subMgr, eMergeType mt);
+  virtual bool ToSettings(SEMechanicalVentilatorSettings& s, SESubstanceManager& subMgr, eMergeType mt) override;
 
   bool IsValid() const override;
   bool IsActive() const override;
@@ -61,13 +63,14 @@ public:
   virtual SEScalarFrequency& GetRespirationRate();
   virtual double GetRespirationRate(const FrequencyUnit& unit) const;
 
+  virtual bool HasSlope() const;
+  virtual SEScalarTime& GetSlope();
+  virtual double GetSlope(const TimeUnit& unit) const;
+
   virtual bool HasTidalVolume() const;
   virtual SEScalarVolume& GetTidalVolume();
   virtual double GetTidalVolume(const VolumeUnit& unit) const;
 
-  virtual bool HasSlope() const;
-  virtual SEScalarTime& GetSlope();
-  virtual double GetSlope(const TimeUnit& unit) const;
 
   const SEScalar* GetScalar(const std::string& name) override;
 
@@ -82,6 +85,6 @@ protected:
   SEScalarTime*                           m_InspiratoryPeriod;
   SEScalarPressure*                       m_PositiveEndExpiratoryPressure;
   SEScalarFrequency*                      m_RespirationRate;
-  SEScalarVolume*                         m_TidalVolume;
   SEScalarTime*                           m_Slope;
+  SEScalarVolume*                         m_TidalVolume;
 };

@@ -24,10 +24,11 @@ class eSerializationFormat(Enum):
     TEXT = 3
 
 
-class eSide(Enum):
-    NullSide = 0
-    Left = 1
-    Right = 2
+class eCharge(Enum):
+    NullCharge = 0
+    Negative = 1
+    Neutral = 2
+    Positive = 3
 
 
 class eGate(Enum):
@@ -36,17 +37,21 @@ class eGate(Enum):
     Closed = 2
 
 
+class eMergeType(Enum):
+    Append = 0
+    Replace = 1
+
+
+class eSide(Enum):
+    NullSide = 0
+    Left = 1
+    Right = 2
+
+
 class eSwitch(Enum):
     NullSwitch = 0
     Off = 1
     On = 2
-
-
-class eCharge(Enum):
-    NullCharge = 0
-    Negative = 1
-    Neutral = 2
-    Positive = 3
 
 
 class eEvent(Enum):
@@ -102,13 +107,35 @@ class eEvent(Enum):
     Tachycardia = 49
     Tachypnea = 50
 
-    # Equipment
-    AnesthesiaMachineOxygenBottleOneExhausted = 1000
-    AnesthesiaMachineOxygenBottleTwoExhausted = 1001
-    AnesthesiaMachineReliefValveActive = 1002
-    MechanicalVentilatorReliefValveActive = 1003
-    SupplementalOxygenBottleExhausted = 1004
-    NonRebreatherMaskOxygenBagEmpty = 1005
+    # Supplemental Oxygen
+    SupplementalOxygenBottleExhausted = 1000
+    NonRebreatherMaskOxygenBagEmpty = 1001
+
+    # Anesthesia Machine
+    AnesthesiaMachineOxygenBottleOneExhausted = 2000
+    AnesthesiaMachineOxygenBottleTwoExhausted = 2001
+    AnesthesiaMachineReliefValveActive = 2002
+
+    # Mechanical Ventilator
+    MechanicalVentilatorReliefValveActive = 3000
+    # Mechanical Ventilator Alarms
+    ApneaTimeAlarmTriggered = 3001
+    AutoPositiveEndExpiratoryPressureAlarmTriggered = 3002
+    CircuitLeakAlarmTriggered = 3003
+    HighEndTidalCarbonDioxideAlarmTriggered = 3004
+    HighMinuteVentilationAlarmTriggered = 3005
+    HighOxygenSaturationAlarmTriggered = 3006
+    HighPositiveEndExpiratoryPressureAlarmTriggered = 3007
+    HighPressureAlarmTriggered = 3008
+    HighRespiratoryRateAlarmTriggered = 3009
+    HighTidalVolumeAlarmTriggered = 3010
+    LowEndTidalCarbonDioxideAlarmTriggered = 3011
+    LowMinuteVentilationAlarmTriggered = 3012
+    LowOxygenSaturationAlarmTriggered = 3013
+    LowPositiveEndExpiratoryPressureAlarmTriggered = 3014
+    LowPressureAlarmTriggered = 3015
+    LowTidalVolumeAlarmTriggered = 3016
+    OxygenSupplyFailureAlarmTriggered = 3017
 
     @staticmethod
     def from_str(s: str):

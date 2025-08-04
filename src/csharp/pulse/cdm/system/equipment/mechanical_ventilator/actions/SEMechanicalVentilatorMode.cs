@@ -6,7 +6,9 @@ namespace Pulse.CDM
   public class SEMechanicalVentilatorMode : SEMechanicalVentilatorAction
   {
     protected eSwitch connection;
-    protected SEMechanicalVentilatorSettings supplemetal_settings = null;
+    protected eMergeType mergeType = eMergeType.Append;
+    protected SEMechanicalVentilatorSettings SupplementalSettings = null;
+    protected string SupplementalSettingsFile = "";
 
     public SEMechanicalVentilatorMode()
     {
@@ -18,20 +20,24 @@ namespace Pulse.CDM
       Copy(other);
     }
 
-    public void copy(SEMechanicalVentilatorMode other)
+    public void Copy(SEMechanicalVentilatorMode other)
     {
       base.Copy(other);
       connection = other.connection;
-      if (other.supplemetal_settings != null)
-        this.GetSupplementalSettings().Copy(other.supplemetal_settings);
+      mergeType = other.mergeType;
+      if (other.SupplementalSettings != null)
+        this.GetSupplementalSettings().Copy(other.SupplementalSettings);
+      this.SupplementalSettingsFile = other.SupplementalSettingsFile;
     }
 
     public override void Clear()
     {
       base.Clear();
       connection = eSwitch.Off;
-      if (this.supplemetal_settings != null)
-        this.supplemetal_settings.Clear();
+      mergeType = eMergeType.Append;
+      if (this.SupplementalSettings != null)
+        this.SupplementalSettings.Clear();
+      this.SupplementalSettingsFile = "";
     }
 
     public override bool IsValid()
@@ -48,23 +54,48 @@ namespace Pulse.CDM
       connection = s;
     }
 
+    public eMergeType GetMergeType()
+    {
+      return mergeType;
+    }
+    public void SetMergeType(eMergeType m)
+    {
+      mergeType = m;
+    }
+
     public bool HasSupplementalSettings()
     {
-      return this.supplemetal_settings != null;
+      return this.SupplementalSettings != null;
     }
     public SEMechanicalVentilatorSettings GetSupplementalSettings()
     {
-      if (this.supplemetal_settings == null)
-        this.supplemetal_settings = new SEMechanicalVentilatorSettings();
-      return this.supplemetal_settings;
+      if (this.SupplementalSettings == null)
+        this.SupplementalSettings = new SEMechanicalVentilatorSettings();
+      return this.SupplementalSettings;
+    }
+
+    public bool HasSupplementalSettingsFile()
+    {
+      return !string.IsNullOrEmpty(this.SupplementalSettingsFile);
+    }
+    public string GetSupplementalSettingsFile()
+    {
+      return this.SupplementalSettingsFile;
+    }
+    public void SetSupplementalSettingsFile(string s)
+    {
+      this.SupplementalSettingsFile = s;
     }
 
     public override string ToString()
     {
       string str = "Mechanical Ventilator Mode";
       str += "\n\tConnection: " + this.connection;
-      if (HasSupplementalSettings())
-        str += supplemetal_settings.ToString();
+      str += "\n\tMerge Type: " + this.mergeType;
+      if (this.HasSupplementalSettingsFile())
+        str += "\n\tSupplemental Settings File: " + this.SupplementalSettingsFile;
+      else if(HasSupplementalSettings())
+        str += SupplementalSettings.ToString();
 
       return str;
     }

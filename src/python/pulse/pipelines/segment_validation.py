@@ -48,7 +48,8 @@ class eExecOpt(Enum):
 #   Full = Steps 1,2,3,4,5
 
 
-def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_results: bool = False) -> bool:
+def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt,
+                                sheet_name: str = "", use_test_results: bool = False) -> bool:
     if folder.is_dir():
         xls_dir = folder
     else:  # Must be inside the code base
@@ -83,7 +84,10 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
         _pulse_logger.error(f"Results directory ({validate_dir}) does not exist. Aborting")
         return False
 
-    sce_ids = gen_scenarios_and_targets(xls_file, scenario_dir, test_results_dir)
+    if sheet_name:
+        _pulse_logger.info(f"Validating single sheet: {sheet_name}")
+
+    sce_ids = gen_scenarios_and_targets(xls_file, scenario_dir, test_results_dir, sheet_name=sheet_name)
     if exec_opt is eExecOpt.GenerateOnly:
         return True
 
@@ -104,6 +108,10 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
         # Create exec statuses for each scenario
         sce_list = []
         for scenario in scenarios:
+            # Match up the sce_ids to what we find, and only run the sce_ids
+            if scenario[:-5] not in sce_ids:
+                continue
+
             scenario_file = scenario_dir / scenario
 
             sce_status = SEScenarioExecStatus()
@@ -182,10 +190,12 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
         serialize_segment_validation_pipeline_config_from_file(config_file, config)
 
     # Carry out validation on the targets of each scenario
-    validate(xls_dir.name, scenario_dir, validate_dir)
+    validate(xls_dir.name, scenario_dir, validate_dir, sheet_name=sheet_name)
 
     if config is not None:
         for table in config.get_tables():
+            if sheet_name and table.get_scenario_name() != sheet_name:
+                continue
             if not table.write_table(
                 validate_dir=validate_dir,
                 in_dir=xls_dir,
@@ -194,7 +204,7 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt, use_test_resul
                 _pulse_logger.error(f"Could not write {table.get_scenario_name()}/{table.get_table_name()}")
         if use_test_results:
             plot_with_test_results(config.get_plotters())
-        create_plots(config.get_plotters())
+        create_plots(config.get_plotters(), sheet_name=sheet_name)
 
     # Run doxygen preprocessor
     for md_file in md_files:
@@ -223,6 +233,12 @@ def main():
         "-t", "--use-test-results",
         action='store_true',
         help="verify the latest test results."
+    )
+    parser.add_argument(
+        "-sce", "--scenario",
+        type=str,
+        default="",
+        help="A specific sheet/scenario to execute from the spreadsheet"
     )
     run_group = parser.add_mutually_exclusive_group()
     run_group.add_argument(
@@ -279,6 +295,7 @@ def main():
         segment_validation_pipeline(
             folder=Path(folder),
             exec_opt=exec_opt,
+            sheet_name=opts.scenario,
             use_test_results=opts.use_test_results
         )
 

@@ -257,6 +257,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/SEInhaler.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/actions/SEInhalerAction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.cs

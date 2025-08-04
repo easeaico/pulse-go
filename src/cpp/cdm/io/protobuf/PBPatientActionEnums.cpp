@@ -6,11 +6,17 @@ PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientActions.pb.h"
 POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/patient/actions/SEAirwayObstruction.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SESubstanceAdministration.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
+
+const std::string& eAirwayObstruction_ResistanceType_Name(eAirwayObstruction_ResistanceType rt)
+{
+  return CDM_BIND::AirwayObstructionData::eResistanceType_Name((CDM_BIND::AirwayObstructionData::eResistanceType)rt);
+}
 
 const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m)
 {

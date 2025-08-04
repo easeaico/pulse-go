@@ -43,7 +43,7 @@ class CSVComparison(SETestReport):
         expected_exists = True
         if not expected_file_path.is_file():
             expected_exists = False
-            _pulse_logger.error(f"Expected file does not exist {expected_csv}")
+            _pulse_logger.error(f"Expected file does not exist {expected_file_path}")
             # TODO: check for zip file
         if not computed_file_path.is_file():
             _pulse_logger.error(f"Computed file does not exist {computed_file_path}")
@@ -140,6 +140,7 @@ class CSVComparison(SETestReport):
 
             # Log all error summary info
             _pulse_logger.info(f"Compared {len(expected_df_trunc.index)} total times")
+
             def _time(idx: int):
                 return times.iloc[int(idx)]
             if total_errors > 0:
@@ -271,19 +272,18 @@ def get_error_info(diff: pd.Series, expected: pd.DataFrame, computed: pd.DataFra
     return pd.Series(summary.values(), summary.keys())
 
 
-if __name__ == "__main__":
+def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-    expected_csv = None
-    computed_csv = None
     error_limit = 2.0
-    plot_type=ePlotType.FastPlot
+    plot_type = ePlotType.FastPlot
     plot_actions = True
     plot_events = False
     report_differences = False
 
     if len(sys.argv) < 3:
-        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> [error limit] [plot type] [plot actions] [plot events] [report differences]")
+        _pulse_logger.error("Expected inputs : <expected results file path> <computed results file path> "
+                            "[error limit] [plot type] [plot actions] [plot events] [report differences]")
         sys.exit(1)
 
     expected_csv = Path(sys.argv[1])
@@ -314,3 +314,7 @@ if __name__ == "__main__":
         report_differences=report_differences,
     )
     c.compare(expected_csv, computed_csv)
+
+
+if __name__ == "__main__":
+    main()

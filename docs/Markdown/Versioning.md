@@ -41,6 +41,9 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Added new oxygen transport and utilization metrics to blood chemistry data
     - Removed inflection point in CO2 saturation calculation for high dissolved CO2 values
     - Fixed bug in upper airway resistance setting for mainstem intubation
+    - Added mechanical ventilator alarm settings and associated events
+    - Added an oscillating upper airway resistance pattern to the airway obstruction action for simulating secretions
+    - Tweaked closed tension pneumothorax model to allow for full lung collapse during positive pressure ventilation
 
 
 ## Pulse v4.3.1 (January 2025)

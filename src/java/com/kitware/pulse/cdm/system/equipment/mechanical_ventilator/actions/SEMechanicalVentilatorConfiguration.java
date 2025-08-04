@@ -3,14 +3,15 @@
 
 package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions;
 
+import com.kitware.pulse.cdm.bind.Actions.eMergeType;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorConfigurationData;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilatorSettings;
 import com.kitware.pulse.utilities.Log;
 
 public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorAction
 {
-
   private static final long serialVersionUID = -1487014080271791164L;
+  protected eMergeType                     mergeType=eMergeType.Append;
   protected SEMechanicalVentilatorSettings settings=null;
   protected String                         settingsFile="";
   
@@ -30,6 +31,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     if(this==other)
       return;
     super.copy(other);
+    this.mergeType = other.mergeType;
     if(other.settings!=null)
       this.getSettings().copy(other.settings);
     this.settingsFile=other.settingsFile;
@@ -40,6 +42,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   {
     super.clear();
     
+    this.mergeType = eMergeType.Append;
     if (this.settings != null)
       this.settings.clear();
     this.settingsFile="";
@@ -54,6 +57,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   public static void load(MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst)
   {
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
+    dst.setMergeType(src.getMergeType());
     switch(src.getOptionCase())
     {
     case SETTINGSFILE:
@@ -75,10 +79,21 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   protected static void unload(SEMechanicalVentilatorConfiguration src, MechanicalVentilatorConfigurationData.Builder dst)
   {
     SEMechanicalVentilatorAction.unload(src, dst.getMechanicalVentilatorActionBuilder());
+    dst.setMergeType(src.mergeType);
     if(src.hasSettingsFile())
       dst.setSettingsFile(src.settingsFile);
     else if(src.hasSettings())
       dst.setSettings(SEMechanicalVentilatorSettings.unload(src.settings));
+  }
+  
+  public eMergeType getMergeType()
+  {
+    return this.mergeType;
+  }
+
+  public void setMergeType(eMergeType mt)
+  {
+    this.mergeType = mt;
   }
   
   public boolean hasSettings()

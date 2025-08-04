@@ -8,12 +8,16 @@ SEMechanicalVentilatorMode::SEMechanicalVentilatorMode(Logger* logger) : SEMecha
 {
   m_Connection = eSwitch::Off;
   m_SupplementalSettings = nullptr;
+  m_SupplementalSettingsFile = "";
+  m_MergeType = eMergeType::Replace;
 }
 
 SEMechanicalVentilatorMode::~SEMechanicalVentilatorMode()
 {
   m_Connection = eSwitch::Off;
   m_SupplementalSettings = nullptr;
+  m_SupplementalSettingsFile = "";
+  m_MergeType = eMergeType::Replace;
 }
 
 void SEMechanicalVentilatorMode::Clear()
@@ -22,28 +26,39 @@ void SEMechanicalVentilatorMode::Clear()
   m_Connection = eSwitch::Off;
   if (m_SupplementalSettings)
     m_SupplementalSettings->Clear();
+  m_SupplementalSettingsFile = "";
+  m_MergeType = eMergeType::Replace;
 }
 
 bool SEMechanicalVentilatorMode::IsValid() const
 {
-  if (m_Connection == eSwitch::NullSwitch)
+  if (m_Connection == eSwitch::NullSwitch && !HasSupplementalSettings() && !HasSupplementalSettingsFile())
     return false;
   return SEMechanicalVentilatorAction::IsValid();
 }
 
 bool SEMechanicalVentilatorMode::IsActive() const
 {
-  return m_Connection == eSwitch::On;
+  return m_Connection == eSwitch::On || HasSupplementalSettings() || HasSupplementalSettingsFile();
 }
 
-bool SEMechanicalVentilatorMode::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
+bool SEMechanicalVentilatorMode::ToSettings(SEMechanicalVentilatorSettings& s, SESubstanceManager& subMgr, eMergeType mt)
 {
   if (!IsValid())
     return false;
 
-  s.Clear();
+  if (mt == eMergeType::Replace)
+    s.Clear();
   if (HasSupplementalSettings())
-    s.Copy(*m_SupplementalSettings, subMgr);
+    s.Merge(GetSupplementalSettings(), subMgr);
+  else if (HasSupplementalSettingsFile())
+  {
+    // Update the action with the file contents
+    std::string cfg_file = GetSupplementalSettingsFile();
+    if (!GetSupplementalSettings().SerializeFromFile(cfg_file, subMgr))
+      Error("Unable to load settings file");
+    s.Merge(GetSupplementalSettings(), subMgr);
+  }
   s.SetConnection(m_Connection);
 
   return true;
@@ -71,4 +86,26 @@ SEMechanicalVentilatorSettings& SEMechanicalVentilatorMode::GetSupplementalSetti
 const SEMechanicalVentilatorSettings* SEMechanicalVentilatorMode::GetSupplementalSettings() const
 {
   return m_SupplementalSettings;
+}
+
+std::string SEMechanicalVentilatorMode::GetSupplementalSettingsFile() const
+{
+  return m_SupplementalSettingsFile;
+}
+void SEMechanicalVentilatorMode::SetSupplementalSettingsFile(const std::string& fileName)
+{
+  m_SupplementalSettingsFile = fileName;
+}
+bool SEMechanicalVentilatorMode::HasSupplementalSettingsFile() const
+{
+  return !m_SupplementalSettingsFile.empty();
+}
+
+void SEMechanicalVentilatorMode::SetMergeType(eMergeType m)
+{
+  m_MergeType = m;
+}
+eMergeType SEMechanicalVentilatorMode::GetMergeType() const
+{
+  return m_MergeType;
 }

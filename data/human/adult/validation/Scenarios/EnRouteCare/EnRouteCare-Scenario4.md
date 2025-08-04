@@ -18,15 +18,9 @@ En Route Care Scenario 4 {#EnRouteCareScenario4}
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/EnRouteCare/Scenario4-vitals_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario4-vitals_monitor_1.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/EnRouteCare/Scenario4-ventilator_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_monitor_1.jpg" width="825"></a></td>
-    <td><a href="./plots/EnRouteCare/Scenario4-ventilator_loops_1.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_loops_1.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/EnRouteCare/Scenario4-vitals_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario4-vitals_monitor_1.jpg" width="1100"></a>
+<br>
+<a href="./plots/EnRouteCare/Scenario4-ventilator_monitor_1.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_monitor_1.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
@@ -42,15 +36,9 @@ En Route Care Scenario 4 {#EnRouteCareScenario4}
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/EnRouteCare/Scenario4-vitals_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario4-vitals_monitor_2.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/EnRouteCare/Scenario4-ventilator_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_monitor_2.jpg" width="825"></a></td>
-    <td><a href="./plots/EnRouteCare/Scenario4-ventilator_loops_2.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_loops_2.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/EnRouteCare/Scenario4-vitals_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario4-vitals_monitor_2.jpg" width="1100"></a>
+<br>
+<a href="./plots/EnRouteCare/Scenario4-ventilator_monitor_2.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_monitor_2.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
@@ -66,15 +54,9 @@ En Route Care Scenario 4 {#EnRouteCareScenario4}
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/EnRouteCare/Scenario4-vitals_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario4-vitals_monitor_3.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/EnRouteCare/Scenario4-ventilator_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_monitor_3.jpg" width="825"></a></td>
-    <td><a href="./plots/EnRouteCare/Scenario4-ventilator_loops_3.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_loops_3.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/EnRouteCare/Scenario4-vitals_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario4-vitals_monitor_3.jpg" width="1100"></a>
+<br>
+<a href="./plots/EnRouteCare/Scenario4-ventilator_monitor_3.jpg"><img src="./plots/EnRouteCare/Scenario4-ventilator_monitor_3.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
@@ -106,7 +88,7 @@ En Route Care Scenario 4 {#EnRouteCareScenario4}
     <td><a href="./plots/EnRouteCare/Scenario4_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/EnRouteCare/Scenario4_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/EnRouteCare/Scenario4_ShuntFraction.jpg"><img src="./plots/EnRouteCare/Scenario4_ClinicalShuntFraction.jpg" width="550"></a></td>
+    <td><a href="./plots/EnRouteCare/Scenario4_ClinicalShuntFraction.jpg"><img src="./plots/EnRouteCare/Scenario4_ClinicalShuntFraction.jpg" width="550"></a></td>
     <td><a href="./plots/EnRouteCare/Scenario4_AlveolarDeadSpace.jpg"><img src="./plots/EnRouteCare/Scenario4_AlveolarDeadSpace.jpg" width="550"></a></td>
 </tr>
 <tr>

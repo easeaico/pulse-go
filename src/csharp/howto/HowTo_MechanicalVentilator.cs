@@ -134,6 +134,9 @@ namespace HowTo_MechanicalVentilator
       vc_ac.GetPositiveEndExpiratoryPressure().SetValue(5.0, PressureUnit.cmH2O);
       vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit.Per_min);
       vc_ac.GetTidalVolume().SetValue(600.0, VolumeUnit.mL);
+      // Add an alarm that will cycle from inhale to exhale when it is reached
+      vc_ac.GetSupplementalSettings().GetAlarms().GetHighPressureThreshold().SetValue(20.0, PressureUnit.cmH2O);
+      vc_ac.GetSupplementalSettings().GetAlarms().SetHighPressureCycleOption(eSwitch.On);
       pulse.ProcessAction(vc_ac);
       pulse.AdvanceTime_s(10);
       // Get the values of the data you requested at this time

@@ -4,6 +4,7 @@
 package com.kitware.pulse.cdm.patient.actions;
 
 import com.kitware.pulse.cdm.bind.PatientActions.AirwayObstructionData;
+import com.kitware.pulse.cdm.bind.PatientActions.AirwayObstructionData.eResistanceType;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 
 public class SEAirwayObstruction extends SEPatientAction
@@ -11,10 +12,12 @@ public class SEAirwayObstruction extends SEPatientAction
   private static final long serialVersionUID = 447938500845345205L;
   
   protected SEScalar0To1 severity;
+  protected eResistanceType resistanceType;
   
   public SEAirwayObstruction()
   {
     severity = null;
+    resistanceType = eResistanceType.Constant;
   }
   
   @Override
@@ -23,6 +26,7 @@ public class SEAirwayObstruction extends SEPatientAction
     super.clear();
     if (severity != null)
       severity.invalidate();
+    resistanceType = eResistanceType.Constant;
   }
   
   public void copy(SEAirwayObstruction other)
@@ -34,6 +38,7 @@ public class SEAirwayObstruction extends SEPatientAction
       getSeverity().set(other.getSeverity());
     else if (severity != null)
       severity.invalidate();
+    resistanceType = other.resistanceType;
   }
   
   @Override
@@ -47,6 +52,7 @@ public class SEAirwayObstruction extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
+    dst.setResistanceType(src.getResistanceType());
   }
   
   public static AirwayObstructionData unload(SEAirwayObstruction src)
@@ -61,6 +67,7 @@ public class SEAirwayObstruction extends SEPatientAction
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasSeverity())
       dst.setSeverity(SEScalar0To1.unload(src.severity));
+    dst.setResistanceType(src.getResistanceType());
   }
   
   public boolean hasSeverity()
@@ -73,13 +80,23 @@ public class SEAirwayObstruction extends SEPatientAction
       severity = new SEScalar0To1();
     return severity;
   }
+  
+  public eResistanceType getResistanceType()
+  {
+    return resistanceType;
+  }
+  public void setResistanceType(eResistanceType rt)
+  {
+    this.resistanceType = rt;
+  }
 
   @Override
   public String toString()
   {
     if (severity != null)
       return "Airway Obstruction" 
-          + "\n\tSeverity: " + getSeverity();
+          + "\n\tSeverity: " + getSeverity()
+          + "\n\tResistance Type: " + getResistanceType();
     else
       return "Action not specified properly";
   }

@@ -177,6 +177,7 @@ namespace pulse
     dst.m_EndTidalCarbonDioxidePressure_cmH2O = src.endtidalcarbondioxidepressure_cmh2o();
     dst.m_EndTidalOxygenFraction = src.endtidaloxygenfraction();
     dst.m_EndTidalOxygenPressure_cmH2O = src.endtidaloxygenpressure_cmh2o();
+    dst.m_TimeSincePatientTrigger_s = src.timesincepatienttrigger_s();
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
   }
   PULSE_BIND::MechanicalVentilatorData* PBEquipment::Unload(const MechanicalVentilatorModel& src)
@@ -208,6 +209,7 @@ namespace pulse
     dst.set_endtidalcarbondioxidepressure_cmh2o(src.m_EndTidalCarbonDioxidePressure_cmH2O);
     dst.set_endtidaloxygenfraction(src.m_EndTidalOxygenFraction);
     dst.set_endtidaloxygenpressure_cmh2o(src.m_EndTidalOxygenPressure_cmH2O);
+    dst.set_timesincepatienttrigger_s(src.m_TimeSincePatientTrigger_s);
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
   }
 }

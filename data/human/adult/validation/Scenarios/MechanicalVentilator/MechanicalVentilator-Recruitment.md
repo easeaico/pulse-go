@@ -9,15 +9,9 @@
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/Recruitment-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-vitals_monitor_1.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_1.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_loops_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_loops_1.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/MechanicalVentilator/Recruitment-vitals_monitor_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-vitals_monitor_1.jpg" width="1100"></a>
+<br>
+<a href="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_1.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_1.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly
@@ -33,15 +27,9 @@
 
 @htmlonly
 <center>
-<table border="0">
-<tr>
-    <td colspan="2"><a href="./plots/MechanicalVentilator/Recruitment-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-vitals_monitor_2.jpg" width="1100"></a></td>
-</tr>
-<tr>
-    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_2.jpg" width="825"></a></td>
-    <td><a href="./plots/MechanicalVentilator/Recruitment-ventilator_loops_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_loops_2.jpg" width="275"></a></td>
-</tr>
-</table>
+<a href="./plots/MechanicalVentilator/Recruitment-vitals_monitor_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-vitals_monitor_2.jpg" width="1100"></a>
+<br>
+<a href="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_2.jpg"><img src="./plots/MechanicalVentilator/Recruitment-ventilator_monitor_2.jpg" width="1100"></a>
 <br>
 </center>
 @endhtmlonly

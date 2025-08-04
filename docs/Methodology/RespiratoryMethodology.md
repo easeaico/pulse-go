@@ -1440,6 +1440,20 @@ path connecting the airway node to the carina node by mapping a user defined sev
 flow through the trachea. The model then calculates the physiological responses
 due to increased airway resistance.
 
+In addition to foreign body obstruction, the %Respiratory Model includes support
+for airway obstruction with secretions, which is particularly relevant during
+mechanical ventilation. This feature is activated through the optional 
+parameter in the airway obstruction action. When secretions are present in a
+mechanically ventilated patient, the model generates a characteristic sawtooth
+oscillation pattern in the upper airway resistance during expiration.
+
+The sawtooth pattern implementation is based on the physiological phenomenon
+where secretions in the airway create turbulent flow during expiration. 
+This enhancement provides a quantifiable signal for automated suctioning alerts
+and distinguishes between structural obstruction and secretion-related obstruction,
+improving the clinical realism and utility of the respiratory model during 
+mechanical ventilation scenarios.
+
 #### Bronchoconstriction
 
 A patient with bronchospasm experiences a sudden constriction of the muscles in

@@ -864,8 +864,11 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorModeData& 
 {
   PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
   dst.m_Connection = (eSwitch)src.connection();
-  if (src.has_supplementalsettings())
+  if (!src.supplementalsettingsfile().empty())
+    dst.SetSupplementalSettingsFile(src.supplementalsettingsfile());
+  else if (src.has_supplementalsettings())
     PBMechanicalVentilator::Load(src.supplementalsettings(), dst.GetSupplementalSettings(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::MechanicalVentilatorModeData* PBEquipmentAction::Unload(const SEMechanicalVentilatorMode& src)
 {
@@ -877,8 +880,11 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorMode& src, CDM_BIN
 {
   PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatoraction());
   dst.set_connection((CDM_BIND::eSwitch)src.m_Connection);
-  if (src.HasSupplementalSettings())
+  if (src.HasSupplementalSettingsFile())
+    dst.set_supplementalsettingsfile(src.m_SupplementalSettingsFile);
+  else if (src.HasSupplementalSettings())
     dst.set_allocated_supplementalsettings(PBMechanicalVentilator::Unload(*src.m_SupplementalSettings));
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 
 void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst, const SESubstanceManager& subMgr)

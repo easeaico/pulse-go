@@ -8,6 +8,7 @@
 #include "cdm/substance/SESubstanceFraction.h"
 
 class SEMechanicalVentilatorConfiguration;
+class SEMechanicalVentilatorAlarms;
 
 class CDM_DECL SEMechanicalVentilatorSettings : public Loggable
 {
@@ -17,16 +18,16 @@ public:
   SEMechanicalVentilatorSettings(Logger* logger);
   virtual ~SEMechanicalVentilatorSettings();
 
-  virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager&);
-
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr);
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
-  virtual void Merge(const SEMechanicalVentilatorSettings& from, SESubstanceManager& subMgr);
   virtual void ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr);
+
+  virtual void Clear();
+  virtual void Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager&);
+  virtual void Merge(const SEMechanicalVentilatorSettings& from, SESubstanceManager& subMgr);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
@@ -188,6 +189,11 @@ public:
   void RemoveConcentrationInspiredAerosol(const SESubstance& substance);
   void RemoveConcentrationInspiredAerosols();
 
+  virtual bool HasAlarms() const;
+  virtual SEMechanicalVentilatorAlarms& GetAlarms();
+  virtual const SEMechanicalVentilatorAlarms* GetAlarms() const;
+  virtual void RemoveAlarms();
+
 protected:
   
   eSwitch                                      m_Connection;
@@ -247,4 +253,6 @@ protected:
 
   std::vector<SESubstanceConcentration*>       m_ConcentrationInspiredAerosols;
   std::vector<const SESubstanceConcentration*> m_cConcentrationInspiredAerosols;
+
+  SEMechanicalVentilatorAlarms*                m_Alarms;
 };

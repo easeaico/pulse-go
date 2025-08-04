@@ -1,13 +1,56 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorSettings
-from pulse.cdm.bind.MechanicalVentilator_pb2 import MechanicalVentilatorSettingsData
+from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorAlarms, SEMechanicalVentilatorSettings
+from pulse.cdm.bind.MechanicalVentilator_pb2 import MechanicalVentilatorAlarmsData, MechanicalVentilatorSettingsData
 from pulse.cdm.bind.Substance_pb2 import SubstanceFractionData, SubstanceConcentrationData
 
 from pulse.cdm.io.scalars import *
 
-def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings, dst: MechanicalVentilatorSettingsData):
+
+def serialize_mechanical_ventilator_alarms_to_bind(src: SEMechanicalVentilatorAlarms, dst: MechanicalVentilatorAlarmsData):
+
+    if src.has_apnea_time_threshold():
+        serialize_scalar_time_to_bind(src.get_apnea_time_threshold(), dst.ApneaTimeThreshold)
+    if src.has_auto_positive_end_expiratory_pressure_threshold():
+        serialize_scalar_pressure_to_bind(src.get_auto_positive_end_expiratory_pressure_threshold(), dst.AutoPositiveEndExpiratoryPressureThreshold)
+    if src.has_circuit_leak_threshold():
+        serialize_scalar_0to1_to_bind(src.get_circuit_leak_threshold(), dst.CircuitLeakThreshold)
+    if src.has_high_end_tidal_carbon_dioxide_threshold():
+        serialize_scalar_pressure_to_bind(src.get_high_end_tidal_carbon_dioxide_threshold(), dst.HighEndTidalCarbonDioxideThreshold)
+    if src.has_high_minute_ventilation_threshold():
+        serialize_scalar_volume_per_time_to_bind(src.get_high_minute_ventilation_threshold(), dst.HighMinuteVentilationThreshold)
+    if src.has_high_oxygen_saturation_threshold():
+        serialize_scalar_0to1_to_bind(src.get_high_oxygen_saturation_threshold(), dst.HighOxygenSaturationThreshold)
+    if src.has_high_positive_end_expiratory_pressure_threshold():
+        serialize_scalar_pressure_to_bind(src.get_high_positive_end_expiratory_pressure_threshold(), dst.HighPositiveEndExpiratoryPressureThreshold)
+    dst.HighPressureCycleOption = src.get_high_pressure_cycle_option().value
+    if src.has_high_pressure_threshold():
+        serialize_scalar_pressure_to_bind(src.get_high_pressure_threshold(), dst.HighPressureThreshold)
+    if src.has_high_respiratory_rate_threshold():
+        serialize_scalar_frequency_to_bind(src.get_high_respiratory_rate_threshold(), dst.HighRespiratoryRateThreshold)
+    if src.has_high_tidal_volume_threshold():
+        serialize_scalar_volume_to_bind(src.get_high_tidal_volume_threshold(), dst.HighTidalVolumeThreshold)
+    if src.has_low_end_tidal_carbon_dioxide_threshold():
+        serialize_scalar_pressure_to_bind(src.get_low_end_tidal_carbon_dioxide_threshold(), dst.LowEndTidalCarbonDioxideThreshold)
+    if src.has_low_minute_ventilation_threshold():
+        serialize_scalar_volume_per_time_to_bind(src.get_low_minute_ventilation_threshold(), dst.LowMinuteVentilationThreshold)
+    if src.has_low_oxygen_saturation_threshold():
+        serialize_scalar_0to1_to_bind(src.get_low_oxygen_saturation_threshold(), dst.LowOxygenSaturationThreshold)
+    if src.has_low_positive_end_expiratory_pressure_threshold():
+        serialize_scalar_pressure_to_bind(src.get_low_positive_end_expiratory_pressure_threshold(), dst.LowPositiveEndExpiratoryPressureThreshold)
+    if src.has_low_pressure_threshold():
+        serialize_scalar_pressure_to_bind(src.get_low_pressure_threshold(), dst.LowPressureThreshold)
+    if src.has_low_tidal_volume_threshold():
+        serialize_scalar_volume_to_bind(src.get_low_tidal_volume_threshold(), dst.LowTidalVolumeThreshold)
+    if src.has_oxygen_supply_failure_threshold():
+        serialize_scalar_0to1_to_bind(src.get_oxygen_supply_failure_threshold(), dst.OxygenSupplyFailureThreshold)
+
+def serialize_mechanical_ventilator_alarms_from_bind(src: MechanicalVentilatorAlarmsData, dst: SEMechanicalVentilatorAlarms):
+    raise Exception("serialize_mechanical_ventilator_alarms_from_bind not implemented")
+
+
+def serialize_mechanical_ventilator_settings_to_bind(src: SEMechanicalVentilatorSettings, dst: MechanicalVentilatorSettingsData):
     dst.Connection = src.get_connection().value
     if src.has_connection_volume():
         serialize_scalar_volume_to_bind(src.get_connection_volume(), dst.ConnectionVolume)
@@ -86,6 +129,9 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
     if src.has_y_piece_volume():
         serialize_scalar_volume_to_bind(src.get_y_piece_volume(), dst.YPieceVolume)
 
+    if src.has_alarms():
+        serialize_mechanical_ventilator_alarms_to_bind(src.get_alarms(), dst.Alarms)
+
     for aGas in src.get_fraction_inspired_gasses():
         sf = SubstanceFractionData()
         sf.Name = aGas.get_substance()
@@ -98,5 +144,6 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
         serialize_scalar_mass_per_volume_to_bind(aAerosol.get_concentration(), sc.Concentration)
         dst.ConcentrationInspiredAerosol.append(sc)
 
-def serialize_mechanical_ventilator_from_bind(src: MechanicalVentilatorSettingsData, dst: SEMechanicalVentilatorSettings):
-    raise Exception("serialize_mechanical_ventilator_from_bind not implemented")
+
+def serialize_mechanical_ventilator_settings_from_bind(src: MechanicalVentilatorSettingsData, dst: SEMechanicalVentilatorSettings):
+    raise Exception("serialize_mechanical_ventilator_settings_from_bind not implemented")

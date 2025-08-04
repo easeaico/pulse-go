@@ -3,7 +3,7 @@
 
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cdm.patient_actions import SEAirwayObstruction
+from pulse.cdm.patient_actions import SEAirwayObstruction, eAirwayObstructionResistanceType
 from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_AirwayObstruction():
@@ -23,6 +23,7 @@ def HowTo_AirwayObstruction():
     airway_obstruction = SEAirwayObstruction()
     airway_obstruction.set_comment("Patient's airways are obstructed")
     airway_obstruction.get_severity().set_value(0.7)
+    airway_obstruction.set_resistance_Type(eAirwayObstructionResistanceType.Oscillating)
     pulse.process_action(airway_obstruction)
 
     # Advance some time and print out the vitals

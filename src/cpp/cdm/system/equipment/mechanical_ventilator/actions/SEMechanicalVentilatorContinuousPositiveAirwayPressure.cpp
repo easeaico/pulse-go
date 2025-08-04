@@ -7,6 +7,7 @@
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/io/protobuf/PBEquipmentActions.h"
+#include "cdm/io/protobuf/PBMechanicalVentilator.h"
 
 SEMechanicalVentilatorContinuousPositiveAirwayPressure::SEMechanicalVentilatorContinuousPositiveAirwayPressure(Logger* logger) : SEMechanicalVentilatorMode(logger)
 {
@@ -56,9 +57,43 @@ void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Copy(const SEMechan
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
-bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
+void SEMechanicalVentilatorContinuousPositiveAirwayPressure::MergeMode(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, const SESubstanceManager& subMgr, eMergeType mt)
 {
-  if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr))
+  if (mt==eMergeType::Replace)
+    PBEquipmentAction::Copy(src, *this, subMgr);
+  else
+  {
+    if (src.HasDeltaPressureSupport())
+      GetDeltaPressureSupport().Set(*src.m_DeltaPressureSupport);
+    if (src.HasFractionInspiredOxygen())
+      GetFractionInspiredOxygen().Set(*src.m_FractionInspiredOxygen);
+    if (src.HasPositiveEndExpiratoryPressure())
+      GetPositiveEndExpiratoryPressure().Set(*src.m_PositiveEndExpiratoryPressure);
+    if (src.HasSlope())
+      GetSlope().Set(*src.m_Slope);
+    if (src.HasInspirationWaveform())
+      SetInspirationWaveform(src.m_InspirationWaveform);
+    if (src.HasInspirationPatientTriggerFlow())
+      GetInspirationPatientTriggerFlow().Set(*src.m_InspirationPatientTriggerFlow);
+    if (src.HasInspirationPatientTriggerPressure())
+      GetInspirationPatientTriggerPressure().Set(*src.m_InspirationPatientTriggerPressure);
+    if (src.HasExpirationWaveform())
+      SetExpirationWaveform(src.m_ExpirationWaveform);
+    if (src.HasExpirationCycleFlow())
+      GetExpirationCycleFlow().Set(*src.m_ExpirationCycleFlow);
+    if (src.HasExpirationCyclePressure())
+      GetExpirationCyclePressure().Set(*src.m_ExpirationCyclePressure);
+
+    if (src.HasSupplementalSettings())
+      PBMechanicalVentilator::Copy(*src.GetSupplementalSettings(), GetSupplementalSettings(), subMgr);
+    else if (HasSupplementalSettings())
+      m_SupplementalSettings->Clear();
+  }
+}
+
+bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechanicalVentilatorSettings& s, SESubstanceManager& subMgr, eMergeType mt)
+{
+  if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr, mt))
     return false;
   if (SEMechanicalVentilatorMode::IsActive())
   {
@@ -118,11 +153,15 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::IsValid() const
   if (!IsActive())
     return true;
 
-  return SEMechanicalVentilatorMode::IsValid() &&
-    HasDeltaPressureSupport() &&
-    HasFractionInspiredOxygen() &&
-    HasPositiveEndExpiratoryPressure();
+  if (m_MergeType == eMergeType::Replace)
+  {
+    return SEMechanicalVentilatorMode::IsValid() &&
+      HasDeltaPressureSupport() &&
+      HasFractionInspiredOxygen() &&
+      HasPositiveEndExpiratoryPressure();
     // Everything else is optional
+  }
+  return true;
 }
 
 bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::IsActive() const

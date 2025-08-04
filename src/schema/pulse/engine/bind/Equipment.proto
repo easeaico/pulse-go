@@ -71,4 +71,5 @@ message MechanicalVentilatorData
   double                                           PreviousDriverPressure_cmH2O           = 21;
   double                                           PreviousYPieceToConnectionFlow_L_Per_s = 22;
   double                                           PositiveEndExpiratoryPressure_cmH2O    = 23;
+  double                                           TimeSincePatientTrigger_s              = 24;
 }

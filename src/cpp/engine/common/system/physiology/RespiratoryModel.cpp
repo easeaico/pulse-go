@@ -1750,7 +1750,8 @@ namespace pulse
     if (m_PatientActions->HasTensionPneumothorax())
     {
       // Minimum flow resistance for the chest cavity or alveoli leak 
-      double PneumoMinResistance_cmH2O_s_Per_L = 100.0;
+      double PneumoOpenMinResistance_cmH2O_s_Per_L = 100.0;
+      double PneumoClosedMinResistance_cmH2O_s_Per_L = 10.0;
       // Maximum flow resistance for the chest cavity or alveoli leak
       double PneumoMaxResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
       // Flow resistance for the decompression needle, if used
@@ -1763,7 +1764,7 @@ namespace pulse
         double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
         if (severity > 0.0 && !m_PatientActions->HasLeftChestOcclusiveDressing())
         {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          resistance_cmH2O_s_Per_L = PneumoOpenMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
         }
         resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
         m_EnvironmentToLeftChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1781,7 +1782,7 @@ namespace pulse
         double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
         if (severity > 0.0 && !m_PatientActions->HasRightChestOcclusiveDressing())
         {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          resistance_cmH2O_s_Per_L = PneumoOpenMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
         }
         resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
         m_EnvironmentToRightChestLeak->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1795,37 +1796,41 @@ namespace pulse
 
       if (m_PatientActions->HasLeftClosedTensionPneumothorax())
       {
-        // Scale the flow resistance through the chest opening based on severity
-        double severity = m_PatientActions->GetLeftClosedTensionPneumothorax().GetSeverity().GetValue();
-        double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
-        if (severity > 0.0)
-        {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
-        }
-        resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
-        m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
         if (m_PatientActions->HasLeftNeedleDecompression())
         {
           m_LeftNeedleToLeftPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        }
+        else
+        {
+          // Scale the flow resistance through the chest opening based on severity
+          double severity = m_PatientActions->GetLeftClosedTensionPneumothorax().GetSeverity().GetValue();
+          double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+          if (severity > 0.0)
+          {
+            resistance_cmH2O_s_Per_L = PneumoClosedMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          }
+          resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+          m_LeftAlveoliLeakToLeftPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
 
       if (m_PatientActions->HasRightClosedTensionPneumothorax())
       {
-        // Scale the flow resistance through the chest opening based on severity
-        double severity = m_PatientActions->GetRightClosedTensionPneumothorax().GetSeverity().GetValue();
-        double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
-        if (severity > 0.0)
-        {
-          resistance_cmH2O_s_Per_L = PneumoMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
-        }
-        resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
-        m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
         if (m_PatientActions->HasRightNeedleDecompression())
         {
           m_RightNeedleToRightPleural->GetNextResistance().SetValue(NeedleResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        }
+        else
+        {
+          // Scale the flow resistance through the chest opening based on severity
+          double severity = m_PatientActions->GetRightClosedTensionPneumothorax().GetSeverity().GetValue();
+          double resistance_cmH2O_s_Per_L = PneumoMaxResistance_cmH2O_s_Per_L;
+          if (severity > 0.0)
+          {
+            resistance_cmH2O_s_Per_L = PneumoClosedMinResistance_cmH2O_s_Per_L / pow(severity, 2.0);
+          }
+          resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, PneumoMaxResistance_cmH2O_s_Per_L);
+          m_RightAlveoliLeakToRightPleural->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
 
@@ -3683,11 +3688,15 @@ namespace pulse
     if (m_PatientActions->HasAirwayObstruction())
     {
       double severity = m_PatientActions->GetAirwayObstruction().GetSeverity().GetValue();
-      if (severity != 0.0) //Prevent small numerical error
+      if (severity > ZERO_APPROX) //Prevent small numerical error
       {
         //Piecewise to ensure fully blocked at a severity of 1.0;
         double startSeverity = 0.9;
-        if (severity > startSeverity)
+        if (severity == 1.0)
+        {
+          tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+        }
+        else if (severity > startSeverity)
         {
           double minResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, startSeverity);
           double maxResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
@@ -3699,6 +3708,13 @@ namespace pulse
           tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(5.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
         }
       }
+
+      // Apply suctioning sawtooth pattern if secretions are present and during expiration
+      if (!inhaling && m_PatientActions->GetAirwayObstruction().GetResistanceType()==eAirwayObstruction_ResistanceType::Oscillating)
+      {
+        double currentFlow_L_Per_s = std::abs(m_PharynxToCarina->GetNextFlow(VolumePerTimeUnit::L_Per_s));
+        tracheaResistance_cmH2O_s_Per_L = CalculateSuctioningPattern(tracheaResistance_cmH2O_s_Per_L, currentFlow_L_Per_s);
+      }
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -3706,7 +3722,7 @@ namespace pulse
     if (m_PatientActions->HasBronchoconstriction())
     {
       double severity = m_PatientActions->GetBronchoconstriction().GetSeverity().GetValue();
-      if (severity != 0.0) //Prevent small numerical error
+      if (severity > ZERO_APPROX) //Prevent small numerical error
       {
         leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
         rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
@@ -4104,6 +4120,53 @@ namespace pulse
       alveoliCompliancePath->GetNextCompliance().SetValue(alveoliCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
     }
   }
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Modulates airway resistance with a flow-dependent sinusoidal pattern to simulate secretion buildup
+  ///
+  /// \param baseResistance_cmH2O_s_Per_L - The baseline upper airway resistance
+  /// \param flow_L_Per_s - Current expiratory flow rate (positive value)
+  /// \return Resistance with sinusoidal variation applied
+  ///
+  /// \details
+  /// Applies a sinusoidal oscillation to the airway resistance during expiration when secretions
+  /// are present. The amplitude and frequency of the sinusoid scale with the expiratory flow rate,
+  /// producing visible ripples in the expiratory flow signal. This mimics the dynamic resistance
+  /// caused by fluid buildup or mucus fluttering in the airway.
+  /// 
+  /// The waveform is continuous and smooth, with higher flow generating higher-frequency and
+  /// higher-amplitude oscillations. The decaying envelope of the flow is not modeled here —
+  /// it is governed by the fluid dynamics of the Pulse Physiology Engine.
+  //--------------------------------------------------------------------------------------------------
+  double RespiratoryModel::CalculateSuctioningPattern(double baseResistance_cmH2O_s_Per_L, double flow_L_Per_s)
+  {
+    if (flow_L_Per_s < 0.01)
+    {
+      return baseResistance_cmH2O_s_Per_L;
+    }
+
+    // Normalize flow magnitude (0–1 range based on expected expiratory peak ~1 L/s)
+    double flowNormalized = std::min(flow_L_Per_s / 1.0, 1.0);
+
+    // Amplitude and frequency scale with flow
+    double amplitude = baseResistance_cmH2O_s_Per_L * (0.3 + 0.2 * flowNormalized); // 30–50% of base
+    double frequency_Hz = 1.0 + 4.0 * flowNormalized; // 1–5 Hz
+
+    // Time in seconds
+    double t = m_ElapsedBreathingCycleTime_min * 60.0;
+    double omega = 2.0 * M_PI * frequency_Hz;
+
+    // Sinusoidal oscillation: -1 to 1
+    double sinusoid = sin(omega * t);
+
+    // Apply to resistance
+    double modulatedResistance = baseResistance_cmH2O_s_Per_L + amplitude * sinusoid;
+
+    // Clamp to stay positive
+    return std::max(modulatedResistance, baseResistance_cmH2O_s_Per_L * 0.1);
+  }
+
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

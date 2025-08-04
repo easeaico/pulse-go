@@ -10,6 +10,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBProperties.h"
 #include "cdm/io/protobuf/PBUtils.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/properties/SEScalarTime.h"
@@ -82,6 +83,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   if (src.has_settings())
     PBMechanicalVentilator::Load(src.settings(), dst.GetSettings(), subMgr);
 }
+
 CDM_BIND::MechanicalVentilatorData* PBMechanicalVentilator::Unload(const SEMechanicalVentilator& src)
 {
   CDM_BIND::MechanicalVentilatorData* dst = new CDM_BIND::MechanicalVentilatorData();
@@ -148,6 +150,95 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
 
   if (src.HasSettings())
     dst.set_allocated_settings(PBMechanicalVentilator::Unload(*src.m_Settings));
+}
+
+void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorAlarmsData& src, SEMechanicalVentilatorAlarms& dst)
+{
+  dst.Clear();
+  PBMechanicalVentilator::Serialize(src, dst);
+}
+void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorAlarmsData& src, SEMechanicalVentilatorAlarms& dst)
+{
+  if (src.has_apneatimethreshold())
+    PBProperty::Load(src.apneatimethreshold(), dst.GetApneaTimeThreshold());
+  if (src.has_autopositiveendexpiratorypressurethreshold())
+    PBProperty::Load(src.autopositiveendexpiratorypressurethreshold(), dst.GetAutoPositiveEndExpiratoryPressureThreshold());
+  if (src.has_circuitleakthreshold())
+    PBProperty::Load(src.circuitleakthreshold(), dst.GetCircuitLeakThreshold());
+  if (src.has_highendtidalcarbondioxidethreshold())
+    PBProperty::Load(src.highendtidalcarbondioxidethreshold(), dst.GetHighEndTidalCarbonDioxideThreshold());
+  if (src.has_highminuteventilationthreshold())
+    PBProperty::Load(src.highminuteventilationthreshold(), dst.GetHighMinuteVentilationThreshold());
+  if (src.has_highoxygensaturationthreshold())
+    PBProperty::Load(src.highoxygensaturationthreshold(), dst.GetHighOxygenSaturationThreshold());
+  if (src.has_highpositiveendexpiratorypressurethreshold())
+    PBProperty::Load(src.highpositiveendexpiratorypressurethreshold(), dst.GetHighPositiveEndExpiratoryPressureThreshold());
+  dst.m_HighPressureCycleOption = (eSwitch)src.highpressurecycleoption();
+  if (src.has_highpressurethreshold())
+    PBProperty::Load(src.highpressurethreshold(), dst.GetHighPressureThreshold());
+  if (src.has_highrespiratoryratethreshold())
+    PBProperty::Load(src.highrespiratoryratethreshold(), dst.GetHighRespiratoryRateThreshold());
+  if (src.has_hightidalvolumethreshold())
+    PBProperty::Load(src.hightidalvolumethreshold(), dst.GetHighTidalVolumeThreshold());
+  if (src.has_lowendtidalcarbondioxidethreshold())
+    PBProperty::Load(src.lowendtidalcarbondioxidethreshold(), dst.GetLowEndTidalCarbonDioxideThreshold());
+  if (src.has_lowminuteventilationthreshold())
+    PBProperty::Load(src.lowminuteventilationthreshold(), dst.GetLowMinuteVentilationThreshold());
+  if (src.has_lowoxygensaturationthreshold())
+    PBProperty::Load(src.lowoxygensaturationthreshold(), dst.GetLowOxygenSaturationThreshold());
+  if (src.has_lowpositiveendexpiratorypressurethreshold())
+    PBProperty::Load(src.lowpositiveendexpiratorypressurethreshold(), dst.GetLowPositiveEndExpiratoryPressureThreshold());
+  if (src.has_lowpressurethreshold())
+    PBProperty::Load(src.lowpressurethreshold(), dst.GetLowPressureThreshold());
+  if (src.has_lowtidalvolumethreshold())
+    PBProperty::Load(src.lowtidalvolumethreshold(), dst.GetLowTidalVolumeThreshold());
+  if (src.has_oxygensupplyfailurethreshold())
+    PBProperty::Load(src.oxygensupplyfailurethreshold(), dst.GetOxygenSupplyFailureThreshold());
+}
+
+CDM_BIND::MechanicalVentilatorAlarmsData* PBMechanicalVentilator::Unload(const SEMechanicalVentilatorAlarms& src)
+{
+  CDM_BIND::MechanicalVentilatorAlarmsData* dst = new CDM_BIND::MechanicalVentilatorAlarmsData();
+  PBMechanicalVentilator::Serialize(src, *dst);
+  return dst;
+}
+void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorAlarms& src, CDM_BIND::MechanicalVentilatorAlarmsData& dst)
+{
+  if (src.HasApneaTimeThreshold())
+    dst.set_allocated_apneatimethreshold(PBProperty::Unload(*src.m_ApneaTimeThreshold));
+  if (src.HasAutoPositiveEndExpiratoryPressureThreshold())
+    dst.set_allocated_autopositiveendexpiratorypressurethreshold(PBProperty::Unload(*src.m_AutoPositiveEndExpiratoryPressureThreshold));
+  if (src.HasCircuitLeakThreshold())
+    dst.set_allocated_circuitleakthreshold(PBProperty::Unload(*src.m_CircuitLeakThreshold));
+  if (src.HasHighEndTidalCarbonDioxideThreshold())
+    dst.set_allocated_highendtidalcarbondioxidethreshold(PBProperty::Unload(*src.m_HighEndTidalCarbonDioxideThreshold));
+  if (src.HasHighMinuteVentilationThreshold())
+    dst.set_allocated_highminuteventilationthreshold(PBProperty::Unload(*src.m_HighMinuteVentilationThreshold));
+  if (src.HasHighOxygenSaturationThreshold())
+    dst.set_allocated_highoxygensaturationthreshold(PBProperty::Unload(*src.m_HighOxygenSaturationThreshold));
+  if (src.HasHighPositiveEndExpiratoryPressureThreshold())
+    dst.set_allocated_highpositiveendexpiratorypressurethreshold(PBProperty::Unload(*src.m_HighPositiveEndExpiratoryPressureThreshold));
+  dst.set_highpressurecycleoption((CDM_BIND::eSwitch)src.m_HighPressureCycleOption);
+  if (src.HasHighPressureThreshold())
+    dst.set_allocated_highpressurethreshold(PBProperty::Unload(*src.m_HighPressureThreshold));
+  if (src.HasHighRespiratoryRateThreshold())
+    dst.set_allocated_highrespiratoryratethreshold(PBProperty::Unload(*src.m_HighRespiratoryRateThreshold));
+  if (src.HasHighTidalVolumeThreshold())
+    dst.set_allocated_hightidalvolumethreshold(PBProperty::Unload(*src.m_HighTidalVolumeThreshold));
+  if (src.HasLowEndTidalCarbonDioxideThreshold())
+    dst.set_allocated_lowendtidalcarbondioxidethreshold(PBProperty::Unload(*src.m_LowEndTidalCarbonDioxideThreshold));
+  if (src.HasLowMinuteVentilationThreshold())
+    dst.set_allocated_lowminuteventilationthreshold(PBProperty::Unload(*src.m_LowMinuteVentilationThreshold));
+  if (src.HasLowOxygenSaturationThreshold())
+    dst.set_allocated_lowoxygensaturationthreshold(PBProperty::Unload(*src.m_LowOxygenSaturationThreshold));
+  if (src.HasLowPositiveEndExpiratoryPressureThreshold())
+    dst.set_allocated_lowpositiveendexpiratorypressurethreshold(PBProperty::Unload(*src.m_LowPositiveEndExpiratoryPressureThreshold));
+  if (src.HasLowPressureThreshold())
+    dst.set_allocated_lowpressurethreshold(PBProperty::Unload(*src.m_LowPressureThreshold));
+  if (src.HasLowTidalVolumeThreshold())
+    dst.set_allocated_lowtidalvolumethreshold(PBProperty::Unload(*src.m_LowTidalVolumeThreshold));
+  if (src.HasOxygenSupplyFailureThreshold())
+    dst.set_allocated_oxygensupplyfailurethreshold(PBProperty::Unload(*src.m_OxygenSupplyFailureThreshold));
 }
 
 void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorSettingsData& src, SEMechanicalVentilatorSettings& dst, const SESubstanceManager& subMgr)
@@ -234,6 +325,9 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
     PBProperty::Load(src.reliefvalvethreshold(), dst.GetReliefValveThreshold());
   if (src.has_ypiecevolume())
     PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
+
+  if (src.has_alarms())
+    PBMechanicalVentilator::Load(src.alarms(), dst.GetAlarms());
 
   const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
@@ -357,6 +451,9 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
   if (src.HasYPieceVolume())
     dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));
 
+  if (src.HasAlarms())
+    dst.set_allocated_alarms(PBMechanicalVentilator::Unload(*src.m_Alarms));
+
   for (SESubstanceFraction* sf : src.m_FractionInspiredGases)
     dst.mutable_fractioninspiredgas()->AddAllocated(PBSubstance::Unload(*sf));
 
@@ -400,4 +497,12 @@ bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMe
     return false;
   PBMechanicalVentilator::Load(data, dst, subMgr);
   return true;
+}
+
+void PBMechanicalVentilator::Copy(const SEMechanicalVentilatorAlarms& src, SEMechanicalVentilatorAlarms& dst)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorAlarmsData data;
+  PBMechanicalVentilator::Serialize(src, data);
+  PBMechanicalVentilator::Serialize(data, dst);
 }

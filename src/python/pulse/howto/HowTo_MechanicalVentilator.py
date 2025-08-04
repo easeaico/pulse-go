@@ -98,6 +98,9 @@ def HowTo_MechanicalVentilator():
     vc_ac.get_positive_end_expired_pressure().set_value(5.0, PressureUnit.cmH2O)
     vc_ac.get_respiration_rate().set_value(12.0, FrequencyUnit.Per_min)
     vc_ac.get_tidal_volume().set_value(600.0, VolumeUnit.mL)
+    # Add an alarm that will cycle from inhale to exhale when it is reached
+    vc_ac.get_supplemental_settings().get_alarms().get_high_pressure_threshold().set_value(20.0, PressureUnit.cmH2O)
+    vc_ac.get_supplemental_settings().get_alarms().set_high_pressure_cycle_option(eSwitch.On)
     pulse.process_action(vc_ac)
     pulse.advance_time_s(10)
     # Get the values of the data you requested at this time

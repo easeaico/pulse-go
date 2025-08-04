@@ -17,7 +17,9 @@ public:
   bool IsValid() const override;
   bool IsActive() const override;
 
-  virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr);
+  virtual bool ToSettings(SEMechanicalVentilatorSettings& s,
+                          SESubstanceManager& subMgr,
+                          eMergeType mt);
 
   virtual eSwitch GetConnection() const;
   virtual void SetConnection(eSwitch c);
@@ -26,8 +28,17 @@ public:
   SEMechanicalVentilatorSettings& GetSupplementalSettings();
   const SEMechanicalVentilatorSettings* GetSupplementalSettings() const;
 
+  virtual std::string GetSupplementalSettingsFile() const;
+  virtual void SetSupplementalSettingsFile(const std::string& fileName);
+  virtual bool HasSupplementalSettingsFile() const;
+
+  virtual eMergeType GetMergeType() const;
+  virtual void SetMergeType(eMergeType m);
+
 protected:
 
-  eSwitch             m_Connection;
+  eSwitch                         m_Connection;
   SEMechanicalVentilatorSettings* m_SupplementalSettings;
+  std::string                     m_SupplementalSettingsFile;
+  eMergeType                      m_MergeType;
 };

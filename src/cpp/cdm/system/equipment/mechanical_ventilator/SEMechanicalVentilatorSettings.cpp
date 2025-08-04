@@ -3,6 +3,8 @@
 
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorAlarms.h"
+#include "cdm/io/protobuf/PBMechanicalVentilator.h"
 
 #include "cdm/substance/SESubstance.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -14,7 +16,6 @@
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerPressure.h"
 #include "cdm/properties/SEScalarTime.h"
-#include "cdm/io/protobuf/PBMechanicalVentilator.h"
 
 SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) : Loggable(logger)
 {
@@ -64,6 +65,8 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
 
   m_ReliefValveThreshold = nullptr;
   m_YPieceVolume = nullptr;
+
+  m_Alarms = nullptr;
 }
 
 SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
@@ -114,6 +117,8 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 
   SAFE_DELETE(m_ReliefValveThreshold);
   SAFE_DELETE(m_YPieceVolume);
+
+  SAFE_DELETE(m_Alarms);
 
   DELETE_VECTOR(m_FractionInspiredGases);
   m_cFractionInspiredGases.clear();
@@ -175,12 +180,28 @@ void SEMechanicalVentilatorSettings::Clear()
 
   RemoveFractionInspiredGases();
   RemoveConcentrationInspiredAerosols();
+
+  if (m_Alarms)
+    m_Alarms->Clear();
 }
 
-void SEMechanicalVentilatorSettings::Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager& subMgr)
+bool SEMechanicalVentilatorSettings::SerializeToString(std::string& output, eSerializationFormat m) const
 {
-  PBMechanicalVentilator::Copy(src, *this, subMgr);
+  return PBMechanicalVentilator::SerializeToString(*this, output, m);
 }
+bool SEMechanicalVentilatorSettings::SerializeToFile(const std::string& filename) const
+{
+  return PBMechanicalVentilator::SerializeToFile(*this, filename);
+}
+bool SEMechanicalVentilatorSettings::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
+{
+  return PBMechanicalVentilator::SerializeFromString(src, *this, m, subMgr);
+}
+bool SEMechanicalVentilatorSettings::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
+{
+  return PBMechanicalVentilator::SerializeFromFile(filename, *this, subMgr);
+}
+
 
 void SEMechanicalVentilatorSettings::ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr)
 {
@@ -197,6 +218,12 @@ void SEMechanicalVentilatorSettings::ProcessConfiguration(SEMechanicalVentilator
     Merge(config.GetSettings(), subMgr);
   }
 }
+
+void SEMechanicalVentilatorSettings::Copy(const SEMechanicalVentilatorSettings& src, const SESubstanceManager& subMgr)
+{
+  PBMechanicalVentilator::Copy(src, *this, subMgr);
+}
+
 void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings& from, SESubstanceManager& subMgr)
 {
   if(from.HasConnection())
@@ -367,6 +394,9 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   COPY_PROPERTY(ReliefValveThreshold);
   COPY_PROPERTY(YPieceVolume);
 
+  if (from.HasAlarms())
+    GetAlarms().Merge(*from.GetAlarms());
+
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
   if (from.HasFractionInspiredGas())
   {
@@ -407,23 +437,6 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   //std::string out;
   //this->SerializeToString(out, eSerializationFormat::JSON);
   //std::cout << out << std::endl;
-}
-
-bool SEMechanicalVentilatorSettings::SerializeToString(std::string& output, eSerializationFormat m) const
-{
-  return PBMechanicalVentilator::SerializeToString(*this, output, m);
-}
-bool SEMechanicalVentilatorSettings::SerializeToFile(const std::string& filename) const
-{
-  return PBMechanicalVentilator::SerializeToFile(*this, filename);
-}
-bool SEMechanicalVentilatorSettings::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
-{
-  return PBMechanicalVentilator::SerializeFromString(src, *this, m, subMgr);
-}
-bool SEMechanicalVentilatorSettings::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
-{
-  return PBMechanicalVentilator::SerializeFromFile(filename, *this, subMgr);
 }
 
 const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& name)
@@ -503,7 +516,8 @@ const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& nam
     return &GetYPieceVolume();
 
   // I did not support for getting a specific gas/aerosol scalars due to lack of coffee
-  return nullptr;
+
+  return GetAlarms().GetScalar(name);
 }
 
 bool SEMechanicalVentilatorSettings::HasConnection() const
@@ -1203,4 +1217,23 @@ void SEMechanicalVentilatorSettings::RemoveConcentrationInspiredAerosols()
   {
     sc->GetConcentration().Invalidate();
   }
+}
+
+bool SEMechanicalVentilatorSettings::HasAlarms() const
+{
+  return m_Alarms != nullptr;
+}
+SEMechanicalVentilatorAlarms& SEMechanicalVentilatorSettings::GetAlarms()
+{
+  if (m_Alarms == nullptr)
+    m_Alarms = new SEMechanicalVentilatorAlarms(GetLogger());
+  return *m_Alarms;
+}
+const SEMechanicalVentilatorAlarms* SEMechanicalVentilatorSettings::GetAlarms() const
+{
+  return m_Alarms;
+}
+void SEMechanicalVentilatorSettings::RemoveAlarms()
+{
+  SAFE_DELETE(m_Alarms);
 }

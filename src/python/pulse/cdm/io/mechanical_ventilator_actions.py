@@ -17,8 +17,8 @@ from pulse.cdm.mechanical_ventilator_actions import SEMechanicalVentilatorAction
                                                     SEMechanicalVentilatorVolumeControl, \
                                                     SEMechanicalVentilatorHold, \
                                                     SEMechanicalVentilatorLeak
-from pulse.cdm.io.mechanical_ventilator import serialize_mechanical_ventilator_to_bind,\
-                                               serialize_mechanical_ventilator_from_bind
+from pulse.cdm.io.mechanical_ventilator import serialize_mechanical_ventilator_settings_to_bind,\
+                                               serialize_mechanical_ventilator_settings_from_bind
 from pulse.cdm.io.equipment_actions import serialize_equipment_action_from_bind, \
                                            serialize_equipment_action_to_bind
 from pulse.cdm.io.scalars import serialize_scalar_pressure_to_bind, \
@@ -36,10 +36,11 @@ def serialize_mechanical_ventilator_action_from_bind(src: MechanicalVentilatorAc
 
 def serialize_mechanical_ventilator_configuration_to_bind(src: SEMechanicalVentilatorConfiguration, dst: MechanicalVentilatorConfigurationData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
+    dst.MergeType = src.get_merge_type().value
     if src.has_settings_file():
         dst.SettingsFile = src.get_settings_file()
     elif src.has_settings():
-        serialize_mechanical_ventilator_to_bind(src.get_settings(), dst.Settings)
+        serialize_mechanical_ventilator_settings_to_bind(src.get_settings(), dst.Settings)
 
 def serialize_mechanical_ventilator_configuration_from_bind(src: MechanicalVentilatorConfigurationData, dst: SEMechanicalVentilatorConfiguration):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)
@@ -48,8 +49,11 @@ def serialize_mechanical_ventilator_configuration_from_bind(src: MechanicalVenti
 def serialize_mechanical_ventilator_mode_to_bind(src: SEMechanicalVentilatorMode, dst: MechanicalVentilatorModeData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
     dst.Connection = src.get_connection().value
-    if src.has_supplemental_settings():
-        serialize_mechanical_ventilator_to_bind(src.get_supplemental_settings(), dst.SupplementalSettings)
+    dst.MergeType = src.get_merge_type().value
+    if src.has_supplemental_settings_file():
+        dst.SupplementalSettingsFile = src.get_supplemental_settings_file()
+    elif src.has_supplemental_settings():
+        serialize_mechanical_ventilator_settings_to_bind(src.get_supplemental_settings(), dst.SupplementalSettings)
 
 def serialize_mechanical_ventilator_mode_from_bind(src: MechanicalVentilatorModeData, dst: SEMechanicalVentilatorMode):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)

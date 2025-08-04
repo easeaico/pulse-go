@@ -974,11 +974,11 @@ namespace Pulse.CDM
     {
       if (src.MechanicalVentilatorAction != null)
         Serialize(src.MechanicalVentilatorAction, dst);
+      dst.SetMergeType((eMergeType)src.MergeType);
       if (!string.IsNullOrEmpty(src.SettingsFile))
         dst.SetSettingsFile(src.SettingsFile);
       else if (src.Settings != null)
         PBMechanicalVentilator.Load(src.Settings, dst.GetSettings());
-      dst.SetMergeType((eMergeType)src.MergeType);
     }
     public static pulse.cdm.bind.MechanicalVentilatorConfigurationData Unload(SEMechanicalVentilatorConfiguration src)
     {
@@ -990,11 +990,11 @@ namespace Pulse.CDM
     {
       dst.MechanicalVentilatorAction = new pulse.cdm.bind.MechanicalVentilatorActionData();
       Serialize(src, dst.MechanicalVentilatorAction);
+      dst.MergeType = (pulse.cdm.bind.eMergeType)(int)src.GetMergeType();
       if (src.HasSettingsFile())
         dst.SettingsFile = src.GetSettingsFile();
       else if (src.HasSettings())
         dst.Settings = PBMechanicalVentilator.Unload(src.GetSettings());
-      dst.MergeType = (pulse.cdm.bind.eMergeType)(int)src.GetMergeType();
     }
     #endregion
 
@@ -1062,7 +1062,10 @@ namespace Pulse.CDM
       if (src.MechanicalVentilatorAction != null)
         Serialize(src.MechanicalVentilatorAction, dst);
       dst.SetConnection((eSwitch)src.Connection);
-      if (src.SupplementalSettings != null)
+      dst.SetMergeType((eMergeType)src.MergeType);
+      if (!string.IsNullOrEmpty(src.SupplementalSettingsFile))
+        dst.SetSupplementalSettingsFile(src.SupplementalSettingsFile);
+      else if (src.SupplementalSettings != null)
         PBMechanicalVentilator.Load(src.SupplementalSettings, dst.GetSupplementalSettings());
     }
     public static pulse.cdm.bind.MechanicalVentilatorModeData Unload(SEMechanicalVentilatorMode src)
@@ -1076,7 +1079,10 @@ namespace Pulse.CDM
       dst.MechanicalVentilatorAction = new pulse.cdm.bind.MechanicalVentilatorActionData();
       Serialize(src, dst.MechanicalVentilatorAction);
       dst.Connection = (pulse.cdm.bind.eSwitch)(int)src.GetConnection();
-      if (src.HasSupplementalSettings())
+      dst.MergeType = (pulse.cdm.bind.eMergeType)(int)src.GetMergeType();
+      if (src.HasSupplementalSettingsFile())
+        dst.SupplementalSettingsFile = src.GetSupplementalSettingsFile();
+      else if (src.HasSupplementalSettings())
         dst.SupplementalSettings = PBMechanicalVentilator.Unload(src.GetSupplementalSettings());
     }
     #endregion

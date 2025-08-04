@@ -5,13 +5,13 @@ namespace Pulse.CDM
 {
   public class SEMechanicalVentilatorConfiguration : SEMechanicalVentilatorAction
   {
+    protected eMergeType mergeType = eMergeType.Append;
     protected SEMechanicalVentilatorSettings settings = null;
     protected string settingsFile = "";
-    protected eMergeType mergeType = eMergeType.Append;
 
     public SEMechanicalVentilatorConfiguration()
     {
-
+      Clear();
     }
 
     public SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorConfiguration other)
@@ -22,24 +22,33 @@ namespace Pulse.CDM
     public void Copy(SEMechanicalVentilatorConfiguration other)
     {
       base.Copy(other);
-      if(other.settings != null)
+      mergeType = other.mergeType;
+      if (other.settings != null)
         this.GetSettings().Copy(other.settings);
       this.settingsFile = other.settingsFile;
-      mergeType = other.mergeType;
     }
 
     public override void Clear()
     {
       base.Clear();
+      mergeType = eMergeType.Append;
       if (this.settings != null)
         this.settings.Clear();
       this.settingsFile = "";
-      mergeType = eMergeType.Append;
     }
 
     public override bool IsValid()
     {
       return HasSettings() || HasSettingsFile();
+    }
+
+    public eMergeType GetMergeType()
+    {
+      return mergeType;
+    }
+    public void SetMergeType(eMergeType m)
+    {
+      mergeType = m;
     }
 
     public bool HasSettings()
@@ -65,25 +74,17 @@ namespace Pulse.CDM
     {
       this.settingsFile = s;
     }
-    public eMergeType GetMergeType()
-    {
-      return mergeType;
-    }
-    public void SetMergeType(eMergeType m)
-    {
-      mergeType = m;
-    }
 
     public override string ToString()
     {
       string str = "Mechanical Ventilator Configuration";
+      str += "\n\tMerge Type: " + this.mergeType;
       if (this.HasSettingsFile())
         str += "\n\tSettings File: " + this.settingsFile;
       else if (HasSettings())
       {
         str += settings.ToString();
       }
-      str += "\n\tMerge Type: " + this.mergeType;
       return str;
     }
   }

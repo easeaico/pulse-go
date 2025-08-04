@@ -23,19 +23,21 @@ from pulse.engine.io.PulseConfiguration import serialize_pulse_configuration_fro
 _pulse_logger = logging.getLogger('pulse')
 
 
-def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Path, name_only: bool = False) -> [str]:
+def gen_scenarios_and_targets(xls_file: Path, output_dir: Path, results_dir: Path, sheet_name: str = "") -> [str]:
     _pulse_logger.info(f"Generating scenarios and targets from {xls_file} to {output_dir}")
     # Iterate through each sheet in the file, generating a scenario for each
     workbook = load_workbook(filename=xls_file, data_only=True)
     scenario_ids = list()
-    if not name_only:
-        for s in workbook.sheetnames:
-            if s == "Notes":
+    for s in workbook.sheetnames:
+        if s == "Notes":
+            continue
+        if s == "Patients":
+            if not process_patient_sheet(workbook[s], Path(f"./patients/{xls_file.stem}")):
+                _pulse_logger.error(f"Unable to read patient sheet")
+        else:
+            if sheet_name and s != sheet_name:
                 continue
-            if s == "Patients":
-                if not process_patient_sheet(workbook[s], Path(f"./patients/{xls_file.stem}")):
-                    _pulse_logger.error(f"Unable to read patient sheet")
-            elif not process_sheet(workbook[s], output_dir, results_dir, scenario_ids):
+            if not process_sheet(workbook[s], output_dir, results_dir, scenario_ids):
                 _pulse_logger.error(f"Unable to read {s} sheet")
     return scenario_ids
 

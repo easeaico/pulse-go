@@ -122,9 +122,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::MaximumPulmonaryVentilationRate:
         m_ss << " Patient's Respiratory Driver has exceeded the maximum target pulmonary ventilation rate, setting value to the maximum allowable rate";
         break;
-      case eEvent::MildDehydration:
-        m_ss << " The patient is in a state of mild dehydration";
-        break;
       case eEvent::MediumHemothorax:
         m_ss << " Patient has Medium Hemothorax";
         break;
@@ -133,6 +130,9 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::MetabolicAlkalosis:
         m_ss << " The patient is in a state of metabolic alkalosis";
+        break;
+      case eEvent::MildDehydration:
+        m_ss << " The patient is in a state of mild dehydration";
         break;
       case eEvent::MinimalHemothorax:
         m_ss << " Patient has Minimal Hemothorax";
@@ -187,7 +187,14 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::StartOfInhale:
         m_ss.str("");// make m_ss empty and nothing will be logged, this event does not need to get logged each activation
         break;
-      // Equipment
+      // Supplemental Oxygen
+      case eEvent::SupplementalOxygenBottleExhausted:
+        m_ss << "Supplemental oxygen bottle is exhausted";
+        break;
+      case eEvent::NonRebreatherMaskOxygenBagEmpty:
+        m_ss << "Non-rebreather mask oxygen bag is empty";
+        break;
+      // Anesthesia Machine
       case eEvent::AnesthesiaMachineOxygenBottleOneExhausted:
         m_ss << "Anesthesia Machine Oxygen Bottle 1 has been exhausted";
         break;
@@ -197,14 +204,61 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::AnesthesiaMachineReliefValveActive:
         m_ss << "Anesthesia Machine Relief valve active - pressure exceeded";
         break;
+      // Mechanical Ventilator
       case eEvent::MechanicalVentilatorReliefValveActive:
         m_ss << "Mechanical Ventilator Relief valve active - pressure exceeded";
         break;
-      case eEvent::SupplementalOxygenBottleExhausted:
-        m_ss << "Supplemental oxygen bottle is exhausted";
+      // Mechanical Ventilator Alarms
+      case eEvent::ApneaTimeAlarmTriggered:
+        m_ss << " Apnea Time Alarm Triggered - No breath detected within specified time interval";
         break;
-      case eEvent::NonRebreatherMaskOxygenBagEmpty:
-        m_ss << "Non-rebreather mask oxygen bag is empty";
+      case eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered:
+        m_ss << " Auto PEEP Alarm Triggered - Air trapping (intrinsic PEEP) has exceeded threshold";
+        break;
+      case eEvent::CircuitLeakAlarmTriggered:
+        m_ss << " Circuit Leak Alarm Triggered - Circuit leak fraction has exceeded threshold";
+        break;
+      case eEvent::HighEndTidalCarbonDioxideAlarmTriggered:
+        m_ss << " High End-Tidal CO2 Alarm Triggered - End-tidal CO2 pressure has exceeded high threshold";
+        break;
+      case eEvent::HighMinuteVentilationAlarmTriggered:
+        m_ss << " High Minute Ventilation Alarm Triggered - Minute ventilation has exceeded high threshold";
+        break;
+      case eEvent::HighOxygenSaturationAlarmTriggered:
+        m_ss << " High Oxygen Saturation Alarm Triggered - Oxygen saturation has exceeded high threshold";
+        break;
+      case eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered:
+        m_ss << " High PEEP Alarm Triggered - PEEP has exceeded high threshold";
+        break;
+      case eEvent::HighPressureAlarmTriggered:
+        m_ss << " High Pressure Alarm Triggered - Airway pressure (PIP) has exceeded high threshold";
+        break;
+      case eEvent::HighRespiratoryRateAlarmTriggered:
+        m_ss << " High Respiratory Rate Alarm Triggered - Respiratory rate has exceeded high threshold";
+        break;
+      case eEvent::HighTidalVolumeAlarmTriggered:
+        m_ss << " High Tidal Volume Alarm Triggered - Tidal volume has exceeded high threshold";
+        break;
+      case eEvent::LowEndTidalCarbonDioxideAlarmTriggered:
+        m_ss << " Low End-Tidal CO2 Alarm Triggered - End-tidal CO2 pressure has fallen below low threshold";
+        break;
+      case eEvent::LowMinuteVentilationAlarmTriggered:
+        m_ss << " Low Minute Ventilation Alarm Triggered - Minute ventilation has fallen below low threshold";
+        break;
+      case eEvent::LowOxygenSaturationAlarmTriggered:
+        m_ss << " Low Oxygen Saturation Alarm Triggered - Oxygen saturation has fallen below low threshold";
+        break;
+      case eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered:
+        m_ss << " Low PEEP Alarm Triggered - PEEP has fallen below low threshold";
+        break;
+      case eEvent::LowPressureAlarmTriggered:
+        m_ss << " Low Pressure Alarm Triggered - Airway pressure (PIP) has fallen below low threshold";
+        break;
+      case eEvent::LowTidalVolumeAlarmTriggered:
+        m_ss << " Low Tidal Volume Alarm Triggered - Tidal volume has fallen below low threshold";
+        break;
+      case eEvent::OxygenSupplyFailureAlarmTriggered:
+        m_ss << " Oxygen Supply Failure Alarm Triggered - Measured FiO2 has fallen below threshold indicating oxygen supply failure";
         break;
       default:
         m_ss << " Engine has entered state : " << eEvent_Name(type);
@@ -363,7 +417,14 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::StartOfInhale:
         m_ss.str("");// make m_ss empty and nothing will be logged, this event does not need to get logged each activation
         break;
-      // Equipment
+        // Supplemental Oxygen
+      case eEvent::SupplementalOxygenBottleExhausted:
+        m_ss << "Supplemental oxygen bottle is no longer exhausted";
+        break;
+      case eEvent::NonRebreatherMaskOxygenBagEmpty:
+        m_ss << "Non-rebreather mask oxygen bag is now longer empty";
+        break;
+        // Anesthesia Machine
       case eEvent::AnesthesiaMachineOxygenBottleOneExhausted:
         m_ss << "Anesthesia Machine Oxygen Bottle 1 has been replenished";
         break;
@@ -373,14 +434,61 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::AnesthesiaMachineReliefValveActive:
         m_ss << "Anesthesia Machine Relief valve inactive - pressure below setting";
         break;
+        // Mechanical Ventilator
       case eEvent::MechanicalVentilatorReliefValveActive:
         m_ss << "Mechanical Ventilator Relief valve inactive - pressure below setting";
         break;
-      case eEvent::SupplementalOxygenBottleExhausted:
-        m_ss << "Supplemental oxygen bottle is no longer exhausted";
+        // Mechanical Ventilator Alarms
+      case eEvent::ApneaTimeAlarmTriggered:
+        m_ss << " Apnea Time Alarm Cleared - Breathing has resumed within normal time interval";
         break;
-      case eEvent::NonRebreatherMaskOxygenBagEmpty:
-        m_ss << "Non-rebreather mask oxygen bag is now longer empty";
+      case eEvent::AutoPositiveEndExpiratoryPressureAlarmTriggered:
+        m_ss << " Auto PEEP Alarm Cleared - Air trapping (intrinsic PEEP) has returned to normal levels";
+        break;
+      case eEvent::CircuitLeakAlarmTriggered:
+        m_ss << " Circuit Leak Alarm Cleared - Circuit leak fraction has returned to acceptable levels";
+        break;
+      case eEvent::HighEndTidalCarbonDioxideAlarmTriggered:
+        m_ss << " High End-Tidal CO2 Alarm Cleared - End-tidal CO2 pressure has returned below high threshold";
+        break;
+      case eEvent::HighMinuteVentilationAlarmTriggered:
+        m_ss << " High Minute Ventilation Alarm Cleared - Minute ventilation has returned below high threshold";
+        break;
+      case eEvent::HighOxygenSaturationAlarmTriggered:
+        m_ss << " High Oxygen Saturation Alarm Cleared - Oxygen saturation has returned below high threshold";
+        break;
+      case eEvent::HighPositiveEndExpiratoryPressureAlarmTriggered:
+        m_ss << " High PEEP Alarm Cleared - PEEP has returned below high threshold";
+        break;
+      case eEvent::HighPressureAlarmTriggered:
+        m_ss << " High Pressure Alarm Cleared - Airway pressure (PIP) has returned below high threshold";
+        break;
+      case eEvent::HighRespiratoryRateAlarmTriggered:
+        m_ss << " High Respiratory Rate Alarm Cleared - Respiratory rate has returned below high threshold";
+        break;
+      case eEvent::HighTidalVolumeAlarmTriggered:
+        m_ss << " High Tidal Volume Alarm Cleared - Tidal volume has returned below high threshold";
+        break;
+      case eEvent::LowEndTidalCarbonDioxideAlarmTriggered:
+        m_ss << " Low End-Tidal CO2 Alarm Cleared - End-tidal CO2 pressure has returned above low threshold";
+        break;
+      case eEvent::LowMinuteVentilationAlarmTriggered:
+        m_ss << " Low Minute Ventilation Alarm Cleared - Minute ventilation has returned above low threshold";
+        break;
+      case eEvent::LowOxygenSaturationAlarmTriggered:
+        m_ss << " Low Oxygen Saturation Alarm Cleared - Oxygen saturation has returned above low threshold";
+        break;
+      case eEvent::LowPositiveEndExpiratoryPressureAlarmTriggered:
+        m_ss << " Low PEEP Alarm Cleared - PEEP has returned above low threshold";
+        break;
+      case eEvent::LowPressureAlarmTriggered:
+        m_ss << " Low Pressure Alarm Cleared - Airway pressure (PIP) has returned above low threshold";
+        break;
+      case eEvent::LowTidalVolumeAlarmTriggered:
+        m_ss << " Low Tidal Volume Alarm Cleared - Tidal volume has returned above low threshold";
+        break;
+      case eEvent::OxygenSupplyFailureAlarmTriggered:
+        m_ss << " Oxygen Supply Failure Alarm Cleared - Measured FiO2 has returned above threshold indicating oxygen supply restored";
         break;
       default:
         m_ss << " Engine has exited state : " << eEvent_Name(type);

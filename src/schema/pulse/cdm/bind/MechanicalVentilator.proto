@@ -8,6 +8,28 @@ import "pulse/cdm/bind/Enums.proto";
 import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/Substance.proto";
 
+message MechanicalVentilatorAlarmsData
+{
+  ScalarTimeData                      ApneaTimeThreshold                         = 1; /**<< @brief Time interval threshold for apnea detection alarm. */
+  ScalarPressureData                  AutoPositiveEndExpiratoryPressureThreshold = 2; /**<< @brief Intrinsic PEEP threshold for auto-PEEP detection alarm. */
+  Scalar0To1Data                      CircuitLeakThreshold                       = 3; /**<< @brief Leak fraction threshold for circuit leak alarm. */
+  ScalarPressureData                  HighEndTidalCarbonDioxideThreshold         = 4; /**<< @brief End-tidal CO2 pressure threshold for high EtCO2 alarm. */
+  ScalarVolumePerTimeData             HighMinuteVentilationThreshold             = 5; /**<< @brief Minute ventilation threshold for high ventilation alarm. */
+  Scalar0To1Data                      HighOxygenSaturationThreshold              = 6; /**<< @brief SpO2 fraction threshold for high oxygen saturation alarm. */
+  ScalarPressureData                  HighPositiveEndExpiratoryPressureThreshold = 7; /**<< @brief PEEP threshold for high PEEP alarm. */
+  eSwitch                             HighPressureCycleOption                    = 8; /**<< @brief Enable cycling option for high pressure alarm. */
+  ScalarPressureData                  HighPressureThreshold                      = 9; /**<< @brief Airway pressure threshold for high pressure alarm (PIP). */
+  ScalarFrequencyData                 HighRespiratoryRateThreshold               = 10;/**<< @brief Respiratory rate threshold for high rate alarm. */
+  ScalarVolumeData                    HighTidalVolumeThreshold                   = 11;/**<< @brief Tidal volume threshold for high volume alarm (VT). */
+  ScalarPressureData                  LowEndTidalCarbonDioxideThreshold          = 12;/**<< @brief End-tidal CO2 pressure threshold for low EtCO2 alarm. */
+  ScalarVolumePerTimeData             LowMinuteVentilationThreshold              = 13;/**<< @brief Minute ventilation threshold for low ventilation alarm. */
+  Scalar0To1Data                      LowOxygenSaturationThreshold               = 14;/**<< @brief SpO2 fraction threshold for low oxygen saturation alarm. */
+  ScalarPressureData                  LowPositiveEndExpiratoryPressureThreshold  = 15;/**<< @brief PEEP threshold for low PEEP alarm. */
+  ScalarPressureData                  LowPressureThreshold                       = 16;/**<< @brief Airway pressure threshold for low pressure alarm (PIP). */
+  ScalarVolumeData                    LowTidalVolumeThreshold                    = 17;/**<< @brief Tidal volume threshold for low volume alarm (VT). */
+  Scalar0To1Data                      OxygenSupplyFailureThreshold               = 18;/**<< @brief FiO2 fraction threshold for oxygen supply failure alarm. */
+}
+
 message MechanicalVentilatorSettingsData
 {
   eSwitch                             Connection                                = 1;/**<< @brief @ref eSwitchTable */
@@ -73,8 +95,10 @@ message MechanicalVentilatorSettingsData
   ScalarPressureData                  ReliefValveThreshold                      = 34;/**<< @brief Pressure at which the relief valve opens. */
   ScalarVolumeData                    YPieceVolume                              = 35;/**<< @brief Dead space volume of the y-piece. */
   
-  repeated SubstanceFractionData      FractionInspiredGas                       = 36;/**<< @brief Break down of the gases, such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol              = 37;/**<< @brief Concentration of added aerosolized substances. */
+  MechanicalVentilatorAlarmsData      Alarms                                    = 36;
+  
+  repeated SubstanceFractionData      FractionInspiredGas                       = 37;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol              = 38;/**<< @brief Concentration of added aerosolized substances. */
 }
 
 message MechanicalVentilatorData
