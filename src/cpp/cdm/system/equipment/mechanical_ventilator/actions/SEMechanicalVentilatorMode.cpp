@@ -39,7 +39,9 @@ bool SEMechanicalVentilatorMode::IsValid() const
 
 bool SEMechanicalVentilatorMode::IsActive() const
 {
-  return m_Connection == eSwitch::On || HasSupplementalSettings() || HasSupplementalSettingsFile();
+  if (m_Connection != eSwitch::On || !HasSupplementalSettings() || !HasSupplementalSettingsFile())
+    return false;
+  return SEMechanicalVentilatorAction::IsActive();
 }
 
 bool SEMechanicalVentilatorMode::ToSettings(SEMechanicalVentilatorSettings& s, SESubstanceManager& subMgr, eMergeType mt)
