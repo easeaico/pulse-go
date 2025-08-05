@@ -7,7 +7,6 @@ import io
 import json
 import logging
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 import shutil
 
 from json2html import *

@@ -138,7 +138,7 @@ class TriageStudy:
     __slots__ = ["_output_dir", "_triage_study", "_dataset", "_pulse_data", "_tgt_id",
                  "_injury_scenarios_dir", "_injury_states_dir", "_injury_outputs_dir", "_injury_exec_status_filename",
                  "_intervention_scenarios_dir", "_intervention_outputs_dir", "_intervention_exec_status_filename",
-                 "_total_interventions",
+                 "_total_interventions", "_num_pulse_casualties",
                  "injury_opts", "keep_triage"
                  ]
 
@@ -162,6 +162,7 @@ class TriageStudy:
         self._intervention_exec_status_filename = None
         self.injury_opts = InjurySeverityOpts()
         self.keep_triage = False
+        self._num_pulse_casualties = 0
 
     def _set_artifact_folder_name(self, folder: str):
         # Directories and files associated with simulating injuries using Pulse
@@ -213,6 +214,11 @@ class TriageStudy:
                             if i != self._tgt_id:
                                 continue
                         self._clear_casualty(casualty)
+                self._num_pulse_casualties = 0
+                for i, casualty in self._triage_study.items():
+                    spec = casualty["specification"]
+                    if spec["pulse"]:
+                        self._num_pulse_casualties += 1
             except Exception as e:
                 _log.error(f"Unable to load file {file}: {e}")
         else:
@@ -222,10 +228,12 @@ class TriageStudy:
             p = SEPatient()
             pulse = PulseEngine()
             pulse.log_to_console(False)
+            self._num_pulse_casualties = 0
             for i, casualty in self._triage_study.items():
                 spec = casualty["specification"]
                 if "state" in spec:
                     spec["pulse"] = True
+                    self._num_pulse_casualties += 1
                     continue
 
                 p.clear()
@@ -241,9 +249,11 @@ class TriageStudy:
                     _log.warning(f"Pulse cannot simulate casualty {i}\n{spec}")
                 else:
                     spec["pulse"] = True
+                    self._num_pulse_casualties += 1
 
             with open(file, 'w') as f:
                 json.dump(self._triage_study, f, indent=2)
+        _log.info(f"Study has {self._num_pulse_casualties}/{len(self._triage_study)} Pulse compatible casualties")
         self._triage(file, tgt_id, skip_visited,
                      untreated_injury_time_min=untreated_injury_time_min,
                      state_interval_min=state_interval_min,
@@ -432,14 +442,15 @@ class TriageStudy:
         serialize_scenario_exec_status_list_from_file(str(self._injury_exec_status_filename),
                                                       casualty_states_exec_status)
 
-        if len(casualty_states_exec_status) != len(self._triage_study):
+        if len(casualty_states_exec_status) != self._num_pulse_casualties:
             _log.fatal(f"Number of scenarios executed ({len(casualty_states_exec_status)}) "
-                       f"does not equal the number of triage study casualties ({len(self._triage_study)})")
+                       f"does not equal the number of triage study casualties ({self._num_pulse_casualties})")
             exit(1)
         for status in casualty_states_exec_status:
             sce = Path(status.get_scenario_filename()).parts[-2]
             i = int(sce[sce.find('_')+1:])
             self._triage_study[i]["injury_exec_status"] = _exec_status_to_dict(status)
+            # TODO Check if runs were successful or not
 
     def _triage_injured_states(self, out_file: Path):
         _log.info("Triaging injured casualties")
@@ -894,6 +905,7 @@ class TriageStudy:
                     exit(1)
                 visit["intervention"]["intervention_exec_status"] = _exec_status_to_dict(intervention_exec_status[v])
                 v += 1
+                # TODO Check if runs were successful or not
         self._total_interventions = v
 
     def _assess_interventions(self, duration_min: float):
