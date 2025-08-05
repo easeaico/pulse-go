@@ -9,6 +9,7 @@ from typing import List, Optional, Union
 from pulse.cdm.enums import eEngineInitializationState
 from pulse.cdm.scalars import SEScalarTime, SEScalarUnit, TimeUnit
 
+
 class eEvent(int, Enum):
     Antidiuresis = 0
     Bradycardia = 1

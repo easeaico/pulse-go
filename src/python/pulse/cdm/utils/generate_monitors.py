@@ -1,7 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-import sys
 import logging
 import argparse
 import numpy as np
@@ -14,7 +13,7 @@ from datetime import timedelta
 from timeit import default_timer as timer
 
 from pulse.cdm.engine import eEvent
-from pulse.cdm.engine import eSwitch
+from pulse.cdm.enums import eSwitch
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
 from pulse.cdm.plots import SEPlotConfig, SEPlotSource, SEMonitorPlotter
 from pulse.cdm.utils.file_utils import adjust_filepath
@@ -503,8 +502,7 @@ def create_ventilator_alarms_image(csv_file: Path, start_time_s: float, end_time
         _pulse_logger.error(f"Expected log file {log_file} does not exist")
         return
     # Load and get information out of the log for our plot
-    log = PulseLog()
-    log.parse(log_file)
+    log = PulseLog(log_files=[log_file])
     
     # Get alarms
     # Pressure Alarms

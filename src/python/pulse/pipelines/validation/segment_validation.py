@@ -13,12 +13,11 @@ import PyPulse
 
 from pulse.cdm.engine import SEDataRequested, eEvent
 from pulse.cdm.validation import SESegmentValidationTarget, generate_percentage_span, format_float
-from pulse.cdm.utils.logger import PulseLog
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
 from pulse.cdm.io.validation import serialize_segment_validation_segment_list_from_file
-
+from pulse.engine.PulseEngineResults import PulseLog
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -91,7 +90,6 @@ def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str =
         fields = list(range(len(headers)))
         align = [('<', '<')] * len(headers)
 
-        log = PulseLog()
         for target in targets:
             if not target.has_validation_targets():
                 continue
@@ -111,8 +109,7 @@ def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str =
                         continue
                     seg_start_time = results.get_segment(seg_id - 1).time_s
                     seg_end_time = results.get_segment(seg_id).time_s
-                    if not log.is_valid:
-                        log.parse(results_files[1])
+                    log = PulseLog(log_files=[results_files[1]])
                     if not segment_durations:
                         segment_durations = log.get_active_events_in_window(seg_start_time, seg_end_time)
                     event = eEvent[header[1]]

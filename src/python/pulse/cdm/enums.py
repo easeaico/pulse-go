@@ -43,3 +43,13 @@ class eCharge(int, Enum):
     Neutral = 2
     Positive = 3
 
+
+class eMergeType(int, Enum):
+    Append = 0
+    Replace = 1
+
+
+class eAppliedRespiratoryCycle(int, Enum):
+    Expiratory = 0
+    Inspiratory = 1
+    Instantaneous = 2

@@ -157,7 +157,7 @@ class PulseLog:
                         while (idx + 1) < len(lines) and len(lines[idx + 1].strip()) != 0:
                             idx += 1
                             line = lines[idx]
-                            if '[' in line:
+                            if '[I' in line:
                                 # This should not be here, something corrupted the log
                                 # If you want to use [ ] in a comment, we'd need to strengthen this logic
                                 _pulse_logger.error("Action json is corrupted")
@@ -167,8 +167,9 @@ class PulseLog:
                         # Attempt to determine action name
                         try:
                             action_dict = json.loads(action_text)
-                        except JSONDecodeError:
+                        except JSONDecodeError as ex:
                             _pulse_logger.error(f"Could not parse action from {log_file} : {action_text}")
+                            _pulse_logger.error(f"{ex}")
                             idx += 1
                             continue
 
