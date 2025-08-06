@@ -666,13 +666,14 @@ class SEPlotSource:
     def get_actions(self,
                     allow_actions_with: Optional[List[str]] = None,
                     omit_actions_with: Optional[List[str]] = None,
-                    count_limit: int = None) -> list:
+                    count_limit: int = None) -> dict:
         if allow_actions_with is None:
             allow_actions_with = list()
         if omit_actions_with is None:
             omit_actions_with = list()
 
-        filtered = []
+        cnt = 0
+        filtered = {}
         for time, actions in self._actions.items():
             for a in actions:
                 if allow_actions_with:
@@ -691,23 +692,30 @@ class SEPlotSource:
 
                 if keep:
                     if count_limit:
-                        if len(filtered) < count_limit:
-                            filtered.append(a)
+                        if cnt < count_limit:
+                            cnt += 1
+                            if time not in filtered:
+                                filtered[time] = []
+                            filtered[time].append(a)
                     else:
-                        filtered.append(a)
+                        cnt += 1
+                        if time not in filtered:
+                            filtered[time] = []
+                        filtered[time].append(a)
 
         return filtered
 
     def get_events(self,
                    allow_events_with: Optional[List[str]] = None,
                    omit_events_with: Optional[List[str]] = None,
-                   count_limit: int = None) -> list:
+                   count_limit: int = None) -> dict:
         if allow_events_with is None:
             allow_events_with = list()
         if omit_events_with is None:
             omit_events_with = list()
 
-        filtered = []
+        cnt = 0
+        filtered = {}
         for time, events in self._events.items():
             for e in events:
                 if allow_events_with:
@@ -726,10 +734,15 @@ class SEPlotSource:
 
                 if keep:
                     if count_limit:
-                        if len(filtered) < count_limit:
-                            filtered.append(e)
+                        cnt += 1
+                        if time not in filtered:
+                            filtered[time] = []
+                        filtered[time].append(e)
                     else:
-                        filtered.append(e)
+                        cnt += 1
+                        if time not in filtered:
+                            filtered[time] = []
+                        filtered[time].append(e)
 
         return filtered
 

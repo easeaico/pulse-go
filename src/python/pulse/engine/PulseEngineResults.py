@@ -281,7 +281,7 @@ class PulseLog:
 
     def get_active_events_in_window(self, window_start_s: float, window_end_s: float):
 
-        events = {}
+        events = {None: {"Duration_s": 0.0, "ActiveFraction": 0.0, "FinalState": False}}
         for e, actives in self._event_windows.items():
             if e not in events:
                 events[e] = {"Duration_s": 0.0, "ActiveFraction": 0.0, "FinalState": False}
