@@ -832,6 +832,9 @@ class TriageStudy:
                 if self._tgt_id:
                     if i != self._tgt_id:
                         continue
+                spec = casualty["specification"]
+                if not spec["pulse"]:
+                    continue
                 for time_s, visit in casualty["visits"].items():
 
                     # Only simulate the injuries we can perform interventions on
@@ -895,6 +898,10 @@ class TriageStudy:
                 if i != self._tgt_id:
                     v += 1
                     continue
+            spec = casualty["specification"]
+            if not spec["pulse"]:
+                continue
+
             for time, visit in casualty["visits"].items():
                 if "intervention" not in visit:
                     continue
