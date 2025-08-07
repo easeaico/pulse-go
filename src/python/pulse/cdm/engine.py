@@ -437,7 +437,7 @@ class eDecimalFormat_type(Enum):
     SignificantDigits = 3
 
 
-class SEDecimalFormat():
+class SEDecimalFormat:
     __slots__ = ["_precision", "_notation"]
 
     def __init__(self, precision: Optional[int]=None, notation: Optional[eDecimalFormat_type]=None) -> None:
@@ -480,6 +480,7 @@ class eDataRequest_category(Enum):
     ECMO = 12
     Inhaler = 13
     MechanicalVentilator = 14
+
 
 class SEDataRequest(SEDecimalFormat):
     __slots__ = ['_category', '_action_name', '_compartment_name', '_substance_name', '_property_name', '_unit']
@@ -657,7 +658,7 @@ class SEDataRequest(SEDecimalFormat):
         return self._unit
 
 
-class SEDataRequested: # Event and Log support
+class SEDataRequested:  # Event and Log support
     __slots__ = ['_id', '_is_active', '_headers', '_header_idxs', '_segments']
 
     @dataclass

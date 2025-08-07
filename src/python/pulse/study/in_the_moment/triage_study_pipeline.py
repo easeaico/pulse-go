@@ -379,6 +379,7 @@ class TriageStudy:
                     _log.info(f"Creating casualty {i}: "
                               f"{spec['sex']}-{spec['age']}yr-{spec['height']}cm-{spec['bmi']}bmi-{spec['heart_rate']}bpm")
 
+                s.get_data_request_manager().set_samples_per_second(1.0)
                 s.get_data_request_manager().set_data_requests(self._pulse_data.data_requests)
                 s.get_data_request_manager().set_results_filename(f"{self._injury_outputs_dir}/"
                                                                   f"casualty_{i}/initial_injury.csv")
@@ -851,6 +852,7 @@ class TriageStudy:
                     s.set_name(f"Casualty {i}")
                     s.set_description(f"Interventions for casualty {i}")
                     s.set_engine_state(triage["state"])
+                    s.get_data_request_manager().set_samples_per_second(1.0)
                     s.get_data_request_manager().set_data_requests(self._pulse_data.data_requests)
                     s.get_data_request_manager().set_results_filename(f"{self._intervention_outputs_dir}"
                                                                       f"/casualty_{i}/{o_fn}")

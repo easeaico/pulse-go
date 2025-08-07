@@ -5,7 +5,7 @@ from pulse.cdm.enums import eSwitch
 from pulse.cdm.scalars import SEScalarTime
 
 
-class PulseConfiguration():
+class PulseConfiguration:
     __slots__ = ["_time_step", "_allow_dynamic_timestep"]
 
     def __init__(self):
