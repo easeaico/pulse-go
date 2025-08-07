@@ -43,7 +43,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 4.3.1 LANGUAGES C CXX)
+project(Pulse VERSION 4.3.2 LANGUAGES C CXX)
 include(GNUInstallDirs)
 
 function(remove_cmake_variables)
