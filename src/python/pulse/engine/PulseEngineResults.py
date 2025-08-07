@@ -132,6 +132,27 @@ class PulseLog:
                     # Look for start/end times
                     if "[Initial SimTime(s)]" in line:
                         self._start_time_s = pull_time()
+                        # Remove stabilization events from our event list
+                        stabilization_events = self._events
+                        self._events = {}
+                        # Clean up events triggered during stabilization
+                        # Remove any inactive events we found
+                        # Reset all event times we have found to 0
+                        for time, events in stabilization_events.items():
+                            for se in events:
+                                if se.event == eEvent.Stabilizing:
+                                    continue
+                                if se.active:
+                                    se.time = 0
+                                    if se.time not in self._events:
+                                        self._events[se.time] = []
+                                    self._events[se.time].append(se)
+                                else:  # Event went from active to inactive in stabilization, so take it out
+                                    for i, e in enumerate(self._events[time]):
+                                        if e.event == se.event:
+                                            del self._events[time][i]
+                                            break
+
                         idx += 1
                         continue
                     elif "[Final SimTime(s)]" in line:
@@ -209,29 +230,6 @@ class PulseLog:
                         continue
 
                     # Look for events
-                    if "[Initial SimTime(s)]" in line:
-                        stabilization_events = self._events
-                        self._events = {}
-                        # Clean up events triggered during stabilization
-                        # Remove any inactive events we found
-                        # Reset all event times we have found to 0
-                        for time, events in stabilization_events.items():
-                            for se in events:
-                                if se.event == eEvent.Stabilizing:
-                                    continue
-                                if se.active:
-                                    se.time = 0
-                                    if se.time not in self._events:
-                                        self._events[se.time] = []
-                                    self._events[se.time].append(se)
-                                else:  # Event went from active to inactive in stabilization, so take it out
-                                    for i, e in enumerate(self._events[time]):
-                                        if e.event == se.event:
-                                            del self._events[time][i]
-                                            break
-                        idx += 1
-                        continue
-
                     match = re.search(
                         r"\[(?P<time_val>\d+.?\d*)\(.*\)\]\s*\[Event(?P<event_name>.*)(?P<active>[01])\](?P<event_text>.*)",
                         line)
