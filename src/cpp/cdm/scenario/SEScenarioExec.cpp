@@ -340,7 +340,6 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SESce
   profiler.Start("Total");
   profiler.Start("Status");
 
-  bool err=false;
   const SEAdvanceTime* adv;
   double expectedFinalSimTime_s = 0;
   double spareAdvanceTime_s = 0;
@@ -361,7 +360,11 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SESce
       spareAdvanceTime_s = time_s - (count * dT_s);
       for (int i=0;i<count;i++)
       {
-        AdvanceEngine(pe);
+        if (!AdvanceEngine(pe) || pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
+        {
+          pe.GetLogger()->Fatal("Halting scenario execution");
+          return false;
+        }
 
         // Pull data from the engine
         scenarioTime_s = pe.GetSimulationTime(TimeUnit::s);
@@ -380,14 +383,16 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SESce
           profiler.Reset("Status");
           pe.GetLogger()->Info(ss);
         }
-        if(pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
-          return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
+        
       }
       continue;
     }
 
     if(!ProcessAction(pe, *a))
-      err=true;
+    {
+      pe.GetLogger()->Fatal("Error processing action, halting scenario execution");
+      return false;
+    }
 
     if(pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
@@ -402,13 +407,12 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SESce
   pe.GetLogger()->Info("[Expected Final SimTime] " + pulse::cdm::to_string(expectedFinalSimTime_s)+"(s)");
   if (GeneralMath::PercentDifference(expectedFinalSimTime_s, simTime_s) > 0.01)
   {
-    err = true;
-    pe.GetLogger()->Error("!!!! Simulation time does not equal expected end time !!!!");
+    pe.GetLogger()->Warning("!!!! Simulation time does not equal expected end time !!!!");
   }
   if (status)
     status->SetFinalSimulationTime_s(simTime_s);
 
-  return !err;
+  return true;
 }
 
 bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
@@ -453,7 +457,7 @@ bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
   return pe.ProcessAction(action);
 }
 
-void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
+bool SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
 {
   if (m_AutoSerializePeriod_s > 0)
   {
@@ -466,15 +470,31 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
       if (m_TimeStampSerializedStates == eSwitch::On)
         m_SerializationOutput << "@" << pe.GetSimulationTime(TimeUnit::s);
       pe.GetLogger()->Info("Serializing state after requested period");
-      pe.SerializeToFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
+      if (!pe.SerializeToFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt))
+      {
+        Error("Unable to Auto SerializeToFile.");
+        return false;
+      }
       if (m_ReloadSerializedState == eSwitch::On)
       {
-        pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
-        pe.SerializeToFile(m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt);
+        if (!pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt))
+        {
+          Error("Unable to ReloadSerializedStateFromFile.");
+          return false;
+        }
+        if (!pe.SerializeToFile(m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt))
+        {
+          Error("Unable to ReloadSerializedStateBackToFile.");
+          return false;
+        }
       }
     }
   }
-  pe.AdvanceModelTime();
+  if (!pe.AdvanceModelTime())
+  {
+    Error("Unable to advance time.");
+    return false;
+  }
   if (m_SaveNextStep)
   {
     m_SaveNextStep = false;
@@ -483,7 +503,11 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     if (m_TimeStampSerializedStates == eSwitch::On)
       m_SerializationOutput << "@" << pe.GetSimulationTime(TimeUnit::s);
     pe.GetLogger()->Info("Serializing state again (after the next timestep)");
-    pe.SerializeToFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
+    if (!pe.SerializeToFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt))
+    {
+      Error("Unable to SerializeNextStepStateToFile.");
+      return false;
+    }
   }
   if (m_SerializationActions.str().length() > 0)
   {
@@ -493,15 +517,28 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     if (m_TimeStampSerializedStates == eSwitch::On)
       m_SerializationOutput << "@" << pe.GetSimulationTime(TimeUnit::s);
     pe.GetLogger()->Info("Serializing state after action");
-    pe.SerializeToFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
+    if (!pe.SerializeToFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt))
+    {
+      Error("Unable to SerializeToFile after action.");
+      return false;
+    }
     if (m_ReloadSerializedState == eSwitch::On)
     {
       pe.GetLogger()->Info("Reloading and saving reloaded state");
-      pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
-      pe.SerializeToFile(m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt);
+      if (!pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt))
+      {
+        Error("Unable to ReloadSerializedStateAfterActionBackToFile.");
+        return false;
+      }
+      if (!pe.SerializeToFile(m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt))
+      {
+        Error("Unable to ReSerializeStateAfterActionBackToFile.");
+        return false;
+      }
     }
     m_SerializationActions.str("");
   }
+  return true;
 }
 
 bool SEScenarioExec::ConvertLog()

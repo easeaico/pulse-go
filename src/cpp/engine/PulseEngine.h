@@ -19,15 +19,6 @@ PULSE_DECL bool eModelType_ValueOf(const std::string s, eModelType& t);
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type = eModelType::HumanAdultWholeBody, Logger* logger = nullptr);
 
-struct IrreversibleStateException : public std::runtime_error
-{
-  IrreversibleStateException()
-    : std::runtime_error("Engine Has Entered An Irreversible State") {}
-
-  IrreversibleStateException(const std::string& _Message)
-    : std::runtime_error(_Message) {}
-};
-
 namespace pulse
 {
   ////////////////////////////////////

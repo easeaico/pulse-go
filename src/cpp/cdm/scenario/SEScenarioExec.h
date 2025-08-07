@@ -167,7 +167,7 @@ protected:
   /// To override default functionality with those
   /// actions override the ProcessActions method
   bool ProcessAction(PhysiologyEngine& pe, SEAction& action);
-  void AdvanceEngine(PhysiologyEngine& pe);
+  bool AdvanceEngine(PhysiologyEngine& pe);
 
   eSwitch     m_LogToConsole;
   std::string m_DataRootDirectory;

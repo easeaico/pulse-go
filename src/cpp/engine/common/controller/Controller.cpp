@@ -612,16 +612,14 @@ namespace pulse
     if (!IsReady())
       return false;
 
-    try
-    {
-      CheckIntubation();
-      PreProcess();
-      Process();
-      PostProcess();
-    }catch (IrreversibleStateException&) { }
+    CheckIntubation();
+    PreProcess();
+    Process();
+    PostProcess();
 
     if (m_EventManager->IsEventActive(eEvent::IrreversibleState))
     {
+      Fatal("We gotta stop!!!");
       m_State = EngineState::Fatal;
       return false;
     }
@@ -692,7 +690,10 @@ namespace pulse
       {
         Info("Advancing until stable using criteria: " + criteria);
         if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, criteria))
+        {
           Error("Engine was unable to AdvanceUntilStable");
+          return false;
+        }
       }
 
       m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
