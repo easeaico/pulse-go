@@ -16,5 +16,6 @@ public:
 
   void Clear() override;
 
+  bool IsActive() const override;
   bool IsValid() const override;
 };
