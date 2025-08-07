@@ -340,7 +340,7 @@ namespace Pulse
     public PulseEngine(eModelType m = eModelType.HumanAdultWholeBody, string data_dir = "./") : base(m,data_dir){ }
 
     [DllImport(Attribute)]
-    private static extern double PulseVersion(out IntPtr version_str);
+    private static extern void PulseVersion(out IntPtr version_str);
     public static string Version()
     {
       if (version.Length == 0)
@@ -353,7 +353,7 @@ namespace Pulse
     }
 
     [DllImport(Attribute)]
-    private static extern double PulseHash(out IntPtr version_str);
+    private static extern void PulseHash(out IntPtr version_str);
     public static string Hash()
     {
       if (hash.Length == 0)
