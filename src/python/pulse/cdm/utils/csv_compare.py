@@ -51,6 +51,14 @@ class CSVComparison(SETestReport):
 
         report = computed_file_path.parent / computed_file_path.stem / f"{computed_file_path.stem}Report.json"
         self.set_full_report_path(report)
+        # Try to include the scenario directory path into the name
+        if (len(self.report_dir.parts) > 2 and
+                self.report_dir.parts[0] == "test_results" and
+                self.report_dir.parts[1] == "scenarios"):
+            extra = ""
+            for i in range(2, len(self.report_dir.parts)-1):
+                extra += self.report_dir.parts[i] + '_'
+            self.name = extra + self.name
 
         # Remove and recreate directory
         try:

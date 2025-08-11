@@ -138,19 +138,20 @@ class PulseLog:
                         # Clean up events triggered during stabilization
                         # Remove any inactive events we found
                         # Reset all event times we have found to 0
+                        zero = 0.0
                         for time, events in stabilization_events.items():
                             for se in events:
                                 if se.event == eEvent.Stabilizing:
                                     continue
                                 if se.active:
-                                    se.time = 0
-                                    if se.time not in self._events:
-                                        self._events[se.time] = []
-                                    self._events[se.time].append(se)
+                                    se.sim_time.set_value(zero, TimeUnit.s)
+                                    if zero not in self._events:
+                                        self._events[zero] = []
+                                    self._events[zero].append(se)
                                 else:  # Event went from active to inactive in stabilization, so take it out
-                                    for i, e in enumerate(self._events[time]):
+                                    for i, e in enumerate(self._events[zero]):
                                         if e.event == se.event:
-                                            del self._events[time][i]
+                                            del self._events[zero][i]
                                             break
 
                         idx += 1

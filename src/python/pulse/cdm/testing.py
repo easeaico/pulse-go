@@ -164,7 +164,7 @@ class SETestReport:
     __slots__ = ["name", "file_name", "report_dir", "test_suites", "known_failing_suites"]
 
     @dataclass
-    class Data():
+    class Data:
         name: str
         runs: int = field(compare=False)
         errors: int = field(compare=False)
@@ -176,6 +176,8 @@ class SETestReport:
         html: str = field(default="", compare=False)
 
     def __init__(self):
+        self.name = ""
+        self.file_name = ""
         self.report_dir = "./"
         self.test_suites = []
         self.known_failing_suites = []
@@ -204,11 +206,11 @@ class SETestReport:
         self.name = name
 
     def get_file_name(self):
-        return this._file_name
+        return self.file_name
     def set_file_name(self, file_name: str, ext: Optional[str]=None):
         if ext is not None:
-            self.name = name
-            self.file_name = name + ext
+            self.name = file_name
+            self.file_name = file_name + ext
         else:
             if "." in file_name:
                 self.file_name = file_name
