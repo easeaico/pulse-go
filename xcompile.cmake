@@ -13,20 +13,16 @@ endif()
 message(STATUS "Creating build directory: ${build_to}")
 file(MAKE_DIRECTORY ${build_to})
 
+set(C_AS_STATIC OFF)
+if(IMAGE STREQUAL "web-wasm")
+  set(C_AS_STATIC ON)
+  message(STATUS "Building static libraries")
+endif()
+  
+set(NATIVE_BUILD_DIR)
 if (DEFINED BIND)
-  # Copy cpp bindings
-  file(MAKE_DIRECTORY ${build_to}/Innerbuild/src/cpp)
-  file(COPY ${build_root}/${BIND}/Innerbuild/src/cpp/pulse
-       DESTINATION ${build_to}/Innerbuild/src/cpp)
-  if (JAVA)
-    # Copy java bindings
-    file(MAKE_DIRECTORY ${build_to}/Innerbuild/src/java)
-    file(COPY ${build_root}/${BIND}/Innerbuild/src/java/com
-         DESTINATION ${build_to}/Innerbuild/src/java)
-  endif()
-  # And get the touch file so we don't run protoc
-  file(COPY "${build_root}/${BIND}/Innerbuild/src/schema_last_built"
-       DESTINATION "${build_to}/Innerbuild/src")
+  set(NATIVE_BUILD_DIR "/work/dockcross-builds/${BIND}")
+  message(STATUS "Using bindings from ${build_root}/${BIND}")
 else()
   message(STATUS "Will generate my own bindings")
 endif()
@@ -56,6 +52,8 @@ if (NOT DEFINED INSTALLER)
   set(INSTALLER "APT") # Default
 endif()
 execute_process(COMMAND ${wsl} ./${IMAGE} cmake -DPulse_JAVA_API:BOOL=${JAVA}
+                                            -DPulse_C_AS_STATIC:BOOL=${C_AS_STATIC}
+                                            -DPulse_NATIVE_BUILD_DIR:PATH=${NATIVE_BUILD_DIR}
                                             -DINSTALLER:STRING=${INSTALLER}
                                             -DBUILD_DIR:PATH=dockcross-builds/${IMAGE}
                                             -DSRC_DIR:PATH=${src_dir}

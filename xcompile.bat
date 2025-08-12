@@ -12,8 +12,35 @@
 :: Change to ON if you want to get libPulseJNI.so binaries
 set BUILD_JAVA=OFF
 
+:: Note, once build line is performed, you can comment it out to run a targeted build
+
 cmake -DIMAGE:STRING=manylinux2014-x64 -DJAVA:BOOL=%BUILD_JAVA% -DINSTALLER:STRING="YUM" -P xcompile.cmake
 cmake -DIMAGE:STRING=android-arm -DJAVA:BOOL=%BUILD_JAVA% -DBIND:STRING=manylinux2014-x64 -P xcompile.cmake
 cmake -DIMAGE:STRING=android-arm64 -DJAVA:BOOL=%BUILD_JAVA% -DBIND:STRING=manylinux2014-x64 -P xcompile.cmake
-cmake -DIMAGE:STRING=web-wasm -DJAVA:BOOL=%BUILD_JAVA% -DBIND:STRING=manylinux2014-x64 -P xcompile.cmake
+
+:: If you want to build according to the latest emscripten supported by dockcross, you can just uncomment the final line of this block
+:: To build for a specific emscripten version:
+:: Note: For Unity, You can determine the path to the exact version of Emscripten toolchain from the emscripten-version.txt located at:
+::    C:\Program Files\Unity\Hub\Editor\<Editor version>\Editor\Data\PlaybackEngines\WebGLSupport\BuildTools\Emscripten\emscripten\emscripten-version.txt
+::
+:: Option 1: Pull the container with the emscripten version closest to what you want
+::   dockcross web-wasm for emscripten 3.1.10: docker pull dockcross/web-wasm:20220520-7a4634c (closest container to version 3.1.9)
+::   dockcross web-wasm for emscripten 3.1.41: docker pull dockcross/web-wasm:20230622-7312d8f (closest container to version 3.1.39)
+:: This prebuilt container build procedure was done to build the 3.1.10 libraries in our Unity asset
+:: Option 2: Build to a specific version, you will should pull a version of the dockcross repo closest to the emscripten version you want
+::   Such as one of the above referenced dockcross git hashes
+::   Or look at this files' history: https://github.com/dockcross/dockcross/commits/master/web-wasm/Dockerfile.in
+::   Manually change the version in web-wasm/Dockerfile.in and build the container yourself
+::   Using: make ORG=pulse web-wasm
+::   More info at: https://github.com/dockcross/dockcross?tab=readme-ov-file#build-images-by-yourself
+::   Next, change the 'dockcross' to the chosen ORG ('pulse') in xcompile.cmake::41
+::      execute_process(COMMAND ${wsl} docker run --rm pulse/${IMAGE} > ./${IMAGE}
+:: This manual container build procedure was done to build the 3.1.39 libraries in our Unity asset
+::
+:: Make sure your ./web-wasm helper script points to the correct container (first non-comment line of file)
+:: While the xcompile.cmake will create this script, you can create it yourself (then edit it) to be used by xcompile.cmake
+:: https://github.com/dockcross/dockcross?tab=readme-ov-file#installation
+:: Once your web-wasm helper script is pointed to use the right container, just run this next line
+::cmake -DIMAGE:STRING=web-wasm -DJAVA:BOOL=%BUILD_JAVA% -DBIND:STRING=manylinux2014-x64 -P xcompile.cmake
+
 ::cmake -DIMAGE:STRING=linux-x64-clang -DJAVA:BOOL=%BUILD_JAVA%
