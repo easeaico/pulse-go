@@ -17,6 +17,8 @@ endif()
 message(STATUS "Configuring cmake via container in ${CMAKE_CURRENT_SOURCE_DIR}")
 execute_process(COMMAND cmake -DPulse_JAVA_API:BOOL=${Pulse_JAVA_API}
                               -DPulse_PYTHON_API:BOOL=OFF
+                              -DPulse_C_AS_STATIC:BOOL=${Pulse_C_AS_STATIC}
+                              -DPulse_NATIVE_BUILD_DIR:PATH=${Pulse_NATIVE_BUILD_DIR}
                               -B${BUILD_DIR}
                               -H${SRC_DIR}
                               -GNinja)
