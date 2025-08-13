@@ -25,8 +25,9 @@ After being eaten, food is stored in the stomach, gradually digested, then relea
 At this point, nutrients are either quickly absorbed into the blood through the intestinal wall or further broken down prior to absorption. 
 An overview of the digestive tract is shown in Figure 1.
 
-<a href="./Images/GI/DigestiveTractDetail.png"><img src="./Images/GI/DigestiveTractDetail.png"></a>
 <center>
+<a href="./Images/GI/DigestiveTractDetail.png"><img src="./Images/GI/DigestiveTractDetail.png"></a>
+
 <i>
 Figure 1. The human digestive tract is composed of several distinct sections @cite LadyofHats2006Digestive. 
 Currently, the gastrointestinal model replicates the behavior of the stomach and small intestine.
@@ -114,9 +115,9 @@ Features, Capabilities, and Dependencies
 ----------------------
 ### Circuit
 
+<center>
 @anchor GI-circuit
 <a href="./Images/GI/GICircuit.png"><img src="./Images/GI/GICircuit.png"></a>
-<center>
 <i>
 Figure 2. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
 </i>

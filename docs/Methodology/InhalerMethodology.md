@@ -47,9 +47,10 @@ Most pMDI's deliver 100-200 &mu;g of a substance per actuation, but a large port
 
 Regardless of how coordinated the user is with the device, a large portion of the dose is generally deposited the oropharynx, lost in the actuator and nozzle, or is exhaled. In engine, the portion of aerosolized dose lost to deposition in oropharynx region is estimated using an empirical relation developed for a study conducted by Yeh in 1996 @cite yeh1996comparisons ,
 
-\f[ODF = \frac{1}{{1 + {{\left( {\frac{{\rho {d^2}Q}}{{30000}}} \right)}^{ - 1.37}}}}\f]
 <center>
-*Equation 1.*
+\f[ODF = \frac{1}{{1 + {{\left( {\frac{{\rho {d^2}Q}}{{30000}}} \right)}^{ - 1.37}}}}\f]
+
+<i>@equationdef {drug_fraction}</i>
 </center><br> 
 
 In this relation, the oral deposition fraction (ODF) is a function of droplet density, <i>&rho;</i>(g/cm<SUP>3</SUP>), droplet diameter, d (&mu;m), and flow rate, Q (cm<SUP>3</SUP>/sec). Nozzle and actuator losses are generally design dependent and will vary depending on the specific pMDI used. In the engine, nozzle losses are treated as a property of the pMDI.
@@ -60,12 +61,13 @@ The inhaler implementation is used to meet the requirement to administer a beta 
 ### Approach
 The pMDI is modeled as a simple circuit (Figure 2) conditionally appended to the existing %Respiratory System circuit model. The inhaler circuit consists of a single inhaler node with a fixed volume connected to the external environment &ldquo;ground.&rdquo; If a spacer is specified in the scenario, the volume of the spacer is added to the inhaler node volume. When the pMDI is actuated during a scenario, the inhaler circuit is connected to the mouth node of the respiratory model, replacing the connection from the mouth to the external environment. Atmospheric air initially fills the inhaler volume and airflow into and out of the respiratory system temporarily passes through the inhaler node. 
 
-<a href="./Images/Inhaler/Inhaler_Figure02.png"><img src="./Images/Inhaler/Inhaler_Figure02.png"></a>
 <center>
+<a href="./Images/Inhaler/Inhaler_Figure02.png"><img src="./Images/Inhaler/Inhaler_Figure02.png"></a>
+
 <i>Figure 2. %Inhaler circuit (red) connected to the %Respiratory System circuit. The inhaler circuit consists of a single inhaler node that is added the respiratory circuit when the pMDI is actuated.</i>
 </center><br>
 
-To model coordinated use of the pMDI, conscious breathing actions were implemented.  The end volumes and time lengths for exhalation, inhalation, and holding breath are specified as parameters for these actions, along with pMDI actuation timing.  When the pMDI is actuated, the drug dose is added to the atmospheric air in the inhaler node. Depending on airflow direction, the air/drug mixture in the inhaler node flows into the mouth or out into the external environment. A fraction of the drug that flows through the mouth and trachea is removed from the system per Equation 1. The remaining drug mass flows into and out of the lungs and alveoli. The drug mass in the inhaler node is assessed each time step during the scenario. When the drug mass in the inhaler node drops to approximately zero, the inhaler is disconnected from the respiratory circuit.
+To model coordinated use of the pMDI, conscious breathing actions were implemented.  The end volumes and time lengths for exhalation, inhalation, and holding breath are specified as parameters for these actions, along with pMDI actuation timing.  When the pMDI is actuated, the drug dose is added to the atmospheric air in the inhaler node. Depending on airflow direction, the air/drug mixture in the inhaler node flows into the mouth or out into the external environment. A fraction of the drug that flows through the mouth and trachea is removed from the system per @equationref {drug_fraction}. The remaining drug mass flows into and out of the lungs and alveoli. The drug mass in the inhaler node is assessed each time step during the scenario. When the drug mass in the inhaler node drops to approximately zero, the inhaler is disconnected from the respiratory circuit.
 
 Once in the alveoli, the drug diffuses into the blood stream. See the @ref DrugsMethodology for pD and pK effects. 
 @anchor inhaler-dataflow

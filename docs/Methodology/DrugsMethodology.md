@@ -45,18 +45,20 @@ Pharmacokinetic models quantify the time evolution of drug distribution from the
 The pharmacokinetic (PK) methodology provides a means for simulating the time-evolution of the distribution of a drug throughout the body. This is accomplished by using the administration actions discussed in the [Actions](@ref drugs-Actions) section below, the [transport methodology](@ref CircuitMethodology), the [perfusion limited diffusion](@ref tissue-perfusionLimitedDiffusion) methodology, and the substance files discussed in the [Common Data Model](@ref SubstanceTable) documentation. Once a drug is administered, it either enters the %Cardiovascular System (liquid) or the %Respiratory System (inhaled). If it is an inhaled drug, modeled in the engine as a gas, the drug will move into the alveoli through advection then diffuse into the %Cardiovascular System through alveoli transfer. Drug effects, described below in the @ref drugs-pharmacodynamics section, are then computed based on the concentration of the drug in the plasma. Note that the plasma concentration calculation is currently incorrect. The concentration of a drug is currently computed by dividing the mass of the drug in a compartment by the volume of plasma, as computed from the hematocrit. Implicit in the plasma concentration calculation is the assumption that all of the drug is in the extracellular space. In actuality, some of the drug will cross blood-cell membranes, and the concentration of drug in the plasma and in the blood is a function of many factors, including the lipophilicity. We will address this error in the [future](@ref drugs-future).
 
 #### Partition Coefficient
-The drugs circulate around the cardiovascular circuit via the generic transport methodology described in the @ref CircuitMethodology. However, drugs diffuse from the %Cardiovascular System into the tissues via [perfusion limited diffusion](@ref tissue-perfusionLimitedDiffusion). For each drug, the physicochemical properties are used to calculate the partition coefficient. This partition coefficient describes the affinity for the particular drug to diffuse across the barrier between the cardiovascular and tissue spaces. Each drug has its individual physicochemical properties described in the substance file with a calculated partition coefficient for each tissue compartment. For a very weak base, an acid, or a neutral, Equation 1 is used to calculate the partition coefficient.
+The drugs circulate around the cardiovascular circuit via the generic transport methodology described in the @ref CircuitMethodology. However, drugs diffuse from the %Cardiovascular System into the tissues via [perfusion limited diffusion](@ref tissue-perfusionLimitedDiffusion). For each drug, the physicochemical properties are used to calculate the partition coefficient. This partition coefficient describes the affinity for the particular drug to diffuse across the barrier between the cardiovascular and tissue spaces. Each drug has its individual physicochemical properties described in the substance file with a calculated partition coefficient for each tissue compartment. For a very weak base, an acid, or a neutral, @equationref {partition_coefficient} is used to calculate the partition coefficient.
 
-\f[{K}_{pu} = f_{EW} + \frac{X * f_{IW}}{Y} + \frac{P * f_{NL} + (0.3 * P + 0.7) * f_{NP}}{Y} + \left[\left(\frac{1}{f_{u}} - 1 - \left(\frac{P * f_{NL} + (0.3 * P + 0.7) * f_{NP}}{Y}\right)\right) * \frac{PR_{T}}{PR_{B}}\right] \f] 
 <center>
-<i>Equation 1.</i>
+
+\f[K_{pu} = f_{EW} + \frac{X \, f_{IW}}{Y} + \frac{P \, f_{NL} + (0.3 P + 0.7) \, f_{NP}}{Y} + \left[\frac{1}{f_{u}} - 1 - \frac{P \, f_{NL} + (0.3 P + 0.7) \, f_{NP}}{Y} \right] \frac{PR_{T}}{PR_{B}}\f]
+<i>@equationdef {partition_coefficient}</i>
 </center><br>
 
-For moderate to strong bases, Equation 2 is used to calculate the partition coefficient.
+For moderate to strong bases, @equationref {base_partition_coefficient} is used to calculate the partition coefficient.
 
-\f[{K}_{pu} = f_{EW} + \frac{1 + 10^{pK_{a}-pH_{IW}} * f_{IW}}{1 + 10^{pK_{a}-pH_{p}}} + \frac{K_{a}*AP_T*10^{pK_{a}-pH_{IW}}}{1+10^{pK_{a}-pH_{p}}} + \frac{P * f_{NL} + (0.3 * P + 0.7) * f_{NP}}{1+10^{pK_{a}-pH_{p}}}\f] 
 <center>
-<i>Equation 2.</i>
+\f[{K}_{pu} = f_{EW} + \frac{1 + 10^{pK_{a}-pH_{IW}} * f_{IW}}{1 + 10^{pK_{a}-pH_{p}}} + \frac{K_{a}*AP_T*10^{pK_{a}-pH_{IW}}}{1+10^{pK_{a}-pH_{p}}} + \frac{P * f_{NL} + (0.3 * P + 0.7) * f_{NP}}{1+10^{pK_{a}-pH_{p}}}\f]
+
+<i>@equationdef {base_partition_coefficient}</i>
 </center><br>
 
 Where <i>X</i> and <i>Y</i> are the different relationships for pH, as shown in Table 1, <i>f<sub>IW</sub></i> is the fraction of intracellular water, <i>f<sub>EW</sub></i> is the fraction of extracellular water,  <i>f<sub>NP</sub></i> is the fraction of neutral phospholipids in the tissue, <i>f<sub>NL</sub></i> is the fraction of lipids in the tissue, <i>P</i> is the octanol:water partition coefficient for the drug, <i>f<sub>u</sub></i> is the fraction of the drug unbound in plasma,  *f<sub>NL,P</sub>* is the fraction of neutral lipids in plasma, *f<sub>NP,P</sub>* is the fraction of phospholipids in plasma,  and <i>PR<sub>T</sub></i> / <i>PR<sub>B</sub></i> is the tissue to plasma ratio of the binding protein. 
@@ -121,34 +123,38 @@ In the current version of the engine, all drugs diffuse by the perfusion-limited
 
 @anchor drugs-clearance
 #### Clearance
-The PBPK model represents renal, hepatic, and systemic clearance. The renal clearance rate, intrinsic clearance rate, and the systemic clearance rate are specified in the substance file in units of milliliter-blood per second per kilogram. The intrinsic clearance rate is used to calculate the hepatic clearance, as shown in Equation 3.
+The PBPK model represents renal, hepatic, and systemic clearance. The renal clearance rate, intrinsic clearance rate, and the systemic clearance rate are specified in the substance file in units of milliliter-blood per second per kilogram. The intrinsic clearance rate is used to calculate the hepatic clearance, as shown in @equationref {hepatic_clearance}.
 
-\f[Cl_{H} = \frac{Q_{H}*f_{u}*Cl_{I}*BW}{Q_{H} + f_{u}*Cl_{I}*BW} \f]
 <center>
-<i>Equation 3.</i>
+\f[Cl_{H} = \frac{Q_{H}*f_{u}*Cl_{I}*BW}{Q_{H} + f_{u}*Cl_{I}*BW} \f]
+
+<i>@equationdef {hepatic_clearance}</i>
 </center><br>
 
 Where <i>Cl<sub>H</sub></i> is the hepatic clearance, <i>f<sub>u</sub></i> is the fraction of the drug unbound in plasma, <i>Cl<sub>I</sub></i> is the intrinsic clearance, and <i>BW</i> is the patient body weight.
 
-The amount of drug removed (cleared) from the system is found by calculating the amount of fluid volume that can be cleared by a healthy organ. The volume is calculated, as shown in Equation 4. This process is completed for the renal and hepatic clearance. 
+The amount of drug removed (cleared) from the system is found by calculating the amount of fluid volume that can be cleared by a healthy organ. The volume is calculated, as shown in @equationref {volume}. This process is completed for the renal and hepatic clearance. 
 
+<center>
 \f[V_{Cl} = Cl_{H}*BW*dt \f]
-<center>
-<i>Equation 4.</i>
+
+<i>@equationdef {volume}</i>
 </center><br>
 
-Where <i>V<sub>cl</sub></i> is the volume cleared, <i>Cl<sub>H</sub></i> is the organ clearance rate, <i>BW</i> is the body weight, and <i>dt</i> is the time step. The actual mass of the substance removed during this process is found by determining the amount of the drug in the volume cleared, as shown in Equation 5.
+Where <i>V<sub>cl</sub></i> is the volume cleared, <i>Cl<sub>H</sub></i> is the organ clearance rate, <i>BW</i> is the body weight, and <i>dt</i> is the time step. The actual mass of the substance removed during this process is found by determining the amount of the drug in the volume cleared, as shown in @equationref {volume_cleared}.
 
+<center>
 \f[M_{Cl} = V_{Cl}*C \f]
-<center>
-<i>Equation 5.</i>
+
+<i>@equationdef {volume_cleared}</i>
 </center><br>
 
-Where <i>M<sub>cl</sub></i> is the mass cleared, <i>V<sub>cl</sub></i> is the volume cleared, and <i>C</i> is the concentration in the tissue. The systemic clearance represents the total clearance for the body, including the renal and hepatic clearance. Therefore, the total volume cleared is calculated, then the renal and hepatic clearance volumes are removed, as shown in Equation 6. The &ldquo;remaining&rdquo; systemic mass cleared is calculated as shown in Equation 5. Half of the mass cleared from renal clearance is removed from each of the kidney tissue compartments, the mass cleared from hepatic clearance is removed from the liver tissue compartment, and the mass removed from the &ldquo;remaining&rdquo; systemic clearance is removed from the vena cava compartment. This is assumed to be from various metabolic processes in the plasma.
+Where <i>M<sub>cl</sub></i> is the mass cleared, <i>V<sub>cl</sub></i> is the volume cleared, and <i>C</i> is the concentration in the tissue. The systemic clearance represents the total clearance for the body, including the renal and hepatic clearance. Therefore, the total volume cleared is calculated, then the renal and hepatic clearance volumes are removed, as shown in @equationref {organ_volume_cleared}. The &ldquo;remaining&rdquo; systemic mass cleared is calculated as shown in @equationref {volume_cleared}. Half of the mass cleared from renal clearance is removed from each of the kidney tissue compartments, the mass cleared from hepatic clearance is removed from the liver tissue compartment, and the mass removed from the &ldquo;remaining&rdquo; systemic clearance is removed from the vena cava compartment. This is assumed to be from various metabolic processes in the plasma.
 
-\f[V_{Cl} = \left(Cl_{s}*BW*dt\right) - V_{ClR} - V_{ClH} \f]
 <center>
-<i>Equation 6.</i>
+\f[V_{Cl} = \left(Cl_{s}*BW*dt\right) - V_{ClR} - V_{ClH} \f]
+
+<i>@equationdef {organ_volume_cleared}</i>
 </center><br>
 
 Where <i>V<sub>cl</sub></i> is the remaining systemic volume cleared, <i>Cl<sub>s</sub></i> is the systemic clearance rate, <i>BW</i> is the patient body weight, <i>dt</i> is the time step, <i>V<sub>clR</sub></i> is the renal volume cleared, and <i>V<sub>clH</sub></i> is the hepatic volume cleared.
@@ -180,38 +186,42 @@ Due to difficulties in measuring drug concentrations at the site of action as we
 |   Tidal Volume  |  Change in the tidal volume. Given as a fraction. | -1 to 1 |
 |   Tubular Permeability | Drug localized effect on tubulear permeability. Given as a severity, 1.0 complete reabsorption block | 0 to 1 | 
 
-The drug effects are specified for each drug in the substance file. The level of effect is calculated based on the expected effect (or, for some drugs, the maximum effect) of the drug and the current plasma concentration for the drug, as shown in Equation 7 @cite rosenbaum2012basic.  
+The drug effects are specified for each drug in the substance file. The level of effect is calculated based on the expected effect (or, for some drugs, the maximum effect) of the drug and the current plasma concentration for the drug, as shown in @equationref {drug_plasma_conc} @cite rosenbaum2012basic.  
 
-\f[\Delta E = E_{bl}*\frac{E_{m}*C_{p}^\eta}{EC_{50}^\eta+C_{p}^\eta} \f]
 <center>
-<i>Equation 7.</i>
+\f[\Delta E = E_{bl}*\frac{E_{m}*C_{p}^\eta}{EC_{50}^\eta+C_{p}^\eta} \f]
+
+<i>@equationdef {drug_plasma_conc}</i>
 </center><br>
 
 Where <i>E<sub>m</sub></i> is the expected (or maximum) effect of the drug, <i>EC<sub>50</sub></i> is the concentration at 50% of the effect, <i>C<sub>p</sub></i> is the drug concentration in plasma, <i>E<sub>bl</sub></i> is the baseline for that effect (i.e., heart rate baseline), <i>&Delta;E</i> is the calculated effect of the drug, and <i>&eta;</i> is the slope factor @cite rosenbaum2012basic. This calculation is repeated for each of the effects in Table 4. 
 
 The drug effect is applied as a fraction of the baseline for the biomarker, which is a patient variable in the engine. For example, a person with a resting heart rate of 72 bpm may have a physiological process happening during simulation, perhaps as a condition, which increases his/her baseline heart rate to 80 bpm. If this patient is given a drug with a heart rate effect of 0.2, then at maximum the patient's heart rate will be 96 bpm (80 + 0.2 * 80). If the same drug were given to the same patient but without the condition, the maximum heart rate will be 86.4 bpm (72 + 0.2 * 72).
 
-The <i>EC<sub>50</sub></i> values were unknown for the majority of the drugs, so it was estimated from the maximum concentration of the drug at a standard adult dose, as shown in Equation 8.
+The <i>EC<sub>50</sub></i> values were unknown for the majority of the drugs, so it was estimated from the maximum concentration of the drug at a standard adult dose, as shown in @equationref {max_conc}.
 
-\f[EC_{50} = \frac{C_{max}}{32} \f]
 <center>
-<i>Equation 8.</i>
+\f[EC_{50} = \frac{C_{max}}{32} \f]
+
+<i>@equationdef {max_conc}</i>
 </center><br>
 
 Where <i>C<sub>max</sub></i> is the maximum plasma concentration for the standard adult dose and <i>EC<sub>50</sub></i> is the concentration at which 50% of the effect should be present.
 
 @anchor drugs-cardiovascular-effects
 ##### Cardiovascular Effects
-Equation 7 provides a straightforward calculation for the heart rate. However, to be applied in the cardiovascular system, the drug effects need to be translated to the effects on the mean arterial pressure and the pulse pressure. This is accomplished using Equations 9 and 10. These equations were developed using the relationship between diastolic and systolic pressure and the mean arterial pressure @cite guyton2006medical.
+@equationref {drug_plasma_conc} provides a straightforward calculation for the heart rate. However, to be applied in the cardiovascular system, the drug effects need to be translated to the effects on the mean arterial pressure and the pulse pressure. This is accomplished using @equationref {map} and @equationref {pp}. These equations were developed using the relationship between diastolic and systolic pressure and the mean arterial pressure @cite guyton2006medical.
 
-\f[\Delta MAP = \left(2* \Delta DBP \right) + \frac{\Delta SBP}{3} \f]
 <center>
-<i>Equation 9.</i>
+\f[\Delta MAP = \left(2* \Delta DBP \right) + \frac{\Delta SBP}{3} \f]
+
+<i>@equationdef {map}</i>
 </center><br>
 
-\f[\Delta P_{pulse} = \Delta SBP - \Delta DBP \f]
 <center>
-<i>Equation 10.</i>
+\f[\Delta P_{pulse} = \Delta SBP - \Delta DBP \f]
+
+<i>@equationdef {pp}</i>
 </center><br>
 
 Where <i>MAP</i> is the mean arterial blood pressure, <i>DBP</i> is the diastolic blood pressure, and <i>SBP</i> is the systolic blood pressure. These changes to the heart rate, mean arterial pressure, and pulse pressure are then system outputs for the drug system. The changes are then applied in the %Cardiovascular System. For more details on the implementation of the effects see the @ref CardiovascularMethodology.

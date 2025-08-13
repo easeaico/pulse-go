@@ -115,19 +115,19 @@ The Mechanical Ventilator configuration parameters were defined to allow for set
 
 While the parameter list is meant to be all encompassing for all ventilator modes, some typical settings are required to be translated by the user or application.  For example, the respiration rate (<i>RR</i>) and I:E Ratio (<i>IE</i>)settings can be translated to an inspiratory period (<i>P<sub>ins</sub></i>) and expiratory period (<i>P<sub>exp</sub></i>) by:
 
+<center>
 \f[{P_{tot}}[s] = \frac{{60}}{{RR[bpm]}}\f]
-<center>
-<i>Equation 1.</i>
+<i>@equationdef {total_period}</i>
 </center><br> 
 
+<center>
 \f[{P_{ins}}[s] = \frac{{IE \cdot {P_{tot}}[s]}}{{1 + IE}}\f]
-<center>
-<i>Equation 2.</i>
+<i>@equationdef {inspiratory_period}</i>
 </center><br> 
 
-\f[{P_{exp}}[s] = {P_{tot}}[s] - {P_{ins}}[s]\f]
 <center>
-<i>Equation 3.</i>
+\f[{P_{exp}}[s] = {P_{tot}}[s] - {P_{ins}}[s]\f]
+<i>@equationdef {expiratory_period}</i>
 </center><br> 
 
 Where the I:E Ratio (<i>IE</i>) is defined by a fraction, for example 1:2 is 0.5 and 1:1 is 1.0.

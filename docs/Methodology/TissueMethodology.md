@@ -57,17 +57,17 @@ Features, Capabilities, and Dependencies
 ----------------------------------------
 The %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. One of the primary functions of the %Tissue system is to control the transport of substances between the tissues and the blood. There are several transport models which help the %Tissue system perform that function. Figure 2 provides an overview of the extravascular space and the various modes of substance transport between the blood and the tissues. The %Tissue system also handles the conversion of substance (i.e. metabolic consumption and production).
 
+<center>
 @anchor tissue-fig2
 <a href="./Images/Tissue/tissueTransport.png"><img src="./Images/Tissue/tissueTransport.png" width="500"></a>
-<center>
 <i>Figure 2. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
 
 ### Bulk Flow and Advection
 The movement of fluid between the intravascular and extravascular space is modeled using the @ref CircuitMethodology. Figure 3 shows a representative circuit diagram. In most cases, each tissue circuit node is connected to one and only one cardiovascular circuit node. However, the gut tissue compartment is a lumped representation of the abdominal viscera organ tissues, and thus the large intestine, small intestine, and splanchnic vascular circuit nodes all connect to the gut tissue circuit node.
 
-<a href="./Images/Tissue/TissueCircuitExample.png"><img src="./Images/Tissue/TissueCircuitExample.png" width="500"></a>
 <center>
+<a href="./Images/Tissue/TissueCircuitExample.png"><img src="./Images/Tissue/TissueCircuitExample.png" width="500"></a>
 <i>Figure 3. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
 
@@ -79,11 +79,11 @@ The %Tissue system is heavily dependent on the patient configuration. Fluid volu
 
 @anchor tissue-perfusionLimitedDiffusion
 ## Perfusion-Limited Diffusion
-Perfusion-limited diffusion is a technique for describing drug kinetics in physiology-based pharmacokintic models. Partition coefficents are used to compute the amount of a drug crossing a membrane at a given perfusion rate. The partition coefficients are calculated based on the physical chemical properties of the drug, the tissue properties of the organ, and the blood properties. They represent a specific substance&rsquo;s affinity for moving across the blood-tissue partition. The engine uses this methodology to simulate drug diffusion, and details of the partition coefficient calculation can be found in the @ref DrugsMethodology. All current drugs in the engine use perfusion-limited diffusion as found in @cite khalil2011physiologically @cite huisinga2012modeling. In the [future](@ref drugs-future), permeability-limited diffusion could be used. Equation 1 shows the calculation used to move mass from the vascular to the tissue and vice versa for perfusion-limited diffusion @cite khalil2011physiologically .
+Perfusion-limited diffusion is a technique for describing drug kinetics in physiology-based pharmacokintic models. Partition coefficents are used to compute the amount of a drug crossing a membrane at a given perfusion rate. The partition coefficients are calculated based on the physical chemical properties of the drug, the tissue properties of the organ, and the blood properties. They represent a specific substance&rsquo;s affinity for moving across the blood-tissue partition. The engine uses this methodology to simulate drug diffusion, and details of the partition coefficient calculation can be found in the @ref DrugsMethodology. All current drugs in the engine use perfusion-limited diffusion as found in @cite khalil2011physiologically @cite huisinga2012modeling. In the [future](@ref drugs-future), permeability-limited diffusion could be used. @equationref {delta_mass} shows the calculation used to move mass from the vascular to the tissue and vice versa for perfusion-limited diffusion @cite khalil2011physiologically .
 
-\f[\Delta M = Q_{T} * C_{V} - \frac{Q_{T} * C_{T}}{K_{P}} \f]
 <center>
-*Equation 1.*
+\f[\Delta M = Q_{T} * C_{V} - \frac{Q_{T} * C_{T}}{K_{P}} \f]
+<i>@equationdef {delta_mass}</i>
 </center><br>
 
 Where <i>&Delta;M</i> is the change in mass due to diffusion, *Q<sub>T</sub>* is the blood flow to the organ, *C<sub>V</sub>* is the concentration of the drug in the organ vasculature, *C<sub>T</sub>* is the concentration of the drug in the organ tissue, and *K<sub>P</sub>* is the partition coefficient for the drug and organ. This calculation is performed for each drug or substance and each tissue organ/compartment.
@@ -92,75 +92,75 @@ Where <i>&Delta;M</i> is the change in mass due to diffusion, *Q<sub>T</sub>* is
 ## Gradient Dependent Transport Processes
 
 ### Gas Exchange - Alveoli Transfer
-At the alveoli-pulmonary capillary interface, oxygen diffuses from the alveoli into the pulmonary capillaries, while carbon dioxide diffuses from the pulmonary capillaries into the alveoli. In reality, gas exchange at the alveoli is a multi-step process in space, where gases dissolve into liquid according to Henry's law and diffuse through liquid and across membranes according to Fick's law. In the model, alveolar gas exchange is driven by the partial pressure differential between the pulmonary capillaries and the alveoli in a one-step process, as shown in Figure 4. The partial pressures of each gas in the capillaries are calculated using Equation 2, while the partial pressures of each gas in the alveoli are calculated using Equation 3.
+At the alveoli-pulmonary capillary interface, oxygen diffuses from the alveoli into the pulmonary capillaries, while carbon dioxide diffuses from the pulmonary capillaries into the alveoli. In reality, gas exchange at the alveoli is a multi-step process in space, where gases dissolve into liquid according to Henry's law and diffuse through liquid and across membranes according to Fick's law. In the model, alveolar gas exchange is driven by the partial pressure differential between the pulmonary capillaries and the alveoli in a one-step process, as shown in Figure 4. The partial pressures of each gas in the capillaries are calculated using @equationref {ppc}, while the partial pressures of each gas in the alveoli are calculated using @equationref {ppa}.
 
+<center>
 <a href="./Images/Tissue/AlveolarDiffusion.png"><img src="./Images/Tissue/AlveolarDiffusion.png" width="700"></a>
-<center>
-<i>Figure 4. Alveolar gas exchange is a single-step, lumped-diffusion process driven by a partial pressure gradient, where the partial pressures are computed using Equations 2 and 3.</i>
+<i>Figure 4. Alveolar gas exchange is a single-step, lumped-diffusion process driven by a partial pressure gradient, where the partial pressures are computed using @equationref {ppc} and @equationref {ppa}.</i>
 </center><br>
 
+<center>
 \f[P_{P} = \frac{C}{d * C_{S}} \f]
-<center>
-*Equation 2.*
+<i>@equationdef {ppc}</i>
 </center><br>
 
-\f[P_{P} = P * V_{f} \f]
 <center>
-*Equation 3.*
+\f[P_{P} = P * V_{f} \f]
+<i>@equationdef {ppa}</i>
 </center><br>
 
 Where, *P<sub>p</sub>* is the partial pressure, *C* is the concentration, *d* is the density, *C<sub>s</sub>* is the solubility coefficient, *P* is the total pressure, and *V<sub>f</sub>* is the volume fraction.
 
-The diffusion rate is calculated using Equation 4 @cite guyton2006medical . 
+The diffusion rate is calculated using @equationref {diffusion} @cite guyton2006medical . 
 
-\f[\dot{D} = \frac{D_{co} * C_{D} * \Delta P_{P} * SA_{a}}{D_{d}} \f]
 <center>
-*Equation 4.*
+\f[\dot{D} = \frac{D_{co} * C_{D} * \Delta P_{P} * SA_{a}}{D_{d}} \f]
+<i>@equationdef {diffusion}</i>
 </center><br>
 
-Where *D<sub>co</sub>* is the diffusing capacity of oxygen, *C<sub>D</sub>* is the relative diffusion coefficient, \delta *P<sub>p</sub>* is the partial pressure differential between the alveoli and the capillaries, *SA<sub>a</sub>* is the surface area of the alveoli, and *D<sub>d</sub>* is the diffusion distance. The surface area of the alveoli for an individual patient is related to the standard alveoli surface area and the patient&rsquo;s total lung capacity. This calculation is shown in Equation 5.
+Where *D<sub>co</sub>* is the diffusing capacity of oxygen, *C<sub>D</sub>* is the relative diffusion coefficient, \delta *P<sub>p</sub>* is the partial pressure differential between the alveoli and the capillaries, *SA<sub>a</sub>* is the surface area of the alveoli, and *D<sub>d</sub>* is the diffusion distance. The surface area of the alveoli for an individual patient is related to the standard alveoli surface area and the patient&rsquo;s total lung capacity. This calculation is shown in @equationref {SAa}.
 
-\f[SA_{a} = \frac{TLC_{p}}{TLC_{s}} * SA_{as} \f]
 <center>
-*Equation 5.*
+\f[SA_{a} = \frac{TLC_{p}}{TLC_{s}} * SA_{as} \f]
+<i>@equationdef {SAa}</i>
 </center><br>
 
 Where *TLC<sub>p</sub>* is the total lung capacity of the patient, as specified in the patient file (@ref PatientData). *TLC<sub>s</sub>* is the standard healthy total lung capacity of 5.8 L @cite guyton2006medical . The *SA<sub>as</sub>* is standard alveoli surface area of 70 square meters @cite guyton2006medical. For more information about patient variability, please see the @ref PatientMethodology report.
 
-The mass diffused at each time step is calculated using Equation 6. This mass is either added or removed from the pulmonary capillaries and the corresponding volume is either added or removed from the alveoli.
+The mass diffused at each time step is calculated using @equationref {Dm}. This mass is either added or removed from the pulmonary capillaries and the corresponding volume is either added or removed from the alveoli.
 
-\f[D_{m} = \dot{D} * \Delta t * d \f]
 <center>
-*Equation 6.*
+\f[D_{m} = \dot{D} * \Delta t * d \f]
+<i>@equationdef {Dm}</i>
 </center><br>
 
 ### Instant Diffusion
 Some substances are able to diffuse across biological membranes at a rate that ensures concentration equilibrium within one engine time step. The instant diffusion model is included in the %Tissue system in order to simulate transport processes that fully evolve in a time period much smaller than the engine time step. All of the gases are transported by instant diffusion. 
 
 ### Simple Diffusion
-Simple diffusion is an implementation of Fick's law in one dimension with a known constant distance. In this case, Fick's law can be described by Equation 7.
+Simple diffusion is an implementation of Fick's law in one dimension with a known constant distance. In this case, Fick's law can be described by @equationref {Jx}.
 
+<center>
 \f[J_{X} = P_{x} * \left([X]_{v} - [X]_{t} \right) \f]
-<center>
-*Equation 7.*
+<i>@equationdef {Jx}</i>
 </center><br>
-Where *J<sub>x</sub>* is the mass flux (mass per area-time) of substance *X*, *[X]<sub>v,t</sub>* is the concentration of substance X in compartment v (or t), and *P<sub>x</sub>* is a proportionality constant defining the permeability. The flux is multiplied by an area to obtain a rate of mass transfer. It is incredibly difficult to experimentally determine the capillary surface area for a given tissue, and it may be impossible to experimentally determine the total cellular membrane surface area. Additionally, lumped tissue models can be difficult to delineate. In the engine, the capillary and cellular membrane surface areas are assumed to be proportional to the mass of a given organ or tissue group, such that the mass transfered in one time step (*D<sub>m</sub>*) may be computed by Equation 8, where *k* is the empirically-determined constant relating the tissue mass (*m<sub>t</sub>*) to the surface area.
+Where *J<sub>x</sub>* is the mass flux (mass per area-time) of substance *X*, *[X]<sub>v,t</sub>* is the concentration of substance X in compartment v (or t), and *P<sub>x</sub>* is a proportionality constant defining the permeability. The flux is multiplied by an area to obtain a rate of mass transfer. It is incredibly difficult to experimentally determine the capillary surface area for a given tissue, and it may be impossible to experimentally determine the total cellular membrane surface area. Additionally, lumped tissue models can be difficult to delineate. In the engine, the capillary and cellular membrane surface areas are assumed to be proportional to the mass of a given organ or tissue group, such that the mass transfered in one time step (*D<sub>m</sub>*) may be computed by @equationref {Dmass}, where *k* is the empirically-determined constant relating the tissue mass (*m<sub>t</sub>*) to the surface area.
 
-\f[ D_{m} = k * m_{t} * J_{X} * \Delta t \f]
 <center>
-*Equation 8.*
+\f[ D_{m} = k * m_{t} * J_{X} * \Delta t \f]
+<i>@equationdef {Dmass}</i>
 </center><br>
 
 ### Facilitated Diffusion
-Facilitated diffusion uses Michaelis-Menten kinetics to model the facilitated transport across a membrane. Note that this type of diffusion does not require energy and it is still a gradient-based transport mode. In contrast to simple diffusion, where substance flux can continue to increase with the concentration gradient, the flux is asymptotic in facilitated diffusion. The flux limit reflex a saturation of the membrane transporter mechanisms. However, at smaller concentration gradients, substance flux is higher in facilitated diffusion than with simple Fick's law diffusion. Figure 5 demonstrates the difference in flux between facilitated and simple diffusion. The mass flux given by Michaelis-Menten kinetics is computed using Equation , where *J<sub>max</sub>* is the maximum flux and *K<sub>m</sub> is the Michaelis constant.
+Facilitated diffusion uses Michaelis-Menten kinetics to model the facilitated transport across a membrane. Note that this type of diffusion does not require energy and it is still a gradient-based transport mode. In contrast to simple diffusion, where substance flux can continue to increase with the concentration gradient, the flux is asymptotic in facilitated diffusion. The flux limit reflex a saturation of the membrane transporter mechanisms. However, at smaller concentration gradients, substance flux is higher in facilitated diffusion than with simple Fick's law diffusion. Figure 5 demonstrates the difference in flux between facilitated and simple diffusion. The mass flux given by Michaelis-Menten kinetics is computed using @equationref {michaelis_menten}, where *J<sub>max</sub>* is the maximum flux and *K<sub>m</sub> is the Michaelis constant.
 
-\f[ J_{X} = \frac{\left([X]_{v} - [X]_{t} \right) * J_{max}}{K_{m} * \left([X]_{v} - [X]_{t} \right)} \f]
 <center>
-*Equation 9.*
+\f[ J_{X} = \frac{\left([X]_{v} - [X]_{t} \right) * J_{max}}{K_{m} * \left([X]_{v} - [X]_{t} \right)} \f]
+<i>@equationdef {michaelis_menten}</i>
 </center><br>
 
-<a href="./plots/Tissue/FluxVsGradient.jpg"><img src="./plots/Tissue/FluxVsGradient.jpg" width="900"></a>
 <center>
+<a href="./plots/Tissue/FluxVsGradient.jpg"><img src="./plots/Tissue/FluxVsGradient.jpg" width="900"></a>
 <i>Figure 5. In simple diffusion based on Fick's law, the substance flux is directly proportional to the concentration gradient. There is no upper limit to transport. In contrast, the flux is asymptotic in facilitated diffusion, reflecting a saturation of transporters in the membrane. These two transport processes can work in concert.</i>
 </center><br>
 
@@ -172,16 +172,16 @@ Active transport is a coarse model of the energy-requiring transport processes (
 ## Metabolic Production and Consumption
 Metabolism is simulated by production and consumption of substances. The basis for the metabolic production and consumption calculations is the  non-protein respiratory quotient (RQ). This value is used to determine the fraction of the metabolic energy that is produced through carbohydrate (glucose) consumption. The curve is determined from data obtained from Gropper and Smith @cite gropper2013nutrition and is displayed in Figure 6.
 
-<a href="./plots/Tissue/Macronutrient_Consumption.jpg"><img src="./plots/Tissue/Macronutrient_Consumption.jpg" width="900"></a>
 <center>
+<a href="./plots/Tissue/Macronutrient_Consumption.jpg"><img src="./plots/Tissue/Macronutrient_Consumption.jpg" width="900"></a>
 <i>Figure 6. The Non-Protein %Respiratory Quotient displays the relationship between the fraction of the metabolism that is generated through carbohydrate metabolism vs. the fraction that is generated via fat metabolism. There is an inverse relationship between the fractions since the metabolic rate is entirely derived from glucose at a RQ of 1.</i>
 </center><br>
 
-The fraction of carbohydrates consumed determines the removal of glucose, with the remaining portion of the fraction determining the removal of tristearin. Glucose is removed in one of two pathways: aerobic metabolism or anaerobic metabolism. The ratio of aerobic to anaerobic metabolism is determined from an anaerobic weighting factor. This factor is defined as the current oxygen partial pressure in the tissue over a resting value of 40 mmHg @cite carreau2011oxygen. The anaerobic weight is shown in Equation 0.
+The fraction of carbohydrates consumed determines the removal of glucose, with the remaining portion of the fraction determining the removal of tristearin. Glucose is removed in one of two pathways: aerobic metabolism or anaerobic metabolism. The ratio of aerobic to anaerobic metabolism is determined from an anaerobic weighting factor. This factor is defined as the current oxygen partial pressure in the tissue over a resting value of 40 mmHg @cite carreau2011oxygen. The anaerobic weight is shown in @equationref {wt}.
 
-\f[w(t) = \frac{P_{O_{2}}(t)}{P_{O_{2,rest}}} \f]
 <center>
-*Equation 10.*
+\f[w(t) = \frac{P_{O_{2}}(t)}{P_{O_{2,rest}}} \f]
+<i>@equationdef {wt}</i>
 </center><br>
 After the fractions of the metabolism have been defined, the exact consumption rates can be determined from molar ratios of nutrient input to ATP (energy) output. Table 1 shows the molar input to output ratios.
 <br><center>
@@ -244,8 +244,9 @@ For severity mapping, dehydration categories are defined based on the fraction o
 
 These values were mapped to corresponding severities to derive a best-fit equation for total fluid loss, given a specific severity input. Figure 7 illustrates the applied equation in the model.
 
-<a href="./Images/Tissue/DehydrationSeverityMapping.png"><img src="./Images/Tissue/DehydrationSeverityMapping.png" width="500"></a>
 <center>
+<a href="./Images/Tissue/DehydrationSeverityMapping.png"><img src="./Images/Tissue/DehydrationSeverityMapping.png" width="500"></a>
+
 <i>Figure 7. The dehydration severity mapping.</i>
 </center><br>
 
@@ -286,8 +287,9 @@ Verification
 | Green       | 20.0   | 10   | 0.50          |
 | Yellow      | 50.0   | 0.0  | 0.00          |
 
-<a href="./plots/Tissue/ConcentrationEquilibration.jpg"><img src="./plots/Tissue/ConcentrationEquilibration.jpg" width="900"></a>
 <center>
+<a href="./plots/Tissue/ConcentrationEquilibration.jpg"><img src="./plots/Tissue/ConcentrationEquilibration.jpg" width="900"></a>
+
 <i>Figure 8. Four compartments start with different concentrations which equilibrate after some time. Initial conditions are shown in Table 3 above.</i>
 </center><br>
 

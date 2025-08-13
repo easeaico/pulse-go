@@ -52,7 +52,7 @@ The synthesis rate is defined by:
 
 \f[f(I)= (5.357 * G) - 328.56 \f] 
 <center>
-*Equation 1.*
+*@equationdef {systhesis}*
 </center><br>
 Where <i>G</i> is glucose concentration of the blood. 
 This linear function is valid for glucose levels of 80-150 mg/dL, and will compute an insulin synthesis rate between 100-475 pmol/min accordingly.
@@ -74,9 +74,9 @@ Two stimuli, exercise and acute stress, can modify the norepinephrine release ra
 #### Exercise
 The increase in epinephrine release as a function of above-basal exercise was developed using data in @cite stratton1985hemodynamic and @cite tidgren1991renal. We assume that the epinephrine clearance rate is constant; therefore, the fractional increase in epinephrine concentration described in @cite stratton1985hemodynamic and @cite tidgren1991renal can be assumed to be due to a similar fractional increase in release rate. Using that assumption, we fit a logistic function to the basal-normalized epinephrine steady-state concentrations during exercise presented in @cite tidgren1991renal. The release modifier varies from 1 to 19.75, as shown in Figure 1, meaning that the epinephrine release rate will be 19.75 times the basal release rate with maximal exercise. The model is implemented by first computing the above-basal metabolic rate and then using the generic logistic function with the appropriate parameter values to compute the release rate multiplier.
 
-<a href="./plots/Endocrine/EpiExercise.jpg"><a href="./plots/Endocrine/EpiExercise.jpg"><img src="./plots/Endocrine/EpiExercise.jpg" width="600"></a></a>
 <center>
-*Figure 1. The increase in epinephrine release during exercise is computed as a fraction of the basal rate.*
+<a href="./plots/Endocrine/EpiExercise.jpg"><img src="./plots/Endocrine/EpiExercise.jpg" width="600"></a>
+<i>Figure 1. The increase in epinephrine release during exercise is computed as a fraction of the basal rate.</i>
 </center><br>
 
 

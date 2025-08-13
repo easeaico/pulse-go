@@ -35,8 +35,8 @@ Figure 1 shows the entire system and is labeled with the following:
 13. Large intestine
 14. Pelvis
 
-<a href="./Images/Renal/RenalSystem.png"><img src="./Images/Renal/RenalSystem.png"></a>
 <center>
+<a href="./Images/Renal/RenalSystem.png"><img src="./Images/Renal/RenalSystem.png"></a>
 <i>
 Figure 1. This is an illustration of the human renal system.  The bounds of the system are generally accepted to be the combination of everything encompassing #1-6 (urinary system) and #8 renal artery and vein. @cite Jmarchn2010Urinary
 </i>
@@ -58,8 +58,8 @@ nitrogen content over long periods of time. Nitrogen waste from the liver is exc
 
 The %Renal model lumps each kidney into a single nephron (Figure 2). The  fluid flow through the kidney is modeled with an electrical circuit analogue, and the substance transport is a combination of the generic transporter and active filtration/reabsorption/secretion based on feedback and substance parameters. Alternatively, excretion can be directly applied and is governed via clearance equations - as with the drug model (@ref DrugsMethodology). This is consistent with other system models, which also employ lumped parameter modeling.
 
-<a href="./Images/Renal/LumpedNephron.png"><img src="./Images/Renal/LumpedNephron.png"></a>
 <center>
+<a href="./Images/Renal/LumpedNephron.png"><img src="./Images/Renal/LumpedNephron.png"></a>
 <i>
 Figure 2. The basic anatomical structure of the nephron. The blood is filtered into the Bowman's capsule from the Glomerular Capillaries. Most of the fluid is then reabsorbed into Peritubluar Capillaries.  The remaining fluid and substances continue through the tubules and are exreted into the bladder. @cite Madhero882010Nephron
 </i>
@@ -113,11 +113,11 @@ the results carry over to the other nephrons in the kidney, these models are abl
 While these models can show the tubular transport of substances and fluid in great detail, some do not directly show the renal
 hemodynamics at work to control glomerular pressure and GFR. In addition, many of these results are steady state rather than time-dependent, which limits the range of applications and outputs.
 
-Many models use the Starling equation (Equation 1) to calculate the fluid flow between the tubules and blood. While this is generally considered to be an accurate representation of the fluid flow, this approach assumes a constant oncotic pressure. This makes the hydrostatic pressures the only dynamic inputs to the Starling equation. The accuracy of this approache can be enhanced by accounting for differences in the substance content in vascular compartments in the glomerular capillaries and deriving the respective oncotic pressures, which allows for a better representation of the pressure differential that drives the flow.
+Many models use the Starling equation (@equationref {Jv}) to calculate the fluid flow between the tubules and blood. While this is generally considered to be an accurate representation of the fluid flow, this approach assumes a constant oncotic pressure. This makes the hydrostatic pressures the only dynamic inputs to the Starling equation. The accuracy of this approache can be enhanced by accounting for differences in the substance content in vascular compartments in the glomerular capillaries and deriving the respective oncotic pressures, which allows for a better representation of the pressure differential that drives the flow.
 
-\f[{J_v} = {K_f}\left( {\left[ {{P_c} - {P_i}} \right] - \sigma \left[ {{\pi _c} - {\pi _i}} \right]} \right)\f]
 <center>
-*Equation 1*
+\f[{J_v} = {K_f}\left( {\left[ {{P_c} - {P_i}} \right] - \sigma \left[ {{\pi _c} - {\pi _i}} \right]} \right)\f]
+<i>@equationdef {Jv}</i>
 </center><br>
 
 
@@ -176,8 +176,9 @@ The %Renal circuit (Figure 4) determines blood and urine pressure, flow, and vol
 
 @anchor renal-circuit
 
-<a href="./Images/Renal/RenalCircuit.png"><img src="./Images/Renal/RenalCircuit.png"></a>
 <center>
+<a href="./Images/Renal/RenalCircuit.png"><img src="./Images/Renal/RenalCircuit.png"></a>
+
 <i>
 Figure 4. The %Renal circuit is made up of nodes and paths with elements.  The fluid mechanics of the system are calculated assuming no transition between blood and urine.  The substance quantities are what distinguish the two fluid types.  Everything above the dashed line can be considered blood.  Fluid below the dashed line transitions to urine as substance filtration and reabsorption change its make-up. The "T" labeled paths are location where transport of each substance is calculated by the %Renal system directly.  All others are done generically.
 </i>
@@ -225,18 +226,18 @@ The volume distribution of the %Renal system is as follows:
 
 The %Renal circuit contains 11 resistances for each kidney, and a shared urethra resistance - see Figure 5.  The urethra (number 12) is typically set as an open switch (approximately infinite resistance), unless the patient is urinating, when it becomes closed to allow flow out of the bladder.
 
-<a href="./Images/Renal/RenalResistances.png"><img src="./Images/Renal/RenalResistances.png"></a>
 <center>
+<a href="./Images/Renal/RenalResistances.png"><img src="./Images/Renal/RenalResistances.png"></a>
 <i>
 Figure 5. The resistances in the left kidney are numbered for further description.
 </i>
 </center><br>
 
-Baseline resistances were determined by leveraging reference pressure and flow values from literature.  Each resistance is calculated using Equation 2, where R is the resistance along the path, &Delta;P is the pressure difference between the source and target nodes, and F is the fluid flow through the path.
+Baseline resistances were determined by leveraging reference pressure and flow values from literature. Each resistance is calculated using @equationref {R}, where R is the resistance along the path, &Delta;P is the pressure difference between the source and target nodes, and F is the fluid flow through the path.
 
-\f[R = \frac{{\Delta P}}{F}\f]
 <center>
-*Equation 2*
+\f[R = \frac{{\Delta P}}{F}\f]
+<i>@equationdef {R}</i>
 </center><br>
 
 The untuned baseline resistance values were calculated using the values in Table 1.  These values and the model were verified with unit testing using a static arteriole pressure equal to the normal mean value.
@@ -269,22 +270,22 @@ The total vascular volume of the %renal system in is defined to be a fraction of
 
 #### Colloid Osmotic Pressure
 
-The net filtration and reabsorption pressures are determined by the sum of the hydrostatic and colloid osmotic forces across the membranes.  While the hydrostatic pressure is automatically handled using the generic circuit algorithms, the colloid osmotic pressure needs to be determined specifically.  This is done by using the Landis-Pappenheimer equation (Equation 4) that is dependent on total protein @cite khazaei2008new.  Since the engine tracks albumin, a constant relationship between total protein and albumin can be leveraged using Equation 3.  *C<sub>TP</sub>* is the local concentration of total protein, *C<sub>A</sub>* is the local concentration of albmuin, and *P<sub>CO</sub>* is colloid osmotic pressure.
+The net filtration and reabsorption pressures are determined by the sum of the hydrostatic and colloid osmotic forces across the membranes.  While the hydrostatic pressure is automatically handled using the generic circuit algorithms, the colloid osmotic pressure needs to be determined specifically.  This is done by using the Landis-Pappenheimer equation (@equationref {Pco}) that is dependent on total protein @cite khazaei2008new.  Since the engine tracks albumin, a constant relationship between total protein and albumin can be leveraged using @equationref {Ctp}. *C<sub>TP</sub>* is the local concentration of total protein, *C<sub>A</sub>* is the local concentration of albmuin, and *P<sub>CO</sub>* is colloid osmotic pressure.
 
-\f[{C_{TP}} = 1.6{C_A}\f]
 <center>
-*Equation 3*
+\f[{C_{TP}} = 1.6{C_A}\f]
+<i>@equationdef {Ctp}</i>
 </center><br>
 
-\f[{P_{CO}} = 2.1{C_{TP}} + 0.16C_{_{TP}}^2 + 0.009C_{_{TP}}^3\f]
 <center>
-*Equation 4*
+\f[{P_{CO}} = 2.1{C_{TP}} + 0.16C_{_{TP}}^2 + 0.009C_{_{TP}}^3\f]
+<i>@equationdef {Pco}</i>
 </center><br>
 
 The Landis-Pappenheimer equation is applied at the pressure sources numbered in Figure 6.
 
-<a href="./Images/Renal/RenalPressureSources.png"><img src="./Images/Renal/RenalPressureSources.png"></a>
 <center>
+<a href="./Images/Renal/RenalPressureSources.png"><img src="./Images/Renal/RenalPressureSources.png"></a>
 <i>
 Figure 6. The four pressure sources that represent the colloid osmotic pressure are determined via the local albumin concentration.
 </i>
@@ -305,26 +306,26 @@ Table 2 gives the typical colloid osmotic pressure values.  The tubular osmotic 
 
 #### Fluid Permeability
 
-The hydraulic and colloid osmotic pressure gradients across the glomerular and pertitubular capillary membranes cause the movement of fluid. The rate of fluid movement is a function of the fluid permeability of the membranes, the total membrane surface area, and the pressure gradient. Considering a nominal pressure that is equal to the linear integral of the effective pressure over the length of the glomerular capillary (with the effective pressure being the difference between the hydrostatic and colloid osmotic pressure gradients at each point along the length of the capillary), the glomerular filtration rate is proportional to the nominal pressure, as shown in Equation 5.
+The hydraulic and colloid osmotic pressure gradients across the glomerular and pertitubular capillary membranes cause the movement of fluid. The rate of fluid movement is a function of the fluid permeability of the membranes, the total membrane surface area, and the pressure gradient. Considering a nominal pressure that is equal to the linear integral of the effective pressure over the length of the glomerular capillary (with the effective pressure being the difference between the hydrostatic and colloid osmotic pressure gradients at each point along the length of the capillary), the glomerular filtration rate is proportional to the nominal pressure, as shown in @equationref {GFR}.
 
-\f[GFR = {L_p}{S_f}\int {\left[ {\left( {{P_g}\left( x \right) - {P_B}} \right) - \sigma \left( {{\pi _g}\left( x \right) - {\pi _B}} \right)} \right]dx}  = {L_p}{S_f}\Delta P\f]
 <center>
-*Equation 5*
+\f[GFR = {L_p}{S_f}\int {\left[ {\left( {{P_g}\left( x \right) - {P_B}} \right) - \sigma \left( {{\pi _g}\left( x \right) - {\pi _B}} \right)} \right]dx}  = {L_p}{S_f}\Delta P\f]
+<i>@equationdef {GFR}</i>
 </center><br>
 
-*L<sub>p</sub>* is the hydraulic conductivity of the membrane and S<sub>f</sub> is the surface area. Relating the equation above to the linear fluid dynamics equations, it is apparent that the resistance to flow can be modeled as 1/(*L<sub>p</sub>* *S<sub>f</sub>*). The product, *L<sub>p</sub>* *S<sub>f</sub>*, has been called the glomerular filtration coefficient @cite tuma2011microcirculation. A similar reabsorption coefficient can be derived from the equations governing the reabsorption of water in the renal tubules @cite tuma2011microcirculation.
+<i>L<sub>p</sub></i> is the hydraulic conductivity of the membrane and S<sub>f</sub> is the surface area. Relating the equation above to the linear fluid dynamics equations, it is apparent that the resistance to flow can be modeled as 1/(<i>L<sub>p</sub></i> <i>S<sub>f</sub></i>). The product, <i>L<sub>p</sub></i> <i>S<sub>f</sub></i>, has been called the glomerular filtration coefficient @cite tuma2011microcirculation. A similar reabsorption coefficient can be derived from the equations governing the reabsorption of water in the renal tubules @cite tuma2011microcirculation.
 
 The hydraulic permeability is computed for use in the model using filtration coefficients reported in literature as well as surface area estimates. The surface area of the glomerular capillaries is estimated to be about 2.0 square meters per human kidney @cite valentin2002icrp. The surface area of the peritubular capillaries is larger than the glomerular capillaries @cite tuma2011microcirculation. However, how much larger is difficult to quantify. For the model, it is assumed that the surface area of the peritubular capillaries is 25 percent larger than the surface area of the glomerular capillaries. Using the glomerular filtration coefficient value of 13 mL/min-mmHg for both kidneys as reported in @cite tuma2011microcirculation (6.5 mL/min-mmHg each kidney assuming an equal distribution of surface area), the hydraulic conductivity of the glomerular capillaries is calculated to be 3.67647 mL/m2-min-mmHg. Likewise, using the reabsorption coefficient value of 10  mL/min-mmHg for both kidneys @cite tuma2011microcirculation, the hydraulic conductivity of the peritubular capillaries is computed to be 2.91747 mL/m2-min-mmHg.
 
-These values are applied in the model as the resistances circled in Figure 7 and are determined using Equation 6.  *R<sub>Filt</sub>* is the membrane fluid resistance, *k<sub>p</sub>* is the permeability, and *A* is the total membrane area.
+These values are applied in the model as the resistances circled in Figure 7 and are determined using @equationref {Rfilt}. <i>R<sub>Filt</sub></i> is the membrane fluid resistance, <i>k<sub>p</sub></i> is the permeability, and <i>A</i> is the total membrane area.
 
-\f[{R_{filt}} = \frac{1}{{{k_p}A}}\f]
 <center>
-*Equation 6*
+\f[{R_{filt}} = \frac{1}{{{k_p}A}}\f]
+<i>@equationdef {Rfilt}</i>
 </center><br>
 
-<a href="./Images/Renal/Filtration.png"><img src="./Images/Renal/Filtration.png"></a>
 <center>
+<a href="./Images/Renal/Filtration.png"><img src="./Images/Renal/Filtration.png"></a>
 <i>
 Figure 7. The membrane fluid filtration for both glomerular filtration and peritubular reabsorption locations are modeled as the resistances circled in red.
 </i>
@@ -358,7 +359,7 @@ Reabsorption works in much the same way as glomerular filtration, with additiona
 
 ##### Reabsorption Feedback
 
-Pressure natriuresis and diuresis are simulated in the %Renal model through reabsorption premeability modifiers. In the kidneys, as arterial pressure increases, shear stresses are developed along the cell walls. These stresses induce the release of nitric oxide, which is diffused downstream to the tubules of the nephron. This serves to decrease the sodium reabsorption rate through select entry pathways @cite navar1999kidney. This decrease in sodium resabsorptioin decreases the osmotic gradient along this fluid path, consequently leading to a coupled decrease in fluid reabsorption. The engine does not currently support nitric oxide, so we model this mechanism by coupling the fluid permeability characteristics of the tubules as function of arterial pressure. This allows for the connection to downstream pressure changes and sodium/water reabsorption. A second order polynomial (See Equation 7) is fit to the data taken from @cite guyton2006medical that scales the tubules' fluid permeability as a function of arterial pressure. This permeability then directly affects the resistance along the reabsorption pathway, leading to a decrease or increase in water/sodium transport. Diruetic administration can also inhibit the reabsorption by modifying the tubular lumen permeabilty as a function of plasma concentration of Furosemide, @ref DrugsMethodology.
+Pressure natriuresis and diuresis are simulated in the %Renal model through reabsorption premeability modifiers. In the kidneys, as arterial pressure increases, shear stresses are developed along the cell walls. These stresses induce the release of nitric oxide, which is diffused downstream to the tubules of the nephron. This serves to decrease the sodium reabsorption rate through select entry pathways @cite navar1999kidney. This decrease in sodium resabsorptioin decreases the osmotic gradient along this fluid path, consequently leading to a coupled decrease in fluid reabsorption. The engine does not currently support nitric oxide, so we model this mechanism by coupling the fluid permeability characteristics of the tubules as function of arterial pressure. This allows for the connection to downstream pressure changes and sodium/water reabsorption. A second order polynomial (See @equationref {kp}) is fit to the data taken from @cite guyton2006medical that scales the tubules' fluid permeability as a function of arterial pressure. This permeability then directly affects the resistance along the reabsorption pathway, leading to a decrease or increase in water/sodium transport. Diruetic administration can also inhibit the reabsorption by modifying the tubular lumen permeabilty as a function of plasma concentration of Furosemide, @ref DrugsMethodology.
 
 <center><a href="./plots/Renal/MAP_vs_UPR.jpg"><img src="./plots/Renal/MAP_vs_UPR.jpg" width="600"></a></center>
 <center>
@@ -366,19 +367,19 @@ Pressure natriuresis and diuresis are simulated in the %Renal model through reab
 </center><br>
 
 
-\f[{k_p} = \left( {2.01 \times {{10}^{ - 6}}} \right)P_A^2 - \left( {8.1 \times {{10}^{ - 4}}} \right)P_A^{} + 9.4 \times {10^{ - 2}}\f]
 <center>
-*Equation 7*
+\f[{k_p} = \left( {2.01 \times {{10}^{ - 6}}} \right)P_A^2 - \left( {8.1 \times {{10}^{ - 4}}} \right)P_A^{} + 9.4 \times {10^{ - 2}}\f]
+<i>@equationdef {kp}</i>
 </center><br>
 
 ##### Diuretic Response
 In addition to alterations in permeability due to ion concentration and perfusion pressure, the renal system's reabsorption pathway can also be effected by diuretic concentrations in the blood plasma. These concentrations directly effect the tubular permeability, simulating Furosmide binding to the Na-K-2Cl symporter. This effect is accounted for by calculating the response due to plasma concentrations in the Drug methodology. This permeability modifier is then stored and accessed in the %Renal system each time step to calculate the reabsorption pathway resistance:
 
-\f[{k_p}_{i+1} =  {k_p}_i * K_{mod}(C_p) \f]
 <center>
-*Equation 8*
+\f[{k_p}_{i+1} =  {k_p}_i * K_{mod}(C_p) \f]
+<i>@equationdef {kpi}</i>
 </center><br>
-Here *K<sub>mod</sub>(C<sub>p</sub>)* is the modification coefficient calculated as a hill type functional response to Furosemide blood plasma concentration, *C<sub>p</sub>*.
+Here <i>K<sub>mod</sub>(C<sub>p</sub>)</i> is the modification coefficient calculated as a hill type functional response to Furosemide blood plasma concentration, <i>C<sub>p</sub></i>.
 
 
 ### Secretion
@@ -394,22 +395,22 @@ One of the main mechanisms for kidney regulation of renal blood flow due to chan
 
 Within an autoregulatory range of 80 to 180 mmHg for the MAP, the renal blood flow is is maintained by either constricting (increased resistance) or dilating (decreased resistance) the afferent areteriole @cite rhoades2003medical. A higher sodium mass flow rate in the tubules leads to a higher resistance, and a lower mass flow rate leads to a lower resistance (see Figure 11). The minimum and maximum resistances for the afferent arteriole were determined through a unit test to be 1.7 mmHg/mL-s (at MAP of 80 mmHg) and 12.382 mmHg/mL-s (at MAP of 180 mmHg).
 
-<a href="./Images/Renal/TubuloglomerularFeedbackFlow.png"><img src="./Images/Renal/TubuloglomerularFeedbackFlow.png"></a>
 <center>
+<a href="./Images/Renal/TubuloglomerularFeedbackFlow.png"><img src="./Images/Renal/TubuloglomerularFeedbackFlow.png"></a>
 <i>
 Figure 11. A flow diagram showing the tubuloglomerular response to increased and decreased MAP.  @cite rhoades2003medical
 </i>
 </center><br>
 
-High frequency oscillations of the tubuloglomerular feedback are damped using the tuning constant, alpha, in Equation 8.  *R<sub>Aff</sub>* is the afferent arteriole resistance where i and i+1 signify the current and the next resistance respectively, ||&Delta; U<sub>Na</sub>|| is the normalized change in sodium flow into the tubules. Normalization is used to decrease sensitivity of the response. Large fluctuations are not only physiologically incorrect but also create instabilities during heartbeats. The sodium mass flow setpoint is the expected value with a stable standard patient. Figure 13 indicates good agreement between the mechanics of the engine and experimental data. Autoregulation is handled entirely from the TGF response, with the myogenic response not modeled currently.
+High frequency oscillations of the tubuloglomerular feedback are damped using the tuning constant, alpha, in @equationref {kpi}. *R<sub>Aff</sub>* is the afferent arteriole resistance where i and i+1 signify the current and the next resistance respectively, ||&Delta; U<sub>Na</sub>|| is the normalized change in sodium flow into the tubules. Normalization is used to decrease sensitivity of the response. Large fluctuations are not only physiologically incorrect but also create instabilities during heartbeats. The sodium mass flow setpoint is the expected value with a stable standard patient. Figure 13 indicates good agreement between the mechanics of the engine and experimental data. Autoregulation is handled entirely from the TGF response, with the myogenic response not modeled currently.
 
-\f[R_{Aff}^{i + 1} * = \frac{{R_{Aff}^i}}{{R_{Aff}^{i + 1}}} + \alpha \left\| {\Delta {U_{Na}}} \right\|\f]
 <center>
-*Equation 9*
+\f[R_{Aff}^{i + 1} * = \frac{{R_{Aff}^i}}{{R_{Aff}^{i + 1}}} + \alpha \left\| {\Delta {U_{Na}}} \right\|\f]
+<i>@equationdef {Raff}</i>
 </center><br>
 
-<a href="./Images/Renal/TubuloglomerularFeedback.png"><img src="./Images/Renal/TubuloglomerularFeedback.png"></a>
 <center>
+<a href="./Images/Renal/TubuloglomerularFeedback.png"><img src="./Images/Renal/TubuloglomerularFeedback.png"></a>
 <i>
 Figure 12. The circle shows the location used to determine the sodium value, and the resistance where the feedback is applied is denoted with an oval.
 </i>
@@ -434,18 +435,18 @@ Figure 13. The plots show the flow response to variations in mean arterial press
 
 When osmolarity (plasma sodium concentration) increases/decreases above/below normal the osmoreceptor feedback system compensates in the way shown in Figure 14. Increased water permeability in the distal nephron segments causes increased water reabsorption and excretion of a small volume of concentrated urine @cite guyton2006medical. This mechanism tends to keep the plasma sodium concentration stable and was calibrated with extended multi-hour simulations.
 
-<a href="./Images/Renal/OsmoreceptorFeedbackFlow.png"><img src="./Images/Renal/OsmoreceptorFeedbackFlow.png"></a>
 <center>
+<a href="./Images/Renal/OsmoreceptorFeedbackFlow.png"><img src="./Images/Renal/OsmoreceptorFeedbackFlow.png"></a>
 <i>
 Figure 14. A flow diagram showing the osmoreceptor response to increased and decreased plasma sodium concentration.  @cite guyton2006medical
 </i>
 </center><br>
 
-The sensitivity of the osmoreceptor feedback is calibrated using the tuning constant *x* in Equation 9.  *k<sub>P</sub>* is the reabsorption fluid permeability, *C<sub>SP</sub>* is the sodium plasma concentration in the tubules, and *C<sub>SP,Set</sub>* is the setpoint.  The sodium plasma concentration setpoint is the expected value with a stable standard patient.
+The sensitivity of the osmoreceptor feedback is calibrated using the tuning constant <i>x</i> in @equationref {Raff}. <i>k<sub>P</sub></i> is the reabsorption fluid permeability, <i>C<sub>SP</sub></i> is the sodium plasma concentration in the tubules, and <i>C<sub>SP,Set</sub></i> is the setpoint.  The sodium plasma concentration setpoint is the expected value with a stable standard patient.
 
-\f[{k_p} *  = {\left( {\frac{{{C_{SP}}}}{{{C_{SP,Set}}}}} \right)^x}\f]
 <center>
-*Equation 10*
+\f[{k_p} *  = {\left( {\frac{{{C_{SP}}}}{{{C_{SP,Set}}}}} \right)^x}\f]
+<i>@equationdef {kp*}</i>
 </center><br>
 
 #### Gluconeogenesis

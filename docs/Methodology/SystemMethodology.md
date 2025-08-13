@@ -34,8 +34,8 @@ integrated with all other types of physiologic software. Models at
 any anatomical level can be implemented within the existing
 infrastructure.
 
-<a href="./Images/System/SystemFidelity.png"><img src="./Images/System/SystemFidelity.png" width="550"></a>
 <center>
+<a href="./Images/System/SystemFidelity.png"><img src="./Images/System/SystemFidelity.png" width="550"></a>
 *Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
 
@@ -138,8 +138,8 @@ maintains three time steps for elements and parameters. These times are:
 
 The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 2.
 
-<a href="./Images/System/Stabilization.png"><img src="./Images/System/Stabilization.png" width="550"></a>
 <center> 
+<a href="./Images/System/Stabilization.png"><img src="./Images/System/Stabilization.png" width="550"></a>
 <i>Figure 2. Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
 </center><br>
 
@@ -215,8 +215,8 @@ Postprocess advances time by moving the next time step values to the
 current time step values. The next values are then set to the baseline values in
 preparation for the upcoming Preprocess call.
 
-<a href="./Images/System/SystemDataFlow.png"><img src="./Images/System/SystemDataFlow.png"></a>
 <center>
+<a href="./Images/System/SystemDataFlow.png"><img src="./Images/System/SystemDataFlow.png"></a>
 *Figure 3. This shows the repetitive three-step process used each time
 step to determine the system states. These three processes are mirrored
 in each system's code and are sequentially called by the engine.*
@@ -244,8 +244,8 @@ The engine modeling approach takes the human body and conceptually divides it in
 	
 Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 4 shows an example of how compartments can be defined in the %Cardiovascular System.
 
-<a href="./Images/System/CompartmentExample.png"><img src="./Images/System/CompartmentExample.png"></a>
 <center>
+<a href="./Images/System/CompartmentExample.png"><img src="./Images/System/CompartmentExample.png"></a>
 <i>Figure 4. This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
 </center><br>
 

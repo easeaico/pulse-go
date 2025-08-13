@@ -24,10 +24,10 @@ circuits have several types of feedback mechanisms that can be set and
 changed at every time step.  Figure 1 presents a generic example of very low fidelity lumped
 parameter physiology circuits.  Circuits can be thought of as pipe networks for fluid analysis.
 
+<center>
 @htmlonly
 <a href="./Images/Circuit/CircuitLumpExample.png"><img src="./Images/Circuit/CircuitLumpExample.png"></a>
 @endhtmlonly
-<center>
 <i>Figure 1.  An example of physiology lumped parameter modeling.  This
 example shows very low fidelity models of specific cardiovascular
 compartments (left), and a respiratory combined mechanical ventilation
@@ -38,10 +38,10 @@ and free breathing model (right) @cite Clipp2012Humansim.</i>
 
 The CDM includes many of the same generic definitions traditionally used to define and analyze circuits.  Paths are ideal conductor branches that may contain elements (i.e., resistors, capacitors, inductors, diodes, etc.).  Nodes are junctions at the intersection of paths.  Figure 2 shows these base circuit element definitions.  Paths are each assigned one source and one target node.  We use the convention of positive current from source to target when performing calculations.
 
+<center>
 @htmlonly
 <a href="./Images/Circuit/CircuitBaseDefinitions.png"><img src="./Images/Circuit/CircuitBaseDefinitions.png"></a>
 @endhtmlonly
-<center>
 <i>Figure 2. Nodes and paths are the lowest level elements used to define all circuits.  Paths correspond to ideal conductors (i.e., wires).  Nodes are placed at the intersections of paths.  In fluid systems, paths can be thought of as frictionless pipes and nodes as pipe junctions.</i>
 </center><br>
 
@@ -233,7 +233,7 @@ e
 </center>
 
 <center>
-<i>Equation 1.</i>
+<i>@equationdef {nodal_analysis}</i>
 </center><br>
 
 After the MNA linear equations are solved, all node potentials and fluxes for paths with no components or source components are parsed out of the <i>x</i> vector. Path fluxes that are not directly determined at this stage are then calculated using the equations shown in Table 3.
@@ -251,7 +251,7 @@ Quantity values (<i>Q</i>) on nodes that are connected to paths with capacitance
 \f[Q = {Q_0} + F \cdot dt\f]
 
 <center>
-<i>Equation 2.</i>
+<i>@equationdef {quantity}</i>
 </center><br>
 
 #### Linear Solver

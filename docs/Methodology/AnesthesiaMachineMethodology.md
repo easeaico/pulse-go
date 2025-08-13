@@ -87,8 +87,10 @@ in the Features section below. Future releases will provide a more rigorously te
 
 The ventilator and valves operate via time-based cycles based on the settings. There are four phases to each complete cycle, as shown in Figure 1.
 
-<center><a href="./Images/AnesthesiaMachine/Cycles.png"><img src="./Images/AnesthesiaMachine/Cycles.png" width="550"></a></center>
-<center><i>Figure 1. Flow diagram showing the ventilatory cycles as implemented in the Anesthesia Machine.</i></center> 
+<center>
+<a href="./Images/AnesthesiaMachine/Cycles.png"><img src="./Images/AnesthesiaMachine/Cycles.png" width="550"></a>
+<i>Figure 1. Flow diagram showing the ventilatory cycles as implemented in the Anesthesia Machine.</i>
+</center> 
 
 #### Process Actions
 
@@ -199,9 +201,9 @@ breathing circle of the Anesthesia System that reduces the amount of
 inhaled CO2 in re-breathed gas. The diagram in Figure 3 presents the
 compartmental view of the Anesthesia Delivery System.
 
-<center><a href="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png" width="650"></a></center>
 <center>
-*Figure 3. Compartmental view of the Anesthesia System. The Anesthesia 
+<a href="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png" width="650"></a>
+<i>Figure 3. Compartmental view of the Anesthesia System. The Anesthesia 
 Machine consists of seven major compartments, as shown in the breathing circuit. 
 These are the mask/endotracheal tube compartment, the Y-piece, the inspiratory 
 and expiratory limbs, the fresh gas inlet, the CO2 absorber, 
@@ -218,7 +220,7 @@ of anesthetic drug and other medical gases through approaches that allow
 inhaled gas delivery. The model also consists of a relief valve path that emulates 
 the exhaust scavenging interface. The 
 Anesthesia Machine also interacts with the %Respiratory System through a circuit 
-path that links the two systems at the airway node.*
+path that links the two systems at the airway node.</i>
 </center><br>
 
 Compartments in the Anesthesia System are modeled as a network of
@@ -245,9 +247,9 @@ the exhaust is connected to a breathing bag reservoir; however, the current vers
 lacks such a reservoir, and the exhaust in the circuit diagram serves as a current 
 source that facilitates appropriate pressure maintenance. 
 
-<a href="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"></a>
 <center>
-*Figure 4. Circuit diagram of the Anesthesia Machine. The circuit 
+<a href="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"></a>
+<i>Figure 4. Circuit diagram of the Anesthesia Machine. The circuit 
 employs the ventilator as a driver pressure source. 
 One of the two pressure sources is selected using the switch. 
 The fresh gas inlet serves as a current source that drives fresh gas and anesthetic drugs 
@@ -256,7 +258,7 @@ the mask (represented as AnesthesiaConnection) and the mouth node of the
 %Respiratory System becomes closed. The switch between the mask and the mouth node remains 
 open when the Anesthesia Machine is turned off. The unidirectional valves of 
 the Anesthesia Machine are handled by assigning very high resistance on the 
-inspiratory or expiratory limbs depending on the breathing phase.*
+inspiratory or expiratory limbs depending on the breathing phase.</i>
 </center><br>
 
 ### Connecting to the Respiratory Circuit
@@ -289,8 +291,8 @@ listed in the table until a wide range of values are tested. Future
 versions will allow user-selected Anesthesia Machine setting parameters.
 
 <center>
-*Table 1. The table shows the basic settings needed as inputs to run the 
-anesthesia machine*
+<i>Table 1. The table shows the basic settings needed as inputs to run the 
+anesthesia machine</i>
 </center>
 |	Parameter	|	Description 	|
 |	---	|	---	|
@@ -380,14 +382,14 @@ extents. Several insults modify the same resistance that leads to ground
 (atmosphere) because the change in flow produced by the ventilator
 reaches the patient in the same way.
 
-<a href="./Images/AnesthesiaMachine/AMSeverityMap.png"><img src="./Images/AnesthesiaMachine/AMSeverityMap.png"></a>
 <center>
-*Figure 5. This plot shows the resistance value that is set based on the
+<a href="./Images/AnesthesiaMachine/AMSeverityMap.png"><img src="./Images/AnesthesiaMachine/AMSeverityMap.png"></a>
+<i>Figure 5. This plot shows the resistance value that is set based on the
 leak severity modifier. The severity is mapped logarithmically in a
 manner that allows the highest severity to allow virtually all flow through
 the path and the lowest severity to allow almost no flow through the
 path. Obstructions use the same function with the severity reversed
-(i.e., 1-severity).*
+(i.e., 1-severity).</i>
 </center><br>
 
 ### Connection Leaks

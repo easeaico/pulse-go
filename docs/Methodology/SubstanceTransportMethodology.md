@@ -97,36 +97,36 @@ The Transporter assumes that fluid movement (i.e. convection) has already taken 
 | *V<sub>C</sub>* | Current compartment volume | Volume | Volume |
 | *E<sub>o,C</sub>* | Current compartment previous time-step extensive property | Mass | Substance volume |
 
-The instantaneous substance quantity values can be determined in each compartment of a graph by doing a mass balance calculation using Equation 1, where *m* is the mass on the current compartment and both *m<sub>in</sub>* and *m<sub>out</sub>* are provided by links to any number of other compartments.
+The instantaneous substance quantity values can be determined in each compartment of a graph by doing a mass balance calculation using @equationref {mass_balance_1}, where *m* is the mass on the current compartment and both *m<sub>in</sub>* and *m<sub>out</sub>* are provided by links to any number of other compartments.
 
+<center>
 \f[\sum\limits_{}^{} {{m_{in}} - \sum\limits_{}^{} {{m_{out}} = \Delta m} } \f]
 
-<center>
-*Equation 1.*
+<i>@equationdef {mass_balance_1}</i>
 </center><br> 
 
-Equation 1 can be further broken out using the parameters in Table 1 to give Equation 2. 
+@equationref {mass_balance_1} can be further broken out using the parameters in Table 1 to give @equationref {mass_balance_2}. 
 
+<center>
 \f[\sum\limits_{}^{} {{I_{SC}}{f_{IL}}t - \sum\limits_{}^{} {{I_C}{f_{OL}}t = {I_C}{V_C} - {E_{o,C}}} } \f]
 
-<center>
-*Equation 2.*
+<i>@equationdef {mass_balance_2}</i>
 </center><br> 
 
-Rearranging Equation 2 gives Equation 3.
+Rearranging @equationref {mass_balance_2} gives @equationref {mass_balance_3}.
 
+<center>
 \f[{I_C}{V_C} - \sum\limits_{}^{} {{I_{SC}}{f_{IL}}t + \sum\limits_{}^{} {{I_C}{f_{OL}}t = {E_{o,C}}} } \f]
 
-<center>
-*Equation 3.*
+<i>@equationdef {mass_balance_3}</i>
 </center><br> 
 
-By simultaneously combining Equation 3 for all compartments in a graph, the linear equations can be written in the form of Equation 4 to solve for the new intensive properties throughout.  *A* is the matrix of constants, *x* is the vector of all intensive properties, and *b* is the right side vector of known previous time-step extensive properties.
-
-\f[Ax = b\f]
+By simultaneously combining @equationref {mass_balance_3} for all compartments in a graph, the linear equations can be written in the form of @equationref {mass_balance_4} to solve for the new intensive properties throughout.  *A* is the matrix of constants, *x* is the vector of all intensive properties, and *b* is the right side vector of known previous time-step extensive properties.
 
 <center>
-*Equation 4.*
+\f[Ax = b\f]
+
+<i>@equationdef {mass_balance_4}</i>
 </center><br>
 @anchor substance-data
 Data Flow
@@ -140,7 +140,7 @@ The Circuit Transporter has no functionality in Preprocess.
 
 ### Process
 
-The generic substance methodology developed for the engine is used to solve for the mass, concentration, substance volume, and volume fraction in each compartment each time-step.  The steps used by the transporter to solve a graph using Equation 4 in a given time-step are:
+The generic substance methodology developed for the engine is used to solve for the mass, concentration, substance volume, and volume fraction in each compartment each time-step.  The steps used by the transporter to solve a graph using @equationref {mass_balance_4} in a given time-step are:
 
 1. Loop over compartments to populate the *A* matrix (one row per compartment) - this is the same for all substances
 	1. Handle infinite volume (often the environment) by setting intensive property constant

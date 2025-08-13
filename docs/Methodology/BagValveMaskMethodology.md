@@ -6,8 +6,8 @@ Bag Valve Mask Methodology {#BagValveMaskMethodology}
 
 The bag valve mask (also known as Ambu bag or manual resuscitator) model is a generic representation of a hand-held device commonly used to provide positive pressure ventilation to patients who are not breathing or not breathing adequately. 
 
-<a href="./Images/BagValveMask/BagValveMaskPhoto.jpg"><img src="./Images/BagValveMask/BagValveMaskPhoto.jpg" width="400"></a>
 <center>
+<a href="./Images/BagValveMask/BagValveMaskPhoto.jpg"><img src="./Images/BagValveMask/BagValveMaskPhoto.jpg" width="400"></a>
 <i>Figure 1. A disposable BVM Resuscitator @cite bagvalvemask.</i>
 </center><br>
 
@@ -41,8 +41,8 @@ specific post process functionality for the bag valve mask. All postprocessing i
 
 The bag valve mask model consists of a pressure/flow source to model bag squeezing. Resistances are present between the bag, valve, filter, and connection.  There is a seal resistance that determines the amount of air that escapes during the simulation. Figure 2 shows the bag valve mask circuit.  The compartments and transport graph mirrors the circuit.  Substance values are set on the reservoir node/compartment, assuming infinite volume.
 
-<a href="./Images/BagValveMask/BagValveMaskCircuit.png"><img src="./Images/BagValveMask/BagValveMaskCircuit.png" width="400"></a>
 <center>
+<a href="./Images/BagValveMask/BagValveMaskCircuit.png"><img src="./Images/BagValveMask/BagValveMaskCircuit.png" width="400"></a>
 <i>Figure 2. Circuit diagram of the bag valve mask model. The circuit employs a driver source (either pressure or flow, depending on the settings) and resistances.</i>
 </center><br>
 

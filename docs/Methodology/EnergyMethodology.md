@@ -28,9 +28,9 @@ The energy system is required to simulate the effects of exercise and elevated p
 ### Approach
 The %Energy system is a physical model of heat transfer combined with a collection of empirical equations for heat production and exchange obtained from literature. Additional equations are derived from stoichiometric relationships and empirical data found in the literature, particularly the governing equations for the metabolic [production and consumption](@ref tissue-metabolic-production) of substances. It uses a thermal circuit to simulate heat transfer through the body, with the body circuit connected to the [environment](@ref EnvironmentMethodology) circuit. The body thermal circuit consists of a core node, representing core temperature, and a skin node, which represents the lumped peripheral temperature. The body thermal circuit is shown in Figure 1.
 
-<a href="./Images/Energy/internalThermal.png"><img src="./Images/Energy/internalThermal.png" width="400"></a>
 <center>
-*Figure 1. The body thermal circuit consists of two nodes and four paths. Two additional paths exist, connecting to the environment thermal circuit. The circuit is used to model the dynamic core and skin temperatures.*
+<a href="./Images/Energy/internalThermal.png"><img src="./Images/Energy/internalThermal.png" width="400"></a>
+<i>Figure 1. The body thermal circuit consists of two nodes and four paths. Two additional paths exist, connecting to the environment thermal circuit. The circuit is used to model the dynamic core and skin temperatures.</i>
 </center><br>
 
 The path elements consist of an internal heat flow source, a core heat capacitance, a skin heat capacitance, and a variable resistor from the core to skin. These four elements represent metabolic heat generation, the discretized heat capacity of the human body, and the convective heat transfer due to blood flow. The heat capacities of the core and skin are computed by proportioning the mass-averaged heat capacity found in literature based on the mass fraction of the skin @cite herman2007physics. The variable core to skin resistance is computed dynamically during simulation, and is inversely proportional to the skin blood flow. A decrease in blood flow leads to an increase in heat transfer resistance, and vice versa. When connected to the [environment](@ref EnvironmentMethodology) thermal circuit, the core and skin temperatures dynamically react to the environmental conditions (e.g. temperature, pressure, and humidity).
@@ -38,40 +38,40 @@ The path elements consist of an internal heat flow source, a core heat capacitan
 The [metabolic production and consumption](@ref tissue-metabolic-production) of the %Energy system is a set of calculations that determine the rate of change of substances (nutrients, ions, gases) in the tissue, relying on [advective](@ref CircuitMethodology) and [diffusive](@ref TissueMethodology) transport methodologies.
 
 ### Thermal Regulation
-Thermal regulation in the %Energy system occurs through manipulation of the metabolic rate or through external losses (sweating). The thermal feedback mechanisms are a direct implementation from those discussed by Herman @cite herman2007physics. For high core temperature, a control equation specifies the sweat rate as a function of the difference between the current core temperature and the set-point (Equation 1). Sweat is removed from the body via a path connected between the skin and the environment (Figure 2). Note that sweat is currently composed of water only, a known limitation which will be addressed in the [future](@ref energy-future).
+Thermal regulation in the %Energy system occurs through manipulation of the metabolic rate or through external losses (sweating). The thermal feedback mechanisms are a direct implementation from those discussed by Herman @cite herman2007physics. For high core temperature, a control equation specifies the sweat rate as a function of the difference between the current core temperature and the set-point (@equationref {flow_rate_src}). Sweat is removed from the body via a path connected between the skin and the environment (Figure 2). Note that sweat is currently composed of water only, a known limitation which will be addressed in the [future](@ref energy-future).
 
+<center>
 <a href="./Images/Energy/sweat.png"><img src="./Images/Energy/sweat.png" width="400"></a>
-<center>
-*Figure 2. Sweat is removed from the body via a flow source path connected to ground. The flow source rate is computed using Equation 1.*
+<i>Figure 2. Sweat is removed from the body via a flow source path connected to ground. The flow source rate is computed using @equationref {flow_rate_src}.</i>
 </center><br>
 
+<center>
 \f[ \dot{m}_{sweat} = \frac{h_{sweat} \left(T_{core} - T_{core,setpoint} \right)}{\rho_{sweat}} \f]
-<center>
-*Equation 1.*
+<i>@equationdef {flow_rate_src}</i>
 </center><br>
 
-For severe increases in core temperature (hyperthermia), the rate of chemical reactions can increase, leading to a subsequent rise in metabolic rate. This value was quantified from Pate et al. @cite pate2001thermal as an eleven percent increase in metabolic rate for every degree increase in core temperature. This is described from the power relationship between metabolic rate and core temperature, shown in Equation 2.
+For severe increases in core temperature (hyperthermia), the rate of chemical reactions can increase, leading to a subsequent rise in metabolic rate. This value was quantified from Pate et al. @cite pate2001thermal as an eleven percent increase in metabolic rate for every degree increase in core temperature. This is described from the power relationship between metabolic rate and core temperature, shown in @equationref {mr_2_ct}.
 
-\f[ \dot{Q}^{n+1}_{metabolic} = \dot{Q}^{n}_{metabolic} * \left(1.11 \right)^{T_{core}-T_{core,high}} \f]
 <center>
-*Equation 2.*
+\f[ \dot{Q}^{n+1}_{metabolic} = \dot{Q}^{n}_{metabolic} * \left(1.11 \right)^{T_{core}-T_{core,high}} \f]
+<i>@equationdef {mr_2_ct}</i>
 </center><br>
 
 For low core temperatures, the maximum metabolic rate achievable through shivering is defined from the summit metabolism. This value is given by Herman as:
 
+<center>
 \f[ \dot{Q}_{metabolic} = 21.0m^{0.75}_{b} \f]
-<center>
-*Equation 3.*
+<i>@equationdef {herman}</i>
 </center><br>
 
-If the summit metabolism is not enough to adequately maintain internal temperature, then the metabolic rate will begin to decrease at a rate of six percent for every degree drop @cite mallet2002hypothermia. The power relationship in Equation 4 is used to describe this phenomenon.
+If the summit metabolism is not enough to adequately maintain internal temperature, then the metabolic rate will begin to decrease at a rate of six percent for every degree drop @cite mallet2002hypothermia. The power relationship in @equationref {power} is used to describe this phenomenon.
 
+<center>
 \f[ \dot{Q}^{n+1}_{metabolic} = \dot{Q}^{n}_{metabolic} * \left(0.96 \right)^{T_{core,low}-T_{core}} \f]
-<center>
-*Equation 4.*
+<i>@equationdef {power}</i>
 </center><br>
 
-Under resting conditions, the metabolic rate is determined from the Harris-Benedict formula. This formula gives the metabolic requirements in kilo-calories per day as a function of weight, height, age, and sex @cite roza1984metabolic . This empirical formula is shown in Equation 5.
+Under resting conditions, the metabolic rate is determined from the Harris-Benedict formula. This formula gives the metabolic requirements in kilo-calories per day as a function of weight, height, age, and sex @cite roza1984metabolic . This empirical formula is shown in @equationref {harris_benedict}.
 
 <center>
 <table border="0">
@@ -84,7 +84,7 @@ Under resting conditions, the metabolic rate is determined from the Harris-Bened
 </table>
 </center>
 <center>
-*Equation 5.*
+<i>@equationdef {harris_benedict}</i>
 </center><br>
 
 @anchor energy-data-flow
@@ -159,68 +159,68 @@ The exercise capacity of the body is physiologically and psychologically limited
 
 <center>
 <a href="./Images/Energy/fatigue.png"><img src="./Images/Energy/fatigue.png"></a>
-*Figure 3. The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.*
+<i>Figure 3. The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.</i>
 </center><br>
 
 The energy available for work is found/stored in the
 usable energy compartment. There are two anaerobic compartments and one aerobic compartment that replenish the usable energy compartment. The peak power
 compartment is analogous to the phosphagen system, the medium power compartment is analogous to the glygogen-lactic acid system, and 
 the endurance compartment can be though of as the aerobic energy system. The amount of energy in each compartment is calculated by adding the change in energy 
-to the current energy level at each timestep, as shown in Equation 7, where *E* is the level of energy in the store. 
+to the current energy level at each timestep, as shown in @equationref {enerty_level}, where *E* is the level of energy in the store. 
 The compartment energy levels are bounded between zero and the maximum capacity.
 
-\f[E(t + \Delta t) = E(t) + \frac{dE}{dt} \Delta t \f]
 <center>
-<i>Equation 7.</i>
+\f[E(t + \Delta t) = E(t) + \frac{dE}{dt} \Delta t \f]
+<i>@equationdef {enerty_level}</i>
 </center><br>
 
-The change in energy is computed by summing the energy flow rates, as shown in Equation 8, where *F<sub>E,in</sub>* and *F<sub>E,out</sub>* are 
+The change in energy is computed by summing the energy flow rates, as shown in @equationref {energy_change}, where *F<sub>E,in</sub>* and *F<sub>E,out</sub>* are 
 the energy flow through the paths leading into and out of the stores, respectively.
 
-\f[ \frac{dE}{dt} = \Sigma \left(F_{E,in} \right) - \Sigma \left(F_{E,out} \right) \f]
 <center>
-<i>Equation 8.</i>
+\f[ \frac{dE}{dt} = \Sigma \left(F_{E,in} \right) - \Sigma \left(F_{E,out} \right) \f]
+<i>@equationdef {energy_change}</i>
 </center><br>
 
-With the exception of the usable energy store, all of the outflow rates are proportional to the energy deficit in the downstream compartment. The usable compartment outflow rate is the work rate. The peak and medium power compartment inflow rates are determined by two split factors. The first split factor determines the amount of endurance energy that is being directed to usable energy, and the second determines how much of the remaining energy goes to filling the peak and medium stores. The split factors are computed from the deficits in the energy compartments. In other words, all energy replenishment is based on the current needs. The energy flow rate governing equations are shown in Equations 9 to 18, where *F<sub>i</sub>* is the energy flow rate through energy path i, *S* is a split fraction between 0 and 1, *N<sub>store</sub>* is the deficit in a store normalized to the maximum level in that store, and *M<sub>store</sub>* is a piecewise linear map for the store deficit normalizations. The purpose of the piecewise function is to allow purely aerobic energy use at low exercise rates. The energy paths are labeled in Figure 4, and the direction of energy flow is indicated by the arrows. The rates are bound at the upper limit by a proportion of the maximum work rate where the maximum work rate is 1 times the maximum endurance rate  plus 2.5 times the maximum endurance rate (the maximum medium power rate) plus 4 times the maximum endurance rate (the maximum peak power rate). These limits are chosen to mimic the maximum aerobic, glycogen-lactic acid, and phosphogen to ATP conversion rates @cite hall2011guyton. Rates are bound at the lower limit by zero.
+With the exception of the usable energy store, all of the outflow rates are proportional to the energy deficit in the downstream compartment. The usable compartment outflow rate is the work rate. The peak and medium power compartment inflow rates are determined by two split factors. The first split factor determines the amount of endurance energy that is being directed to usable energy, and the second determines how much of the remaining energy goes to filling the peak and medium stores. The split factors are computed from the deficits in the energy compartments. In other words, all energy replenishment is based on the current needs. The energy flow rate governing equations are shown in @equationref {F1} to @equationref {m_usable}, where *F<sub>i</sub>* is the energy flow rate through energy path i, *S* is a split fraction between 0 and 1, *N<sub>store</sub>* is the deficit in a store normalized to the maximum level in that store, and *M<sub>store</sub>* is a piecewise linear map for the store deficit normalizations. The purpose of the piecewise function is to allow purely aerobic energy use at low exercise rates. The energy paths are labeled in Figure 4, and the direction of energy flow is indicated by the arrows. The rates are bound at the upper limit by a proportion of the maximum work rate where the maximum work rate is 1 times the maximum endurance rate  plus 2.5 times the maximum endurance rate (the maximum medium power rate) plus 4 times the maximum endurance rate (the maximum peak power rate). These limits are chosen to mimic the maximum aerobic, glycogen-lactic acid, and phosphogen to ATP conversion rates @cite hall2011guyton. Rates are bound at the lower limit by zero.
 
 <center>
 \f[ F_{1} = \left(N_{Usable} + N_{Peak} + N_{Medium} \right) F_{1,max} \f]
-<i>Equation 9.</i>
+<i>@equationdef {F1}</i>
 
 \f[ F_{2} = S_{1} F_{1} \f]
-<i>Equation 10.</i>
+<i>@equationdef {F2}</i>
 
 \f[ F_{3} = (1-S_{1}) F_{1} \f]
-<i>Equation 11.</i>
+<i>@equationdef {F3}</i>
 
 \f[ S_{1} = \frac{N_{Usable}}{N_{Usable} + 0.5 * \left(N_{Medium} + N_{Peak} \right)} \f]
-<i>Equation 12.</i>
+<i>@equationdef {S1}</i>
 
 \f[ F_{4} = S_{2} F_{3} \f]
-<i>Equation 13.</i>
+<i>@equationdef {F4}</i>
 
 \f[ F_{5} = (1-S_{2}) F_{3} \f]
-<i>Equation 14.</i>
+<i>@equationdef {F5}</i>
 
 \f[ S_{2} = \frac{N_{Peak}}{N_{Peak} + N_{Medium}} \f]
-<i>Equation 15.</i>
+<i>@equationdef {S2}</i>
 
 \f[ F_{6} = M_{Usable} N_{Usable} F_{6,max} \f]
-<i>Equation 16.</i>
+<i>@equationdef {F6}</i>
 
 \f[ F_{7} = M_{Usable} N_{Usable} F_{7,max} \f]
-<i>Equation 17.</i>
+<i>@equationdef {F7}</i>
 
 \f[ M_{Usable} = \left\{ \begin{array}{ll} N_{Usable} \leq 0.8333 & 0 \\ N_{Usable} > 0.8333 & 6*N_{Usable} - 5 \\ \end{array} \right. \f]
-<i>Equation 18.</i>
+<i>@equationdef {m_usable}</i>
 </center><br>
 
-The energy flow rate into the endurance energy store, indicated by the large orange arrow in Figure 4, is independent of bloodborne substances in the current release; however, this rate will be coupled to the nutrient substance concentrations in the blood in a future release. Equation 19 shows the endurance fill rate, where *k<sub>endurance</sub>* is a constant and *N<sub>Total</sub>* is the sum of the normalized store deficits.
+The energy flow rate into the endurance energy store, indicated by the large orange arrow in Figure 4, is independent of bloodborne substances in the current release; however, this rate will be coupled to the nutrient substance concentrations in the blood in a future release. @equationref {F_endurance} shows the endurance fill rate, where *k<sub>endurance</sub>* is a constant and *N<sub>Total</sub>* is the sum of the normalized store deficits.
 
 <center>
 \f[ F_{Endurance} = k_{Endurance} * N_{Total} \f]
-<i>Equation 19.</i>
+<i>@equationdef {F_endurance}</i>
 </center><br>
 
 There are three output parameters associated with the exercise action: the achieved exercise level, the fatigue level, and the total work rate level.

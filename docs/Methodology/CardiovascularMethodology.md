@@ -115,15 +115,15 @@ The heart model generates pressure that drives the hemodynamics through a variab
 #### Heart Elastance and Compliance
 The heart compliance is calculated from the inverse of the heart elastance. The heart elastance model used is adapted from the one developed by Stergiopulos et al @cite stergiopulos1996elastance. This model utilizes a double Hill function to represent heart elastance over the cardiac cycle time period. It was chosen due to its ability to scale with increasing or decreasing cardiac cycle times. The functional form for elastance of both left and right ventricles is shown in @equationref {elastance1} and @equationref {elastance2}.
 
-\f[E_{v} (t)=(E_{\max ,v} -E_{\min ,v} )\left(\frac{f(t)}{f_{\max } } \right)+E_{\min ,v} \f]
 <center>
+\f[E_{v} (t)=(E_{\max ,v} -E_{\min ,v} )\left(\frac{f(t)}{f_{\max } } \right)+E_{\min ,v} \f]
 *@equationdef {elastance1}*
 </center><br>
 
 Where *E<sub>max,v</sub>* is the maximum ventricle elastance in mmHg per mL. *E<sub>min,v</sub>* is the minimum ventricle elastance in mmHg per mL. *f(t)* is the double Hill function, and *f<sub>max</sub>* is the maximum value of the double Hill over the cardiac cycle length.
 
-\f[f(t)=\left[\frac{\left(\frac{t}{\alpha _{1} T} \right)^{n_{1} } }{1+\left(\frac{t}{\alpha _{1} T} \right)^{n_{1} } } \right]\left[\frac{1}{1+\left(\frac{t}{\alpha _{2} T} \right)^{n_{2} } } \right] \f]
 <center>
+\f[f(t)=\left[\frac{\left(\frac{t}{\alpha _{1} T} \right)^{n_{1} } }{1+\left(\frac{t}{\alpha _{1} T} \right)^{n_{1} } } \right]\left[\frac{1}{1+\left(\frac{t}{\alpha _{2} T} \right)^{n_{2} } } \right] \f]
 *@equationdef {elastance2}*
 </center><br>
 
