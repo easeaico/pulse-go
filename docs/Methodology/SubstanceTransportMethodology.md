@@ -18,13 +18,13 @@ Introduction
 
 The engine modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In the engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
 
-Links represent connections between compartments with a directional flow component defining a volume change each time-step.  In the engine, links can be assigned a path that provides the instantaneous flow value.  Figure 1 shows the base transport elements definitions in an example graph.
+Links represent connections between compartments with a directional flow component defining a volume change each time-step.  In the engine, links can be assigned a path that provides the instantaneous flow value.  @figureref {SubstanceTransportComponents} shows the base transport elements definitions in an example graph.
 
 @htmlonly
 <center><a href="./Images/SubstanceTransporter/Components.png"><img src="./Images/SubstanceTransporter/Components.png" style="width:50%;"></a></center>
 @endhtmlonly
 <center>
-<i>Figure 1. This is a conceptual example graph that describes the lowest level elements used to define properties used by the Transporter.  Links provide flow between compartments that store both fluid and substance quantity information.</i>
+<i>@figuredef {SubstanceTransportComponents} This is a conceptual example graph that describes the lowest level elements used to define properties used by the Transporter.  Links provide flow between compartments that store both fluid and substance quantity information.</i>
 </center><br>
 
 @anchor substance-design
@@ -81,10 +81,10 @@ The Transporter is implemented generically for both liquid and gas systems using
 	- Pouring some out will not change the value
 	- Examples: Concentration, VolumeFraction, and Temperature
 
-The Transporter assumes that fluid movement (i.e. convection) has already taken place - generally calculated and updated inside the system by the circuit solver (@ref CircuitMethodology).  Once the convective fluid movement properties of compartment volume and link flow are updated for the current time-step being analyzed, the extensive and intensive substance values at each compartment can be determined by using the previous time-step state.  Table 1 shows the parameters needed to calculate the advective transport by bulk flow.
+The Transporter assumes that fluid movement (i.e. convection) has already taken place - generally calculated and updated inside the system by the circuit solver (@ref CircuitMethodology).  Once the convective fluid movement properties of compartment volume and link flow are updated for the current time-step being analyzed, the extensive and intensive substance values at each compartment can be determined by using the previous time-step state.  @tableref {SubstanceTransportParameters} shows the parameters needed to calculate the advective transport by bulk flow.
 	
 <center><br>
-*Table 1. The variable definitions as well as the mapped property used to calculate advective transport.*
+*@tabledef {SubstanceTransportParameters} The variable definitions as well as the mapped property used to calculate advective transport.*
 </center>
 
 | Parameter | Definition | Liquid Variable | Gas Variable |
@@ -105,7 +105,7 @@ The instantaneous substance quantity values can be determined in each compartmen
 <i>@equationdef {mass_balance_1}</i>
 </center><br> 
 
-@equationref {mass_balance_1} can be further broken out using the parameters in Table 1 to give @equationref {mass_balance_2}. 
+@equationref {mass_balance_1} can be further broken out using the parameters in @tableref {SubstanceTransportParameters} to give @equationref {mass_balance_2}. 
 
 <center>
 \f[\sum\limits_{}^{} {{I_{SC}}{f_{IL}}t - \sum\limits_{}^{} {{I_C}{f_{OL}}t = {I_C}{V_C} - {E_{o,C}}} } \f]

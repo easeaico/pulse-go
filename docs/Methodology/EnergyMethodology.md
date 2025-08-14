@@ -26,11 +26,11 @@ Background and Scope
 The energy system is required to simulate the effects of exercise and elevated physical activity as well as react to temperature and pressure changes in the environment.
 
 ### Approach
-The %Energy system is a physical model of heat transfer combined with a collection of empirical equations for heat production and exchange obtained from literature. Additional equations are derived from stoichiometric relationships and empirical data found in the literature, particularly the governing equations for the metabolic [production and consumption](@ref tissue-metabolic-production) of substances. It uses a thermal circuit to simulate heat transfer through the body, with the body circuit connected to the [environment](@ref EnvironmentMethodology) circuit. The body thermal circuit consists of a core node, representing core temperature, and a skin node, which represents the lumped peripheral temperature. The body thermal circuit is shown in Figure 1.
+The %Energy system is a physical model of heat transfer combined with a collection of empirical equations for heat production and exchange obtained from literature. Additional equations are derived from stoichiometric relationships and empirical data found in the literature, particularly the governing equations for the metabolic [production and consumption](@ref tissue-metabolic-production) of substances. It uses a thermal circuit to simulate heat transfer through the body, with the body circuit connected to the [environment](@ref EnvironmentMethodology) circuit. The body thermal circuit consists of a core node, representing core temperature, and a skin node, which represents the lumped peripheral temperature. The body thermal circuit is shown in @figureref {InternalThermal}.
 
 <center>
 <a href="./Images/Energy/internalThermal.png"><img src="./Images/Energy/internalThermal.png" width="400"></a>
-<i>Figure 1. The body thermal circuit consists of two nodes and four paths. Two additional paths exist, connecting to the environment thermal circuit. The circuit is used to model the dynamic core and skin temperatures.</i>
+<i>@figuredef {InternalThermal} The body thermal circuit consists of two nodes and four paths. Two additional paths exist, connecting to the environment thermal circuit. The circuit is used to model the dynamic core and skin temperatures.</i>
 </center><br>
 
 The path elements consist of an internal heat flow source, a core heat capacitance, a skin heat capacitance, and a variable resistor from the core to skin. These four elements represent metabolic heat generation, the discretized heat capacity of the human body, and the convective heat transfer due to blood flow. The heat capacities of the core and skin are computed by proportioning the mass-averaged heat capacity found in literature based on the mass fraction of the skin @cite herman2007physics. The variable core to skin resistance is computed dynamically during simulation, and is inversely proportional to the skin blood flow. A decrease in blood flow leads to an increase in heat transfer resistance, and vice versa. When connected to the [environment](@ref EnvironmentMethodology) thermal circuit, the core and skin temperatures dynamically react to the environmental conditions (e.g. temperature, pressure, and humidity).
@@ -38,11 +38,11 @@ The path elements consist of an internal heat flow source, a core heat capacitan
 The [metabolic production and consumption](@ref tissue-metabolic-production) of the %Energy system is a set of calculations that determine the rate of change of substances (nutrients, ions, gases) in the tissue, relying on [advective](@ref CircuitMethodology) and [diffusive](@ref TissueMethodology) transport methodologies.
 
 ### Thermal Regulation
-Thermal regulation in the %Energy system occurs through manipulation of the metabolic rate or through external losses (sweating). The thermal feedback mechanisms are a direct implementation from those discussed by Herman @cite herman2007physics. For high core temperature, a control equation specifies the sweat rate as a function of the difference between the current core temperature and the set-point (@equationref {flow_rate_src}). Sweat is removed from the body via a path connected between the skin and the environment (Figure 2). Note that sweat is currently composed of water only, a known limitation which will be addressed in the [future](@ref energy-future).
+Thermal regulation in the %Energy system occurs through manipulation of the metabolic rate or through external losses (sweating). The thermal feedback mechanisms are a direct implementation from those discussed by Herman @cite herman2007physics. For high core temperature, a control equation specifies the sweat rate as a function of the difference between the current core temperature and the set-point (@equationref {flow_rate_src}). Sweat is removed from the body via a path connected between the skin and the environment (@figureref {Sweat}). Note that sweat is currently composed of water only, a known limitation which will be addressed in the [future](@ref energy-future).
 
 <center>
 <a href="./Images/Energy/sweat.png"><img src="./Images/Energy/sweat.png" width="400"></a>
-<i>Figure 2. Sweat is removed from the body via a flow source path connected to ground. The flow source rate is computed using @equationref {flow_rate_src}.</i>
+<i>@figuredef {Sweat} Sweat is removed from the body via a flow source path connected to ground. The flow source rate is computed using @equationref {flow_rate_src}.</i>
 </center><br>
 
 <center>
@@ -140,10 +140,10 @@ Actions
 -------
 @anchor energy-exercise
 ### Exercise
-The exercise action is initiated by specifying the exercise intensity. The exercise intensity is a number between 0 and 1 that defines the requested fraction of the body's maximal work rate. For instance, the average adult male has a maximal work rate of approximately 1200 Watts @cite hall2011guyton; therefore, a user-specified exercise intensity of 0.5 would request a work rate of 600 Watts from the body. Table 1 shows the approximate exercise intensity for some common activities executed by an average adult male. The approximate mechanical power produced by an adult male is also included in the table.
+The exercise action is initiated by specifying the exercise intensity. The exercise intensity is a number between 0 and 1 that defines the requested fraction of the body's maximal work rate. For instance, the average adult male has a maximal work rate of approximately 1200 Watts @cite hall2011guyton; therefore, a user-specified exercise intensity of 0.5 would request a work rate of 600 Watts from the body. @tableref {EnergyExerciseIntensity} shows the approximate exercise intensity for some common activities executed by an average adult male. The approximate mechanical power produced by an adult male is also included in the table.
 
 <br><center>
-*Table 1. The approximate exercise intensity for some common activities and the corresponding approximate mechanical power. Note that the values in the table correspond to a body with a 1200 Watt maximum work rate capability.*
+*@tabledef {EnergyExerciseIntensity} The approximate exercise intensity for some common activities and the corresponding approximate mechanical power. Note that the values in the table correspond to a body with a 1200 Watt maximum work rate capability.*
 </center>
 |Activity |Exerise Intensity | Mechanical Power (W) |
 |-------- |----------------- |--------------------- |
@@ -155,11 +155,11 @@ The exercise action is initiated by specifying the exercise intensity. The exerc
 |Jogging at about 2.2 m/s (5 mph) @cite johnson2000exercise                                  |0.06 |70   |
 |Rest  |0.0 |0 |
 
-The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in Figure 3.
+The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in @figureref {Fatigue}.
 
 <center>
 <a href="./Images/Energy/fatigue.png"><img src="./Images/Energy/fatigue.png"></a>
-<i>Figure 3. The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.</i>
+<i>@figuredef {Fatigue} The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.</i>
 </center><br>
 
 The energy available for work is found/stored in the
@@ -182,7 +182,7 @@ the energy flow through the paths leading into and out of the stores, respective
 <i>@equationdef {energy_change}</i>
 </center><br>
 
-With the exception of the usable energy store, all of the outflow rates are proportional to the energy deficit in the downstream compartment. The usable compartment outflow rate is the work rate. The peak and medium power compartment inflow rates are determined by two split factors. The first split factor determines the amount of endurance energy that is being directed to usable energy, and the second determines how much of the remaining energy goes to filling the peak and medium stores. The split factors are computed from the deficits in the energy compartments. In other words, all energy replenishment is based on the current needs. The energy flow rate governing equations are shown in @equationref {F1} to @equationref {m_usable}, where *F<sub>i</sub>* is the energy flow rate through energy path i, *S* is a split fraction between 0 and 1, *N<sub>store</sub>* is the deficit in a store normalized to the maximum level in that store, and *M<sub>store</sub>* is a piecewise linear map for the store deficit normalizations. The purpose of the piecewise function is to allow purely aerobic energy use at low exercise rates. The energy paths are labeled in Figure 4, and the direction of energy flow is indicated by the arrows. The rates are bound at the upper limit by a proportion of the maximum work rate where the maximum work rate is 1 times the maximum endurance rate  plus 2.5 times the maximum endurance rate (the maximum medium power rate) plus 4 times the maximum endurance rate (the maximum peak power rate). These limits are chosen to mimic the maximum aerobic, glycogen-lactic acid, and phosphogen to ATP conversion rates @cite hall2011guyton. Rates are bound at the lower limit by zero.
+With the exception of the usable energy store, all of the outflow rates are proportional to the energy deficit in the downstream compartment. The usable compartment outflow rate is the work rate. The peak and medium power compartment inflow rates are determined by two split factors. The first split factor determines the amount of endurance energy that is being directed to usable energy, and the second determines how much of the remaining energy goes to filling the peak and medium stores. The split factors are computed from the deficits in the energy compartments. In other words, all energy replenishment is based on the current needs. The energy flow rate governing equations are shown in @equationref {F1} to @equationref {m_usable}, where *F<sub>i</sub>* is the energy flow rate through energy path i, *S* is a split fraction between 0 and 1, *N<sub>store</sub>* is the deficit in a store normalized to the maximum level in that store, and *M<sub>store</sub>* is a piecewise linear map for the store deficit normalizations. The purpose of the piecewise function is to allow purely aerobic energy use at low exercise rates. The energy paths are labeled in @figureref {Fatigue}, and the direction of energy flow is indicated by the arrows. The rates are bound at the upper limit by a proportion of the maximum work rate where the maximum work rate is 1 times the maximum endurance rate  plus 2.5 times the maximum endurance rate (the maximum medium power rate) plus 4 times the maximum endurance rate (the maximum peak power rate). These limits are chosen to mimic the maximum aerobic, glycogen-lactic acid, and phosphogen to ATP conversion rates @cite hall2011guyton. Rates are bound at the lower limit by zero.
 
 <center>
 \f[ F_{1} = \left(N_{Usable} + N_{Peak} + N_{Medium} \right) F_{1,max} \f]
@@ -216,7 +216,7 @@ With the exception of the usable energy store, all of the outflow rates are prop
 <i>@equationdef {m_usable}</i>
 </center><br>
 
-The energy flow rate into the endurance energy store, indicated by the large orange arrow in Figure 4, is independent of bloodborne substances in the current release; however, this rate will be coupled to the nutrient substance concentrations in the blood in a future release. @equationref {F_endurance} shows the endurance fill rate, where *k<sub>endurance</sub>* is a constant and *N<sub>Total</sub>* is the sum of the normalized store deficits.
+The energy flow rate into the endurance energy store, indicated by the large orange arrow in @figureref {Fatigue}, is independent of bloodborne substances in the current release; however, this rate will be coupled to the nutrient substance concentrations in the blood in a future release. @equationref {F_endurance} shows the endurance fill rate, where *k<sub>endurance</sub>* is a constant and *N<sub>Total</sub>* is the sum of the normalized store deficits.
 
 <center>
 \f[ F_{Endurance} = k_{Endurance} * N_{Total} \f]
@@ -268,7 +268,7 @@ Results and Conclusions
 Validation - Resting Physiologic State
 --------------------------------------
 <br><center>
-*Table 2. The %Energy system properties consist of core and skin temperature, as well as metabolic production rates. The properties show good agreement with the validation values.*
+*@tabledef {EnergySystemProperties} The %Energy system properties consist of core and skin temperature, as well as metabolic production rates. The properties show good agreement with the validation values.*
 </center>
 
 <b>Standard Male</b>
@@ -279,14 +279,14 @@ Validation - Resting Physiologic State
 
 @insert ./test_results/tables/Energy-StandardFemaleValidationTable.md
 
-The resting system properties for the energy system are temperatures and metabolic production rates. From Table 2, it is shown that the temperatures meet the validation criteria extremely well for resting conditions. The production rates show reasonable agreement with the validation data. Gas consumption and production yield the largest disparity. This is due to accurate resting physiology being achieved for the displayed consumption and production rates. Additional refinement of the gas consumption and production rates can occur, but the change would propagate through the other systems. In order to preserve accurate resting physiology all other systems would need to be adjusted for this change. This is currently planned for a future release. The remaining metabolic production rates show good agreement with the validation data.
+The resting system properties for the energy system are temperatures and metabolic production rates. From @tableref {EnergySystemProperties}, it is shown that the temperatures meet the validation criteria extremely well for resting conditions. The production rates show reasonable agreement with the validation data. Gas consumption and production yield the largest disparity. This is due to accurate resting physiology being achieved for the displayed consumption and production rates. Additional refinement of the gas consumption and production rates can occur, but the change would propagate through the other systems. In order to preserve accurate resting physiology all other systems would need to be adjusted for this change. This is currently planned for a future release. The remaining metabolic production rates show good agreement with the validation data.
 
 Validation - Actions and Conditions
 --------------------
 The %Energy and %Environment systems were validated for four scenarios encompassing four different actions. These include: exercise, cold water submersion (including active heating), and a high altitude environment change. These scenarios were meant to test the dynamic feedback of the energy environment systems on both thermal regulation and internal physiology. There is good agreement with the expected results.
 
 <center>
-*Table 3. The dynamic response from the %Energy and %Environment systems were validated for four scenarios: Two Exercise scenarios, Cold Water Submersion, and High Altitude. The scenarios demonstrate a good response to exercise and environmental conditions.*
+*@tabledef {EnergyDynamicResponse} The dynamic response from the %Energy and %Environment systems were validated for four scenarios: Two Exercise scenarios, Cold Water Submersion, and High Altitude. The scenarios demonstrate a good response to exercise and environmental conditions.*
 </center>
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
@@ -301,7 +301,7 @@ The %Energy and %Environment systems were validated for four scenarios encompass
 There are two scenarios for validation of the exercise action. The first scenario qualitatively validates that a work rate threshold exists. The scenario is based on the assertion by @cite johnson2000exercise that a body working around the threshold for maximal oxygen uptake (approximately 430 watts) will only be able to perform at the desired level for about three minutes before reaching physiological limits. The second scenario takes advantage of the abundance of experiments using variations of the Bruce protocol to study exercise physiology. In the second scenario, the exercise intensity is periodically increased, with short breaks in between each exercise period. The quantitative validation results are shown in the table below.
 
 <center><br>
-*Table 4a. The dynamic response to exercise. 15 measures are compared to data reported in literature at 8 different times during increasing exercise intensity with intermittent rest, for a total of 120 points of comparison. Of those, 86 were within 10 percent of the reported value, 8 were within 30 percent, and 26 deviated from the expected value by more than 30 percent. The first intensity/rest period is shown in Table 4a.*
+*@tabledef {EnergyExerciseValidation1} The dynamic response to exercise. 15 measures are compared to data reported in literature at 8 different times during increasing exercise intensity with intermittent rest, for a total of 120 points of comparison. Of those, 86 were within 10 percent of the reported value, 8 were within 30 percent, and 26 deviated from the expected value by more than 30 percent. The first intensity/rest period is shown in this table.*
 </center>
 |	Segment	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Core Temperature (Celsius)	|	Peripheral Temperature (Celsius)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Stroke Volume (mL)	|	Cardiac Output (L/min)	|	Gut Blood Flow (L/min)	|	Systemic Vascular Resistance (mmHg-min/L)	|	Respiration Rate (breaths/min)	|	Tidal Volume (L)	|	Respiratory Exchange Ratio	|	Oxygen Consumption (L/min)	|	Urine Production Rate (mL/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -309,7 +309,7 @@ There are two scenarios for validation of the exercise action. The first scenari
 |	Exercise Severity 0	|	rest 2 minutes	|	390	|	509	|<span class="success">	Increase @cite christie1987cardiac or no change @cite byrne2007ingestible	</span>|<span class="success">	No change or decrease @cite griffin1993temperature	</span>|<span class="success">	Decreasing [Sensus Communis]	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	No change @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|
 <center><br>
 
-*Table 4b. The second intensity/rest period.*
+*@tabledef {EnergyExerciseValidation2} The second intensity/rest period.*
 </center>
 |	Segment	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Core Temperature (Celsius)	|	Peripheral Temperature (Celsius)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Stroke Volume (mL)	|	Cardiac Output (L/min)	|	Gut Blood Flow (L/min)	|	Systemic Vascular Resistance (mmHg-min/L)	|	Respiration Rate (breaths/min)	|	Tidal Volume (L)	|	Exchange Ratio (Or Respiratory Quotient)	|	Oxygen Consumption (L/min)	|	Urine Production Rate (mL/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -317,7 +317,7 @@ There are two scenarios for validation of the exercise action. The first scenari
 |	Exercise Severity 0	|	rest 2 minutes	|	870	|	989	|<span class="success">	Increase @cite christie1987cardiac or no change @cite byrne2007ingestible	</span>|<span class="success">	No change or decrease @cite griffin1993temperature	</span>|<span class="success">	Decreasing [Sensus Communis]	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	No change @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|
 <center><br>
 
-*Table 4c. The third intensity/rest period.*
+*@tabledef {EnergyExerciseValidation3} The third intensity/rest period.*
 </center>
 |	Segment	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Core Temperature (Celsius)	|	Peripheral Temperature (Celsius)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Stroke Volume (mL)	|	Cardiac Output (L/min)	|	Gut Blood Flow (L/min)	|	Systemic Vascular Resistance (mmHg-min/L)	|	Respiration Rate (breaths/min)	|	Tidal Volume (L)	|	Exchange Ratio (Or Respiratory Quotient)	|	Oxygen Consumption (L/min)	|	Urine Production Rate (mL/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -325,7 +325,7 @@ There are two scenarios for validation of the exercise action. The first scenari
 |	Exercise Severity 0	|	rest 2 minutes	|	1350	|	1469	|<span class="success">	Increase @cite christie1987cardiac or no change @cite byrne2007ingestible	</span>|<span class="success">	No change or decrease @cite griffin1993temperature	</span>|<span class="success">	Decreasing [Sensus Communis]	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	No change @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|
 <center><br>
 
-*Table 4d. The fourth intensity/rest period.*
+*@tabledef {EnergyExerciseValidation4} The fourth intensity/rest period.*
 </center>
 |	Segment	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Core Temperature (Celsius)	|	Peripheral Temperature (Celsius)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Stroke Volume (mL)	|	Cardiac Output (L/min)	|	Gut Blood Flow (L/min)	|	Systemic Vascular Resistance (mmHg-min/L)	|	Respiration Rate (breaths/min)	|	Tidal Volume (L)	|	Exchange Ratio (Or Respiratory Quotient)	|	Oxygen Consumption (L/min)	|	Urine Production Rate (mL/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -333,7 +333,7 @@ There are two scenarios for validation of the exercise action. The first scenari
 |	Exercise Severity 0	|	rest 2 minutes	|	1830	|	1950	|<span class="success">	Increase @cite christie1987cardiac or no change @cite byrne2007ingestible	</span>|<span class="success">	No change or decrease @cite griffin1993temperature	</span>|<span class="success">	Decreasing [Sensus Communis]	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	No change @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|<span class="success">	Toward baseline @cite christie1987cardiac	</span>|	No Data	|
 <center><br>
 
-*Table 5. The fatigue scenario validation results.*
+*@tabledef {EnergyFatigueValidation} The fatigue scenario validation results.*
 </center>
 |	Segment	|	Notes	|	Occurrence Time (s)	|	Duration of Full Exercise	|
 |	---	|	---	|	---	|	---	|
@@ -350,10 +350,10 @@ There are several physiological measures that are failing validation for the exe
 <a href="./plots/Energy/ColdWaterSubmersionLegend.jpg"><img src="./plots/Energy/ColdWaterSubmersionLegend.jpg" width="1100"></a>
 </center>
 <center>
-*Figure 5. The cold water submersion begins by submerging the patient in water that has a temperature of 10 degrees Celsius. A direct result of this is a drop in skin temperature due to an increased heat loss from the skin surface. The patient remains in the water for one hour, during which the metabolic rate increases via shivering. This rise in metabolic rate allows for the core temperature to stabilize just above 35 degrees Celsius. After one hour, the patient is removed and then active heating begins ten minutes later. The result of active heating is an increase in core and skin temperature, and a decline in the patient&rsquo;s metabolic rate.*
+*@figuredef {ColdWaterSubmersion} The cold water submersion begins by submerging the patient in water that has a temperature of 10 degrees Celsius. A direct result of this is a drop in skin temperature due to an increased heat loss from the skin surface. The patient remains in the water for one hour, during which the metabolic rate increases via shivering. This rise in metabolic rate allows for the core temperature to stabilize just above 35 degrees Celsius. After one hour, the patient is removed and then active heating begins ten minutes later. The result of active heating is an increase in core and skin temperature, and a decline in the patient&rsquo;s metabolic rate.*
 </center><br>
 <center>
-*Table 6. The cold water submersion scenario results.*
+*@tabledef {EnergyColdWaterValidation} The cold water submersion scenario results.*
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Core Temperature (Celsius)	|	Peripheral Temperature (Celsius)	|	Metabolic Rate	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Cardiac Output (L/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
@@ -378,7 +378,7 @@ At a scenario time of 50 seconds, the patient is submerged in water with a tempe
 </tr>
 </table>
 <center>
-*Figure 6. The patient is placed at a high altitude with an atmospheric pressure of 525 mmHg. The immediate result is a drop in arterial oxygen due to the decreased environment oxygen partial pressure. This leads to a drop in oxygen saturation and an increase in the patient heart rate. The patient stabilizes, acquiring a new resting physiologic state at the reduced pressure. The exaggerated increase in heart rate is due to a catecholamine release secondary to  hypoxia, a [known issue](@ref known-issues) in the engine*
+*@figuredef {HighAltitude} The patient is placed at a high altitude with an atmospheric pressure of 525 mmHg. The immediate result is a drop in arterial oxygen due to the decreased environment oxygen partial pressure. This leads to a drop in oxygen saturation and an increase in the patient heart rate. The patient stabilizes, acquiring a new resting physiologic state at the reduced pressure. The exaggerated increase in heart rate is due to a catecholamine release secondary to  hypoxia, a [known issue](@ref known-issues) in the engine*
 </center><br>
 
 This scenario is used to simulate the effects of low oxygen due to high altitude. At 30 seconds, the surrounding environment is changed to an equivalent elevation of 4000 meters, resulting in a drop in atmospheric pressure from 760 mmHg to 525 mmHg. The patient remains in the reduced pressure environment for 15 minutes. The immediate response is a decrease in arterial oxygen due to the reduced partial pressure in the environment. This leads to a decrease in the blood oxygen saturation, which is in line with the expected validation data. The reduced arterial oxygen causes an increase in the heart rate. This increase is currently determined from epinephrine release due to a hypoxia event being triggered. Another expected result of the epinephrine release is a respiration rate increase. This effect is nullified from the reduction in atmospheric carbon dioxide, which allows for larger quantities of carbon dioxide to diffuse out of the alveoli. The increased diffusion leads to lower arterial carbon dioxide partial pressures, which is used to drive the respiratory frequency. This counter balances the effect of epinephrine in the system, thus causing a slight decrease in respiration rate.

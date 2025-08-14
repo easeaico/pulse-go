@@ -36,13 +36,13 @@ While other ventilator virtual software and computational models exist @cite han
 
 ### Circuit
 
-The mechanical ventilator model consists of a pressure/flow source with tubes and valves for inspiration and expiration. The unidirectional valves are ideal and do not allow any backflow. Figure 1 shows the mechanical ventilator circuit. The compartments and transport graph mirrors the circuit. Substance values are set on the ventilator node/compartment, assuming infinite volume. The ventilator interacts with the existing respiratory circuit through a direct connection that allows air (gases and aerosols) to flow freely. A path connects the airway node of the respiratory system to the connection (mask or tube) node of the ventilator. When the machine is turned on, both individually defined circuits are combined into a single, closed-loop circuit that is solved as a single linear algebra matrix.
+The mechanical ventilator model consists of a pressure/flow source with tubes and valves for inspiration and expiration. The unidirectional valves are ideal and do not allow any backflow. @figureref {MechanicalVentilatorCircuit} shows the mechanical ventilator circuit. The compartments and transport graph mirrors the circuit. Substance values are set on the ventilator node/compartment, assuming infinite volume. The ventilator interacts with the existing respiratory circuit through a direct connection that allows air (gases and aerosols) to flow freely. A path connects the airway node of the respiratory system to the connection (mask or tube) node of the ventilator. When the machine is turned on, both individually defined circuits are combined into a single, closed-loop circuit that is solved as a single linear algebra matrix.
 
 @htmlonly
 <center><a href="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png"><img src="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png" style="width:75%;"></a></center>
 @endhtmlonly
 <center>
-<i>Figure 1. The Pulse 0-D mechanical ventilator fluid circuit diagram with an example pressure source waveform. Node objects hold volumes and pressures, while paths hold element definitions and flows.  The circuit employs a variable driver source (either pressure or flow), resistances, valves, and a compliance. The example driver waveform shown has a ramp waveform function for inspiration and square for expiration. The bracketed numbers and letters correspond to the enumerations previously listed in the Settings section.</i>
+<i>@figuredef {MechanicalVentilatorCircuit} The Pulse 0-D mechanical ventilator fluid circuit diagram with an example pressure source waveform. Node objects hold volumes and pressures, while paths hold element definitions and flows.  The circuit employs a variable driver source (either pressure or flow), resistances, valves, and a compliance. The example driver waveform shown has a ramp waveform function for inspiration and square for expiration. The bracketed numbers and letters correspond to the enumerations previously listed in the Settings section.</i>
 </center><br>
 
 ### Connecting to the Respiratory Circuit
@@ -167,7 +167,7 @@ The hold action can be set to be applied instantaneously, at the end of the expi
 
 ### Data Flow
 
-The mechanical ventilator model follows the same logic loop as all Pulse systems, as shown in Figure 2. The state at every time-step is determined through a three-step process: 1) a preprocess step determines the circuit element values based on feedback mechanisms and engine settings/actions, 2) a process step uses the generic circuit calculator and substance transporter to compute the entire state of the circuit and fill in all pertinent values, and 3) a postprocess step is used to advance time. 
+The mechanical ventilator model follows the same logic loop as all Pulse systems, as shown in @figureref {MechanicalVentilatorLogic}. The state at every time-step is determined through a three-step process: 1) a preprocess step determines the circuit element values based on feedback mechanisms and engine settings/actions, 2) a process step uses the generic circuit calculator and substance transporter to compute the entire state of the circuit and fill in all pertinent values, and 3) a postprocess step is used to advance time. 
 
 The software logic we implemented is meant to mimic the control software of real-world ventilators.  Feedback is read from locations within the ventilator circuit as if they are from actual sensors.  The data model was used to generate a data flow that is distilled down to simple conditionals. The model modifies the ventilator circuit elements each time-step based on the configuration settings and actions and the Pulse circuit solver and transporter handle the fluid mechanics and substance computations.
 
@@ -175,7 +175,7 @@ The software logic we implemented is meant to mimic the control software of real
 <center><a href="./Images/MechanicalVentilator/BreathFlowDiagram.png"><img src="./Images/MechanicalVentilator/BreathFlowDiagram.png" style="width:75%;"></a></center>
 @endhtmlonly
 <center>
-<i>Figure 2. We implemented a phased breath logic in the Pulse mechanical ventilator methodology. The bracketed numbers and letters correspond to the enumerations previously listed in the Settings section. Blue boxes signify transitions between the two phases that make up one full breath, white diamonds are conditionals, green boxes are the pressure/flow driver updates that occur each time-step, and grey boxes advance the simulation time to the next time-step. The ventilator can be stopped at any time-step during simulation.</i>
+<i>@figuredef {MechanicalVentilatorLogic} We implemented a phased breath logic in the Pulse mechanical ventilator methodology. The bracketed numbers and letters correspond to the enumerations previously listed in the Settings section. Blue boxes signify transitions between the two phases that make up one full breath, white diamonds are conditionals, green boxes are the pressure/flow driver updates that occur each time-step, and grey boxes advance the simulation time to the next time-step. The ventilator can be stopped at any time-step during simulation.</i>
 </center><br>
 
 @anchor ventilator-dependencies
@@ -220,7 +220,7 @@ To validate functionality of our virtual ventilator model, we compared Pulse sim
 <center><a href="./Images/MechanicalVentilator/PhysicalSetup.png"><img src="./Images/MechanicalVentilator/PhysicalSetup.png" style="width:40%;"></a></center>
 @endhtmlonly
 <center>
-<i>Figure 3. The physical breathing simulator setup for virtual mechanical ventilator model validation is shown on the left.  The ASL 5000<sup>TM</sup> lung simulator (Model 31 00 150, SN:2226) was connected with a network cable to a laptop running RespiSim(R) software (version 4.0.10520). A Drager Evita(R) Infinity(R) V500 ventilator (SN:ASBD-0072) was connected with tubing to the ASL 5000. The patient respiratory physiological parameters and ventilator settings used for both the breathing simulator setup and the Pulse simulation are shown in the tables on the right.</i>
+<i>@figuredef {MechanicalVentilatorValidationSetup} The physical breathing simulator setup for virtual mechanical ventilator model validation is shown on the left.  The ASL 5000<sup>TM</sup> lung simulator (Model 31 00 150, SN:2226) was connected with a network cable to a laptop running RespiSim(R) software (version 4.0.10520). A Drager Evita(R) Infinity(R) V500 ventilator (SN:ASBD-0072) was connected with tubing to the ASL 5000. The patient respiratory physiological parameters and ventilator settings used for both the breathing simulator setup and the Pulse simulation are shown in the tables on the right.</i>
 </center><br>
 
 The waveforms created by the virtual ventilator match well with the displayed physical ventilator monitor values. The important temporal features and patterns used by Respiratory Therapists to manage patients @cite dexter2020ventilator are present. However, the data shows that an extended inspiration time by the physical ventilator translates to higher TVs than come from our ideal, deterministic circuit model. Discrepancies with the TV outputs for the PC-AC and CPAP modes can be attributed to imperfections with real-world sampling, lags from sensor triggering, non-instantaneous driver transitions, and differences in assumptions about air humidification in the patient's lungs. This follows expectations from previous lung model bench tests showed major differences between mechanical ventilator devices in both general characteristics and technical reliability @cite l2014bench. Most notable are large variability in TV delivery.
@@ -228,7 +228,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 ### Healthy Patient
 
 <center>
-<i>Table 1. The healthy patient respiratory physiological parameters used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorHealthyPatientSettings} The healthy patient respiratory physiological parameters used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Healthy-Patient-Settings.md
@@ -236,7 +236,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### VC-AC Mode
 
 <center>
-<i>Table 2. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorHealthyVCACSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Healthy_VC_AC-Ventilator-Settings.md
@@ -277,11 +277,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 5. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation1} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 3. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorHealthyVCACValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Healthy_VC_AC-Validation.md
@@ -289,7 +289,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### PC-AC Mode
 
 <center>
-<i>Table 4. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorHealthyPCACSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Healthy_PC_AC-Ventilator-Settings.md
@@ -330,11 +330,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 6. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation2} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 5. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorHealthyPCACValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Healthy_PC_AC-Validation.md
@@ -342,7 +342,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### CPAP Mode
 
 <center>
-<i>Table 6. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorHealthyCPAPSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Healthy_CPAP-Ventilator-Settings.md
@@ -383,11 +383,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 7. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation3} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 7. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorHealthyCPAPValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Healthy_CPAP-Validation.md
@@ -395,7 +395,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 ### Restrictive Patient
 
 <center>
-<i>Table 8. The restrictive patient respiratory physiological parameters used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorRestrictivePatientSettings} The restrictive patient respiratory physiological parameters used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Restrictive-Patient-Settings.md
@@ -403,7 +403,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### VC-AC Mode
 
 <center>
-<i>Table 9. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorRestrictiveVCACSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Restrictive_VC_AC-Ventilator-Settings.md
@@ -444,11 +444,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 8. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation4} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 10. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorRestrictiveVCACValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Restrictive_VC_AC-Validation.md
@@ -456,7 +456,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### PC-AC Mode
 
 <center>
-<i>Table 11. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorRestrictivePCACSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Restrictive_PC_AC-Ventilator-Settings.md
@@ -497,11 +497,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 9. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation5} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 12. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorRestrictivePCACValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Restrictive_PC_AC-Validation.md
@@ -509,7 +509,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### CPAP Mode
 
 <center>
-<i>Table 13. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorRestrictiveCPAPSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Restrictive_CPAP-Ventilator-Settings.md
@@ -550,11 +550,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 10. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation6} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 14. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorRestrictiveCPAPValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Restrictive_CPAP-Validation.md
@@ -562,7 +562,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 ### Obstructive Patient
 
 <center>
-<i>Table 15. The obstructive patient respiratory physiological parameters used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorObstructivePatientSettings} The obstructive patient respiratory physiological parameters used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive-Patient-Settings.md
@@ -570,7 +570,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### VC-AC Mode
 
 <center>
-<i>Table 2. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorObstructiveVCACSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive_VC_AC-Ventilator-Settings.md
@@ -611,11 +611,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 11. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation7} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 16. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorObstructiveVCACValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive_VC_AC-Validation.md
@@ -623,7 +623,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### PC-AC Mode
 
 <center>
-<i>Table 17. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorObstructivePCACSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive_PC_AC-Ventilator-Settings.md
@@ -664,11 +664,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 12. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation8} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 18. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorObstructivePCACValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive_PC_AC-Validation.md
@@ -676,7 +676,7 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 #### CPAP Mode
 
 <center>
-<i>Table 19. The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
+<i>@tabledef {VentilatorObstructiveCPAPSettings} The ventilator settings used for both the breathing simulator setup and the Pulse simulation.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive_CPAP-Ventilator-Settings.md
@@ -717,11 +717,11 @@ The waveforms created by the virtual ventilator match well with the displayed ph
 </table>
 @endhtmlonly
 <center>
-<i>Figure 13. A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
+<i>@figuredef {MechanicalVentilatorValidation9} A comparison of waveforms and loops from the breathing simulator (left) and the Pulse simulation (right).</i>
 </center><br>
 
 <center>
-<i>Table 20. A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
+<i>@tabledef {VentilatorObstructiveCPAPValidation} A comparison of the breathing simulator ground truth values and the Pulse simulation results.</i>
 </center><br>
 
 @insert ./test_results/tables/MechanicalVentilator-Obstructive_CPAP-Validation.md

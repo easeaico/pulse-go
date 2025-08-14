@@ -61,10 +61,10 @@ For moderate to strong bases, @equationref {base_partition_coefficient} is used 
 <i>@equationdef {base_partition_coefficient}</i>
 </center><br>
 
-Where <i>X</i> and <i>Y</i> are the different relationships for pH, as shown in Table 1, <i>f<sub>IW</sub></i> is the fraction of intracellular water, <i>f<sub>EW</sub></i> is the fraction of extracellular water,  <i>f<sub>NP</sub></i> is the fraction of neutral phospholipids in the tissue, <i>f<sub>NL</sub></i> is the fraction of lipids in the tissue, <i>P</i> is the octanol:water partition coefficient for the drug, <i>f<sub>u</sub></i> is the fraction of the drug unbound in plasma,  *f<sub>NL,P</sub>* is the fraction of neutral lipids in plasma, *f<sub>NP,P</sub>* is the fraction of phospholipids in plasma,  and <i>PR<sub>T</sub></i> / <i>PR<sub>B</sub></i> is the tissue to plasma ratio of the binding protein. 
+Where <i>X</i> and <i>Y</i> are the different relationships for pH, as shown in @tableref {DrugspHEffects}, <i>f<sub>IW</sub></i> is the fraction of intracellular water, <i>f<sub>EW</sub></i> is the fraction of extracellular water,  <i>f<sub>NP</sub></i> is the fraction of neutral phospholipids in the tissue, <i>f<sub>NL</sub></i> is the fraction of lipids in the tissue, <i>P</i> is the octanol:water partition coefficient for the drug, <i>f<sub>u</sub></i> is the fraction of the drug unbound in plasma,  *f<sub>NL,P</sub>* is the fraction of neutral lipids in plasma, *f<sub>NP,P</sub>* is the fraction of phospholipids in plasma,  and <i>PR<sub>T</sub></i> / <i>PR<sub>B</sub></i> is the tissue to plasma ratio of the binding protein. 
 
 <center>
-<i>Table 1. The pH effects on the partition coefficient are described based on the drug type, i.e., very weak base, acid, or neutral. X relates the drug property pK<sub>a</sub> to the pH<sub>IW</sub>, intracellular water pH, while Y relates the pK<sub>a</sub> to the pH of the plasma.</i> </center>
+<i>@tabledef {DrugspHEffects} The pH effects on the partition coefficient are described based on the drug type, i.e., very weak base, acid, or neutral. X relates the drug property pK<sub>a</sub> to the pH<sub>IW</sub>, intracellular water pH, while Y relates the pK<sub>a</sub> to the pH of the plasma.</i> </center>
 | Ionic State    |    X    |    Y    |
 | -------------- | :-----: | :-----: |
 | Acid           | \f[1 + 10^{pH_{IW}-pK_{a}}\f] | \f[1 + 10^{pH_{p}-pK_{a}}\f] |
@@ -75,7 +75,7 @@ Where <i>X</i> and <i>Y</i> are the different relationships for pH, as shown in 
 A number of these values are drug parameters found in the substance file definitions. However, many of them are organ/compartment dependent as shown in Tables 2 and 3. 
 
 <center>
-<i>Table 2. The volume fractions for neutral lipids and phospholipids vary by compartment. These values are specified for each compartment as outlined below and used to calculate the partition coefficient of each drug for each tissue compartment in the engine. These values were found in @cite rodgers2005physiologically.</i>
+<i>@tabledef {DrugsVolumeFractions} The volume fractions for neutral lipids and phospholipids vary by compartment. These values are specified for each compartment as outlined below and used to calculate the partition coefficient of each drug for each tissue compartment in the engine. These values were found in @cite rodgers2005physiologically.</i>
 </center>
 
 |	%Tissue Compartment	|	Extracellular Water (<i>f<sub>EW</sub></i>) 	|   Intracellular Water (<i>f<sub>IW</sub></i>)  |    Neutral Lipd (<i>f<sub>NL</sub></i>)  |  Neutral Phospholipid (<i>f<sub>NP</sub></i>)   |
@@ -94,7 +94,7 @@ A number of these values are drug parameters found in the substance file definit
 
 
 <center>
-<i>Table 3. The tissue to plasma protein binding ratios are shown for each tissue compartment in the engine. Two proteins are available for drug binding, albumin and lipoprotein. The binding protein for each drug is specified in the substance file. These values were found in @cite rodgers2005physiologically.</i>
+<i>@tabledef {DrugsProteinBinding} The tissue to plasma protein binding ratios are shown for each tissue compartment in the engine. Two proteins are available for drug binding, albumin and lipoprotein. The binding protein for each drug is specified in the substance file. These values were found in @cite rodgers2005physiologically.</i>
 </center>
 
 |	%Tissue Compartment	|	%Tissue to Plasma Albumin Ratio	|   %Tissue to Plasma Lipoprotein Ratio  |
@@ -166,10 +166,10 @@ Pharmacodynamic (PD) models characterize the effect that a drug has on the organ
 - A site-of-action model with a local response functionally linked to the local tissue concentration of a drug
 
 #### Plasma Concentration Model
-Due to difficulties in measuring drug concentrations at the site of action as well as the varied and complex nature of the chain of events from receptor binding to biological response, drug responses are often quantified indirectly through surrogate endpoints. Development of the pharmaocodynamic model began with a characterization of expected results by subject matter experts for a small library of drugs. The expected results were limited to whole-body biomarkers similar to vital signs (e.g. changes in heart rate, respiration rate, blood pressure, etc.). We treated the expected results as surrogate endpoints and used the common E<sub>max</sub> model to characterize the effects. Note that in this initial application, E<sub>max</sub> referred to the expected effect of the drug rather than the maximum effect of the drug. For that reason, overdose is not possible with most of the drugs in the current version of the engine. However, the simple E<sub>max</sub> model has been extended to a sigmoidal E<sub>max</sub> model; therefore, it is possible to shape the response curve to better match empirical data, and setting the true maximum effect is as simple as setting the correct value in the drug file. We are beginning to convert the pharmacodynamics of some drugs to the true E<sub>max</sub> model as data becomes available to us (see the [future work](@ref drugs-future) section). The pharmacodynamic effects included in the plasma concentration PD model are described in Table 4.
+Due to difficulties in measuring drug concentrations at the site of action as well as the varied and complex nature of the chain of events from receptor binding to biological response, drug responses are often quantified indirectly through surrogate endpoints. Development of the pharmaocodynamic model began with a characterization of expected results by subject matter experts for a small library of drugs. The expected results were limited to whole-body biomarkers similar to vital signs (e.g. changes in heart rate, respiration rate, blood pressure, etc.). We treated the expected results as surrogate endpoints and used the common E<sub>max</sub> model to characterize the effects. Note that in this initial application, E<sub>max</sub> referred to the expected effect of the drug rather than the maximum effect of the drug. For that reason, overdose is not possible with most of the drugs in the current version of the engine. However, the simple E<sub>max</sub> model has been extended to a sigmoidal E<sub>max</sub> model; therefore, it is possible to shape the response curve to better match empirical data, and setting the true maximum effect is as simple as setting the correct value in the drug file. We are beginning to convert the pharmacodynamics of some drugs to the true E<sub>max</sub> model as data becomes available to us (see the [future work](@ref drugs-future) section). The pharmacodynamic effects included in the plasma concentration PD model are described in @tableref {DrugsPharmacodynamicEffects}.
 
 <center>
-<i>Table 4. Pharmacodynamic effects modeled in the engine with descriptions and relevant ranges.</i>
+<i>@tabledef {DrugsPharmacodynamicEffects} Pharmacodynamic effects modeled in the engine with descriptions and relevant ranges.</i>
 </center>
 
 |	Pharmacodynamic Effect	|	Description 	|   Available Values   |
@@ -194,7 +194,7 @@ The drug effects are specified for each drug in the substance file. The level of
 <i>@equationdef {drug_plasma_conc}</i>
 </center><br>
 
-Where <i>E<sub>m</sub></i> is the expected (or maximum) effect of the drug, <i>EC<sub>50</sub></i> is the concentration at 50% of the effect, <i>C<sub>p</sub></i> is the drug concentration in plasma, <i>E<sub>bl</sub></i> is the baseline for that effect (i.e., heart rate baseline), <i>&Delta;E</i> is the calculated effect of the drug, and <i>&eta;</i> is the slope factor @cite rosenbaum2012basic. This calculation is repeated for each of the effects in Table 4. 
+Where <i>E<sub>m</sub></i> is the expected (or maximum) effect of the drug, <i>EC<sub>50</sub></i> is the concentration at 50% of the effect, <i>C<sub>p</sub></i> is the drug concentration in plasma, <i>E<sub>bl</sub></i> is the baseline for that effect (i.e., heart rate baseline), <i>&Delta;E</i> is the calculated effect of the drug, and <i>&eta;</i> is the slope factor @cite rosenbaum2012basic. This calculation is repeated for each of the effects in @tableref {DrugsPharmacodynamicEffects}. 
 
 The drug effect is applied as a fraction of the baseline for the biomarker, which is a patient variable in the engine. For example, a person with a resting heart rate of 72 bpm may have a physiological process happening during simulation, perhaps as a condition, which increases his/her baseline heart rate to 80 bpm. If this patient is given a drug with a heart rate effect of 0.2, then at maximum the patient's heart rate will be 96 bpm (80 + 0.2 * 80). If the same drug were given to the same patient but without the condition, the maximum heart rate will be 86.4 bpm (72 + 0.2 * 72).
 
@@ -247,7 +247,7 @@ The pharmacodynamic effects of diuretics locally target the renal system's funct
 
 @anchor drugs-substances
 ### Substances
-The full list of drugs available in the data library can be found in Table 5 in the Validation section. Additional substances, such as oxygen, carbon dioxide, and hemoglobin that are available in the engine can be found in the @ref BloodChemistryMethodology.
+The full list of drugs available in the data library can be found in @tableref {DrugsValidationSummary} in the Validation section. Additional substances, such as oxygen, carbon dioxide, and hemoglobin that are available in the engine can be found in the @ref BloodChemistryMethodology.
 
 @anchor drugs-variability
 ### Patient Variability
@@ -259,7 +259,7 @@ The substance calculations rely on the flow values calculated by the @ref Circui
 
 While this model is primarily used for drugs, it could be used for any substance in the body. The engine uses the clearance methodology for several additional substances. The modular approach to these calculations allows for the use of any combination of the three methodologies, PK, clearance, and PD.
 
-The substance values and calculations are used by a variety of systems to trigger actions and responses, define physiologic set points, scale circuit parameters, and modify driver frequencies. Many of these triggers and responses are discussed in the @ref BloodChemistryMethodology and the @ref EndocrineMethodology. The drug-specific effects are listed and described briefly in Table 5. The implementation of these calculated responses can be found in the @ref CardiovascularMethodology and the @ref RespiratoryMethodology.
+The substance values and calculations are used by a variety of systems to trigger actions and responses, define physiologic set points, scale circuit parameters, and modify driver frequencies. Many of these triggers and responses are discussed in the @ref BloodChemistryMethodology and the @ref EndocrineMethodology. The drug-specific effects are listed and described briefly in @tableref {DrugsValidationSummary}. The implementation of these calculated responses can be found in the @ref CardiovascularMethodology and the @ref RespiratoryMethodology.
 
 @anchor drugs-assumptions
 ### Assumptions and Limitations
@@ -306,7 +306,7 @@ Validation - Actions
 
 All drugs in the data library were validated qualitatively or with subject matter expert input. The bolus injection methodology was validated by comparing the PK and PD results to literature. See the sections below for more detail. 
 
-The succinycholine scenario shows a drug impacting the major engine systems. Succinycholine (Figure 1) initially drops the heart rate and blood pressure approximately 5-10%. As expected, the respiration drops to zero within 60-90 seconds to represent the paralysis associated with the neuromuscular blocker. The oxygen saturation drops slowly as the concentration of oxygen in the bloodstream drops, leading to hypoxia. Epinephrine is released in response to hypoxia, causing an increase in heart rate and blood pressure (@ref EndocrineMethodology). This is an example of the interdependent nature of the engine systems and the chain reaction drug administration can cause.
+The succinycholine scenario shows a drug impacting the major engine systems. Succinycholine (@figureref {SuccinylcholineValidation}) initially drops the heart rate and blood pressure approximately 5-10%. As expected, the respiration drops to zero within 60-90 seconds to represent the paralysis associated with the neuromuscular blocker. The oxygen saturation drops slowly as the concentration of oxygen in the bloodstream drops, leading to hypoxia. Epinephrine is released in response to hypoxia, causing an increase in heart rate and blood pressure (@ref EndocrineMethodology). This is an example of the interdependent nature of the engine systems and the chain reaction drug administration can cause.
 
 <center>
 <table border="0">
@@ -324,7 +324,7 @@ The succinycholine scenario shows a drug impacting the major engine systems. Suc
 </table>
 </center>
 <center>
-<i>Figure 1. The neuromuscular blocker, Succinylcholine, causes a cessation of respiration due to its paralytic effects. The heart rate and blood pressure initially decrease due to the system-level drug effects. As the oxygen decreases,  hypoxia occurs, resulting in an increase in heart rate and blood pressure.</i>
+<i>@figuredef {SuccinylcholineValidation} The neuromuscular blocker, Succinylcholine, causes a cessation of respiration due to its paralytic effects. The heart rate and blood pressure initially decrease due to the system-level drug effects. As the oxygen decreases,  hypoxia occurs, resulting in an increase in heart rate and blood pressure.</i>
 </center><br>
 
 #### Intravenous Administration
@@ -338,73 +338,73 @@ The PK model was validated by comparing the plasma concentration calculated by t
 
 <a href="./plots/Drugs/Albuterol.jpg"><img src="./plots/Drugs/Albuterol.jpg" width="1100"></a>
 <center>
-<i>Figure 2. Albuterol is an aerosol. Alveolar exchange takes place bidirectionally as long as the "gas" (aerosol) is in the blood or in the environment. For that reason, the concentration of Albuterol in the plasma diminishes much faster in the engine than demonstrated in literature @cite anderson1998pharmacokinetics. This is a known issue and an area of future work.</i>
+<i>@figuredef {AlbuterolValidation} Albuterol is an aerosol. Alveolar exchange takes place bidirectionally as long as the "gas" (aerosol) is in the blood or in the environment. For that reason, the concentration of Albuterol in the plasma diminishes much faster in the engine than demonstrated in literature @cite anderson1998pharmacokinetics. This is a known issue and an area of future work.</i>
 </center><br>
 
 <a href="./plots/Drugs/Etomidate.jpg"><img src="./plots/Drugs/Etomidate.jpg" width="1100"></a>
 <center>
-<i>Figure 3. The physical chemical properties of etomidate found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite Hebron1983pharmacokinetics, @cite Valk2021etomidate, and @cite VanHamme1978pharmacokinetics.</i>
+<i>@figuredef {EtomidateValidation} The physical chemical properties of etomidate found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite Hebron1983pharmacokinetics, @cite Valk2021etomidate, and @cite VanHamme1978pharmacokinetics.</i>
 </center><br>
 
 
 <a href="./plots/Drugs/Fentanyl.jpg"><img src="./plots/Drugs/Fentanyl.jpg" width="1100"></a>
 <center>
-<i>Figure 4. The physical chemical properties of fentanyl found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite shankaran2013physiologically.</i>
+<i>@figuredef {FentanylValidation} The physical chemical properties of fentanyl found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite shankaran2013physiologically.</i>
 </center><br>
 
 <a href="./plots/Drugs/Furosemide.jpg"><img src="./plots/Drugs/Furosemide.jpg" width="1100"></a>
 <center>
-<i>Figure 4. The physical chemical properties of furosemide found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite hammarlund1985acute.</i>
+<i>@figuredef {FurosemideValidation} The physical chemical properties of furosemide found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite hammarlund1985acute.</i>
 </center><br>
 
 <a href="./plots/Drugs/Ketamine.jpg"><img src="./plots/Drugs/Ketamine.jpg" width="1100"></a>
 <center>
-<i>Figure 5. The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
+<i>@figuredef {KetamineValidation} The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
 </center><br>
 
 <a href="./plots/Drugs/Lorazepam.jpg"><img src="./plots/Drugs/Lorazepam.jpg" width="1100"></a>
 <center>
-<i>Figure 6. The engine curve for lorazepam plasma concentration shows a good overall fit with the experimental data found in @cite Swart2003comparitive, @cite Kyriakopoulos1978Clinical, and @cite Greenblatt1981Clinical.</i>
+<i>@figuredef {LorazepamValidation} The engine curve for lorazepam plasma concentration shows a good overall fit with the experimental data found in @cite Swart2003comparitive, @cite Kyriakopoulos1978Clinical, and @cite Greenblatt1981Clinical.</i>
 </center><br>
 
 <a href="./plots/Drugs/Midazolam.jpg"><img src="./plots/Drugs/Midazolam.jpg" width="1100"></a>
 <center>
-<i>Figure 7. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
+<i>@figuredef {MidazolamValidation} The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
 </center><br>
 
 <a href="./plots/Drugs/Morphine.jpg"><img src="./plots/Drugs/Morphine.jpg" width="1100"></a>
 <center>
-<i>Figure 8. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
+<i>@figuredef {MorphineValidation} The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
 </center><br>
 
 <a href="./plots/Drugs/Naloxone.jpg"><img src="./plots/Drugs/Naloxone.jpg" width="1100"></a>
 <center>
-<i>Figure 9.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
+<i>@figuredef {NaloxoneValidation} The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
 </center><br>
 
 <a href="./plots/Drugs/Pralidoxime.jpg"><img src="./plots/Drugs/Pralidoxime.jpg" width="1100"></a>
 <center>
-<i>Figure 10. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
+<i>@figuredef {PralidoximeValidation} The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
 </center><br>
 
 <a href="./plots/Drugs/Prednisone.jpg"><img src="./plots/Drugs/Prednisone.jpg" width="1100"></a>
 <center>
-<i>Figure 11.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
+<i>@figuredef {PrednisoneValidation} The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
 </center><br>
 
 <a href="./plots/Drugs/Propofol.jpg"><img src="./plots/Drugs/Propofol.jpg" width="1100"></a>
 <center>
-<i>Figure 12. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
+<i>@figuredef {PropofolValidation} The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
 </center><br>
 
 <a href="./plots/Drugs/Rocuronium.jpg"><img src="./plots/Drugs/Rocuronium.jpg" width="1100"></a>
 <center>
-<i>Figure 13. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
+<i>@figuredef {RocuroniumValidation} The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
 </center><br>
 
 <a href="./plots/Drugs/Succinylcholine.jpg"><img src="./plots/Drugs/Succinylcholine.jpg" width="1100"></a>
 <center>
-<i>Figure 14. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
+<i>@figuredef {SuccinylcholinePK} The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
 </center><br>
 
 The above results show that, in general, the model chosen for the engine produces good agreement between experimental and calculated data. However, it also reveals that for some drugs, this model does not appear to be valid. Future work will investigate the incorporation of vaporized substance methodologies, and additional partition coefficient calculations that may prove more accurate for specific drug types. Further statistical analysis will also be undertaken to assess the model performance rather than solely relying on a qualitative analysis.
@@ -413,10 +413,10 @@ The above results show that, in general, the model chosen for the engine produce
 Validation - Pharmacodynamic
 --------------------
 
-The pharmacodynamic effects of the drugs were validated by comparing the effects of each drug to a number of clinical parameters. A summary of the drug validation is shown in Table 5. More details on the individual scenario validation can be found in the <a href="DrugsValidation.pdf">Drugs Scenario Validation Matrix</a>.
+The pharmacodynamic effects of the drugs were validated by comparing the effects of each drug to a number of clinical parameters. A summary of the drug validation is shown in @tableref {DrugsValidationSummary}. More details on the individual scenario validation can be found in the <a href="DrugsValidation.pdf">Drugs Scenario Validation Matrix</a>.
 
 <center>
-<i>Table 5. The engine drug library was validated qualitatively with published values and using subject matter expertise. Green indicates good agreement with validation data, yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation success or failure.</i>
+<i>@tabledef {DrugsValidationSummary} The engine drug library was validated qualitatively with published values and using subject matter expertise. Green indicates good agreement with validation data, yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation success or failure.</i>
 </center>
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
@@ -441,7 +441,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |		|	Total	|<span class="success">	102	</span>|<span class="warning">	2	</span>|<span class="danger">	8	</span>|
 
 <center>
-<i>Table 6. The validation results for liquid-modeled drugs.</i>
+<i>@tabledef {DrugsLiquidValidation} The validation results for liquid-modeled drugs.</i>
 </center>
 
 |	Event	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (breaths/min)	|	Oxygen Saturation	|
@@ -462,7 +462,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Administer Succinylcholine - 96 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Goes to Zero @cite Morgan2006Clinical p224; Goes to Zero @cite dukeSME     	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
 
 <center>
-<i>Table 7. The validation results for gas-modeled drugs.</i>
+<i>@tabledef {DrugsGasValidation} The validation results for gas-modeled drugs.</i>
 </center>
 
 |	Event	|	Notes	|	Action Occurance Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Oxygen Saturation	|
@@ -471,7 +471,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 
 
 <center>
-<i>Table 8. The validation results for furosemide.</i>
+<i>@tabledef {DrugsFurosemideValidation} The validation results for furosemide.</i>
 </center>
 
 |	Event	|	Notes	|	Action Occurance Time (s)	|	Sample Scenario Time (min)	|	Urine Production Rate (mL/min)	|	Chloride Excretion (mmol/min)	|	Sodium Excretion (mol/min)	|	Vascular Volume (mL)	|
@@ -482,7 +482,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 
 @anchor drugs-furosemide
 ### Diuretic-Furosemide 
-PD effects for the diuretic Furosemide are handled differently than other drugs in the engine. Localized effects are implemented via a tubular permeability modifier. This effectively simulates Furosemide's effect on the tubular luminal Na-K-Cl co-transporter, inhibiting reabsorption of fluid and ions into the vasculature, as shown in Figure 15. The permeability modifier is a function of the PK effects of the drug concentration in the blood plasma. These concentrations are then mapped to a Hill-type sigmoid to determine appropriate tubular reabsorption inhibition via reducing the permeability of the tubular lumen, see @ref RenalMethodology. This effectively increases the urine production rate and ion excretion, and reduces the patient's total blood volume. To see the effects of the drug on the cardiovascular system during ventricular systolic dysfunction, see @ref cardiovascular-validation-conditions "Cardiovascular System".
+PD effects for the diuretic Furosemide are handled differently than other drugs in the engine. Localized effects are implemented via a tubular permeability modifier. This effectively simulates Furosemide's effect on the tubular luminal Na-K-Cl co-transporter, inhibiting reabsorption of fluid and ions into the vasculature, as shown in @figureref {FurosemideDiuretic}. The permeability modifier is a function of the PK effects of the drug concentration in the blood plasma. These concentrations are then mapped to a Hill-type sigmoid to determine appropriate tubular reabsorption inhibition via reducing the permeability of the tubular lumen, see @ref RenalMethodology. This effectively increases the urine production rate and ion excretion, and reduces the patient's total blood volume. To see the effects of the drug on the cardiovascular system during ventricular systolic dysfunction, see @ref cardiovascular-validation-conditions "Cardiovascular System".
 
 <center>
 <table border="0">
@@ -500,13 +500,13 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 </table>
 </center>
 <center>
-<i>Figure 15. The diuretic furosemide causes an inhibition of reabsorption due to its effect on the tubular lumen co-transporter. Total blood volume decreases as urine production and ion excretion increase. Eventually, as the body clears the drug, urine production and ion excretion both begin to return to normal.</i>
+<i>@figuredef {FurosemideDiuretic} The diuretic furosemide causes an inhibition of reabsorption due to its effect on the tubular lumen co-transporter. Total blood volume decreases as urine production and ion excretion increase. Eventually, as the body clears the drug, urine production and ion excretion both begin to return to normal.</i>
 </center><br>
 
-Norepinephrine occurs naturally in the body and its basal metabolic value is validated as part of the @ref BloodChemistryMethodology. The infusion of norepinephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for five different infusion rates. They are shown in Table 9.
+Norepinephrine occurs naturally in the body and its basal metabolic value is validated as part of the @ref BloodChemistryMethodology. The infusion of norepinephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for five different infusion rates. They are shown in @tableref {DrugsNorepinephrineValidation}.
 
 <center>
-<i>Table 9. The validation results for Norepinephrine.</i>
+<i>@tabledef {DrugsNorepinephrineValidation} The validation results for Norepinephrine.</i>
 </center>
 
 |	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate (beats/min)	|	Computed Heart Rate (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
@@ -517,10 +517,10 @@ Norepinephrine occurs naturally in the body and its basal metabolic value is val
 |	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite ensinger1992relationship	|<span class="success">	5.05	</span>|	[39, 55] Minimal Decrease@cite ensinger1992relationship	|<span class="success">	75	</span>|	[152, 182]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	138	</span>|	[77, 93] Minimal Increase @cite ensinger1992relationship	|<span class="success">	95	</span>|
 |	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite ensinger1992relationship	|<span class="success">	76	</span>|	[174, 192]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	140	</span>|	[83, 99] Minimal Increase @cite ensinger1992relationship	|<span class="success">	98	</span>|
 
-The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
+The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in @tableref {DrugsPhenylephrineValidation}.
 
 <center>
-<i>Table 10. The validation results for Phenylephrine.</i>
+<i>@tabledef {DrugsPhenylephrineValidation} The validation results for Phenylephrine.</i>
 </center>
 
 |	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate Change (beats/min)	|	Computed Heart Rate Change (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure Change (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure Change (mmHg)	|

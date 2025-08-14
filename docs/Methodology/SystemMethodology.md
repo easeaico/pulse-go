@@ -36,7 +36,7 @@ infrastructure.
 
 <center>
 <a href="./Images/System/SystemFidelity.png"><img src="./Images/System/SystemFidelity.png" width="550"></a>
-*Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
+*@figuredef {SystemFidelity} The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
 
 # System Design
@@ -136,11 +136,11 @@ maintains three time steps for elements and parameters. These times are:
 @anchor system-stabilization
 ### Stabilization
 
-The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 2.
+The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in @figureref {StabilizationProtocol}.
 
 <center> 
 <a href="./Images/System/Stabilization.png"><img src="./Images/System/Stabilization.png" width="550"></a>
-<i>Figure 2. Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
+<i>@figuredef {StabilizationProtocol} Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
 </center><br>
 
 #### Dynamic Stabilization
@@ -217,7 +217,7 @@ preparation for the upcoming Preprocess call.
 
 <center>
 <a href="./Images/System/SystemDataFlow.png"><img src="./Images/System/SystemDataFlow.png"></a>
-*Figure 3. This shows the repetitive three-step process used each time
+*@figuredef {SystemDataFlow} This shows the repetitive three-step process used each time
 step to determine the system states. These three processes are mirrored
 in each system's code and are sequentially called by the engine.*
 </center><br>
@@ -242,11 +242,11 @@ Externally available data is defined within the engine in three major ways:
 
 The engine modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In the engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
 	
-Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 4 shows an example of how compartments can be defined in the %Cardiovascular System.
+Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. @figureref {CompartmentExample} shows an example of how compartments can be defined in the %Cardiovascular System.
 
 <center>
 <a href="./Images/System/CompartmentExample.png"><img src="./Images/System/CompartmentExample.png"></a>
-<i>Figure 4. This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
+<i>@figuredef {CompartmentExample} This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
 </center><br>
 
 Users can customize scenarios by modifying a variety of file types. For example, patients, substances, compound substances, and environments can all be modified
@@ -268,12 +268,12 @@ See the individual system methodology documents for more specifics.
 
 ## Combined Effects Validation
 
-Several scenarios have been developed and validated to ensure proper interaction not only within, but also between the physiologic systems. These patients and scenarios were developed as part of the HumanSim: Sedation and Airway project funded by TATRC, contract number W81XWH-11-C-0045. The combined effects scenarios were validated qualitatively from available literature and from the opinions of subject matter experts (SME).  More detail on patient parameters can be found in the @ref PatientMethodology documentation. A summary of the validation is shown in Table 6.  Green indicates good agreement with validation data, 
+Several scenarios have been developed and validated to ensure proper interaction not only within, but also between the physiologic systems. These patients and scenarios were developed as part of the HumanSim: Sedation and Airway project funded by TATRC, contract number W81XWH-11-C-0045. The combined effects scenarios were validated qualitatively from available literature and from the opinions of subject matter experts (SME).  More detail on patient parameters can be found in the @ref PatientMethodology documentation. A summary of the validation is shown in @tableref {SystemValidationSummary}.  Green indicates good agreement with validation data, 
 yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation
 success or failure.
 
 <center>
-*Table 6. Validation scenarios were completed for five patients subjected to a variety of insults and intervention: Cynthia, Gus, Hassan, Joel, and Nathan. The resulting effects of each individual insult and intervention were validated both qualitatively and from subject matter experts. Green indicates good agreement with validation data, yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation success or failure.*
+*@tabledef {SystemValidationSummary} Validation scenarios were completed for five patients subjected to a variety of insults and intervention: Cynthia, Gus, Hassan, Joel, and Nathan. The resulting effects of each individual insult and intervention were validated both qualitatively and from subject matter experts. Green indicates good agreement with validation data, yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation success or failure.*
 </center>
 
 |	Key	|
@@ -312,10 +312,10 @@ The Cynthia scenario begins with the administration of midazolam at 50 seconds w
 </tr>
 </table>
 </center>
-<center><i>Figure 5. Select outputs from the Cynthia combined effects scenario.</i></center>
+<center><i>@figuredef {CynthiaCombinedEffects} Select outputs from the Cynthia combined effects scenario.</i></center>
 
 <center><br>
-*Table 7. The Cynthia scenario displays the effects of sequential midazolam administration, airway obstruction, ventilator mask, ketamine and rocuronium administration, and intubation. This scenario shows some good agreement with the expected qualitative and SME trends.*
+*@tabledef {SystemCynthiaScenario} The Cynthia scenario displays the effects of sequential midazolam administration, airway obstruction, ventilator mask, ketamine and rocuronium administration, and intubation. This scenario shows some good agreement with the expected qualitative and SME trends.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -345,10 +345,10 @@ A ventilator mask is applied to Gus at 50 seconds, and succinylcholine is inject
 </tr>
 </table>
 </center>
-<center><i>Figure 6. Select outputs from the Gus combined effects scenario.</i></center>
+<center><i>@figuredef {GusCombinedEffects} Select outputs from the Gus combined effects scenario.</i></center>
 
 <center><br>
-*Table 8. The Gus scenario displays the effects of sequential ventilator mask application, succinylcholine injection, esophageal intubation and then a successful endotracheal intubation. This scenario shows good agreement with the SME and qualitative validation.*
+*@tabledef {SystemGusScenario} The Gus scenario displays the effects of sequential ventilator mask application, succinylcholine injection, esophageal intubation and then a successful endotracheal intubation. This scenario shows good agreement with the SME and qualitative validation.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -377,10 +377,10 @@ At the beginning of the scenario, a ventilator mask is applied to Hassan. He the
 </tr>
 </table>
 </center>
-<center><i>Figure 7. Select outputs from the Hassan combined effects scenario.</i></center>
+<center><i>@figuredef {SystemHassanCombinedEffects} Select outputs from the Hassan combined effects scenario.</i></center>
 
 <center><br>
-*Table 9. Hassan displays the effects of a right mainstem intubation after the patient has been injected with ketamine and succinylcholine. The engine output shows complete agreement with the validation trends.*
+*@tabledef {SystemHassanScenario} Hassan displays the effects of a right mainstem intubation after the patient has been injected with ketamine and succinylcholine. The engine output shows complete agreement with the validation trends.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -409,10 +409,10 @@ The Joel scenario begins with a full severity airway obstruction at 50 seconds. 
 </tr>
 </table>
 </center>
-<center><i>Figure 8. Select outputs from the Joel combined effects scenario.</i></center>
+<center><i>@figuredef {SystemJoelCombinedEffects} Select outputs from the Joel combined effects scenario.</i></center>
 
 <center><br>
-*Table 10. The Joel scenario displays the effects of sequential airway obstruction, ventilator mask application, etomidate administration, succinylcholine administration, and intubation. The engine results show excellent agreement with the validation trends.*
+*@tabledef {SystemJoelScenario} The Joel scenario displays the effects of sequential airway obstruction, ventilator mask application, etomidate administration, succinylcholine administration, and intubation. The engine results show excellent agreement with the validation trends.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -442,10 +442,10 @@ Nathan receives a bolus injection of fentanyl at a dose of 150 micrograms at a s
 </tr>
 </table>
 </center>
-<center><i>Figure 9. Select outputs from the Nathan combined effects scenario.</i></center>
+<center><i>@figuredef {SystemNathanCombinedEffects} Select outputs from the Nathan combined effects scenario.</i></center>
 
 <center><br>
-*Table 8. The Nathan scenario displays the effects of sequential bolus fentanyl injection, ventilator mask application, and oxygen wall pressure loss. The engine results show strong agreement with the validation trends.*
+*@tabledef {SystemNathanScenario} The Nathan scenario displays the effects of sequential bolus fentanyl injection, ventilator mask application, and oxygen wall pressure loss. The engine results show strong agreement with the validation trends.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -464,7 +464,7 @@ Four scenarios were created to showcase the ability of the open-source physiolog
 A team of soldiers is conducting a patrol when an explosive device detonates, injuring one of the soldiers. The squad medic applies direct pressure to a hemorrhaging wound, and, suspecting a tension pneumothorax, performs a needle decompression. Direct pressure is not controlling the bleeding, so a tourniquet is applied. Morphine and IV fluids are administered.
 
 <center><br>
-*Table 9. The validation results for the Combat Multitrauma Showcase scenario.*
+*@tabledef {SystemCombatMultitrauma} The validation results for the Combat Multitrauma Showcase scenario.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Mean Arterial Pressure  (mmHg)	|	Cardiac Output  (mL/min)	|	Mean Central Venous Pressure (mmHg)	|	Respiration Rate (Breaths/min)	|	Oxygen Saturation (fraction)	|	Tidal Volume (mL)	|
@@ -492,14 +492,14 @@ A team of soldiers is conducting a patrol when an explosive device detonates, in
 </tr>
 </table>
 </center>
-<center><i>Figure 10. Select outputs from the Combat Multitrauma showcase scenario.</i></center>
+<center><i>@figuredef {SystemCombatMultitraumaShowcase} Select outputs from the Combat Multitrauma showcase scenario.</i></center>
 
 ### Asthma Attack
 
 A 40 year old female with a history of asthma is having an asthma attack. She arrives at the hospital ten minutes after the beginning of the attack. A doctor administers albuterol and her condition improves.
 
 <center><br>
-*Table 10. The validation results for the Asthma Attack Showcase scenario.*
+*@tabledef {SystemAsthmaAttackValidation} The validation results for the Asthma Attack Showcase scenario.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Heart Stroke Volume (mL)	|	Mean Arterial Pressure  (mmHg)	|	Systolic Pressure  (mmHg)	|	Cardiac Output (mL/min)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation (fraction)	|	End Tidal CO2 (fraction)	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	pH (mmHg)	|
@@ -522,14 +522,14 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 </tr>
 </table>
 </center>
-<center><i>Figure 11. Select outputs from the Asthma Attack showcase scenario.</i></center>
+<center><i>@figuredef {SystemAsthmaAttackShowcase} Select outputs from the Asthma Attack showcase scenario.</i></center>
 
 ### Heat Stroke
 
 A 25 year old male is hiking towards a rock formation to begin a recreational free climb. During the hike, he is working at ~10% of his maximum capacity. The man arrives at a rock formation and begins climbing at an intensity of ~1/2 of his maximum capacity. At the top of the rock formation, the man becomes dizzy and passes out. An off-duty medic takes action to treat a heat injury.
 
 <center><br>
-*Table 11. The validation results for the Heat Stroke Showcase scenario.*
+*@tabledef {SystemHeatStrokeValidation} The validation results for the Heat Stroke Showcase scenario.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Heart Stroke Volume (mL)	|	Mean Arterial Pressure (mmHg)	|	Systolic Arterial Pressure (mmHg)	|	Diastolic Arterial Pressure (mmHg)	|	Oxygen Saturation  (mmHg)	|	Core Temperate (C)	|	Skin Temperature (C)	|	Sweat Rate  (mL/min)	|
@@ -555,14 +555,14 @@ A 25 year old male is hiking towards a rock formation to begin a recreational fr
 </tr>
 </table>
 </center>
-<center><i>Figure 12. Select outputs from the Heat Stroke showcase scenario.</i></center>
+<center><i>@figuredef {SystemHeatStrokeShowcase} Select outputs from the Heat Stroke showcase scenario.</i></center>
 
 ### Environment Exposure
 
 A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a newspaper. The door closes as she exits the house. She is stuck outside for 45 minutes where it is -10<sup>o</sup>C. When the woman's housemates realize that she is outside, they bring her back in and sit her next to a fire.
 
 <center><br>
-*Table 11. The validation results for the Environmental Exposure Showcase scenario.*
+*@tabledef {SystemEnvironmentExposureValidation} The validation results for the Environmental Exposure Showcase scenario.*
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Systolic Arterial Pressure (mmHg)	|	Respiration Rate (Breaths/min)	|	Core Temperature (C)	|	Oxygen Consumption (mL/min)	|	Carbon Dioxide Production (mL/min)	|	Metabolic Rate (W)	|
@@ -585,7 +585,7 @@ A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a new
 </tr>
 </table>
 </center>
-<center><i>Figure 13. Select outputs from the %Environment Exposure showcase scenario.</i></center>
+<center><i>@figuredef {SystemEnvironmentExposureShowcase} Select outputs from the %Environment Exposure showcase scenario.</i></center>
 
 ## Conclusion
 

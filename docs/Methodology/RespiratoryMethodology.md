@@ -19,12 +19,12 @@ The %Respiratory System supplies oxygen and removes waste carbon dioxide from th
 
 The human %Respiratory System consists of the upper airways (region above the cricoid cartilage), the lower airways, the lungs, and the respiratory muscles. The lower airways begin at the trachea and extend to the bronchi, bronchioles, and the alveoli. At the carina, the trachea divides into two mainstem bronchi, the right and left. The bronchi bifurcate into smaller bronchioles that continue branching for up to 23 generations, forming the tracheobronchial tree that terminates with the alveoli. Alveolar ducts and alveolar sacs are the operating units of the lungs where gas exchange occurs with the pulmonary capillaries. The first several generations of airways, where no gas exchange occurs, constitute the anatomic dead space and are referred to as the conducting zone. In contrast, alveolar ducts and sacs that terminate the tracheobronchial tree are referred to as the respiration zone.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./Images/Respiratory/RespiratorySystemDiagram.png"><img src="./Images/Respiratory/RespiratorySystemDiagram.png"></a>
 <br>
-</center>
 @endhtmlonly
+</center>
 <center>
 <i>@figuredef {RespiratorySystemDiagram}. The %Respiratory System consists of the upper and lower airways. The diaphragm acts as a respiratory muscle taking part in the ventilatory driver mechanics. The trachea branches into the right and left bronchi, each of which further bifurcates into multiple generations of smaller bronchioles. These bronchioles form the tracheobronchial tree, which terminates at the alveoli. @cite LadyofHats2014Respiratory </i>
 </center><br>
@@ -211,12 +211,12 @@ analogue, the model predicts the dynamic properties of the %Respiratory System.
 @figureref {RespiratoryCircuit} depicts the network of respiratory circuit elements and their
 interconnections.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./Images/Respiratory/RespiratoryCircuit.png"><img src="./Images/Respiratory/RespiratoryCircuit.png" width="650"></a>
 <br>
-</center>
 @endhtmlonly
+</center>
 <center>
 <i>@figuredef {RespiratoryCircuit}. Circuit diagram of the %Respiratory System. The diagram depicts a
 closed circuit of the major compartments and the subordinate compartments. The circuit depicts the muscle
@@ -331,13 +331,13 @@ Unless a conscious respiration action is called, all other segment fractions are
 
 Where <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  @figureref {DriverWaveform} shows the basic segmented muscle driver waveform used.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/DriverWaveform.jpg">
 <img src="./plots/Respiratory/DriverWaveform.jpg" width="600"></a>
 <br> 
-</center>
 @endhtmlonly
+</center>
 <center>
 <i>@figuredef {DriverWaveform}. Conscious respiration muscle pressure waveform showing all segments with a duration of 1s each to minimum and maximum pressure.  These segment functions are presented in the equation above. The fraction of each segment duration compared to the total breath duration is set based on the inspiratory-expiratory ratio - many often set to zero. The total time of each breath is determined from a target respiration rate.</i>
 </center><br>
@@ -382,12 +382,11 @@ where <i>V<sup><b>.</b></sup><sub>E</sub></i> is calculated using the relation
 
 <i>V<sup><b>.</b></sup><sub>D</sub></i> is the dead space ventilation and is obtained by taking the product of the dead space volume and the respiration rate. The target tidal volume <i>V<sub>T</sub></i> needed to predict <i>f<sub>v</sub></i> is calculated from the pulmonary ventilation based on a piecewise linear relationship between the tidal volume and the minute ventilation as shown by Watson @cite watson1974tidalVolume . In the article, the author presented data that  describes the relationship between the minute ventilation and tidal volume by straight line. The data is reproduced in @figureref {Respiratory_Figure05} below.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./Images/Respiratory/Respiratory_Figure05.png">
 <img src="./Images/Respiratory/Respiratory_Figure05.png" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Respiratory_Figure05}. The figure shows data from literature that presents the linear relationship between the minute ventilation 
@@ -440,8 +439,8 @@ The respiratory muscle driver pressure is dynamically adjusted based on pulmonar
 
 @figureref {pressures} depicts the time-dependent driver pressure source of the %Respiratory System as obtained during simulation of the standard patient model of the engine (77 kg adult male) under normal physiological conditions. For comparison, the driver pressure is plotted with the alveolar, intrapleural, and transpulmonary pressures. The figure shows the pressures for several breathing cycles. The model driver pressure exhibits distinct waveforms during the inspiration and expiration phases. These patterns represent the active distension and passive relaxation behaviors of the inspiratory muscles. As a result of such input, the model distinguishes between the active inspiratory and passive expiratory phases of the breathing cycle. The time-dependent muscle pressure together with the atmospheric pressure and the compliances act in tandem to generate the pleural and alveolar pressure waveforms shown in the figure.
 
-@htmlonly
 <center>
+@htmlonly
 <table border="0">
 <tr>
     <td><a href="./plots/Respiratory/Muscle_Pressure.jpg"><img src="./plots/Respiratory/Muscle_Pressure.jpg" width="800"></a></td>
@@ -462,14 +461,13 @@ The respiratory muscle driver pressure is dynamically adjusted based on pulmonar
 
 #### Compliances
 
-The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure 6) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. @figureref {ComplianceCurve} shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
+The Pulse respiratory system is separated into four compliances (see @figureref {RespiratoryCircuit}) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. @figureref {ComplianceCurve} shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./Images/Respiratory/ComplianceCurve.png">
 <img src="./Images/Respiratory/ComplianceCurve.png" width="550"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {ComplianceCurve}. The healthy single lung compliance curve is determined by standard patient lung volume parameters and a baseline compliance (C<sub>baseline</sub>) value.</i>
@@ -601,12 +599,11 @@ cycles. The %Respiratory Model outputs the value of V<sub>T</sub> for each
 breathing cycle. @figureref {TidalVolume_from_TotalLungVolume} presents the plot of the total lung volume and V<sub>T</sub> as a
 function of time.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg">
 <img src="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {TidalVolume_from_TotalLungVolume}. This shows the relationship of the total lung volume with the tidal
@@ -719,12 +716,11 @@ nodes. The right and left anatomic dead space volumes when
 compared to the right and left alveoli volumes are shown in @figureref {Alveoli_and_Dead_Space_Volumes}. When the patient weight is factored into the 
 calculation, the alveolar ventilation predicted from the model is close to the expected value.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/Alveoli_and_Dead_Space_Volumes.jpg">
 <img src="./plots/Respiratory/Alveoli_and_Dead_Space_Volumes.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Alveoli_and_Dead_Space_Volumes}. The right and left anatomic dead space volumes together with the right and left 
@@ -748,12 +744,11 @@ resistance <i>R<sub>trachea</sub></i> as:
 <i>P<sub>mouth</sub></i> and <i>P<sub>carina</sub></i> are the pressures at the mouth and the carina nodes,
 respectively. The figure shown below presents the absolute flow rate (no distinction for flow direction) for one breathing cycle.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/Total_Flow_Through_Trachea.jpg">
 <img src="./plots/Respiratory/Total_Flow_Through_Trachea.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Total_Flow_Through_Trachea}. Tracheal airflow and total lung volume during one typical breathing
@@ -774,12 +769,11 @@ volume for one breathing cycle. The alveolar pressure in the engine is absolute 
 to atmospheric pressure), so the relative pressure can be determined by subtracting the standard atmospheric pressure of 1033 cmH2O - giving outputs close to the range of  -1.8 cm H<SUB>2</SUB>O to 1.8 cm H<SUB>2</SUB>O
 found in the literature @cite otis1947measurement . 
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/Lung_Pressure_And_Volume.jpg">
 <img src="./plots/Respiratory/Lung_Pressure_And_Volume.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Lung_Pressure_And_Volume}. Typical lung pressures. The plot shows the instantaneous pressure of
@@ -804,8 +798,8 @@ Transpulmonary pressure is defined as the difference between the alveolar
  possibly the average values is a consequence of the specific driver pressure and 
  patient parameters employed in the engine.
 
-@htmlonly
 <center>
+@htmlonly
 <table border="0">
 <tr>
     <td><a href="./plots/Respiratory/Engine_Pressures.jpg"><img src="./plots/Respiratory/Engine_Pressures.jpg" width="550"></a></td>
@@ -838,8 +832,8 @@ curve of a healthy person shows hysteresis during the inspiratory and expiratory
 As shown in the figure, the %Respiratory Model mimics the expected 
 hysteresis of the P-V curve.
 
-@htmlonly
 <center>
+@htmlonly
 <table border="0">
 <tr>
     <td><a href="./plots/Respiratory/Engine_Pulmonary_Compliance.jpg"><img src="./plots/Respiratory/Engine_Pulmonary_Compliance.jpg" width="550"></a></td>
@@ -906,12 +900,11 @@ of the standard patient. Typically, the average alveolar partial pressure of oxy
  is 104 mmHg @cite Levitzky2013pulmonary . The value from the engine is close to that of the 
  literature.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/Alveolar_Oxygen_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Alveolar_Oxygen_Partial_Pressure.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Alveolar_Oxygen_Partial_Pressure}. Alveolar O<SUB>2</SUB> partial pressure. The partial pressure of O<SUB>2</SUB> at the two
@@ -928,12 +921,11 @@ pressure for the left and right alveoli nodes. Typically, the average alveolar C
 The prediction from the engine is close to the expected
 literature value.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/Alveolar_Carbon_Dioxide_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Alveolar_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Alveolar_Carbon_Dioxide_Partial_Pressure}. Alveolar CO<SUB>2</SUB> partial pressure. The partial pressure of CO<SUB>2</SUB> at the two
@@ -952,12 +944,11 @@ depicts the time variation of tracheal CO<SUB>2</SUB> partial pressure. The wave
 CO<SUB>2</SUB> partial pressure appears similar to those found in normal capnograph at the mouth
 (Fig.3.9, Ref @cite Levitzky2013pulmonary ). 
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/Trachea_Carbon_Dioxide_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Trachea_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Trachea_Carbon_Dioxide_Partial_Pressure}. Tracheal CO<SUB>2</SUB> partial pressure. The partial pressure of CO<SUB>2</SUB> at the
@@ -973,12 +964,11 @@ calculates the tracheal O<SUB>2</SUB> partial pressure by making use of the pres
 carina node. The output of the tracheal O<SUB>2</SUB> partial
 pressure calculation is presented in @figureref {Trachea_Oxygen_Partial_Pressure}.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/Trachea_Oxygen_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Trachea_Oxygen_Partial_Pressure.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Trachea_Oxygen_Partial_Pressure}. Tracheal O<SUB>2</SUB> partial pressure. The partial pressure of O<SUB>2</SUB> at the
@@ -996,9 +986,11 @@ The concept of the Recruited Fraction is central to this model. It represents th
 
 This relationship is visually depicted in @figureref {recruitment}, which illustrates the mapping of reduced alveolar volume to the shunt scaling factor across different cardiopulmonary compartments.
 
+<center>
 @htmlonly
-<center><a href="./Images/Respiratory/RecruitmentShunting.png"><img src="./Images/Respiratory/RecruitmentShunting.png" style="width:60%;"></a></center>
+<a href="./Images/Respiratory/RecruitmentShunting.png"><img src="./Images/Respiratory/RecruitmentShunting.png" style="width:60%;"></a>
 @endhtmlonly
+</center>
 <center>
 <i>@figuredef {recruitment}. The mapping of reduced alveolar volume to shunt scaling factor for each cardiopulmonary compartment.</i>
 </center><br>
@@ -1357,23 +1349,21 @@ When positive pressure ventilation is introduced, the engine models the resultin
 
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. @figureref {FlowVolumeCurves} shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD. The conscious respiration action was used to exhale to the expiratory reserve volume and inhale to the inspiratory capacity.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/FlowVolumeCurves.jpg">
 <img src="./plots/Respiratory/FlowVolumeCurves.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {FlowVolumeCurves}. A spirometry simulation comparing healthy, obstructive (COPD), and restrictive (ARDS) forced breath loops. COPD and ARDS severities of 0.6 and conscious respiration actions are used in the simulation. Results match those expected and presented in literature @cite barreiro2004approach.</i>
 </center><br>
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./plots/Respiratory/SpirometryVolumeCurves.jpg">
 <img src="./plots/Respiratory/SpirometryVolumeCurves.jpg" width="800"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {SpirometryVolumeCurves}. Volume vs. time results from the same pulmonary function test as @figureref {FlowVolumeCurves}. This scenario uses the COPD and ARDS exacerbation action to simulate all three modalities with the conscious respiration action to complete a full exhale-inhale cycle. Changes in the functional residual capacity, residual volume, and total lung capacity can be seen at the maximum and minimum points. Results match those expected and presented in literature @cite kliegman2007nelson.</i>
@@ -1538,12 +1528,11 @@ from the lung into the plural space as in laceration of the lung following blunt
 trauma. The model evaluates the physiological responses arising from increased
 intrapleural pressure and leakage in the airflow of the respiratory circuit.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./Images/Respiratory/PneumoCirucit.png">
 <img src="./Images/Respiratory/PneumoCirucit.png" width="550"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {PneumoCirucit}. Both lungs in the engine have elements to mimic the effects of open and closed tension pneumothorax insults as well as chest occlusive dressing (for open) and needle decompression (for both) interventions. The red boxes denote these additional elements.</i>
@@ -1590,12 +1579,11 @@ Each of the three supplemental oxygen devices is modeled using a different lumpe
 
 The seal resistance in each circuit dictates how much air escapes due to be secured imperfectly. The nasal cannula has a low seal value to realistically represent the prongs in the patient's nostrils.
 
-@htmlonly
 <center>
+@htmlonly
 <a href="./Images/Respiratory/SupplementalOxygenCirucits.png">
 <img src="./Images/Respiratory/SupplementalOxygenCirucits.png" width="1000"></a>
 <br>
-</center>
 @endhtmlonly
 <center>
 <i>@figuredef {SupplementalOxygenCirucits}. Each supplemental oxygen device has a different circuit to mimic the air mixing nuances of each.</i>
@@ -1612,8 +1600,8 @@ Conscious respiration consists of a set of commands that model forced exhalation
 
 Conscious respiration has any number of potential applications and is likely to be implemented to attain proper breathing while using an inhaler, generate a spirometry curve, or simulate coughing.  @figureref {Experimental_Cough_Flow} shows the results for a cough scenario that leverages the conscious respiration action compared to empirical data.
 
-@htmlonly
 <center>
+@htmlonly
 <table border="0">
 <tr>
     <td><a href="./plots/Respiratory/Engine_Cough_Flow.jpg"><img src="./plots/Respiratory/Engine_Cough_Flow.jpg" width="550"></a></td>
@@ -1797,7 +1785,7 @@ The pneumonia condition was validated against three scenarios; severe pneumonia 
 
 ### Pulmonary Fibrosis
 
-The pulmonary fibrosis condition was validated with a severe pulmonary fibrosis scenario by applying a severity of 0.9 to the patient.The severity decreased the lung compliance and increased the airway resistance making it difficult to breathe.The resulting outputs are shown in Table 11 for common clinical parameters.
+The pulmonary fibrosis condition was validated with a severe pulmonary fibrosis scenario by applying a severity of 0.9 to the patient.The severity decreased the lung compliance and increased the airway resistance making it difficult to breathe.The resulting outputs are shown in @tableref {fibrosis} for common clinical parameters.
 
 <center><br>
 <i>@tabledef {fibrosis}. Validation matrix for severe pulmonary fibrosis. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
@@ -1817,8 +1805,8 @@ Validation - Actions
 
 The bronchoconstriction action was validated with a scenario that applies varying severities of 0.3, 0.6, and 1.0 to the patient. Varying the severity of the obstruction simulates the constriction of the bronchii, leading to obstructed air flow. The severity levels logarithmically increase the airway resistance.
 
-@htmlonly
 <center>
+@htmlonly
 <table border="0">
 <tr>
     <td><a href="./plots/Respiratory/BronchoConstrictionVaried_TidalVolume.jpg"><img src="./plots/Respiratory/BronchoConstrictionVaried_TidalVolume.jpg" width="550"></a></td>
@@ -1858,8 +1846,8 @@ Two scenarios were used to validate tension pneuomthorax and its associated inte
 
 It is important to note nervous system responses of a conscious patient due to pain or panicking are not included with the Pneumothorax action. Some of these responses can be attained by including an Acute Stress action (see @ref endocrine-actions "Endocrine Methodology").
 
-@htmlonly
 <center>
+@htmlonly
 <table border="0">
 <tr>
     <td><a href="./plots/Respiratory/TensionPneumothoraxOpenVaried_TotalLungVolume.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_TotalLungVolume.jpg" width="550"></a></td>

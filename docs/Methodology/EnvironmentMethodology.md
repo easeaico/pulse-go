@@ -39,10 +39,10 @@ The %Environment system is used to meet the following requirements:
 One of the most comprehensive analysis of human interaction with typical thermal environments is contained within the American Society of Heating, Refrigerating, and Air-Conditioning Engineers (ASHRAE) Handbook - specifically the Thermal Comfort chapter @cite handbook2013fundamentals. The International Organization for Standardization (ISO) standard 7730:2005: Ergonomics of the Thermal %Environment contains additional data and analyses @cite ISOPDF. Both of these publications are focused on occupant thermal comfort for indoor environment planning and thus make assumptions that are not valid for some of the extreme environments required by the engine. Data and analyses from these publications were heavily leveraged during development of the environment system. Other existing research includes the high-level heat transfer analysis focused on medical and biological applications reported in Ref. @cite shitzer1985heat, as well as experimental and computational explorations of thermoregulation @cite mccutchan1951respiratory @cite oliveira2008measuring @cite de1997convective @cite fiala1999computer.
 
 ### Approach
-The %Environment system was designed with as few assumptions and parameter bounds as possible to allow simulations of both standard and extreme environments. The system is dynamic. By leveraging the @ref CDM and the generic [circuit](@ref CircuitMethodology) and [convective transport](@ref SubstanceTransportMethodology) solvers, the engine will react differently to varying initial environments and to changes in the environment during simulation.  %Environment parameters can be changed through specifying a separate environment file, or by manually updating the parameters through the environment state change action (for more details see the @ref SDK). Table 1 shows these inputs, which set the substance, fluid, and thermal properties external to the patient.
+The %Environment system was designed with as few assumptions and parameter bounds as possible to allow simulations of both standard and extreme environments. The system is dynamic. By leveraging the @ref CDM and the generic [circuit](@ref CircuitMethodology) and [convective transport](@ref SubstanceTransportMethodology) solvers, the engine will react differently to varying initial environments and to changes in the environment during simulation.  %Environment parameters can be changed through specifying a separate environment file, or by manually updating the parameters through the environment state change action (for more details see the @ref SDK). @tableref {EnvironmentParameters} shows these inputs, which set the substance, fluid, and thermal properties external to the patient.
 
 <br><center>
-<i>Table 1. The parameters that can be set using the %Environment condition.  Note that air density is a calculated value inside the class.</i>
+<i>@tabledef {EnvironmentParameters} The parameters that can be set using the %Environment condition.  Note that air density is a calculated value inside the class.</i>
 </center>
 
 | Parameter | Use | Unit Type |
@@ -83,11 +83,11 @@ Many meteorologic parameters such as ambient temperature, wind speed, atmospheri
 
 ### Thermal Environment
 
-The remaining parameters are used for setting and manipulating the surrounding thermal environment.  A simplified one-dimensional representation of the thermodynamic process solved by the %Environment system is shown in Figure 1 @cite handbook2013fundamentals .  The %Environment circuit connects directly to the %Energy system circuit to balance with metabolic rate and body heat storage.
+The remaining parameters are used for setting and manipulating the surrounding thermal environment.  A simplified one-dimensional representation of the thermodynamic process solved by the %Environment system is shown in @figureref {Environment2DModel} @cite handbook2013fundamentals .  The %Environment circuit connects directly to the %Energy system circuit to balance with metabolic rate and body heat storage.
 
 <center>
 <a href="./Images/Environment/Environment2DModel.png"><img src="./Images/Environment/Environment2DModel.png"></a>
-<i>Figure 1. Human thermoregulation in an environment can be shown with a simplified one dimensional model.  The net heat production is transferred to the environment through the skin surface and respiratory tract.</i>
+<i>@figuredef {Environment2DModel} Human thermoregulation in an environment can be shown with a simplified one dimensional model.  The net heat production is transferred to the environment through the skin surface and respiratory tract.</i>
 </center><br>
 
 
@@ -116,19 +116,19 @@ Features and Capabilities
 An acronyms, initialisms, and a nomenclature table are available in the Glossary section.
 
 ### Circuit
-The one-dimensional model shown in Figure 1 is further simplified to a zero-dimensional model (Figure 3) by averaging the thermal effects over the entire patient.  The %Environment system uses the generic circuit solver in the same way as fluid systems (@ref CircuitMethodology).
+The one-dimensional model shown in @figureref {Environment2DModel} is further simplified to a zero-dimensional model (@figureref {EnvironmentCircuit}) by averaging the thermal effects over the entire patient.  The %Environment system uses the generic circuit solver in the same way as fluid systems (@ref CircuitMethodology).
 
 The Ambient node contains both thermal properties (temperature), fluid properties (pressure), and substance properties (volume fraction, aerosol concentration).  It is assigned as the %Respiratory and Anesthesia Machine circuit&rsquo;s reference node, and therefore, interacts with them directly.  Any changes to the Ambient node properties automatically propagates through the other systems.
 
 <center>
 <a href="./Images/Environment/EnvironmentCircuit.png"><img src="./Images/Environment/EnvironmentCircuit.png"></a>
-<i>Figure 3. The %Environment circuit consists of 6 nodes that are connected via 8 paths. There are 8 parameters representing circuit elements that are modified by feedback mechanisms or actions. The circuit is used to estimate all environment thermal properties each time step.</i>
+<i>@figuredef {EnvironmentCircuit} The %Environment circuit consists of 6 nodes that are connected via 8 paths. There are 8 parameters representing circuit elements that are modified by feedback mechanisms or actions. The circuit is used to estimate all environment thermal properties each time step.</i>
 </center><br>
 
-The clothing thermal insulation/resistance in this model is an average lumped value over the entire patient's body.  Because clothing insulation cannot be measured for most routine engineering application, tables of measure values for various ensembles can be used as in Table 2 @cite handbook2013fundamentals.  When a premeasured ensemble cannot be found to match, estimated ensemble insulation can be determined via a summation of the individual garmets as in Table 3 @cite handbook2013fundamentals.  An important note is that the clothing resistance remains constant once set, and does not automatically take into account sweat saturation or changes due to submersion.  These effects could be accounted for by external determination of a new thermal resistance value and set using the environment change action.
+The clothing thermal insulation/resistance in this model is an average lumped value over the entire patient's body.  Because clothing insulation cannot be measured for most routine engineering application, tables of measure values for various ensembles can be used as in @tableref {EnvironmentClothingEnsembles} @cite handbook2013fundamentals.  When a premeasured ensemble cannot be found to match, estimated ensemble insulation can be determined via a summation of the individual garmets as in @tableref {EnvironmentGarmentInsulation} @cite handbook2013fundamentals.  An important note is that the clothing resistance remains constant once set, and does not automatically take into account sweat saturation or changes due to submersion.  These effects could be accounted for by external determination of a new thermal resistance value and set using the environment change action.
 
 <br><center>
-<i>Table 2. Typical insulation for clothing ensembles.</i>
+<i>@tabledef {EnvironmentClothingEnsembles} Typical insulation for clothing ensembles.</i>
 </center>
 | Ensemble Description | Icl (clo) |
 | :----     | :----   |
@@ -151,7 +151,7 @@ The clothing thermal insulation/resistance in this model is an average lumped va
 | Insulated coveralls, long-sleeved thermal underwear, long underwear bottoms | 1.37 |
 
 <br><center>
-<i>Table 3. Typical garment insulation.</i>
+<i>@tabledef {EnvironmentGarmentInsulation} Typical garment insulation.</i>
 </center>
 | Garment Description | Icl (clo) | Garment Description	 | Icl (clo) |
 | :----     | :----   | :----   | :----   |
@@ -195,7 +195,7 @@ An aerosol is a colloidal suspension of either solid or liquid droplet particles
 
 <center>
 <a href="./Images/Environment/depositionFractions.png"><img src="./Images/Environment/depositionFractions.png"></a>
-<i>Figure 4. The deposition fraction in each compartment is computed as a function of particle size, and the deposition fraction for a collection of particles within a histogram bin is computed from the mean deposition fraction within the boundaries of the bin. An 8 bin partition is shown in the figure for illustration purposes. The CDM supports histograms with an arbitrary number of bins.</i>
+<i>@figuredef {EnvironmentAerosolDeposition} The deposition fraction in each compartment is computed as a function of particle size, and the deposition fraction for a collection of particles within a histogram bin is computed from the mean deposition fraction within the boundaries of the bin. An 8 bin partition is shown in the figure for illustration purposes. The CDM supports histograms with an arbitrary number of bins.</i>
 </center><br>
 
 The size-independent deposition efficiencies are computed from the deposition fractions using @equationref {mathrm_K_B}.
@@ -243,21 +243,21 @@ The total mass of particles that deposit in compartment <i>B</i> is some fractio
 
 Rearranging @equationref {K_Bm_tB} and combining with @equationref {m_ib_2} yields [@equationref {mathrm_K_B}](@ref SIDE), the size-independent deposition efficiency coefficient for compartment <i>B</i>.
 
-The mass deposited in each compartment is computed by multiplying the size-independent deposition efficiency coefficient by the mass in the compartment at each time step. Once an aerosol substance deposits in a respiratory compartment it stays in the respiratory compartment. In other words, coughing is not productive in the engine. The direct effect of a deposited substance depends on the mass deposited and the value of the inflammation coefficient that is defined in the substance file. The inflammation coefficient defines the amount of damage, by any mode, that the substance does to the respiratory tissue. Figure 5 visually describes the direct effects of an aerosol on the %Respiratory system.
+The mass deposited in each compartment is computed by multiplying the size-independent deposition efficiency coefficient by the mass in the compartment at each time step. Once an aerosol substance deposits in a respiratory compartment it stays in the respiratory compartment. In other words, coughing is not productive in the engine. The direct effect of a deposited substance depends on the mass deposited and the value of the inflammation coefficient that is defined in the substance file. The inflammation coefficient defines the amount of damage, by any mode, that the substance does to the respiratory tissue. @figureref {EnvironmentAerosolEffects} visually describes the direct effects of an aerosol on the %Respiratory system.
 
 <center>
 <a href="./Images/Environment/AerosolEffects.png"><img src="./Images/Environment/AerosolEffects.png" width="700"></a>
-<i>Figure 5. Diagram describing aerosol transport into the respiratory compartments and the associated effects.</i>
+<i>@figuredef {EnvironmentAerosolEffects} Diagram describing aerosol transport into the respiratory compartments and the associated effects.</i>
 </center><br>
 
 In addition to the direct effects, deposited aerosol substances can also have indirect effects. After liquid aerosol substances deposit they can diffuse into the surrounding tissue and then into the blood stream. If the liquid aerosol has pharmacodynamic properties defined, it's effects will be realized when it enters the blood and the plasma concentration becomes non-zero.
 
 Currently, Albuterol and smoke particulate have histogram data and are modeled as polydisperse aerosols in the environment with the former being delivered via an inhaler and the latter being a concentration in the ambient environment. Smoke is modeled as a solid aerosol.
 
-The solid smoke particulate in the engine is a model of the particulate generated through the combustion of organic material in a forest fire. We assume that the fire is well evolved in time to mitigate the bi-modal behavior seen during the initial ignition and smoldering @cite zhang2012chemical. This allows us to model the size distribution as a lognormal curve. The forest fire smoke particle size distribution histogram is given in table 4.
+The solid smoke particulate in the engine is a model of the particulate generated through the combustion of organic material in a forest fire. We assume that the fire is well evolved in time to mitigate the bi-modal behavior seen during the initial ignition and smoldering @cite zhang2012chemical. This allows us to model the size distribution as a lognormal curve. The forest fire smoke particle size distribution histogram is given in @tableref {EnvironmentWoodSmokeHistogram}.
 
 <br><center>
-<i>Table 4. Histogram for wood smoke particulate in the environment. </i>
+<i>@tabledef {EnvironmentWoodSmokeHistogram} Histogram for wood smoke particulate in the environment. </i>
 </center>
 | Amount (fraction) | Diameter (microns) |
 | ----------------- |------------------- |
@@ -268,11 +268,11 @@ The solid smoke particulate in the engine is a model of the particulate generate
 | 0.015 | 1.0-1.0e1       |
 | 0     | 1.0e1 - 1.0 e2  |
 
-Figure 6 summarizes the fate and effects of liquid and smoke aerosols in the engine.
+@figureref {EnvironmentAerosolSummary} summarizes the fate and effects of liquid and smoke aerosols in the engine.
 
 <center>
 <a href="./Images/Environment/AerosolFate.png"><img src="./Images/Environment/AerosolFate.png" width="700"></a>
-<i>Figure 6. Diagram summarizing the transport into the respiratory compartments, effects, and the fate of liquid and solid particle aerosols.</i>
+<i>@figuredef {EnvironmentAerosolSummary} Diagram summarizing the transport into the respiratory compartments, effects, and the fate of liquid and solid particle aerosols.</i>
 </center><br>
 
 @anchor environment-carbon-monoxide
@@ -295,7 +295,7 @@ where <i>T<sub>CO</sub></i> is the total carbon monoxide in the blood, <i>CO<sub
 The model is implemented by first totaling the carbon monoxide in a compartment post diffusion, then computing the partial pressure of carbon monoxide, and finally computing the carboxyhemoglobin in the compartment. After the target distribution is calculated, the hemoglobin species (unbound, oxyhemoglobin, carboxyhemoglobin, carbaminohemoglobin, and oxycarbaminohemoglobin) amounts are updated by assuming that unbound hemoglobin is consumed first followed by oxyhemoglobin then oxycarbaminohemoglobin and finally carbaminohemoglobin. If all hemoglobin is converted to carboxyhemoglobin before the necessary adjustment is made to conserve CO mass, then the remaining CO is distributed back to the dissolved species. This acts as an automatic negative feedback device to ensure that the perfusion contribution to the diffusing capacity is saturated when the hemoglobin becomes saturated. See the [C++ code](@ref CalculateCarbonMonoxideSpeciesDistribution) for more details.
 
 #### Carbon Monoxide Effects on Oxygen Saturation Curve
-The oxygen saturation curve effects model implemented is adapted from the regression model described by @ref bruce2003multicompartment. We have simplified the model by assuming a linear relationship between carboxyhemoglobin and both the Hill coefficient and the 50% saturation shaping parameter. We then applied the linear relationship to the Dash and Bassingthwaithe oxygen saturation model already implemented in the engine (see the [Tissue Methodology](@ref tissue-approach)). @equationref {eta} and @equationref {P50} describe the adjustments made to the oxygen saturation curve in the presence of carboxyhemoglobin, and Figure 7 shows the shift in the curve at various carboxyhemoglobin concentrations. In the equations, *&eta;* is the Hill coefficient, <i>S<sub>CO</sub></i> is the fraction of carboxyhemoglobin to total hemoglobin (i.e. CO saturation), and <i>P<sub>50</sub></i> is the standard partial pressure of oxygen at 50% oxygen saturation.
+The oxygen saturation curve effects model implemented is adapted from the regression model described by @ref bruce2003multicompartment. We have simplified the model by assuming a linear relationship between carboxyhemoglobin and both the Hill coefficient and the 50% saturation shaping parameter. We then applied the linear relationship to the Dash and Bassingthwaithe oxygen saturation model already implemented in the engine (see the [Tissue Methodology](@ref tissue-approach)). @equationref {eta} and @equationref {P50} describe the adjustments made to the oxygen saturation curve in the presence of carboxyhemoglobin, and @figureref {EnvironmentCarboxyhemoglobinCurve} shows the shift in the curve at various carboxyhemoglobin concentrations. In the equations, *&eta;* is the Hill coefficient, <i>S<sub>CO</sub></i> is the fraction of carboxyhemoglobin to total hemoglobin (i.e. CO saturation), and <i>P<sub>50</sub></i> is the standard partial pressure of oxygen at 50% oxygen saturation.
 <center>
 \f[\eta = 1.7 - 1.1 \cdot S_{CO} \f]
 <i>@equationdef {eta}</i>
@@ -307,7 +307,7 @@ The oxygen saturation curve effects model implemented is adapted from the regres
 
 <center>
 <a href="./Images/Environment/leftShiftCO.png"><img src="./Images/Environment/leftShiftCO.png"></a>
-<i>Figure 7. Oxygen concentration at partial pressure of oxygen in the blood with carboxyhemoglobin present. The dashed lines show what the curves would look like without the characteristic leftward shift.</i>
+<i>@figuredef {EnvironmentCarboxyhemoglobinCurve} Oxygen concentration at partial pressure of oxygen in the blood with carboxyhemoglobin present. The dashed lines show what the curves would look like without the characteristic leftward shift.</i>
 </center><br>
 
 @anchor environment-dependencies
@@ -328,14 +328,14 @@ Since the one dimensional model used for the %Environment thermal circuit needs 
 <i>@equationdef {Ad}</i>
 </center><br>
 
-Several properties of water are needed at varying temperatures to determine the heat transfer occurring between the skin/clothing/lungs and the air.  Four of these are determined using the best fit of property tables or experimental data, as shown in Figure 8.
+Several properties of water are needed at varying temperatures to determine the heat transfer occurring between the skin/clothing/lungs and the air.  Four of these are determined using the best fit of property tables or experimental data, as shown in @figureref {EnvironmentWaterProperties}.
 
 <center>
 <a href="./Images/Environment/EnvironmentWaterPropertyGraphs.png"><img src="./Images/Environment/EnvironmentWaterPropertyGraphs.png"></a>
-<i>Figure 8. These four properties of water are intermediate values needed for further calculations.  A, B, and C are plotted from data presented in a table @cite chase1985journal , while D is reproduced from data in a plot given by experimental data(d) @cite Cordes2014Heat .  Note in B that 1 Centipoise is equal to 0.001 N-s/m<sup>2</sup>.</i>
+<i>@figuredef {EnvironmentWaterProperties} These four properties of water are intermediate values needed for further calculations.  A, B, and C are plotted from data presented in a table @cite chase1985journal , while D is reproduced from data in a plot given by experimental data(d) @cite Cordes2014Heat .  Note in B that 1 Centipoise is equal to 0.001 N-s/m<sup>2</sup>.</i>
 </center><br>
 
-The first three properties (Figure 8 A-C) are used later for determining the heat transfer when the patient is submerged in water.  Finding a best fit for these plots yields:
+The first three properties (@figureref {EnvironmentWaterProperties} A-C) are used later for determining the heat transfer when the patient is submerged in water.  Finding a best fit for these plots yields:
 
 <center>
 \f[{\mathrm{c}}_{\mathrm{p,w}}=-1e^{-7}{\mathrm{T}}^{\mathrm{3}}_{\mathrm{\infty }}+3e^{-5}{\mathrm{T}}^{\mathrm{2}}_{\mathrm{\infty }}-0.0018{\mathrm{T}}_{\mathrm{\infty }}+4.2093\f]
@@ -352,7 +352,7 @@ The first three properties (Figure 8 A-C) are used later for determining the hea
 <i>@equationdef {mathrm_alpha}</i>
 </center><br>
 
-The heat of vaporization (Figure 8 D) is the enthalpy change required to transform a given quantity of a substance from a liquid into a gas and is needed for determining the heat lost through respiration.  Finding a piecewise best fit yields:
+The heat of vaporization (@figureref {EnvironmentWaterProperties} D) is the enthalpy change required to transform a given quantity of a substance from a liquid into a gas and is needed for determining the heat lost through respiration.  Finding a piecewise best fit yields:
 
 <center>
 \f[{\mathrm{h}}_{\mathrm{fg}}\mathrm{=}\left\{ \begin{array}{c}
@@ -362,7 +362,7 @@ The heat of vaporization (Figure 8 D) is the enthalpy change required to transfo
 <i>@equationdef {heat_loss}</i>
 </center><br>
 
-The water vapor pressure at the skin and in ambient air is determined using the piecewise Antoine Equation given by @equationref {p_mathrm} @cite antoine1888tensions .  The resulting pressure is in units of mmHg and is a function of temperature in degrees Celsius. The constants are given by Table 5.
+The water vapor pressure at the skin and in ambient air is determined using the piecewise Antoine Equation given by @equationref {p_mathrm} @cite antoine1888tensions .  The resulting pressure is in units of mmHg and is a function of temperature in degrees Celsius. The constants are given by @tableref {EnvironmentAntoineConstants}.
 
 <center>
 \f[p\mathrm{=}{\mathrm{10}}^{\left(A\mathrm{-}\frac{B}{C\mathrm{+}t}\right)}\f]
@@ -370,7 +370,7 @@ The water vapor pressure at the skin and in ambient air is determined using the 
 </center><br>
 
 <br><center>
-<i>Table 5. Antione equation constants are used to calculate the water vapor pressure.</i>
+<i>@tabledef {EnvironmentAntoineConstants} Antione equation constants are used to calculate the water vapor pressure.</i>
 </center>
 | A       | B       | C       | t min (degrees C) | t max (degrees C) |
 | :----   | :----   | :----   | :----             | :----             |
@@ -410,11 +410,11 @@ The radiation heat transfer coefficient is used to determine the radiation resis
 <i>@equationdef {hR}</i>
 </center><br>
 
-Figure 9 highlights which elements are modified by the radiation method and by which parameters.
+@figureref {EnvironmentRadiationElements} highlights which elements are modified by the radiation method and by which parameters.
 
 <center>
 <a href="./Images/Environment/EnvironmentRadiationCircuit.png"><img src="./Images/Environment/EnvironmentRadiationCircuit.png"></a>
-<i>Figure 9. Elements that are directly affected by the radiation calculations are boxed and labeled with parameters that cause them to change.</i>
+<i>@figuredef {EnvironmentRadiationElements} Elements that are directly affected by the radiation calculations are boxed and labeled with parameters that cause them to change.</i>
 </center><br>
 
 ### Convection
@@ -426,11 +426,11 @@ The equation chosen to account for convective effects comes from a study that us
 <i>@equationdef {conv_heat_tx}</i>
 </center><br>
 
-Figure 6 highlights which elements are modified by the convection method and by which parameters.
+@figureref {EnvironmentConvectionElements} highlights which elements are modified by the convection method and by which parameters.
 
 <center>
 <a href="./Images/Environment/EnvironmentConvectionCircuit.png"><img src="./Images/Environment/EnvironmentConvectionCircuit.png"></a>
-<i>Figure 10. Elements that are directly affected by the convection calculations are boxed and labeled with parameters that cause them to change.</i>
+<i>@figuredef {EnvironmentConvectionElements} Elements that are directly affected by the convection calculations are boxed and labeled with parameters that cause them to change.</i>
 </center><br>
 
 ### Evaporation
@@ -478,11 +478,11 @@ Evaporative heat loss by sweating is directly proportional to the rate of sweat 
 <i>@equationdef {E_sk}</i>
 </center><br>
 
-Figure 11 highlights which elements are modified by the evaporation method and by which parameters.
+@figureref {EnvironmentEvaporationElements} highlights which elements are modified by the evaporation method and by which parameters.
 
 <center>
 <a href="./Images/Environment/EnvironmentEvaporationCircuit.png"><img src="./Images/Environment/EnvironmentEvaporationCircuit.png"></a>
-<i>Figure 11. The evaporation flow source is directly calculated by the evaporation calculations, which is boxed in the circuit diagram.</i>
+<i>@figuredef {EnvironmentEvaporationElements} The evaporation flow source is directly calculated by the evaporation calculations, which is boxed in the circuit diagram.</i>
 </center><br>
 
 ### Respiration
@@ -522,11 +522,11 @@ Since heat and water vapor are transferred in the lungs, expired air is saturate
 <i>@equationdef {q_res}</i>
 </center><br>
 
-Figure 12 highlights the source element that is modified by the respiration method.
+@figureref {EnvironmentRespirationElements} highlights the source element that is modified by the respiration method.
 
 <center>
 <a href="./Images/Environment/EnvironmentRespirationCircuit.png"><img src="./Images/Environment/EnvironmentRespirationCircuit.png"></a>
-<i>Figure 12. The respiratory flow source is directly calculated by the respiratory calculations, which is boxed in the circuit diagram.</i>
+<i>@figuredef {EnvironmentRespirationElements} The respiratory flow source is directly calculated by the respiratory calculations, which is boxed in the circuit diagram.</i>
 </center><br>
 
 ### Submerged
@@ -571,11 +571,11 @@ The heat transfer coefficient can is determined by @cite boutelier2003experiment
 <i>@equationdef {41}</i>
 </center><br>
 
-Figure 13 highlights which elements are modified when submerged and by which parameters.  Radiation is handled much like an open switch in a circuit via the resistor and does not allow any transfer.  The evaporation transfer source is directly set to zero.
+@figureref {EnvironmentSubmergedElements} highlights which elements are modified when submerged and by which parameters.  Radiation is handled much like an open switch in a circuit via the resistor and does not allow any transfer.  The evaporation transfer source is directly set to zero.
 
 <center>
 <a href="./Images/Environment/EnvironmentSubmergedCircuit.png"><img src="./Images/Environment/EnvironmentSubmergedCircuit.png"></a>
-<i>Figure 13. Elements that are directly affected by the submerged calculations are boxed and labeled with the parameters that cause them to change.</i>
+<i>@figuredef {EnvironmentSubmergedElements} Elements that are directly affected by the submerged calculations are boxed and labeled with the parameters that cause them to change.</i>
 </center><br>
 
 ### Outputs
@@ -617,13 +617,13 @@ The environment change condition has the option to be done directly or by readin
 Actions
 -------
 
-The environment change action has the option to be done directly or by reading an environment xml file.  Any of the parameters shown in Table 1 can be modified in this manor during runtime.
+The environment change action has the option to be done directly or by reading an environment xml file.  Any of the parameters shown in @tableref {EnvironmentParameters} can be modified in this manor during runtime.
 
-The thermal application action can directly add heat, remove heat, or set a temperature over any percentage of the patient&rsquo;s body.  They can be called individually or will sum together if called in combination.  These actions will set the active heat flow source and/or the active temperature source shown in Figure 14.  The applied area or fraction is used to determine the average amount to apply to the patient, since the %Environment is modeled as a one-dimensional circuit.  When actively heating or cooling, the total power is directly scaled using the fraction of the body that is covered using the patient skin surface area.  When applying a specific temperature, the average temperature will be applied between it and the ambient value, weighted by the fraction of the body covered.
+The thermal application action can directly add heat, remove heat, or set a temperature over any percentage of the patient&rsquo;s body.  They can be called individually or will sum together if called in combination.  These actions will set the active heat flow source and/or the active temperature source shown in @figureref {EnvironmentThermalApplication}.  The applied area or fraction is used to determine the average amount to apply to the patient, since the %Environment is modeled as a one-dimensional circuit.  When actively heating or cooling, the total power is directly scaled using the fraction of the body that is covered using the patient skin surface area.  When applying a specific temperature, the average temperature will be applied between it and the ambient value, weighted by the fraction of the body covered.
 
 <center>
 <a href="./Images/Environment/EnvironmentActiveCircuit.png"><img src="./Images/Environment/EnvironmentActiveCircuit.png"></a>
-<i>Figure 14. The active flow source is directly set by the heating and/or cooling actions.  It is boxed in the circuit diagram.</i>
+<i>@figuredef {EnvironmentThermalApplication} The active flow source is directly set by the heating and/or cooling actions.  It is boxed in the circuit diagram.</i>
 </center><br>
 
 @anchor environment-events
@@ -637,7 +637,7 @@ Results and Conclusions
 Verification
 --------------------------------------
 
-Results using the equations from ISO 7730:2005 were used to compare to %Environment outputs.  The standard focuses mostly on two thermal comfort metrics, Predictive Mean Vote and Predictive Percentage Dissatisfied @cite ISOPDF.  Although it is intended for the ergonomics of thermal environments, intermediate values can be extracted for the values shown in Table 6.  The connection points that connect to the %Energy system are replaced with a heat source equal to the metabolic rate, shown in Figure 15.  The other circuit elements are set to match the Inputs columns in Table 6.  The static circuit is run until everything balances and steady state is reached.  The clothing surface temperature is collected directly from the clothing node and system heat loss values are collected directly from the flow in the appropriate paths.
+Results using the equations from ISO 7730:2005 were used to compare to %Environment outputs.  The standard focuses mostly on two thermal comfort metrics, Predictive Mean Vote and Predictive Percentage Dissatisfied @cite ISOPDF.  Although it is intended for the ergonomics of thermal environments, intermediate values can be extracted for the values shown in @tableref {EnvironmentISOValidation}.  The connection points that connect to the %Energy system are replaced with a heat source equal to the metabolic rate, shown in @figureref {EnvironmentISOTestSetup}.  The other circuit elements are set to match the Inputs columns in @tableref {EnvironmentISOValidation}.  The static circuit is run until everything balances and steady state is reached.  The clothing surface temperature is collected directly from the clothing node and system heat loss values are collected directly from the flow in the appropriate paths.
 
 The following assumptions are made for this verification test:
 - Complete conservation of thermal energy with none stored
@@ -646,13 +646,13 @@ The following assumptions are made for this verification test:
 
 <center>
 <a href="./Images/Environment/EnvironmentVerificationCircuit.png"><img src="./Images/Environment/EnvironmentVerificationCircuit.png"></a>
-<i>Figure 15. The %Energy system is replaced for the %Environment unit test by a single heat source to represent the metabolic rate.  None of the energy is stored, but instead directly affects the %Environment.</i>
+<i>@figuredef {EnvironmentISOTestSetup} The %Energy system is replaced for the %Environment unit test by a single heat source to represent the metabolic rate.  None of the energy is stored, but instead directly affects the %Environment.</i>
 </center><br>
 
-The results in Table 6 show the skin temperatures calculated significantly higher than that by the ISO standard code.  However, the individual heat loss values seem reasonable and show the correct trends based on the inputs.  The %Environment model conserves energy as seen in the last column with the difference in heat produced by the metabolic rate to the sum of the heat loss by all four means.  The ISO standard does not conserve energy in the same way, and makes several looser assumptions that the %Environment system does not.  This could explain many of the discrepancies.  The requirement for the %Environment system to be able to handle extreme environments with feedback from other systems requires it to more strictly adhere to a rigorous physics based modeling approach.
+The results in @tableref {EnvironmentISOValidation} show the skin temperatures calculated significantly higher than that by the ISO standard code.  However, the individual heat loss values seem reasonable and show the correct trends based on the inputs.  The %Environment model conserves energy as seen in the last column with the difference in heat produced by the metabolic rate to the sum of the heat loss by all four means.  The ISO standard does not conserve energy in the same way, and makes several looser assumptions that the %Environment system does not.  This could explain many of the discrepancies.  The requirement for the %Environment system to be able to handle extreme environments with feedback from other systems requires it to more strictly adhere to a rigorous physics based modeling approach.
 
 <br><center>
-<i>Table 6. The published ISO 7730:2005 Appendix D: Computer Program for Calculation PMV and PPD
+<i>@tabledef {EnvironmentISOValidation} The published ISO 7730:2005 Appendix D: Computer Program for Calculation PMV and PPD
 Written in BASIC code @cite ISOPDF was used to verify the %Environment calculations are reasonable.  Deviations can be explained by the fact that the engine successfully conserves energy, while the ISO 7730:2005 outputs do not.</i>
 </center>
 <center><a href="./Images/Environment/EnvironmentVerification.png"><img src="./Images/Environment/EnvironmentVerification.png" width="1100"></a></center>
@@ -660,7 +660,7 @@ Written in BASIC code @cite ISOPDF was used to verify the %Environment calculati
 Validation
 ----------
 ###Forest Fire Fighter
-This scenario simulates exposure to a moderate/severe forest fire . This includes a suspension of wood particulate concentration of 2.9 mg/m^3 and a concentration of carbon monoxide of 20 ppm. Environmental composition data for this scenario simulation was taken from @cite reinhardt2000smoke. Spirometry data was determined through expiratory flow curve taken during conscious respiration. Figure 16 details the difference in mass deposited in two separate respiratory compartments (following from equations 1-7) and the difference in expiratory flow before and after smoke inhalation. Slight decreases to the expiratory flow maximum are seen and coincide fairly well with validated data @cite betchley1997pulmonary. 
+This scenario simulates exposure to a moderate/severe forest fire . This includes a suspension of wood particulate concentration of 2.9 mg/m^3 and a concentration of carbon monoxide of 20 ppm. Environmental composition data for this scenario simulation was taken from @cite reinhardt2000smoke. Spirometry data was determined through expiratory flow curve taken during conscious respiration. @figureref {EnvironmentForestFireValidation} details the difference in mass deposited in two separate respiratory compartments (following from equations 1-7) and the difference in expiratory flow before and after smoke inhalation. Slight decreases to the expiratory flow maximum are seen and coincide fairly well with validated data @cite betchley1997pulmonary. 
 
 <center>
 <table border="0">
@@ -674,12 +674,12 @@ This scenario simulates exposure to a moderate/severe forest fire . This include
 </tr>
 </table>
 </center>
-<center><i>Figure 16. The top two figures show mass deposited into two different respiratory compartments during exposure to a forest fire. Different lung compartments have different mass deposition as a function of the particle mass distribution histogram. The lower figures show the difference in expiratory flow before and after smoke inhalation. The differences a very minor but are generally in line with validated data, Table 7.</i>
+<center><i>@figuredef {EnvironmentForestFireValidation} The top two figures show mass deposited into two different respiratory compartments during exposure to a forest fire. Different lung compartments have different mass deposition as a function of the particle mass distribution histogram. The lower figures show the difference in expiratory flow before and after smoke inhalation. The differences a very minor but are generally in line with validated data, @tableref {EnvironmentForestFireResults}.</i>
 </center><br>
 
 <center>
 <i>
-Table 7.
+@tabledef {EnvironmentForestFireResults}
 </i>
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Functional Vital Capacity (% from baseline PFT) 	|	Functional expiratory volume over 1 second (%Change)	|	Forced expiratory flow (25-75) (%Change)	|
@@ -692,7 +692,7 @@ There are two scenarios used to validate carbon monoxide poisoning. The first is
 
 <center>
 <i>
-Table 8.
+@tabledef {EnvironmentCarbonMonoxideResults}
 </i>
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Pulse Oximetry	|	Oxygen Saturation	|	Percent Carboxyhemoglobin	|
@@ -705,7 +705,7 @@ Table 8.
 
 <center>
 <i>
-Table 9.
+@tabledef {EnvironmentCarbonMonoxideExtremeResults}
 </i>
 </center>
 |	Action	|	Notes	|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Pulse Oximetry	|	Oxygen Saturation	|	Percent Carboxyhemoglobin	|
@@ -758,9 +758,9 @@ PMV - Predictive Mean Vote
 
 PPD - Predictive Percentage Dissatisfied
 
-The variables presented in Table 10 are used throughout this document.
+The variables presented in @tableref {EnvironmentVariables} are used throughout this document.
 <br><center>
-<i>Table 10. There are many parameters used to determine the %Environment&rsquo;s thermal state.</i>
+<i>@tabledef {EnvironmentVariables} There are many parameters used to determine the %Environment&rsquo;s thermal state.</i>
 </center>
 <center><a href="./Images/Environment/EnvironmentVariables.png"><img src="./Images/Environment/EnvironmentVariables.png" width="1100"></a></center>
 

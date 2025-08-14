@@ -55,20 +55,20 @@ Assessments are data collected and packaged to resemble a report or analysis tha
 
 Features, Capabilities, and Dependencies
 ----------------------------------------
-The %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. One of the primary functions of the %Tissue system is to control the transport of substances between the tissues and the blood. There are several transport models which help the %Tissue system perform that function. Figure 2 provides an overview of the extravascular space and the various modes of substance transport between the blood and the tissues. The %Tissue system also handles the conversion of substance (i.e. metabolic consumption and production).
+The %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. One of the primary functions of the %Tissue system is to control the transport of substances between the tissues and the blood. There are several transport models which help the %Tissue system perform that function. @figureref {TissueTransport} provides an overview of the extravascular space and the various modes of substance transport between the blood and the tissues. The %Tissue system also handles the conversion of substance (i.e. metabolic consumption and production).
 
 <center>
 @anchor tissue-fig2
 <a href="./Images/Tissue/tissueTransport.png"><img src="./Images/Tissue/tissueTransport.png" width="500"></a>
-<i>Figure 2. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
+<i>@figuredef {TissueTransport} The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
 
 ### Bulk Flow and Advection
-The movement of fluid between the intravascular and extravascular space is modeled using the @ref CircuitMethodology. Figure 3 shows a representative circuit diagram. In most cases, each tissue circuit node is connected to one and only one cardiovascular circuit node. However, the gut tissue compartment is a lumped representation of the abdominal viscera organ tissues, and thus the large intestine, small intestine, and splanchnic vascular circuit nodes all connect to the gut tissue circuit node.
+The movement of fluid between the intravascular and extravascular space is modeled using the @ref CircuitMethodology. @figureref {TissueCircuitExample} shows a representative circuit diagram. In most cases, each tissue circuit node is connected to one and only one cardiovascular circuit node. However, the gut tissue compartment is a lumped representation of the abdominal viscera organ tissues, and thus the large intestine, small intestine, and splanchnic vascular circuit nodes all connect to the gut tissue circuit node.
 
 <center>
 <a href="./Images/Tissue/TissueCircuitExample.png"><img src="./Images/Tissue/TissueCircuitExample.png" width="500"></a>
-<i>Figure 3. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
+<i>@figuredef {TissueCircuitExample} The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
 
 The volume in the tissue compartment is partitioned into the extracellular and intracellular space, as shown in [Figure 2](@ref tissue-fig2). The extracellular partition is connected to the circuit model, whereas the intercellular partition is seperate to allow for a non-linear control of the fluid flow dynamics. Although fluid moves according to the circuit model, there is no advective transport into the parenchyma. All substance transport into the tissue fluid space is simulated using one or more of the transport modes described below.
@@ -92,11 +92,11 @@ Where <i>&Delta;M</i> is the change in mass due to diffusion, *Q<sub>T</sub>* is
 ## Gradient Dependent Transport Processes
 
 ### Gas Exchange - Alveoli Transfer
-At the alveoli-pulmonary capillary interface, oxygen diffuses from the alveoli into the pulmonary capillaries, while carbon dioxide diffuses from the pulmonary capillaries into the alveoli. In reality, gas exchange at the alveoli is a multi-step process in space, where gases dissolve into liquid according to Henry's law and diffuse through liquid and across membranes according to Fick's law. In the model, alveolar gas exchange is driven by the partial pressure differential between the pulmonary capillaries and the alveoli in a one-step process, as shown in Figure 4. The partial pressures of each gas in the capillaries are calculated using @equationref {ppc}, while the partial pressures of each gas in the alveoli are calculated using @equationref {ppa}.
+At the alveoli-pulmonary capillary interface, oxygen diffuses from the alveoli into the pulmonary capillaries, while carbon dioxide diffuses from the pulmonary capillaries into the alveoli. In reality, gas exchange at the alveoli is a multi-step process in space, where gases dissolve into liquid according to Henry's law and diffuse through liquid and across membranes according to Fick's law. In the model, alveolar gas exchange is driven by the partial pressure differential between the pulmonary capillaries and the alveoli in a one-step process, as shown in @figureref {AlveolarGasExchange}. The partial pressures of each gas in the capillaries are calculated using @equationref {ppc}, while the partial pressures of each gas in the alveoli are calculated using @equationref {ppa}.
 
 <center>
 <a href="./Images/Tissue/AlveolarDiffusion.png"><img src="./Images/Tissue/AlveolarDiffusion.png" width="700"></a>
-<i>Figure 4. Alveolar gas exchange is a single-step, lumped-diffusion process driven by a partial pressure gradient, where the partial pressures are computed using @equationref {ppc} and @equationref {ppa}.</i>
+<i>@figuredef {AlveolarGasExchange} Alveolar gas exchange is a single-step, lumped-diffusion process driven by a partial pressure gradient, where the partial pressures are computed using @equationref {ppc} and @equationref {ppa}.</i>
 </center><br>
 
 <center>
@@ -152,7 +152,7 @@ Where *J<sub>x</sub>* is the mass flux (mass per area-time) of substance *X*, *[
 </center><br>
 
 ### Facilitated Diffusion
-Facilitated diffusion uses Michaelis-Menten kinetics to model the facilitated transport across a membrane. Note that this type of diffusion does not require energy and it is still a gradient-based transport mode. In contrast to simple diffusion, where substance flux can continue to increase with the concentration gradient, the flux is asymptotic in facilitated diffusion. The flux limit reflex a saturation of the membrane transporter mechanisms. However, at smaller concentration gradients, substance flux is higher in facilitated diffusion than with simple Fick's law diffusion. Figure 5 demonstrates the difference in flux between facilitated and simple diffusion. The mass flux given by Michaelis-Menten kinetics is computed using @equationref {michaelis_menten}, where *J<sub>max</sub>* is the maximum flux and *K<sub>m</sub> is the Michaelis constant.
+Facilitated diffusion uses Michaelis-Menten kinetics to model the facilitated transport across a membrane. Note that this type of diffusion does not require energy and it is still a gradient-based transport mode. In contrast to simple diffusion, where substance flux can continue to increase with the concentration gradient, the flux is asymptotic in facilitated diffusion. The flux limit reflex a saturation of the membrane transporter mechanisms. However, at smaller concentration gradients, substance flux is higher in facilitated diffusion than with simple Fick's law diffusion. @figureref {FacilitatedDiffusion} demonstrates the difference in flux between facilitated and simple diffusion. The mass flux given by Michaelis-Menten kinetics is computed using @equationref {michaelis_menten}, where *J<sub>max</sub>* is the maximum flux and *K<sub>m</sub> is the Michaelis constant.
 
 <center>
 \f[ J_{X} = \frac{\left([X]_{v} - [X]_{t} \right) * J_{max}}{K_{m} * \left([X]_{v} - [X]_{t} \right)} \f]
@@ -161,7 +161,7 @@ Facilitated diffusion uses Michaelis-Menten kinetics to model the facilitated tr
 
 <center>
 <a href="./plots/Tissue/FluxVsGradient.jpg"><img src="./plots/Tissue/FluxVsGradient.jpg" width="900"></a>
-<i>Figure 5. In simple diffusion based on Fick's law, the substance flux is directly proportional to the concentration gradient. There is no upper limit to transport. In contrast, the flux is asymptotic in facilitated diffusion, reflecting a saturation of transporters in the membrane. These two transport processes can work in concert.</i>
+<i>@figuredef {FacilitatedDiffusion} In simple diffusion based on Fick's law, the substance flux is directly proportional to the concentration gradient. There is no upper limit to transport. In contrast, the flux is asymptotic in facilitated diffusion, reflecting a saturation of transporters in the membrane. These two transport processes can work in concert.</i>
 </center><br>
 
 ## Gradient Independent Transport Processes
@@ -170,11 +170,11 @@ Active transport is a coarse model of the energy-requiring transport processes (
 
 @anchor tissue-metabolic-production
 ## Metabolic Production and Consumption
-Metabolism is simulated by production and consumption of substances. The basis for the metabolic production and consumption calculations is the  non-protein respiratory quotient (RQ). This value is used to determine the fraction of the metabolic energy that is produced through carbohydrate (glucose) consumption. The curve is determined from data obtained from Gropper and Smith @cite gropper2013nutrition and is displayed in Figure 6.
+Metabolism is simulated by production and consumption of substances. The basis for the metabolic production and consumption calculations is the  non-protein respiratory quotient (RQ). This value is used to determine the fraction of the metabolic energy that is produced through carbohydrate (glucose) consumption. The curve is determined from data obtained from Gropper and Smith @cite gropper2013nutrition and is displayed in @figureref {RespiratoryQuotient}.
 
 <center>
 <a href="./plots/Tissue/Macronutrient_Consumption.jpg"><img src="./plots/Tissue/Macronutrient_Consumption.jpg" width="900"></a>
-<i>Figure 6. The Non-Protein %Respiratory Quotient displays the relationship between the fraction of the metabolism that is generated through carbohydrate metabolism vs. the fraction that is generated via fat metabolism. There is an inverse relationship between the fractions since the metabolic rate is entirely derived from glucose at a RQ of 1.</i>
+<i>@figuredef {RespiratoryQuotient} The Non-Protein %Respiratory Quotient displays the relationship between the fraction of the metabolism that is generated through carbohydrate metabolism vs. the fraction that is generated via fat metabolism. There is an inverse relationship between the fractions since the metabolic rate is entirely derived from glucose at a RQ of 1.</i>
 </center><br>
 
 The fraction of carbohydrates consumed determines the removal of glucose, with the remaining portion of the fraction determining the removal of tristearin. Glucose is removed in one of two pathways: aerobic metabolism or anaerobic metabolism. The ratio of aerobic to anaerobic metabolism is determined from an anaerobic weighting factor. This factor is defined as the current oxygen partial pressure in the tissue over a resting value of 40 mmHg @cite carreau2011oxygen. The anaerobic weight is shown in @equationref {wt}.
@@ -183,9 +183,9 @@ The fraction of carbohydrates consumed determines the removal of glucose, with t
 \f[w(t) = \frac{P_{O_{2}}(t)}{P_{O_{2,rest}}} \f]
 <i>@equationdef {wt}</i>
 </center><br>
-After the fractions of the metabolism have been defined, the exact consumption rates can be determined from molar ratios of nutrient input to ATP (energy) output. Table 1 shows the molar input to output ratios.
+After the fractions of the metabolism have been defined, the exact consumption rates can be determined from molar ratios of nutrient input to ATP (energy) output. @tableref {TissueMolarRatios} shows the molar input to output ratios.
 <br><center>
-*Table 1. The molar ratio of nutrient to output of ATP @cite gropper2013nutrition. This gives ratios of the molar amount of each nutrient required to the moles of ATP produced*
+*@tabledef {TissueMolarRatios} The molar ratio of nutrient to output of ATP @cite gropper2013nutrition. This gives ratios of the molar amount of each nutrient required to the moles of ATP produced*
 </center>
 |Molar Ratio                              		|Value                     |
 |------------------------                     	|------------------------  |
@@ -198,9 +198,9 @@ After the fractions of the metabolism have been defined, the exact consumption r
 |Lactate To ATP                                 |1/36                      |
 |Acetoacetate To ATP                            |1/24                      |
 
-The substance to ATP ratios are used to determine the consumption and production rates in the tissues, given in units of moles per time in Table 2. 
+The substance to ATP ratios are used to determine the consumption and production rates in the tissues, given in units of moles per time in @tableref {TissueConsumptionEquations}. 
 <br><center>
-*Table 2. The equations for nutrient and gas consumption/production are displayed for the following metabolic substances: glucose, lipids, acetoacetic acid,
+*@tabledef {TissueConsumptionEquations} The equations for nutrient and gas consumption/production are displayed for the following metabolic substances: glucose, lipids, acetoacetic acid,
 lactic acid, oxygen, and carbon dioxide.*
 </center>
 | Substance | Consumption | Production | Tissues |
@@ -242,12 +242,12 @@ For severity mapping, dehydration categories are defined based on the fraction o
  - Extreme: > 10% of body weight
  - Fatal: > 15% of body weight
 
-These values were mapped to corresponding severities to derive a best-fit equation for total fluid loss, given a specific severity input. Figure 7 illustrates the applied equation in the model.
+These values were mapped to corresponding severities to derive a best-fit equation for total fluid loss, given a specific severity input. @figureref {DehydrationSeverity} illustrates the applied equation in the model.
 
 <center>
 <a href="./Images/Tissue/DehydrationSeverityMapping.png"><img src="./Images/Tissue/DehydrationSeverityMapping.png" width="500"></a>
 
-<i>Figure 7. The dehydration severity mapping.</i>
+<i>@figuredef {DehydrationSeverity} The dehydration severity mapping.</i>
 </center><br>
 
 Special attention is given to fluid removal from the cardiovascular and tissue circuits, ensuring accurate handling of compliances due to their temporal nature. Pressure values from the previous timestep are adjusted to align with the volume change, maintaining the same pressure-volume relationship as if the fluid loss occurred over an extended period.
@@ -276,9 +276,9 @@ Results and Conclusions
 
 Verification
 -------------
-%Verification of the diffusion methods is achieved through several units tests. One of the simple diffusion unit tests was used to generate data for Figure 8. The figure shows the time-evolution of the concentrations of four different compartments. Table 3 shows the initial conditions. Note that the units are arbitrary, thus not shown. The red, blue, and green compartment all share a boundary with the yellow compartment, but not with each other.
+%Verification of the diffusion methods is achieved through several units tests. One of the simple diffusion unit tests was used to generate data for @figureref {DiffusionValidation}. The figure shows the time-evolution of the concentrations of four different compartments. @tableref {TissueDiffusionInitialConditions} shows the initial conditions. Note that the units are arbitrary, thus not shown. The red, blue, and green compartment all share a boundary with the yellow compartment, but not with each other.
 <br><center>
-*Table 3. Initial conditions for a four compartment simple diffusion unit test.*
+*@tabledef {TissueDiffusionInitialConditions} Initial conditions for a four compartment simple diffusion unit test.*
 </center>
 | Compartment | Volume | Mass | Concentration |
 | ----------- | ------ | ---- | ------------- |
@@ -290,7 +290,7 @@ Verification
 <center>
 <a href="./plots/Tissue/ConcentrationEquilibration.jpg"><img src="./plots/Tissue/ConcentrationEquilibration.jpg" width="900"></a>
 
-<i>Figure 8. Four compartments start with different concentrations which equilibrate after some time. Initial conditions are shown in Table 3 above.</i>
+<i>@figuredef {DiffusionValidation} Four compartments start with different concentrations which equilibrate after some time. Initial conditions are shown in @tableref {TissueDiffusionInitialConditions} above.</i>
 </center><br>
 
 Validation - Resting Physiologic State
@@ -298,7 +298,7 @@ Validation - Resting Physiologic State
 The tissue system volumes are validated using data from @cite valentin2002icrp.  
 
 <br><center>
-*Table 4. Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
+*@tabledef {TissueSystemValidation} Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
 </center>
 
 <b>Standard Male</b>
@@ -310,7 +310,7 @@ The tissue system volumes are validated using data from @cite valentin2002icrp.
 @insert ./test_results/tables/Tissue-StandardFemaleValidationTable.md
 
 <br><center>
-*Table 5. Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
+*@tabledef {TissueCompartmentValidation} Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
 </center>
 
 <b>Standard Male</b>
@@ -326,10 +326,10 @@ More validation of this system can be found in the system outputs of all other s
 Validation - Actions and Conditions
 -----------------------
 
-The dehydration model was validated using three distinct scenarios representing mild, moderate, and severe dehydration. The simulation outputs for each scenario were rigorously validated. Quantitative validation was applied wherever possible, with qualitative validation employed in other areas by comparing the engine output against expected trends and values. Table 6 presents the results for a standard healthy patient alongside those for mild, moderate, and severe dehydration. The validation is specified with a color-coded comparison, with green indicating good agreement with trends/values, yellow indicating moderate agreement with trends/values, and red indicating poor agreement with trends/values. The dehydration model outputs shows good overall agreement with the predicted trends.
+The dehydration model was validated using three distinct scenarios representing mild, moderate, and severe dehydration. The simulation outputs for each scenario were rigorously validated. Quantitative validation was applied wherever possible, with qualitative validation employed in other areas by comparing the engine output against expected trends and values. @tableref {TissueDehydrationValidation} presents the results for a standard healthy patient alongside those for mild, moderate, and severe dehydration. The validation is specified with a color-coded comparison, with green indicating good agreement with trends/values, yellow indicating moderate agreement with trends/values, and red indicating poor agreement with trends/values. The dehydration model outputs shows good overall agreement with the predicted trends.
 
 <br><center>
-*Table 6. Results for the dehydration validation scenarios.*
+*@tabledef {TissueDehydrationValidation} Results for the dehydration validation scenarios.*
 </center>
 
 | Parameter                         | Healthy Value | Mild Value | Mild Expected                                                      | Moderate Value | Moderate Expected                                                 | Severe Value | Severe Expected                                                   |

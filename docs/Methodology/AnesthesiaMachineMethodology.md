@@ -85,11 +85,11 @@ in the Features section below. Future releases will provide a more rigorously te
 
 ### Preprocess
 
-The ventilator and valves operate via time-based cycles based on the settings. There are four phases to each complete cycle, as shown in Figure 1.
+The ventilator and valves operate via time-based cycles based on the settings. There are four phases to each complete cycle, as shown in @figureref {AnesthesiaVentilatoryCycles}.
 
 <center>
 <a href="./Images/AnesthesiaMachine/Cycles.png"><img src="./Images/AnesthesiaMachine/Cycles.png" width="550"></a>
-<i>Figure 1. Flow diagram showing the ventilatory cycles as implemented in the Anesthesia Machine.</i>
+<i>@figuredef {AnesthesiaVentilatoryCycles} Flow diagram showing the ventilatory cycles as implemented in the Anesthesia Machine.</i>
 </center> 
 
 #### Process Actions
@@ -198,12 +198,12 @@ unidirectional valve switches and allow gas flow into and out of the
 lung. The ventilator compartment supports positive-pressure ventilation for oxygen delivery and ventilation. Among the remaining compartments, 
 the CO2 absorber canister compartment belongs to an important part of the
 breathing circle of the Anesthesia System that reduces the amount of
-inhaled CO2 in re-breathed gas. The diagram in Figure 3 presents the
+inhaled CO2 in re-breathed gas. The diagram in @figureref {AnesthesiaCompartmental} presents the
 compartmental view of the Anesthesia Delivery System.
 
 <center>
 <a href="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png" width="650"></a>
-<i>Figure 3. Compartmental view of the Anesthesia System. The Anesthesia 
+<i>@figuredef {AnesthesiaCompartmental} Compartmental view of the Anesthesia System. The Anesthesia 
 Machine consists of seven major compartments, as shown in the breathing circuit. 
 These are the mask/endotracheal tube compartment, the Y-piece, the inspiratory 
 and expiratory limbs, the fresh gas inlet, the CO2 absorber, 
@@ -249,7 +249,7 @@ source that facilitates appropriate pressure maintenance.
 
 <center>
 <a href="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"></a>
-<i>Figure 4. Circuit diagram of the Anesthesia Machine. The circuit 
+<i>@figuredef {AnesthesiaCircuit} Circuit diagram of the Anesthesia Machine. The circuit 
 employs the ventilator as a driver pressure source. 
 One of the two pressure sources is selected using the switch. 
 The fresh gas inlet serves as a current source that drives fresh gas and anesthetic drugs 
@@ -284,14 +284,14 @@ respiration rate, inspiration-to-expiration ratio, relief valve
 pressure, and positive end expired pressure as input parameters. 
 Additionally, the model assigns a set of parameters to control the fresh gas
 flow and the various gas fractions delivered to the breathing circuit.
-Table 1 lists the Anesthesia Machine configuration settings
+@tableref {AnesthesiaConfiguration} lists the Anesthesia Machine configuration settings
 currently used in the engine. It should be noted that the current
 version of the Anesthesia Machine Model is restricted to the values
 listed in the table until a wide range of values are tested. Future
 versions will allow user-selected Anesthesia Machine setting parameters.
 
 <center>
-<i>Table 1. The table shows the basic settings needed as inputs to run the 
+<i>@tabledef {AnesthesiaConfiguration} The table shows the basic settings needed as inputs to run the 
 anesthesia machine</i>
 </center>
 |	Parameter	|	Description 	|
@@ -373,7 +373,7 @@ failures. Breathing circuit disconnection is a leading cause of critical
 incidents in anesthesia @cite roth2007anesthesia @cite Morgan2006Clinical .
 Disconnections, which are effectively leaks, can be complete or partial. Some of these
 failures are modeled in the engine by changing a resistance value based on
-the severity. Figure 5 shows the resistance value that is set based on
+the severity. @figureref {AnesthesiaLeakResistance} shows the resistance value that is set based on
 the insult severity and will be referenced throughout the rest of this
 section. We have chosen a resistance of 1000 cmH2O-s/L to be associated with a fully open 
 switch (closed valve) and a resistance of 0.001 cmH2O-s/L to represent a fully 
@@ -384,7 +384,7 @@ reaches the patient in the same way.
 
 <center>
 <a href="./Images/AnesthesiaMachine/AMSeverityMap.png"><img src="./Images/AnesthesiaMachine/AMSeverityMap.png"></a>
-<i>Figure 5. This plot shows the resistance value that is set based on the
+<i>@figuredef {AnesthesiaLeakResistance} This plot shows the resistance value that is set based on the
 leak severity modifier. The severity is mapped logarithmically in a
 manner that allows the highest severity to allow virtually all flow through
 the path and the lowest severity to allow almost no flow through the
@@ -402,7 +402,7 @@ One of the most common equipment failures in the anesthetic delivery system
 is the mask leak. If a mask is being used on an Anesthesia Machine and is improperly
 secured or has damage, leaks can occur. The engine models mask
 leaks by varying a resistance based on the severity in the manner previously
-described and shown in Figure 5.
+described and shown in @figureref {AnesthesiaLeakResistance}.
 
 #### Tube Leak
 
@@ -410,14 +410,14 @@ Endotracheal tube cuff leaks are often caused by a structural defects in the end
 but may also arise from improper placement or a failure to fully inflate the cuff.
 Large leaks can lead to inadequate ventilation. The engine models endotracheal tube 
 leaks by varying a resistance based on severity
-in the manner previously described and shown in Figure 5.
+in the manner previously described and shown in @figureref {AnesthesiaLeakResistance}.
 
 #### Y-Piece Disconnect
 
 The most common disconnection site is at the Y-piece @cite roth2007anesthesia @cite Morgan2006Clinical .
 The engine models endotracheal tube leaks by varying a resistance based on the severity in 
 the manner previously described and shown
-in Figure 5. In the case of both a tube and Y-piece leak, the severities are combined and limited to a 
+in @figureref {AnesthesiaLeakResistance}. In the case of both a tube and Y-piece leak, the severities are combined and limited to a 
 total value of one.
 
 ### Valve Leaks
@@ -428,7 +428,7 @@ between very high and very low resistance values to mimic a switch opening and c
 every breath cycle. This prevents rebreathing of carbon 
 dioxide during the respiration cycle. If there is a leak present, the valve closed (i.e., high resistance) 
 value is modified based on the severity
-in the manner previously described and shown in Figure 5.
+in the manner previously described and shown in @figureref {AnesthesiaLeakResistance}.
 
 ### Valve Obstructions
 
@@ -436,7 +436,7 @@ Anesthesia Machine tracheal tubes can become kinked, and hoses throughout the br
 mechanical forces that can impinge the flow @cite roth2007anesthesia @cite Morgan2006Clinical .
 The engine models both inspiratory and expiratory valve obstructions similarly to leaks, by modifying the valve resistance values. If there is an
 obstruction present, the valve open (i.e., low resistance) value is modified based on the severity in the manner previously described and shown
-in Figure 5.
+in @figureref {AnesthesiaLeakResistance}.
 
 ### Ventilator Pressure Loss
 
@@ -487,7 +487,7 @@ and a condition the alerts the user when the pressure has reached the threshold 
 @anchor anesthesia-settingsvalidation
 ## Validation - Settings
 
-The Anesthesia Machine Settings are fully dynamic and do not have any bounds enforced.  A scenario that varies these settings in several different combinations is included with the code base and produces the outputs shown in Figure 6.  This scenario also tests the relief valve functionality and causes the active event to be logged when the Ventilator Pressure is set too high.
+The Anesthesia Machine Settings are fully dynamic and do not have any bounds enforced.  A scenario that varies these settings in several different combinations is included with the code base and produces the outputs shown in @figureref {AnesthesiaSettingsValidation}.  This scenario also tests the relief valve functionality and causes the active event to be logged when the Ventilator Pressure is set too high.
 
 <center>
 <table border="0">
@@ -504,14 +504,14 @@ The Anesthesia Machine Settings are fully dynamic and do not have any bounds enf
 </tr>
 </table>
 </center>
-<center><i>Figure 6. These plots show the successful implementation of varying Anesthesia Machine settings. The first region has the machine connected and provides supplemental Oxygen only. The other three regions are after Succinylcholine is administered to stop unassisted breathing. The upper plot shows compartment data from the ventilator and relief valve. The relief valve is shown to be active by the blue flow plot when the ventilator pressure is set too high. These plots exemplify the interconnectivity of the Anesthesia Machine with the %Respiratory System.</i></center><br>
+<center><i>@figuredef {AnesthesiaSettingsValidation} These plots show the successful implementation of varying Anesthesia Machine settings. The first region has the machine connected and provides supplemental Oxygen only. The other three regions are after Succinylcholine is administered to stop unassisted breathing. The upper plot shows compartment data from the ventilator and relief valve. The relief valve is shown to be active by the blue flow plot when the ventilator pressure is set too high. These plots exemplify the interconnectivity of the Anesthesia Machine with the %Respiratory System.</i></center><br>
 @anchor anesthesia-actionsvalidation
 ## Validation - Actions
 
 All equipment failures in the Anesthesia Machine system were validated quantitatively where possible and qualitatively elsewhere by comparing the engine output to expected trends and values. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
 
 <center><br>
-Table 2. Cumulative validation results for Anesthesia Machine specific conditions and actions scenarios.
+@tabledef {AnesthesiaValidationSummary} Cumulative validation results for Anesthesia Machine specific conditions and actions scenarios.
 </center>
 
 |	Key	|
@@ -562,10 +562,10 @@ with increasing severity.
 </tr>
 </table>
 </center>
-<center><i>Figure 7. Select outputs from the Mask Leak scenario. MaskLeakVaried, EndotrachealTubeLeakVaried, and YPieceDisconnectVaried all give the same results.</i></center>
+<center><i>@figuredef {AnesthesiaMaskLeak} Select outputs from the Mask Leak scenario. MaskLeakVaried, EndotrachealTubeLeakVaried, and YPieceDisconnectVaried all give the same results.</i></center>
 
 <center><br>
-<i>Table 3. Validation matrix for physiological responses due to varying severities of leaks. MaskLeakVaried, EndotrachealTubeLeakVaried, and YPieceDisconnectVaried all give the same results.</i>
+<i>@tabledef {AnesthesiaLeakValidation} Validation matrix for physiological responses due to varying severities of leaks. MaskLeakVaried, EndotrachealTubeLeakVaried, and YPieceDisconnectVaried all give the same results.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -600,10 +600,10 @@ mask to supply the gas. The severity of the leak was varied.
 </tr>
 </table>
 </center>
-<center><i>Figure 8. Select outputs from the expiratory valve leak scenario.</i></center>
+<center><i>@figuredef {AnesthesiaExpiratoryValveLeak} Select outputs from the expiratory valve leak scenario.</i></center>
 
 <center><br>
-<i>Table 4. Validation matrix for physiological responses due to varying severities of an expiratory valve leak.</i>
+<i>@tabledef {AnesthesiaExpiratoryValveLeakValidation} Validation matrix for physiological responses due to varying severities of an expiratory valve leak.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -633,10 +633,10 @@ mask to supply the gas. The severity of the leak was varied.
 </tr>
 </table>
 </center>
-<center><i>Figure 9. Select outputs from the inspiratory valve leak scenario.</i></center>
+<center><i>@figuredef {AnesthesiaInspiratoryValveLeak} Select outputs from the inspiratory valve leak scenario.</i></center>
 
 <center><br>
-<i>Table 5. Validation matrix for physiological responses due to varying severities of an inspiratory valve leak.</i>
+<i>@tabledef {AnesthesiaInspiratoryValveLeakValidation} Validation matrix for physiological responses due to varying severities of an inspiratory valve leak.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -675,10 +675,10 @@ cessation of respiration or tidal volume due to flow obstruction. Since the neur
 </tr>
 </table>
 </center>
-<center><i>Figure 10. Select outputs from the expiratory valve obstruction scenario.</i></center>
+<center><i>@figuredef {AnesthesiaExpiratoryValveObstruction} Select outputs from the expiratory valve obstruction scenario.</i></center>
 
 <center><br>
-<i>Table 6. Validation matrix for physiological responses due to varying severities of an expiratory valve obstruction.</i>
+<i>@tabledef {AnesthesiaExpiratoryValveObstructionValidation} Validation matrix for physiological responses due to varying severities of an expiratory valve obstruction.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -707,10 +707,10 @@ cessation of respiration or tidal volume due to flow obstruction. Since the neur
 </tr>
 </table>
 </center>
-<center><i>Figure 11. Select outputs from the inspiratory valve obstruction scenario.</i></center>
+<center><i>@figuredef {AnesthesiaInspiratoryValveObstruction} Select outputs from the inspiratory valve obstruction scenario.</i></center>
 
 <center><br>
-<i>Table 7. Validation matrix for physiological responses due to varying severities of an inspiratory valve obstruction.</i>
+<i>@tabledef {AnesthesiaInspiratoryValveObstructionValidation} Validation matrix for physiological responses due to varying severities of an inspiratory valve obstruction.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -743,10 +743,10 @@ The severity of the failure was varied. At the full failure, a cessation of resp
 </tr>
 </table>
 </center>
-<center><i>Figure 12. Select outputs from the ventilator pressure loss scenario.</i></center>
+<center><i>@figuredef {AnesthesiaVentilatorPressureLoss} Select outputs from the ventilator pressure loss scenario.</i></center>
 
 <center><br>
-<i>Table 8. Validation matrix for physiological responses due to varying severities of a ventilator pressure loss.</i>
+<i>@tabledef {AnesthesiaVentilatorPressureLossValidation} Validation matrix for physiological responses due to varying severities of a ventilator pressure loss.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -780,10 +780,10 @@ remain stable. Carbon dioxide in the blood increases.
 </tr>
 </table>
 </center>
-<center><i>Figure 13. Select outputs from the soda lime failure scenario.</i></center>
+<center><i>@figuredef {AnesthesiaSodaLimeFailure} Select outputs from the soda lime failure scenario.</i></center>
 
 <center><br>
-<i>Table 9. Validation matrix for physiological responses due to varying severities of a soda lime failure.</i>
+<i>@tabledef {AnesthesiaSodaLimeFailureValidation} Validation matrix for physiological responses due to varying severities of a soda lime failure.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -817,10 +817,10 @@ observed for all other severity levels.
 </tr>
 </table>
 </center>
-<center><i>Figure 14. Select output from the vaporizer failure scenario.</i></center>
+<center><i>@figuredef {AnesthesiaVaporizerFailure} Select output from the vaporizer failure scenario.</i></center>
 
 <center><br>
-<i>Table 10. Validation matrix for physiological responses due to varying severities of a vaporizer failure.</i>
+<i>@tabledef {AnesthesiaVaporizerFailureValidation} Validation matrix for physiological responses due to varying severities of a vaporizer failure.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Drug Plasma Concentration (ug/mL)	|
@@ -858,10 +858,10 @@ oxygen by turning off the failure brings the oxygen level to normal.
 </tr>
 </table>
 </center>
-<center><i>Figure 15. Select outputs from the oxygen wall pressure loss scenario.</i></center>
+<center><i>@figuredef {AnesthesiaOxygenWallPressureLoss} Select outputs from the oxygen wall pressure loss scenario.</i></center>
 
 <center><br>
-<i>Table 11. Validation matrix for physiological responses due to an oxygen wall pressure loss.</i>
+<i>@tabledef {AnesthesiaOxygenWallPressureLossValidation} Validation matrix for physiological responses due to an oxygen wall pressure loss.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|
@@ -902,10 +902,10 @@ a decline in oxygen saturation and arterial oxygen partial pressure due to a fai
 </tr>
 </table>
 </center>
-<center><i>Figure 16. Select outputs from the oxygen tank pressure loss scenario.</i></center>
+<center><i>@figuredef {AnesthesiaOxygenTankPressureLoss} Select outputs from the oxygen tank pressure loss scenario.</i></center>
 
 <center><br>
-<i>Table 12. Validation matrix for physiological responses due to an oxygen tank pressure loss.</i>
+<i>@tabledef {AnesthesiaOxygenTankPressureLossValidation} Validation matrix for physiological responses due to an oxygen tank pressure loss.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation	|	Tidal Volume (mL)	|	Aorta Oxygen Partial Pressure (mmHg)	|	Aorta Carbon Dioxide Partial Pressure (mmHg)	|

@@ -42,7 +42,7 @@ The acid-base and blood gas distribution model is based on the Stewart model for
 \f[\ \ \left[Na^+\right]+\left[K^+\right]+\left[I^{n+}\right]+\left[Cl^-\right]+\left[La^-\right]+\left[Ket^-\right]+\left[I^{n-}\right]+{\mathrm{[HCO}}^-_{\mathrm{3}}]-\left[A^-\right]\ =0 \f]
 <i>@equationdef {strong_ions}</i>
 </center><br>
-Where *I<sup>n,+/-</sup>* represents the n anions and cations not included in the engine. All symbols are defined in [Table 6](@ref bloodchemistry-symbols). Note that some ions, such as carbonate, are in such minute concentrations that their contribution to electrical neutrality is negligible. These ions are neglected and thus excluded from @equationref {strong_ions}.
+Where *I<sup>n,+/-</sup>* represents the n anions and cations not included in the engine. All symbols are defined in [@tableref {BloodChemistrySymbols}](@ref bloodchemistry-symbols). Note that some ions, such as carbonate, are in such minute concentrations that their contribution to electrical neutrality is negligible. These ions are neglected and thus excluded from @equationref {strong_ions}.
 
 It is convenient to define a concentration called strong ion difference [SID], described by @equationref {strong_ion_diff} which reduces the electroneutrality to @equationref {electroneutrality}.
 
@@ -207,7 +207,7 @@ The respiratory alkalosis event is triggered when the blood pH increases above t
 
 <center>
 <a href="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png"><img src="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png"></a>
-<i>Figure 2. The acidosis and alkalosis events are broken down into either metabolic or respiratory induced. Metabolic induced acidosis/alkalosis is driven from a shift in bicarbonate
+<i>@figuredef {BloodChemistryAcidBaseEvents} The acidosis and alkalosis events are broken down into either metabolic or respiratory induced. Metabolic induced acidosis/alkalosis is driven from a shift in bicarbonate
 while respiratory induced acidosis/alkalosis is due to a chance in arterial carbon dioxide. The shift between either acidosis or alkalosis occurs at a blood pH of 7.4.</i>
 </center><br>
 
@@ -233,10 +233,10 @@ Results and Conclusions
 
 Validation - Resting Physiologic State
 --------------------------------------
-Published values from the literature were compared to the engine output to perform a quantitative validation of the blood chemistry resting physiology. Table 1 shows the validation results.  The validation is specified with a color coding system, with green indicating a less than 10% error, yellow indicating a less than 30% error, and red indicating a greater than 30% error when comparing the engine output to the published values. All references are noted in the table.
+Published values from the literature were compared to the engine output to perform a quantitative validation of the blood chemistry resting physiology. @tableref {BloodChemistryRestingValidation} shows the validation results.  The validation is specified with a color coding system, with green indicating a less than 10% error, yellow indicating a less than 30% error, and red indicating a greater than 30% error when comparing the engine output to the published values. All references are noted in the table.
 
 <center>
-*Table 1. Results of the resting physiology validation of the Blood Chemistry System.*
+*@tabledef {BloodChemistryRestingValidation} Results of the resting physiology validation of the Blood Chemistry System.*
 </center>
 
 <b>Standard Male</b>
@@ -252,7 +252,7 @@ Overall, the engine meets validation, with all but two of the validation paramet
 Validation - Conditions and Actions
 -----------------------
 ## Hemorrhage
-The Blood Chemistry system does not have any conditions or actions directly embedded, but the outputs of Blood Chemistry are dependent on the actions and conditions of other systems. An example is the Hemorrhage insult, an action of the [Cardiovascular](@ref CardiovascularMethodology) System. Figure 2 shows the effects of hemorrhage and fluid resuscitation with saline on the total blood volume and the total hemoglobin for the patient.
+The Blood Chemistry system does not have any conditions or actions directly embedded, but the outputs of Blood Chemistry are dependent on the actions and conditions of other systems. An example is the Hemorrhage insult, an action of the [Cardiovascular](@ref CardiovascularMethodology) System. @figureref {BloodChemistryHemorrhage} shows the effects of hemorrhage and fluid resuscitation with saline on the total blood volume and the total hemoglobin for the patient.
 
 <center>
 <a href="./plots/BloodChemistry/Volume.jpg"><img src="./plots/BloodChemistry/Volume.jpg" width="1100"></a>
@@ -260,16 +260,16 @@ The Blood Chemistry system does not have any conditions or actions directly embe
 <a href="./plots/BloodChemistry/BloodChemistryLegend.jpg"><img src="./plots/BloodChemistry/BloodChemistryLegend.jpg" width="500"></a>
 </center>
 <center>
-<i>Figure 3. The total blood volume decreases with the hemorrhage, then increases as saline is infused. The total hemoglobin also decreases with the hemorrhage but remains reduced after the hemorrhage is stopped.</i>
+<i>@figuredef {BloodChemistryHemorrhage} The total blood volume decreases with the hemorrhage, then increases as saline is infused. The total hemoglobin also decreases with the hemorrhage but remains reduced after the hemorrhage is stopped.</i>
 </center><br>
 
 @anchor bloodchemistry-validation-assessments
 Validation - Assessments
 ------------------------
-There are three asessments in the Blood Chemistry system. Each assessment provides all of the values associated with a specific "blood test" as a single output. The three assessments currently supported are an arterial blood gas test, a metabolic panel (Chem-14), and a complete blood count. These assessments were validated with published data, as shown in Table 2, Table 3, and Table 4, respectively. As with the resting physiology, the references for all values are provided and the results are color coded. 
+There are three asessments in the Blood Chemistry system. Each assessment provides all of the values associated with a specific "blood test" as a single output. The three assessments currently supported are an arterial blood gas test, a metabolic panel (Chem-14), and a complete blood count. These assessments were validated with published data, as shown in @tableref {BloodChemistryArterialBloodGas}, @tableref {BloodChemistryMetabolicPanel}, and @tableref {BloodChemistryCompleteBloodCount}, respectively. As with the resting physiology, the references for all values are provided and the results are color coded. 
 
 <center>
-*Table 2. Results of the arterial blood gas test as compiled during the healthy resting physiology.*
+*@tabledef {BloodChemistryArterialBloodGas} Results of the arterial blood gas test as compiled during the healthy resting physiology.*
 </center>
 
 <b>Standard Male</b>
@@ -281,7 +281,7 @@ There are three asessments in the Blood Chemistry system. Each assessment provid
 @insert ./test_results/tables/ArterialBloodGasTest-StandardFemaleValidationTable.md
 
 <center>
-*Table 3. Results of the metabolic panel as compiled during the healthy resting physiology.*
+*@tabledef {BloodChemistryMetabolicPanel} Results of the metabolic panel as compiled during the healthy resting physiology.*
 </center>
 
 <b>Standard Male</b>
@@ -293,7 +293,7 @@ There are three asessments in the Blood Chemistry system. Each assessment provid
 @insert ./test_results/tables/CompleteMetabolicPanel-StandardFemaleValidationTable.md
 
 <center>
-*Table 4. Results of the complete blood count as compiled during the healthy resting physiology.*
+*@tabledef {BloodChemistryCompleteBloodCount} Results of the complete blood count as compiled during the healthy resting physiology.*
 </center>
 
 <b>Standard Male</b>
@@ -309,17 +309,17 @@ All of the measures in the two Blood Chemistry assessments meet validation.
 @anchor bloodchemistry-fourCompartment
 Four Compartment Test
 ------------------------
-As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of the engine was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in Figure 4 below.
+As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of the engine was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in @figureref {BloodChemistryFourCompartment} below.
 
 <center>
 <a href="./Images/BloodChemistry/BloodChemistryFourCompartment.png"><img src="./Images/BloodChemistry/BloodChemistryFourCompartment.png" width="600"></a>
-<i>Figure 4. The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.</i>
+<i>@figuredef {BloodChemistryFourCompartment} The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.</i>
 </center><br>
 
-Pressures, volumes, and substances were initialized to good values (see Table 5 below), and then the simplified Four Compartment system was run as the engine would run the normal, complete model using the Preprocess, Process, Postprocess paradigm. In the Preprocess step, oxygen is removed and carbon dioxide is added in the Capillaries to simulate metabolism while oxygen is added and carbon dioxide is removed in the Pulmonary compartment to represent respiration. If a tissue compartment was present, diffusion could also occur in this stage. In the Process step, circuit calculation and substance transport are done. Then, the Postprocess step moves the "Next" values to "Current". For more information about this paradigm, see @ref CircuitMethodology.
+Pressures, volumes, and substances were initialized to good values (see @tableref {BloodChemistryFourCompartmentInitial} below), and then the simplified Four Compartment system was run as the engine would run the normal, complete model using the Preprocess, Process, Postprocess paradigm. In the Preprocess step, oxygen is removed and carbon dioxide is added in the Capillaries to simulate metabolism while oxygen is added and carbon dioxide is removed in the Pulmonary compartment to represent respiration. If a tissue compartment was present, diffusion could also occur in this stage. In the Process step, circuit calculation and substance transport are done. Then, the Postprocess step moves the "Next" values to "Current". For more information about this paradigm, see @ref CircuitMethodology.
 
 <center>
-*Table 5. Initial values for the Four Compartment test. Variables with an asterisk indicate that the values were pulled from a simulation run to a stable point.*
+*@tabledef {BloodChemistryFourCompartmentInitial} Initial values for the Four Compartment test. Variables with an asterisk indicate that the values were pulled from a simulation run to a stable point.*
 | Variable | Initial Value |
 | :---------------- | :---------- |
 | Veins Pressure | 4 mmHg @cite Leeuwen2015laboratory |
@@ -355,7 +355,7 @@ Pressures, volumes, and substances were initialized to good values (see Table 5 
 
 Because the Four Compartment test is initialized to good values, and because of the design of the engine and Blood Chemistry system, output values should be within physiological ranges. Indeed, the outputs shown below reflect the proper function of the Blood Chemistry system.
 <center>
-*Table 6. Stable results of the Four Compartment test.*
+*@tabledef {BloodChemistryFourCompartmentResults} Stable results of the Four Compartment test.*
 Variable			|	Four Compartment Test Ending Value	|	Valid Value	|
 ------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|
 Arteries HCO3			|	0.158	|<span class="success">	[0.134, 0.159] g/dL @cite valtin1995renal	</span>|
@@ -403,7 +403,7 @@ Appendices
 Glossary
 --------
 <center>
-*Table 7. List of acronyms and symbols.*
+*@tabledef {BloodChemistrySymbols} List of acronyms and symbols.*
 | Symbol or Acronym | Description |
 | :---------------- | :---------- |
 | <i>A<sup>-</sup></i> | The sum of all weak anions that are the conjugate base of all non-volatile weak acids |

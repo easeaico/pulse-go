@@ -33,7 +33,7 @@ Each patient parameter falls into one of three categories:
 - <b>Optional:</b> These parameters can be optionally explicitly set by the user. Many optional values have bounds associated with them to ensure a healthy initial patient.
 - <b>Unallowed:</b> These parameters are calculated or determined through simulation based on other settings. They can not be modified by the user.
 
-Table 1 provides the values and equations used to determine optional values not explicitly set by the user and those unallowed to be externally modified.
+@tableref {PatientParameters} provides the values and equations used to determine optional values not explicitly set by the user and those unallowed to be externally modified.
 @anchor patient-features
 Features and Capabilities
 -------------------------
@@ -41,7 +41,7 @@ Features and Capabilities
 ### Definitions
 
 <center>
-*Table 1. All patient parameters, how they are determined, and upper and lower limits.*
+*@tabledef {PatientParameters} All patient parameters, how they are determined, and upper and lower limits.*
 </center>
 
 |	Parameter	|	Modification Category	|	Initial Value (If not Explicitly Set)	|	Lower Bound	|	Upper Bound	|	Notes	|
@@ -108,7 +108,7 @@ Verification and Validation
 ---------------------------
 
 <center><br>
-*Table 2. There are several patients that we created for base validation, system-specific patient effects validation, and extreme case will stabilization.*
+*@tabledef {PatientValidationCases} There are several patients that we created for base validation, system-specific patient effects validation, and extreme case will stabilization.*
 </center>
 
 |	<b>Name</b>	|	Standard Male	|	Standard Female	|	Default Male	|	Default Female	|	Overweight	|	Underweight	|	Tachycardic	|	Bradycardic	|	Extreme Female	|	Extreme Male	|
@@ -125,7 +125,7 @@ Verification and Validation
 |	<b>Right Lung Ratio</b>	|	-	|	-	|	-	|	-	|	-	|	-	|	-	|	-	|	0.5	|	0.6	|
 
 <center><br>
-*Table 3. There are several patients we created for combined effects validation and showcase scenarios.*
+*@tabledef {PatientShowcaseCases} There are several patients we created for combined effects validation and showcase scenarios.*
 </center>
 
 |	<b>Name</b>	|	Cynthia	|	Gus	|	Joel	|	Nathan	|	Rick	|	Hassan	|	Soldier	|	Jeff	|	Carol	|	Jane	|
@@ -145,115 +145,115 @@ All of the patients that are included with the code base have been validated to 
 Values that are colored green are within 10% of the original set or calculated/estimated (expected) value, yellow are within 30%, and red are greater than 30% error. Values that are not within 10% are not necessarily a failure.  As previously described, many of these are estimated before the stabilization simulation begins, and are really determined and overwritten after all other factors reach homeostasis. Those values that are explicitly set by the user/patient file should have much tighter tolerances.
 
 <center>
-*Table 4. StandardMale patient values with expected and engine output.*
+*@tabledef {PatientStandardMaleValidation} StandardMale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-StandardMaleValidationTable.md
 
 <center>
-*Table 5. StandardFemale patient values with expected and engine output.*
+*@tabledef {PatientStandardFemaleValidation} StandardFemale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-StandardFemaleValidationTable.md
 
 <center>
-*Table 6. DefaultMale patient values with expected and engine output.*
+*@tabledef {PatientDefaultMaleValidation} DefaultMale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-DefaultMaleValidationTable.md
 
 <center>
-*Table 7. DefaultFemale patient values with expected and engine output.*
+*@tabledef {PatientDefaultFemaleValidation} DefaultFemale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-DefaultFemaleValidationTable.md
 
 <center>
-*Table 8. Overweight patient values with expected and engine output.*
+*@tabledef {PatientOverweightValidation} Overweight patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-OverweightValidationTable.md
 
 <center>
-*Table 9. Underweight patient values with expected and engine output.*
+*@tabledef {PatientUnderweightValidation} Underweight patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-UnderweightValidationTable.md
 
 <center>
-*Table 10. Tachycardic patient values with expected and engine output.*
+*@tabledef {PatientTachycardicValidation} Tachycardic patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-TachycardicValidationTable.md
 
 <center>
-*Table 11. Bradycardic patient values with expected and engine output.*
+*@tabledef {PatientBradycardicValidation} Bradycardic patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-BradycardicValidationTable.md
 
 <center>
-*Table 12. Cynthia patient values with expected and engine output.*
+*@tabledef {PatientCynthiaValidation} Cynthia patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-CynthiaValidationTable.md
 
 <center>
-*Table 13. Gus patient values with expected and engine output.*
+*@tabledef {PatientGusValidation} Gus patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-GusValidationTable.md
 
 <center>
-*Table 14. Joel patient values with expected and engine output.*
+*@tabledef {PatientJoelValidation} Joel patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-JoelValidationTable.md
 
 <center>
-*Table 15. Nathan patient values with expected and engine output.*
+*@tabledef {PatientNathanValidation} Nathan patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-NathanValidationTable.md
 
 <center>
-*Table 16. Hassan patient values with expected and engine output.*
+*@tabledef {PatientHassanValidation} Hassan patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-HassanValidationTable.md
 
 <center>
-*Table 17. Soldier patient values with expected and engine output.*
+*@tabledef {PatientSoldierValidation} Soldier patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-SoldierValidationTable.md
 
 <center>
-*Table 18. Jeff patient values with expected and engine output.*
+*@tabledef {PatientJeffValidation} Jeff patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-JeffValidationTable.md
 
 <center>
-*Table 19. Carol patient values with expected and engine output.*
+*@tabledef {PatientCarolValidation} Carol patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-CarolValidationTable.md
 
 <center>
-*Table 20. Jane patient values with expected and engine output.*
+*@tabledef {PatientJaneValidation} Jane patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-JaneValidationTable.md
 
 <center>
-*Table 21. ExtremeFemale patient values with expected and engine output.*
+*@tabledef {PatientExtremeFemaleValidation} ExtremeFemale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-ExtremeFemaleValidationTable.md
 
 <center>
-*Table 22. ExtremeMale patient values with expected and engine output.*
+*@tabledef {PatientExtremeMaleValidation} ExtremeMale patient values with expected and engine output.*
 </center><br>
 
 @insert ./test_results/tables/Patient-ExtremeMaleValidationTable.md
