@@ -187,7 +187,7 @@ def segment_validation_pipeline(folder: Path, exec_opt: eExecOpt,
     config = None
     if config_file is not None:
         config = SESegmentValidationPipelineConfig()
-        serialize_segment_validation_pipeline_config_from_file(config_file, config)
+        serialize_segment_validation_pipeline_config_from_file(str(config_file), config)
 
     # Carry out validation on the targets of each scenario
     validate(xls_dir.name, scenario_dir, validate_dir, sheet_name=sheet_name)
@@ -275,11 +275,11 @@ def main():
     else:
         # In the future, we will do all xlsx in the data/validation dir
         # But for now, we are just hard coding the automated xlsx files
-        folders.append("Hemorrhage")
-        folders.append("AirwayObstruction")
+        #folders.append("AirwayObstruction")
         folders.append("Dehydration")
-        folders.append("MechanicalVentilator")
         folders.append("EnRouteCare")
+        folders.append("Hemorrhage")
+        folders.append("MechanicalVentilator")
 
     exec_opt = eExecOpt.Full
     if opts.generate_only:

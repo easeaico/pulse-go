@@ -75,13 +75,13 @@ def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str =
                     #  Note: If we want to also allow referencing other workbook books, maybe add another [a-zA-Z]+:
                     sheet_references = re.findall(r"\{[a-zA-Z]+:[0-9]+\}", formula, re.DOTALL)
                     for sheet_reference in sheet_references:
-                        sheet_name = re.findall(r"[a-zA-Z]+", sheet_reference, re.DOTALL)[0]
-                        if sheet_name not in referenced_results:
-                            referenced_segments_filename = Path(str(results_files[0]).replace(target_name, sheet_name))
+                        ref_sheet_name = re.findall(r"[a-zA-Z]+", sheet_reference, re.DOTALL)[0]
+                        if ref_sheet_name not in referenced_results:
+                            referenced_segments_filename = Path(str(results_files[0]).replace(target_name, ref_sheet_name))
                             if not referenced_segments_filename.exists():
                                 _pulse_logger.error(f"Cannot find referenced sheet: {referenced_segments_filename}")
                             else:
-                                referenced_results[sheet_name] = (
+                                referenced_results[ref_sheet_name] = (
                                     serialize_data_requested_result_from_file(str(referenced_segments_filename)))
                                 #  TODO Not supporting referencing event/assessment values from another workbook/sheet
                                 #  Would need to call find_results_files for the referenced sheet, and pass them along
