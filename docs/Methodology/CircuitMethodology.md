@@ -478,7 +478,9 @@ because of differing conventions for those elements.</i>
 @figureref {CircuitWaveforms} shows transient analysis results and the circuit diagram used for three sets of equivalent code blocks to illustrate the templated approach in setting up electrical, fluid, and thermal circuits.
 
 @htmlonly
+<center>
 <a href="./Images/Circuit/CircuitWaveforms.png"><img src="./Images/Circuit/CircuitWaveforms.png" style="width:75%;"></a>
+</center>
 @endhtmlonly
 <center>
 <i>@figuredef {CircuitWaveforms} The circuit and simulation outputs from a validation test of the multiphysics framework. The potential source for all three circuits is driven by a sinusoidal function and the switch is closed 15 seconds into the simulation. All three circuit types give the same values for potential, fluxes, and quantities with different native units. Labels for each plot from left to right are electrical, fluid, and thermal.</i>
@@ -487,7 +489,9 @@ because of differing conventions for those elements.</i>
 The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in @figureref {CardiovascularCompartmentVolumes}. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
 
 @htmlonly
+<center>
 <a href="./Images/Circuit/CardiovascularCompartmentVolumes.png"><img src="./Images/Circuit/CardiovascularCompartmentVolumes.png" style="width:60%;"></a>
+</center>
 @endhtmlonly
 <center>
 <i>@figuredef {CardiovascularCompartmentVolumes} The blood volume within each compartment continuously varies in the cardiovascular circuit.   The sum of these volumes does not change at any time step, and system mass is successfully conserved.</i>
