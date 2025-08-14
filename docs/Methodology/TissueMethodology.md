@@ -234,7 +234,7 @@ Other solutes:
  - Lactate: 0.01 g/L (0-0.02 g/L - increases with exercise intensity and reflects muscle energy metabolism)
  - Urea: 0.003 g/L (0.002-0.01 g/L - waste product of protein breakdown, generally higher than in blood plasma)
 
-For severity mapping, dehydration categories are defined based on the fraction of body weight lost @cite gellert2015signs:
+For severity mapping, dehydration categories are defined based on the fraction of body weight lost @cite gellert2015signs :
  - Imminent: 0.22-1% of body weight
  - Mild: 1-2% of body weight
  - Moderate: 2-5% of body weight

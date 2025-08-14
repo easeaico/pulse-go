@@ -89,13 +89,13 @@ The Transporter assumes that fluid movement (i.e. convection) has already taken 
 
 | Parameter | Definition | Liquid Variable | Gas Variable |
 | --- | --- | --- | --- |
-| *I<sub>C</sub>* | Current compartment intensive property | Concentration | Volume Fraction |
-| *I<sub>SC</sub>* | Source compartment intensive property | Concentration | Volume Fraction |
-| *f<sub>IL</sub>* | Input link flow | Volumetric flow | Volumetric flow | 
-| *f<sub>OL</sub>* | Output link flow | Volumetric flow | Volumetric flow | 
-| *t* | time-step | Time | Time |
-| *V<sub>C</sub>* | Current compartment volume | Volume | Volume |
-| *E<sub>o,C</sub>* | Current compartment previous time-step extensive property | Mass | Substance volume |
+| <i>I<sub>C</sub></i> | Current compartment intensive property | Concentration | Volume Fraction |
+| <i>I<sub>SC</sub></i> | Source compartment intensive property | Concentration | Volume Fraction |
+| <i>f<sub>IL</sub></i> | Input link flow | Volumetric flow | Volumetric flow | 
+| <i>f<sub>OL</sub></i> | Output link flow | Volumetric flow | Volumetric flow | 
+| <i>t</i> | time-step | Time | Time |
+| <i>V<sub>C</sub></i> | Current compartment volume | Volume | Volume |
+| <i>E<sub>o,C</sub></i> | Current compartment previous time-step extensive property | Mass | Substance volume |
 
 The instantaneous substance quantity values can be determined in each compartment of a graph by doing a mass balance calculation using @equationref {mass_balance_1}, where *m* is the mass on the current compartment and both *m<sub>in</sub>* and *m<sub>out</sub>* are provided by links to any number of other compartments.
 

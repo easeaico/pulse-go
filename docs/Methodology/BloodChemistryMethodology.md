@@ -335,7 +335,7 @@ Pressures, volumes, and substances were initialized to good values (see Table 5 
 | Albumin Concentration | 45 g/L @cite valtin1995renal |
 | Hematocrit | .45 @cite guyton2006medical @cite valtin1995renal |
 | Body Temperature | 37 C @cite herman2007physics |
-| [SID] | 40.5 mmol/L @cite kellum2009stewart |
+| Strong Ion Difference | 40.5 mmol/L @cite kellum2009stewart |
 | Phosphate | 1.1 mmol/L @cite Leeuwen2015laboratory |
 | *Pulmonary and Arteries CO2 Saturation | .0282123  |
 | *Pulmonary and Arteries O2 Saturation | .974759  |
@@ -419,7 +419,7 @@ Glossary
 | <i>Hct</i> | Hematocrit  |
 | <i>Hgb</i> | Hemoglobin  |
 | <i>I<sup>n+</sup></i> | Represents a lumped set of unnamed cations (e.g. Mg*^{2+}* + Cu*^{2+}* + Fe*^{3+}* + ... ) |
-| <i>I^<sup>n-</sup></i> | Represents a lumped set of unnamed anions (e.g. sulfate + beta-hydroxybutyrate + ... )  |
+| <i>I<sup>n-</sup></i> | Represents a lumped set of unnamed anions (e.g. sulfate + beta-hydroxybutyrate + ... )  |
 | <i>K<sup>+</sup></i> | Potassium (strong cation)  |
 | <i>Ket<sup>-</sup></i> | Ketone body (i.e. acetoacetate, beta-hydroxybutyrate, and acetone)  |
 | <i>La<sup>-</sup></i> | Lactate (strong anion)  |
