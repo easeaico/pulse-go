@@ -5,8 +5,10 @@
 #include "PulseEngine.h"
 
 // Include the various types you will be using in your code
+#include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/patient/actions/SECardiovascularMechanicsModification.h"
 #include "cdm/system/physiology/SECardiovascularMechanicsModifiers.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
@@ -54,7 +56,7 @@ void HowToCardiovascularMechanicsModification()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp.csv");
 
@@ -73,11 +75,8 @@ void HowToCardiovascularMechanicsModification()
   // set the incremental flag to true, and the engine apply this action and not run a stabilization stage
   pe->ProcessAction(config);
 
-  for (size_t i = 0; i < 36; i++)
-  {
-    AdvanceAndTrackTime_s(10, *pe);
-    pe->GetEngineTracker()->LogRequestedValues();
-  }
+  AdvanceAndTrackTime_s(10, *pe);
+  pe->GetEngineTracker()->LogRequestedValues();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -181,5 +180,5 @@ void HowToCardiovascularMechanicsModificationAnalysis()
   }
 
   // Output the results
-  outFile.close();          // Close the file stream
+  outFile.close(); // Close the file stream
 }
