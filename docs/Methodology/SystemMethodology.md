@@ -36,7 +36,7 @@ infrastructure.
 
 <center>
 <a href="./Images/System/SystemFidelity.png"><img src="./Images/System/SystemFidelity.png" width="550"></a>
-*@figuredef {SystemFidelity} The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
+<i>@figuredef {SystemFidelity} The engine uses a top-down approach to model development with bottom-up hooks for expansion.</i>
 </center><br>
 
 # System Design
@@ -217,9 +217,9 @@ preparation for the upcoming Preprocess call.
 
 <center>
 <a href="./Images/System/SystemDataFlow.png"><img src="./Images/System/SystemDataFlow.png"></a>
-*@figuredef {SystemDataFlow} This shows the repetitive three-step process used each time
+<i>@figuredef {SystemDataFlow} This shows the repetitive three-step process used each time
 step to determine the system states. These three processes are mirrored
-in each system's code and are sequentially called by the engine.*
+in each system's code and are sequentially called by the engine.</i>
 </center><br>
 
 ### Interface
@@ -273,7 +273,7 @@ yellow indicates agreement with a general trend with some minor disagreement, an
 success or failure.
 
 <center>
-*@tabledef {SystemValidationSummary} Validation scenarios were completed for five patients subjected to a variety of insults and intervention: Cynthia, Gus, Hassan, Joel, and Nathan. The resulting effects of each individual insult and intervention were validated both qualitatively and from subject matter experts. Green indicates good agreement with validation data, yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation success or failure.*
+<i>@tabledef {SystemValidationSummary} Validation scenarios were completed for five patients subjected to a variety of insults and intervention: Cynthia, Gus, Hassan, Joel, and Nathan. The resulting effects of each individual insult and intervention were validated both qualitatively and from subject matter experts. Green indicates good agreement with validation data, yellow indicates agreement with a general trend with some minor disagreement, and red indicates a disagreement with the validation data. The number indicates the number of output parameters for each category of validation success or failure.</i>
 </center>
 
 |	Key	|
@@ -308,14 +308,14 @@ The Cynthia scenario begins with the administration of midazolam at 50 seconds w
     <td><a href="./plots/System/Cynthia_O2Sat.jpg"><img src="./plots/System/Cynthia_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/CynthiaLegend.jpg"><img src="./plots/System/CynthiaLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/System/CynthiaLegend.jpg"><img src="./plots/System/CynthiaLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
 <center><i>@figuredef {CynthiaCombinedEffects} Select outputs from the Cynthia combined effects scenario.</i></center>
 
 <center><br>
-*@tabledef {SystemCynthiaScenario} The Cynthia scenario displays the effects of sequential midazolam administration, airway obstruction, ventilator mask, ketamine and rocuronium administration, and intubation. This scenario shows some good agreement with the expected qualitative and SME trends.*
+<i>@tabledef {SystemCynthiaScenario} The Cynthia scenario displays the effects of sequential midazolam administration, airway obstruction, ventilator mask, ketamine and rocuronium administration, and intubation. This scenario shows some good agreement with the expected qualitative and SME trends.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -341,14 +341,14 @@ A ventilator mask is applied to Gus at 50 seconds, and succinylcholine is inject
     <td><a href="./plots/System/Gus_O2Sat.jpg"><img src="./plots/System/Gus_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/GusLegend.jpg"><img src="./plots/System/GusLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/System/GusLegend.jpg"><img src="./plots/System/GusLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
 <center><i>@figuredef {GusCombinedEffects} Select outputs from the Gus combined effects scenario.</i></center>
 
 <center><br>
-*@tabledef {SystemGusScenario} The Gus scenario displays the effects of sequential ventilator mask application, succinylcholine injection, esophageal intubation and then a successful endotracheal intubation. This scenario shows good agreement with the SME and qualitative validation.*
+<i>@tabledef {SystemGusScenario} The Gus scenario displays the effects of sequential ventilator mask application, succinylcholine injection, esophageal intubation and then a successful endotracheal intubation. This scenario shows good agreement with the SME and qualitative validation.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -373,14 +373,14 @@ At the beginning of the scenario, a ventilator mask is applied to Hassan. He the
     <td><a href="./plots/System/Hassan_O2Sat.jpg"><img src="./plots/System/Hassan_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/HassanLegend.jpg"><img src="./plots/System/HassanLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/System/HassanLegend.jpg"><img src="./plots/System/HassanLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
 <center><i>@figuredef {SystemHassanCombinedEffects} Select outputs from the Hassan combined effects scenario.</i></center>
 
 <center><br>
-*@tabledef {SystemHassanScenario} Hassan displays the effects of a right mainstem intubation after the patient has been injected with ketamine and succinylcholine. The engine output shows complete agreement with the validation trends.*
+<i>@tabledef {SystemHassanScenario} Hassan displays the effects of a right mainstem intubation after the patient has been injected with ketamine and succinylcholine. The engine output shows complete agreement with the validation trends.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -405,14 +405,14 @@ The Joel scenario begins with a full severity airway obstruction at 50 seconds. 
     <td><a href="./plots/System/Joel_O2Sat.jpg"><img src="./plots/System/Joel_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/JoelLegend.jpg"><img src="./plots/System/JoelLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/System/JoelLegend.jpg"><img src="./plots/System/JoelLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
 <center><i>@figuredef {SystemJoelCombinedEffects} Select outputs from the Joel combined effects scenario.</i></center>
 
 <center><br>
-*@tabledef {SystemJoelScenario} The Joel scenario displays the effects of sequential airway obstruction, ventilator mask application, etomidate administration, succinylcholine administration, and intubation. The engine results show excellent agreement with the validation trends.*
+<i>@tabledef {SystemJoelScenario} The Joel scenario displays the effects of sequential airway obstruction, ventilator mask application, etomidate administration, succinylcholine administration, and intubation. The engine results show excellent agreement with the validation trends.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -438,14 +438,14 @@ Nathan receives a bolus injection of fentanyl at a dose of 150 micrograms at a s
     <td><a href="./plots/System/Nathan_O2Sat.jpg"><img src="./plots/System/Nathan_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/NathanLegend.jpg"><img src="./plots/System/NathanLegend.jpg" width="800"></a></td>
+    <td colspan="2"><center><a href="./plots/System/NathanLegend.jpg"><img src="./plots/System/NathanLegend.jpg" width="800"></a></center></td>
 </tr>
 </table>
 </center>
 <center><i>@figuredef {SystemNathanCombinedEffects} Select outputs from the Nathan combined effects scenario.</i></center>
 
 <center><br>
-*@tabledef {SystemNathanScenario} The Nathan scenario displays the effects of sequential bolus fentanyl injection, ventilator mask application, and oxygen wall pressure loss. The engine results show strong agreement with the validation trends.*
+<i>@tabledef {SystemNathanScenario} The Nathan scenario displays the effects of sequential bolus fentanyl injection, ventilator mask application, and oxygen wall pressure loss. The engine results show strong agreement with the validation trends.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (mmHg)	|	Oxygen Saturation  (mmHg)	|
@@ -464,7 +464,7 @@ Four scenarios were created to showcase the ability of the open-source physiolog
 A team of soldiers is conducting a patrol when an explosive device detonates, injuring one of the soldiers. The squad medic applies direct pressure to a hemorrhaging wound, and, suspecting a tension pneumothorax, performs a needle decompression. Direct pressure is not controlling the bleeding, so a tourniquet is applied. Morphine and IV fluids are administered.
 
 <center><br>
-*@tabledef {SystemCombatMultitrauma} The validation results for the Combat Multitrauma Showcase scenario.*
+<i>@tabledef {SystemCombatMultitrauma} The validation results for the Combat Multitrauma Showcase scenario.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Mean Arterial Pressure  (mmHg)	|	Cardiac Output  (mL/min)	|	Mean Central Venous Pressure (mmHg)	|	Respiration Rate (Breaths/min)	|	Oxygen Saturation (fraction)	|	Tidal Volume (mL)	|
@@ -488,7 +488,7 @@ A team of soldiers is conducting a patrol when an explosive device detonates, in
     <td><a href="./plots/System/CombatMultitrauma_O2Sat.jpg"><img src="./plots/System/CombatMultitrauma_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/CombatMultitraumaLegend.jpg"><img src="./plots/System/CombatMultitraumaLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/System/CombatMultitraumaLegend.jpg"><img src="./plots/System/CombatMultitraumaLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -499,7 +499,7 @@ A team of soldiers is conducting a patrol when an explosive device detonates, in
 A 40 year old female with a history of asthma is having an asthma attack. She arrives at the hospital ten minutes after the beginning of the attack. A doctor administers albuterol and her condition improves.
 
 <center><br>
-*@tabledef {SystemAsthmaAttackValidation} The validation results for the Asthma Attack Showcase scenario.*
+<i>@tabledef {SystemAsthmaAttackValidation} The validation results for the Asthma Attack Showcase scenario.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Heart Stroke Volume (mL)	|	Mean Arterial Pressure  (mmHg)	|	Systolic Pressure  (mmHg)	|	Cardiac Output (mL/min)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation (fraction)	|	End Tidal CO2 (fraction)	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	pH (mmHg)	|
@@ -518,7 +518,7 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
     <td><a href="./plots/System/AsthmaAttack_O2Sat.jpg"><img src="./plots/System/AsthmaAttack_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/AsthmaAttackLegend.jpg"><img src="./plots/System/AsthmaAttackLegend.jpg" width="700"></a></td>
+    <td colspan="2"><center><a href="./plots/System/AsthmaAttackLegend.jpg"><img src="./plots/System/AsthmaAttackLegend.jpg" width="700"></a></center></td>
 </tr>
 </table>
 </center>
@@ -529,7 +529,7 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 A 25 year old male is hiking towards a rock formation to begin a recreational free climb. During the hike, he is working at ~10% of his maximum capacity. The man arrives at a rock formation and begins climbing at an intensity of ~1/2 of his maximum capacity. At the top of the rock formation, the man becomes dizzy and passes out. An off-duty medic takes action to treat a heat injury.
 
 <center><br>
-*@tabledef {SystemHeatStrokeValidation} The validation results for the Heat Stroke Showcase scenario.*
+<i>@tabledef {SystemHeatStrokeValidation} The validation results for the Heat Stroke Showcase scenario.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Heart Stroke Volume (mL)	|	Mean Arterial Pressure (mmHg)	|	Systolic Arterial Pressure (mmHg)	|	Diastolic Arterial Pressure (mmHg)	|	Oxygen Saturation  (mmHg)	|	Core Temperate (C)	|	Skin Temperature (C)	|	Sweat Rate  (mL/min)	|
@@ -551,7 +551,7 @@ A 25 year old male is hiking towards a rock formation to begin a recreational fr
     <td><a href="./plots/System/HeatStroke_RR.jpg"><img src="./plots/System/HeatStroke_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/HeatStrokeLegend.jpg"><img src="./plots/System/HeatStrokeLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/System/HeatStrokeLegend.jpg"><img src="./plots/System/HeatStrokeLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -562,7 +562,7 @@ A 25 year old male is hiking towards a rock formation to begin a recreational fr
 A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a newspaper. The door closes as she exits the house. She is stuck outside for 45 minutes where it is -10<sup>o</sup>C. When the woman's housemates realize that she is outside, they bring her back in and sit her next to a fire.
 
 <center><br>
-*@tabledef {SystemEnvironmentExposureValidation} The validation results for the Environmental Exposure Showcase scenario.*
+<i>@tabledef {SystemEnvironmentExposureValidation} The validation results for the Environmental Exposure Showcase scenario.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Systolic Arterial Pressure (mmHg)	|	Respiration Rate (Breaths/min)	|	Core Temperature (C)	|	Oxygen Consumption (mL/min)	|	Carbon Dioxide Production (mL/min)	|	Metabolic Rate (W)	|
@@ -581,7 +581,7 @@ A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a new
     <td><a href="./plots/System/EnvironmentExposure_RR.jpg"><img src="./plots/System/EnvironmentExposure_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/System/EnvironmentExposureLegend.jpg"><img src="./plots/System/EnvironmentExposureLegend.jpg" width="900"></a></td>
+    <td colspan="2"><center><a href="./plots/System/EnvironmentExposureLegend.jpg"><img src="./plots/System/EnvironmentExposureLegend.jpg" width="900"></a></center></td>
 </tr>
 </table>
 </center>

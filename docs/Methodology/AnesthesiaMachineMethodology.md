@@ -500,7 +500,7 @@ The Anesthesia Machine Settings are fully dynamic and do not have any bounds enf
     <td><a href="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TidalVolume.jpg"><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TidalVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/AMVariedLegend.jpg"><img src="./plots/AnesthesiaMachine/AMVariedLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/AMVariedLegend.jpg"><img src="./plots/AnesthesiaMachine/AMVariedLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -558,7 +558,7 @@ with increasing severity.
     <td><a href="./plots/AnesthesiaMachine/MaskLeakVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakVaried_CO2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/MaskLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/MaskLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -596,7 +596,7 @@ mask to supply the gas. The severity of the leak was varied.
     <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -629,7 +629,7 @@ mask to supply the gas. The severity of the leak was varied.
     <td><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -671,7 +671,7 @@ cessation of respiration or tidal volume due to flow obstruction. Since the neur
     <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionLegend.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionLegend.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -703,7 +703,7 @@ cessation of respiration or tidal volume due to flow obstruction. Since the neur
     <td><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionLegend.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionLegend.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -739,7 +739,7 @@ The severity of the failure was varied. At the full failure, a cessation of resp
     <td><a href="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/VentilatorPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/VentilatorPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -776,7 +776,7 @@ remain stable. Carbon dioxide in the blood increases.
     <td><a href="./plots/AnesthesiaMachine/SodaLimeFailureVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/SodaLimeFailureLegend.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/SodaLimeFailureLegend.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -813,7 +813,7 @@ observed for all other severity levels.
     <td><a href="./plots/AnesthesiaMachine/VaporizerFailureVaried_DesfluraneConcentration.jpg"><img src="./plots/AnesthesiaMachine/VaporizerFailureVaried_DesfluraneConcentration.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><a href="./plots/AnesthesiaMachine/VaporizerFailureLegend.jpg"><img src="./plots/AnesthesiaMachine/VaporizerFailureLegend.jpg" width="800"></a></td>
+    <td><center><a href="./plots/AnesthesiaMachine/VaporizerFailureLegend.jpg"><img src="./plots/AnesthesiaMachine/VaporizerFailureLegend.jpg" width="800"></a></center></td>
 </tr>
 </table>
 </center>
@@ -854,7 +854,7 @@ oxygen by turning off the failure brings the oxygen level to normal.
     <td><a href="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2PP.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/OxygenWallPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLossLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/OxygenWallPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLossLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -898,7 +898,7 @@ a decline in oxygen saturation and arterial oxygen partial pressure due to a fai
     <td><a href="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2PP.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/AnesthesiaMachine/OxygenTankPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLossLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/AnesthesiaMachine/OxygenTankPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLossLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>

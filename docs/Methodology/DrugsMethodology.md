@@ -319,7 +319,7 @@ The succinycholine scenario shows a drug impacting the major engine systems. Suc
     <td><a href="./plots/Drugs/Succinylcholine_OxygenSaturation.jpg"><img src="./plots/Drugs/Succinylcholine_OxygenSaturation.jpg" width="550"></td></a>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Drugs/SuccinylcholineLegend.jpg"><img src="./plots/Drugs/SuccinylcholineLegend.jpg" width="1100"></td></a>
+    <td colspan="2"><center><a href="./plots/Drugs/SuccinylcholineLegend.jpg"><img src="./plots/Drugs/SuccinylcholineLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -334,7 +334,7 @@ Validation of intravenous administration of a hypotonic solution and blood produ
 Validation - Pharmacokinetic
 --------------------
 
-The PK model was validated by comparing the plasma concentration calculated by the engine to plasma concentration curves found in the literature. The comparisons are shown in Figures 2-14. No available data was found for Epinephrine, so this drug was only validated from a PD perspective.
+The PK model was validated by comparing the plasma concentration calculated by the engine to plasma concentration curves found in the literature. The comparisons are shown in the following figures. No available data was found for Epinephrine, so this drug was only validated from a PD perspective.
 
 <a href="./plots/Drugs/Albuterol.jpg"><img src="./plots/Drugs/Albuterol.jpg" width="1100"></a>
 <center>
@@ -495,7 +495,7 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
     <td><a href="./plots/Drugs/Furosemide_UrineProductionRate.jpg"><img src="./plots/Drugs/Furosemide_UrineProductionRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Drugs/FurosemideLegend.jpg"><img src="./plots/Drugs/FurosemideLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/Drugs/FurosemideLegend.jpg"><img src="./plots/Drugs/FurosemideLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>

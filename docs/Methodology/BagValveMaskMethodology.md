@@ -140,7 +140,7 @@ The bag valve mask settings are fully dynamic.  A scenario that varies the setti
   <td><a href="./plots/BagValveMask/BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/BagValveMask/BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-  <td colspan="2"><a href="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume_Legend.jpg"><img src="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume_Legend.jpg" width="1100"></a></td>
+  <td colspan="2"><center><a href="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume_Legend.jpg"><img src="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume_Legend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>

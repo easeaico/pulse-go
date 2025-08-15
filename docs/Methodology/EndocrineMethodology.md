@@ -50,9 +50,9 @@ Insulin is secreted by the pancreatic beta cells in response to increased blood 
 The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in Polonsky @cite polonsky1987insulin.
 The synthesis rate is defined by:
 
-\f[f(I)= (5.357 * G) - 328.56 \f] 
 <center>
-*@equationdef {systhesis}*
+\f[f(I)= (5.357 * G) - 328.56 \f] 
+<i>@equationdef {systhesis}</i> 
 </center><br>
 Where <i>G</i> is glucose concentration of the blood. 
 This linear function is valid for glucose levels of 80-150 mg/dL, and will compute an insulin synthesis rate between 100-475 pmol/min accordingly.
@@ -114,7 +114,7 @@ Results and Conclusions
 Validation - Resting Physiologic State
 --------------------------------------
 
-In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic "Drugs Validation's @tableref {DrugsPharmacodynamicValidation}". At resting physiological levels, epinephrine has no pharmacodynamic effects.
+In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic. At resting physiological levels, epinephrine has no pharmacodynamic effects.
 
 Validation - Actions
 --------------------------------------
@@ -133,17 +133,17 @@ The effects of epinephrine release on the physiology can be clearly seen by trig
     <td><a href="./plots/Endocrine/AcuteStressDiastolic.jpg"><img src="./plots/Endocrine/AcuteStressDiastolic.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Endocrine/AcuteStressLegend.jpg"><img src="./plots/Endocrine/AcuteStressLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/Endocrine/AcuteStressLegend.jpg"><img src="./plots/Endocrine/AcuteStressLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
 <center><i>
-*@figuredef {AcuteStress} Epinephrine is released in response to Acute Stress actions.*
+<i>@figuredef {AcuteStress} Epinephrine is released in response to Acute Stress actions.</i>
 </i>
 </center><br>
 
 <center>
-*@tabledef {EndocrineValidation} Actions associated with the %Endocrine System were validated by comparing the engine output to expected trends and data. Engine results show favorable agreement (green), some agreement (yellow), or bad agreement (red). Results mostly matched expected trends.*
+<i>@tabledef {EndocrineValidation} Actions associated with the %Endocrine System were validated by comparing the engine output to expected trends and data. Engine results show favorable agreement (green), some agreement (yellow), or bad agreement (red). Results mostly matched expected trends.</i>
 </center>
 
 |	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Arterial Epinephrine (ug/L)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Heart Rate (1/min)	|	Pulmonary Resistance (cmH2O-s/L)	|

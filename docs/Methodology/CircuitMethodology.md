@@ -217,7 +217,7 @@ There is no literal Preprocess call within the circuit solver class (i.e., code)
 
 #### Network Analysis
 
-Several mathematical methods for solving the state of the closed-loop circuit network were considered, including Sparse Tableau Analysis and nodal analysis.  Ultimately, modified nodal analysis (MNA) was selected as the most advantageous approach. This technique leverages branch constitutive equations (i.e., potential-flux characteristics) and Kirkoff’s Laws to assemble the system and build the required network matrices. The key feature of MNA is assuming the sum of all path fluxes connected to each node is zero - inflows equal outflows. To achieve this balance, the solver iterates over all nodes contained in the circuit to generate a set of linear equations in the matrix form <i>Ax=b</i>. The matrix form of the solution is further defined by Equation 1, where <i>G</i> is the interconnections between passive components, <i>B</i> and <i>C</i>  are the connections between potential sources, <i>D</i> is zero because only independent sources are considered, <i>v</i> and <i>j</i> are the potentials and fluxes, respectively, <i>i</i> is the sum of fluxes through passive components, and <i>e</i> is the independent potential sources @cite najm_2010.
+Several mathematical methods for solving the state of the closed-loop circuit network were considered, including Sparse Tableau Analysis and nodal analysis.  Ultimately, modified nodal analysis (MNA) was selected as the most advantageous approach. This technique leverages branch constitutive equations (i.e., potential-flux characteristics) and Kirkoff’s Laws to assemble the system and build the required network matrices. The key feature of MNA is assuming the sum of all path fluxes connected to each node is zero - inflows equal outflows. To achieve this balance, the solver iterates over all nodes contained in the circuit to generate a set of linear equations in the matrix form <i>Ax=b</i>. The matrix form of the solution is further defined by @equationref {nodal_analysis}, where <i>G</i> is the interconnections between passive components, <i>B</i> and <i>C</i>  are the connections between potential sources, <i>D</i> is zero because only independent sources are considered, <i>v</i> and <i>j</i> are the potentials and fluxes, respectively, <i>i</i> is the sum of fluxes through passive components, and <i>e</i> is the independent potential sources @cite najm_2010.
 
 <center>
 \f[\left[ {\begin{array}{*{20}{c}}
@@ -246,17 +246,16 @@ After the MNA linear equations are solved, all node potentials and fluxes for pa
 @endhtmlonly
 <br>
 
-Quantity values (<i>Q</i>) on nodes that are connected to paths with capacitances are incremented by Equation 2, where <i>Q<sub>0</sub></i> is the previous quantity value. @figureref {CircuitDataFlow} further illustrates this general circuit solver logic. The MNA matrices are rebuilt each time-step by parsing each node and iteratively populating the <i>A</i> matrix and <i>x</i> vector.
-
-\f[Q = {Q_0} + F \cdot dt\f]
+Quantity values (<i>Q</i>) on nodes that are connected to paths with capacitances are incremented by @equationref {quantity}, where <i>Q<sub>0</sub></i> is the previous quantity value. @figureref {CircuitDataFlow} further illustrates this general circuit solver logic. The MNA matrices are rebuilt each time-step by parsing each node and iteratively populating the <i>A</i> matrix and <i>x</i> vector.
 
 <center>
+\f[Q = {Q_0} + F \cdot dt\f]
 <i>@equationdef {quantity}</i>
 </center><br>
 
 #### Linear Solver
 
-The Pulse generic circuit solver leverages standard linear solver software. The <i>b</i> vector in Equation 1 is solved using methods provided by the Eigen open-source library for linear algebra. A number of algorithms within Eigen were tested for computationally efficient and accurate matrix solutions.  The most efficient linear solver for most circumstances in Pulse was determined to be Sparse supernodal LU factorization (SparseLU). However, the circuit solver logic is designed to shift to the slower, but more robust LU decomposition with complete pivoting (FullPivLU) approach when SparseLU fails to provide accurate results. This logic is shown on the right side of @figureref {CircuitDataFlow}.
+The Pulse generic circuit solver leverages standard linear solver software. The <i>b</i> vector in @equationref {nodal_analysis} is solved using methods provided by the Eigen open-source library for linear algebra. A number of algorithms within Eigen were tested for computationally efficient and accurate matrix solutions.  The most efficient linear solver for most circumstances in Pulse was determined to be Sparse supernodal LU factorization (SparseLU). However, the circuit solver logic is designed to shift to the slower, but more robust LU decomposition with complete pivoting (FullPivLU) approach when SparseLU fails to provide accurate results. This logic is shown on the right side of @figureref {CircuitDataFlow}.
 
 Nonlinear components (diodes and polarized components) have states with required behavior criteria, as shown in @tableref {CircuitFluxEquations}. These component states cannot be directly determined, but must be assumed and iteratively solved until a valid combination that meets all criteria is found. The conditional looping logic implemented in the circuit solver is shown on the left side of @figureref {CircuitDataFlow}.
 

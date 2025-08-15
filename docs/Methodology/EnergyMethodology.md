@@ -374,7 +374,7 @@ At a scenario time of 50 seconds, the patient is submerged in water with a tempe
     <td><a href="./plots/Energy/HighAltitude_RR.jpg"><img src="./plots/Energy/HighAltitude_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Energy/HighAltitudeLegend.jpg"><img src="./plots/Energy/HighAltitudeLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/Energy/HighAltitudeLegend.jpg"><img src="./plots/Energy/HighAltitudeLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 <center>

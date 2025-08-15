@@ -14,7 +14,7 @@ Introduction
 ### Cardiovascular Physiology
 The cardiovascular system is a large organ system comprised of the heart and the blood vessels. It serves as the body's primary transport and distribution system. The cardiovascular system is sometimes described as two separate circulations: the systemic circulation and the pulmonary circulation. In the systemic circulation, oxygenated blood leaves the left side of the heart, travels  through arteries and into the capillaries, and then returns as deoxygenated blood through the veins to the right side of the heart. From the right side of the heart, the deoxygenated blood travels in the pulmonary circulation through the pulmonary arteries, is re-oxygenated in the pulmonary capillaries, and then returns to the left side of the heart through the pulmonary veins (@figureref {SystemDiagram}). Whether the cardiovascular circulation is thought of as one closed circuit with a single dual-purpose pump or two interconnected circuits with separate synchronous pumps, the key combination of systemic and pulmonary vasculature serves as a distribution and exchange network, providing vital oxygen to the tissues and removing toxic carbon dioxide while distributing nutrients and other substances necessary for healthy physiologic function.
 
-\htmlonly
+@htmlonly
 <center>
 <a href="./Images/Cardiovascular/CardiovascularSystemDiagram.png">
   <img src="./Images/Cardiovascular/CardiovascularSystemDiagram.png">

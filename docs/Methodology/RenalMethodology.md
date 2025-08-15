@@ -655,7 +655,7 @@ Quantification of the renal system during and after the bleed ends are displayed
     <td><a href="./plots/Renal/HemorrhageArterioleResistance.jpg"><img src="./plots/Renal/HemorrhageArterioleResistance.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Renal/HemorrhageClass3NoFluidLegend.jpg"><img src="./plots/Renal/HemorrhageClass3NoFluidLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/Renal/HemorrhageClass3NoFluidLegend.jpg"><img src="./plots/Renal/HemorrhageClass3NoFluidLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
@@ -697,7 +697,7 @@ are attenuated as the afferent arteriole resistance increases.
     <td><a href="./plots/Renal/AltitudeArterioleResistance.jpg"><img src="./plots/Renal/AltitudeArterioleResistance.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Renal/HighAltitudeEnvironmentChangeLegend.jpg"><img src="./plots/Renal/HighAltitudeEnvironmentChangeLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/Renal/HighAltitudeEnvironmentChangeLegend.jpg"><img src="./plots/Renal/HighAltitudeEnvironmentChangeLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>

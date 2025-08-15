@@ -41,7 +41,6 @@ The pupil is the small hole in the iris that allows light to pass through the le
 
 Data Flow
 ---------
-An overview of the data flow in the %Nervous system is shown in @figureref {NervousDataFlow}.
 
 ### Initialization and Stabilization
 The engine initialization and stabilization is described in detail in the [stabilization section](@ref system-stabilization) of the @ref SystemMethodology report. The mean arterial pressure set-point is updated after the %Cardiovascular system reaches a homeostatic state.
@@ -80,7 +79,7 @@ The baroreceptor model implemented is adapted from the models described by Ottes
 <i>@equationdef {eta_p}</i>
 </center><br>
 
-Where &nu; is a parameter that represents the response slope of the baroreceptors, <b>p</b><sub>a</sub> is the current MAP, and <b>p</b><sub>a,setpoint</sub> is the MAP set-point. An example of the sympathetic and parasympathetic responses as a function of MAP are shown in @figureref {BaroreceptorResponse}. These were calculated with an assumed MAP set-point of 87 mmHg. The model in @cite ottesen2004applied uses an &nu value of 1, which worked well in an isolated system as shown in @figureref {BaroreceptorResponse}. However, when integrated into the whole-body physiology model, this was unable to account for the accumulated response of the baroreceptors. For example, as the MAP increases, the sympathetic response increases, however, the effects of the sympathetic response drop the MAP. At the next time step, the sympathetic response will drop. In reality the response is required to maintain this effect, but the constant loop of feedback obscures the needed sympathetic response. To combat this, we increased the value of &nu to 4.
+Where &nu; is a parameter that represents the response slope of the baroreceptors, <b>p</b><sub>a</sub> is the current MAP, and <b>p</b><sub>a,setpoint</sub> is the MAP set-point. An example of the sympathetic and parasympathetic responses as a function of MAP are shown in @figureref {BaroreceptorResponse}. These were calculated with an assumed MAP set-point of 87 mmHg. The model in @cite ottesen2004applied uses an &nu value of 1, which worked well in an isolated system. However, when integrated into the whole-body physiology model, this was unable to account for the accumulated response of the baroreceptors. For example, as the MAP increases, the sympathetic response increases, however, the effects of the sympathetic response drop the MAP. At the next time step, the sympathetic response will drop. In reality the response is required to maintain this effect, but the constant loop of feedback obscures the needed sympathetic response. To combat this, we increased the value of &nu to 4.
 
 @htmlonly
 <center>
@@ -247,7 +246,7 @@ Validation - Actions and Conditions
 Actions and conditions with responses specific to the Nervous System were validated. A summary of this validation is shown in @tableref {NervousValidationSummary}. More details on each individual scenario's validation can be found below.
 
 <center>
-*@tabledef {NervousValidationSummary} Cumulative validation results for Nervous specific conditions and actions scenarios.*
+<i>@tabledef {NervousValidationSummary} Cumulative validation results for Nervous specific conditions and actions scenarios.</i>
 </center>
 
 |	Key	|

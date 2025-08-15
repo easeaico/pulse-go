@@ -71,7 +71,7 @@ The movement of fluid between the intravascular and extravascular space is model
 <i>@figuredef {TissueCircuitExample} The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
 
-The volume in the tissue compartment is partitioned into the extracellular and intracellular space, as shown in [Figure 2](@ref tissue-fig2). The extracellular partition is connected to the circuit model, whereas the intercellular partition is seperate to allow for a non-linear control of the fluid flow dynamics. Although fluid moves according to the circuit model, there is no advective transport into the parenchyma. All substance transport into the tissue fluid space is simulated using one or more of the transport modes described below.
+The volume in the tissue compartment is partitioned into the extracellular and intracellular space, as shown in @figureref {TissueTransport}. The extracellular partition is connected to the circuit model, whereas the intercellular partition is seperate to allow for a non-linear control of the fluid flow dynamics. Although fluid moves according to the circuit model, there is no advective transport into the parenchyma. All substance transport into the tissue fluid space is simulated using one or more of the transport modes described below.
 
 @anchor tissue-variability
 ### Patient Variability
