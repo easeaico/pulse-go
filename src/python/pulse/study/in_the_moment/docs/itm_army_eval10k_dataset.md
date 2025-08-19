@@ -6,14 +6,14 @@ The following images show how our eval dataset compares to the expected statisti
 @htmlonly
 <table border="2" align="center"> 
     <tr>
-        <td><a href="./Images/itm/10k/eval_casualties_age_histogram.jpg">
-            <img src="./Images/itm/10k/eval_casualties_age_histogram.jpg" alt="" border=3 style="width:400px"></a>
+        <td><a href="./Images/itm/army/10k/eval_casualties_age_histogram.jpg">
+            <img src="./Images/itm/army/10k/eval_casualties_age_histogram.jpg" alt="" border=3 style="width:400px"></a>
         </td>
-        <td><a href="./Images/itm/10k/eval_casualties_sex.png">
-            <img src="./Images/itm/10k/eval_casualties_sex.png" alt="" border=3 style="width:200px"></a>
+        <td><a href="./Images/itm/army/10k/eval_casualties_sex.png">
+            <img src="./Images/itm/army/10k/eval_casualties_sex.png" alt="" border=3 style="width:200px"></a>
         </td>
-        <td><a href="./Images/itm/10k/eval_casualties_statistics.png">
-            <img src="./Images/itm/10k/eval_casualties_statistics.png" alt="" border=3 style="width:500px"></a>
+        <td><a href="./Images/itm/army/10k/eval_casualties_statistics.png">
+            <img src="./Images/itm/army/10k/eval_casualties_statistics.png" alt="" border=3 style="width:500px"></a>
         </td>
     </tr>
     <tr>
@@ -29,8 +29,8 @@ The following images show how our eval dataset compares to the expected statisti
 
 <br><br>
 @htmlonly
-<a href="./Images/itm/10k/eval_casualties_injury_statistics.png">
-<img src="./Images/itm/10k/eval_casualties_injury_statistics.png" alt="" border=3></a>
+<a href="./Images/itm/army/10k/eval_casualties_injury_statistics.png">
+<img src="./Images/itm/army/10k/eval_casualties_injury_statistics.png" alt="" border=3></a>
 @endhtmlonly
 <center>
 <i>Casualty Injuries</i>

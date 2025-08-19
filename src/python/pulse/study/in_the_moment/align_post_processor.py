@@ -269,12 +269,13 @@ def compare_results():
     for inj, cnt in missed_injuries.items():
         _log.info(f"{inj}: {cnt}")
 
+
 def main():
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-    # generate_icl_examples()
+    generate_icl_examples()
 
-    compare_results()
+    # compare_results()
 
 
 if __name__ == "__main__":

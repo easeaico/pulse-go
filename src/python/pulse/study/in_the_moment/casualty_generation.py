@@ -225,6 +225,23 @@ def calculate_population_error(population: dict, distributions: dict) -> dict:
     return error
 
 
+def plot_population(ages: dict, img_dir: Path):
+    groups = []
+    age_bins = ages["bins"]
+    for i in range(len(age_bins)-1):
+        if i < len(age_bins)-2:
+            groups.append(f"{age_bins[i]}-{age_bins[i+1]-1}")
+        else:
+            groups.append(f"{age_bins[i]}-{age_bins[i+1]}")
+    synthetic_age_counts = ages["percents"]
+    plt.xlabel("Age Groups")
+    plt.ylabel('Percent %')
+    plt.bar(groups, synthetic_age_counts)
+    plt.savefig(img_dir/f"age_histogram.png", format="jpeg")
+    plt.clf()  # Clears the entire figure
+    plt.close()
+
+
 def plot_population_error(population_error: dict, results_stem: str):
 
     # Age

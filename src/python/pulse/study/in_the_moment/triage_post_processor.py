@@ -20,7 +20,7 @@ from pulse.study.in_the_moment.triage_dataset import Intervention, TriageColor, 
 from pulse.study.in_the_moment.triage_study_pipeline import Dataset
 
 from casualty_generation import (calculate_population_error, calculate_injury_error,
-                                 plot_population_error, plot_injury_error, to_specification_lists)
+                                 plot_population_error, plot_injury_error, to_specification_lists, plot_population)
 
 from army_dataset import population_distributions as army_population_distributions, injury_list_to_dict
 from army_dataset import injury_distributions as army_injury_distributions
@@ -799,6 +799,7 @@ def main():
     )
 
     opts = parser.parse_args()
+    docs = Path(get_root_dir()) / "src/python/pulse/study/in_the_moment/docs"
 
     # TODO Add dataset arg when we add more datasets
     dataset = Dataset.Army
@@ -814,6 +815,18 @@ def main():
         shutil.copyfile(opts.eval_1k_file, downloads_dir / "itm_eval1k_dataset.json")
     if opts.eval_10k_file.exists():
         shutil.copyfile(opts.eval_10k_file, downloads_dir / "itm_eval10k_dataset.json")
+
+    if docs.exists():
+        shutil.copyfile(docs / "ALIGN_Triage.pdf", downloads_dir / "ALIGN_Triage.pdf")
+        shutil.copyfile(docs / "ALIGN_Triage.png", downloads_dir / "ALIGN_Triage.png")
+        shutil.copyfile(docs / "Triage_Evaluation.pdf", downloads_dir / "Triage_Evaluation.pdf")
+        shutil.copyfile(docs / "Triage_Evaluation.png", downloads_dir / "Triage_Evaluation.png")
+
+    output_img_dir = None
+    if opts.create_plots:
+        output_img_dir = Path(f"./docs/html/Images/itm/{dataset.value}")
+        output_img_dir.mkdir(parents=True, exist_ok=True)
+        plot_population(army_population_distributions["age"], output_img_dir)
 
     output_md_dir = None
     if opts.markdown:
@@ -832,19 +845,18 @@ def main():
         female_ht = _severity(pop['sex']['female']['height'])
         female_bmi = _severity(pop['sex']['female']['bmi'])
         with open(output_md_dir / "army_population_table.md", 'w') as file:
-            file.write(f"|             |  Male     | Female     |\n")
-            file.write(f"|-------------|:---------:|:----------:|\n")
-            file.write(f"| Percent     | {male_p}% |{female_p}% |\n")
-            file.write(f"| Height (cm) | {male_ht} |{female_ht} |\n")
-            file.write(f"| BMI         | {male_bmi}|{female_bmi}|\n")
-            file.write(f"| Heart Rate  | {hr}      |{hr}        |\n")
+            file.write(f"|                                   |  Male     | Female     |\n")
+            file.write(f"|-----------------------------------|:---------:|:----------:|\n")
+            file.write(f"| Percent @cite Demographics2022    | {male_p}% |{female_p}% |\n")
+            file.write(f"| Height (cm) @cite Martin2016      | {male_ht} |{female_ht} |\n")
+            file.write(f"| BMI @cite Martin2016              | {male_bmi}|{female_bmi}|\n")
 
         # Generate injury table
         def _percent_severity(d: dict):
             percent = d["percent"]
             severity = d["severity"]
             if "mean" in severity:
-                return percent, f"mean: {severity['mean']:.1f}<br> stdev: {severity['std']:.1f}"
+                return percent, f"mean: {severity['mean']:.2f}<br> stdev: {severity['std']:.2f}"
             elif "values" in severity:
                 dist = ""
                 for i, sp in enumerate(severity["percents"]):
@@ -872,27 +884,30 @@ def main():
         e_fd_p, e_fd_s = _percent_severity(inj["extremity"]["types"]["fracture_dislocation"])
         e_hg_p, e_hg_s = _percent_severity(inj["extremity"]["types"]["hemorrhage"])
         with open(output_md_dir / "army_injury_table.md", 'w') as file:
-            file.write(f"| Location    | Type                        | Proportion |   AIS    |\n")
-            file.write(f"| ----------- |-----------------------------|:----------:|:--------:|\n")
-            file.write(f"| Head / Neck |                             |{hn_p}%     |          |\n")
-            file.write(f"|             | Airway Obstruction          |{hn_ao_p}%  |{hn_ao_s} |\n")
-            file.write(f"|             | Superficial                 |{hn_s_p}%   |{hn_s_s}  |\n")
-            file.write(f"|             | Traumatic Brain Injury      |{hn_tbi_p}% |{hn_tbi_s}|\n")
-            file.write(f"| Thorax      |                             |{t_p}%      |          |\n")
-            file.write(f"|             | Fracture                    |{t_f_p}%    |{t_f_s}   |\n")
-            file.write(f"|             | Hemorrhage                  |{t_hg_p}%   |{t_hg_s}  |\n")
-            file.write(f"|             | Hemothorax                  |{t_hx_p}%   |{t_hx_s}  |\n")
-            file.write(f"|             | Pneumothorax                |{t_px_p}%   |{t_px_s}  |\n")
-            file.write(f"|             | Pulmonary Contusion         |{t_pc_p}%   |{t_pc_s}  |\n")
-            file.write(f"|             | Spinal                      |{t_s_p}%    |{t_s_s}   |\n")
-            file.write(f"| Abdomen     |                             |{a_p}%      |          |\n")
-            file.write(f"|             | Hemorrhage                  |{a_hg_p}%   |{a_hg_s}  |\n")
-            file.write(f"|             | Laceration / Contusion      |{a_lc_p}%   |{a_lc_s}  |\n")
-            file.write(f"| Extremity   |                             |{e_p}%      |          |\n")
-            file.write(f"|             | Burn / Nerve                |{e_bn_p}%   |{e_bn_s}  |\n")
-            file.write(f"|             | Contusion / Sprain / Strain |{e_css_p}%  |{e_css_s} |\n")
-            file.write(f"|             | Fracture / Dislocation      |{e_fd_p}%   |{e_fd_s}  |\n")
-            file.write(f"|             | Hemorrhage                  |{e_hg_p}%   |{e_hg_s}  |\n")
+            file.write(f"| Location    | Type                        | Proportion                    | AIS                          |\n")
+            file.write(f"| ----------- |-----------------------------|:-----------------------------:|:----------------------------:|\n")
+            file.write(f"| Head / Neck |                             |{hn_p}%    @cite Belmont2010   |                              |\n")
+            file.write(f"|             | Airway Obstruction          |{hn_ao_p}% @cite Blackburn2018 |{hn_ao_s} @cite Blackburn2018 |\n")
+            file.write(f"|             | Superficial                 |{hn_s_p}%                      |{hn_s_s}                      |\n")
+            file.write(f"|             | Traumatic Brain Injury      |{hn_tbi_p}%                    |{hn_tbi_s}                    |\n")
+            file.write(f"| Thorax      |                             |{t_p}% @cite Ivey2012          |                              |\n")
+            file.write(f"|             | Fracture                    |{t_f_p}%  @cite Ivey2012       |{t_f_s} @cite Ivey2012        |\n")
+            file.write(f"|             | Hemorrhage                  |{t_hg_p}% @cite Ivey2012       |{t_hg_s} @cite Ivey2012       |\n")
+            file.write(f"|             | Hemothorax                  |{t_hx_p}% @cite Ivey2012       |{t_hx_s} @cite Ivey2012       |\n")
+            file.write(f"|             | Pneumothorax                |{t_px_p}% @cite Ivey2012       |{t_px_s} @cite Ivey2012       |\n")
+            file.write(f"|             | Pulmonary Contusion         |{t_pc_p}% @cite Ivey2012       |{t_pc_s} @cite Ivey2012       |\n")
+            file.write(f"|             | Spinal                      |{t_s_p}%  @cite Ivey2012       |{t_s_s} @cite Ivey2012        |\n")
+            file.write(f"| Abdomen     |                             |{a_p}% @cite Belmont2010       |                              |\n")
+            file.write(f"|             | Hemorrhage                  |{a_hg_p}%*                     |{a_hg_s}*                     |\n")
+            file.write(f"|             | Laceration / Contusion      |{a_lc_p}%                      |{a_lc_s}*                     |\n")
+            file.write(f"| Extremity   |                             |{e_p}%   @cite Belmont2010     |                              |\n")
+            file.write(f"|             | Burn / Nerve                |{e_bn_p}%  @cite Perez2022     |{e_bn_s} @cite Perez2022      |\n")
+            file.write(f"|             | Contusion / Sprain / Strain |{e_css_p}% @cite Perez2022     |{e_css_s} @cite Perez2022     |\n")
+            file.write(f"|             | Fracture / Dislocation      |{e_fd_p}%  @cite Perez2022     |{e_fd_s} @cite Perez2022      |\n")
+            file.write(f"|             | Hemorrhage                  |{e_hg_p}%  @cite Perez2022     |{e_hg_s} @cite Perez2022      |\n")
+            file.write(f"@htmlonly")
+            file.write(f"<p style=\"font-size:8pt;\">*Assumed to match statistics for Thorax Hemorrhage</p><br>")
+            file.write(f"@endhtmlonly")
 
         # Update our landing page with all these runs
         src = Path(get_root_dir()) / "src/python/pulse/study/in_the_moment/docs/itm_triage_datasets.md"
@@ -925,9 +940,9 @@ def main():
             _log.info(f"There are {len(eval_study)} casualties in {eval_file}")
 
             if opts.create_plots:
-                output_tb_dir = Path(f"./docs/html/Images/itm/{set_name}")
-                output_tb_dir.mkdir(parents=True, exist_ok=True)
-                results_stem = str(output_tb_dir / "eval_casualties")
+                dst_dir = output_img_dir / f"{set_name}"
+                dst_dir.mkdir(exist_ok=True, parents=True)
+                results_stem = str(dst_dir) + "/eval_casualties"
 
                 # Write out the error images for this generated dataset
                 spec = to_specification_lists(eval_study)

@@ -48,3 +48,12 @@ set_target_properties (PyPulse PROPERTIES FOLDER Pulse)
 
 # Install protobuf python support, we don't get this unless python api is enabled
 install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+
+# Setup any study data files
+message(STATUS "Unzipping MHSRS 2025 dataset")
+set(MHSRS_2025_DIR ${CMAKE_INSTALL_PREFIX}/bin/test_results/itm/triage_study/)
+file(MAKE_DIRECTORY ${MHSRS_2025_DIR})
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_CURRENT_SOURCE_DIR}/pulse/study/in_the_moment/datasets/mhsrs_2025_triage_study.zip
+  WORKING_DIRECTORY ${MHSRS_2025_DIR}
+)
