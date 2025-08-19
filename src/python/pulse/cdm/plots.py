@@ -9,9 +9,10 @@ from typing import Dict, List, Optional, Set, Tuple, Union
 import logging
 import pandas as pd
 
+from pulse.cdm.engine import SEEventChange
 from pulse.cdm.utils.file_utils import get_dir_from_run_config
 from pulse.cdm.utils.csv_utils import read_csv_into_df
-from pulse.cdm.utils.logger import LogItem, LogAction, LogEvent, PulseLog
+from pulse.engine.PulseEngineResults import PulseLogAction, PulseLog
 
 
 _pulse_logger = logging.getLogger('pulse')
@@ -591,9 +592,9 @@ class SEPlotConfig():
         self._y2_bounds = None
 
 
-class SEPlotSource():
+class SEPlotSource:
     __slots__ = ["_csv_data", "_log_file", "_df", "_label", "_line_format",
-                 "_line_width", "_start_row", "_end_row", "_row_skip", "_actions_events"]
+                 "_line_width", "_start_row", "_end_row", "_row_skip", "_actions", "_events"]
 
     def __init__(self, csv_data: Optional[str]=None, log_file: Optional[str]=None, label: Optional[str]=None,
         line_format: Optional[str]=None, line_width: Optional[float]=None, start_row: Optional[int]=None,
@@ -608,7 +609,8 @@ class SEPlotSource():
         self._end_row = end_row
         self._row_skip = row_skip
 
-        self._actions_events = None
+        self._actions = None
+        self._events = None
         self._df = pd.DataFrame()
 
     def get_name(self):
@@ -655,89 +657,103 @@ class SEPlotSource():
                 _pulse_logger.error(f"Could not find corresponding log file: {self._csv_data}")
                 return False
 
-        log = PulseLog()
-        log.parse(self._log_file)
-        self._actions_events = []
-        self._actions_events.extend(log.actions)
-        self._actions_events.extend(log.events)
-
-        self._actions_events = sorted(self._actions_events, key=attrgetter('time'))
+        log = PulseLog([self._log_file])
+        self._actions = log.actions
+        self._events = log.events
 
         return True
 
-    def get_actions_events(self, plot_actions: bool = True, plot_events: bool = True,
-                           allow_actions_with: Optional[List[str]] = None,
-                           allow_events_with: Optional[List[str]] = None,
-                           omit_actions_with: Optional[List[str]] = None,
-                           omit_events_with: Optional[List[str]] = None,
-                           count_limit: int = None) -> List[LogItem]:
+    def get_actions(self,
+                    allow_actions_with: Optional[List[str]] = None,
+                    omit_actions_with: Optional[List[str]] = None,
+                    count_limit: int = None) -> dict:
         if allow_actions_with is None:
             allow_actions_with = list()
-        if allow_events_with is None:
-            allow_events_with = list()
         if omit_actions_with is None:
             omit_actions_with = list()
-        if omit_events_with is None:
-            omit_events_with = list()
 
-        filtered = []
-        ae_counts = {"Action": {}, "Event": {}}
-        for ae in self._actions_events:
-            if plot_actions and isinstance(ae, LogAction):
+        cnt = 0
+        filtered = {}
+        for time, actions in self._actions.items():
+            for a in actions:
                 if allow_actions_with:
                     keep = False
                     for o in allow_actions_with:
-                        if o in ae.text:
+                        if o in a.text:
                             keep = True
                             break
                 else:
                     keep = True
 
                 for o in omit_actions_with:
-                    if o in ae.text:
+                    if o in a.text:
                         keep = False
                         break
 
                 if keep:
-                    filtered.append(ae)
-                    if ae.name not in ae_counts["Action"]:
-                        ae_counts["Action"][ae.name] = 0
-                    ae_counts["Action"][ae.name] += 1
-            elif plot_events and isinstance(ae, LogEvent):
+                    if count_limit:
+                        if cnt < count_limit:
+                            cnt += 1
+                            if time not in filtered:
+                                filtered[time] = []
+                            filtered[time].append(a)
+                    else:
+                        cnt += 1
+                        if time not in filtered:
+                            filtered[time] = []
+                        filtered[time].append(a)
+
+        return filtered
+
+    def get_events(self,
+                   allow_events_with: Optional[List[str]] = None,
+                   omit_events_with: Optional[List[str]] = None,
+                   count_limit: int = None) -> dict:
+        if allow_events_with is None:
+            allow_events_with = list()
+        if omit_events_with is None:
+            omit_events_with = list()
+
+        cnt = 0
+        filtered = {}
+        for time, events in self._events.items():
+            for e in events:
                 if allow_events_with:
                     keep = False
                     for o in allow_events_with:
-                        if o in ae.text:
+                        if o in str(e):
                             keep = True
                             break
                 else:
                     keep = True
 
                 for o in omit_events_with:
-                    if o in ae.text:
+                    if o in str(e):
                         keep = False
                         break
-                if keep:
-                    filtered.append(ae)
-                    if ae.event not in ae_counts["Event"]:
-                        ae_counts["Event"][ae.event] = 0
-                    ae_counts["Event"][ae.event] += 1
 
-        if count_limit is not None:
-            limited = []
-            for ae in filtered:
-                if isinstance(ae, LogAction) and ae_counts["Action"][ae.name] <= count_limit:
-                    limited.append(ae)
-                elif isinstance(ae, LogEvent) and ae_counts["Event"][ae.event] <= count_limit:
-                    limited.append(ae)
-            filtered = limited  # [ae for ae in filtered if not ae_counts[ae.category][ae.name] > count_limit]
+                if keep:
+                    if count_limit:
+                        cnt += 1
+                        if time not in filtered:
+                            filtered[time] = []
+                        filtered[time].append(e)
+                    else:
+                        cnt += 1
+                        if time not in filtered:
+                            filtered[time] = []
+                        filtered[time].append(e)
 
         return filtered
 
-    def set_actions_events(self, actions_events: List[LogItem]) -> None:
-        self._actions_events = sorted(actions_events, key=attrgetter('time'))
+    def set_actions_events(self,
+                           actions: Dict[float, List[PulseLogAction]],
+                           events: Dict[float, List[SEEventChange]]) -> None:
+        self._actions = actions
+        self._events = events
+
     def has_actions_events(self) -> bool:
-        return self._actions_events is not None
+        return self._actions is not None and self._events is not None
 
     def get_data_frame(self) -> pd.DataFrame:
         if self._df.empty:

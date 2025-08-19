@@ -50,9 +50,9 @@ Insulin is secreted by the pancreatic beta cells in response to increased blood 
 The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in Polonsky @cite polonsky1987insulin.
 The synthesis rate is defined by:
 
-\f[f(I)= (5.357 * G) - 328.56 \f] 
 <center>
-*Equation 1.*
+\f[f(I)= (5.357 * G) - 328.56 \f] 
+<i>@equationdef {systhesis}</i> 
 </center><br>
 Where <i>G</i> is glucose concentration of the blood. 
 This linear function is valid for glucose levels of 80-150 mg/dL, and will compute an insulin synthesis rate between 100-475 pmol/min accordingly.
@@ -72,11 +72,11 @@ Norepinephrine is released  as part of the body's parasympathetic response. The 
 Two stimuli, exercise and acute stress, can modify the norepinephrine release rate. The norepinephrine release is considered to be inversely proportional to the epinephrine release rate during this circumstances. The epinephrine release was validated as noted below.
 
 #### Exercise
-The increase in epinephrine release as a function of above-basal exercise was developed using data in @cite stratton1985hemodynamic and @cite tidgren1991renal. We assume that the epinephrine clearance rate is constant; therefore, the fractional increase in epinephrine concentration described in @cite stratton1985hemodynamic and @cite tidgren1991renal can be assumed to be due to a similar fractional increase in release rate. Using that assumption, we fit a logistic function to the basal-normalized epinephrine steady-state concentrations during exercise presented in @cite tidgren1991renal. The release modifier varies from 1 to 19.75, as shown in Figure 1, meaning that the epinephrine release rate will be 19.75 times the basal release rate with maximal exercise. The model is implemented by first computing the above-basal metabolic rate and then using the generic logistic function with the appropriate parameter values to compute the release rate multiplier.
+The increase in epinephrine release as a function of above-basal exercise was developed using data in @cite stratton1985hemodynamic and @cite tidgren1991renal. We assume that the epinephrine clearance rate is constant; therefore, the fractional increase in epinephrine concentration described in @cite stratton1985hemodynamic and @cite tidgren1991renal can be assumed to be due to a similar fractional increase in release rate. Using that assumption, we fit a logistic function to the basal-normalized epinephrine steady-state concentrations during exercise presented in @cite tidgren1991renal. The release modifier varies from 1 to 19.75, as shown in @figureref {EpiExercise}, meaning that the epinephrine release rate will be 19.75 times the basal release rate with maximal exercise. The model is implemented by first computing the above-basal metabolic rate and then using the generic logistic function with the appropriate parameter values to compute the release rate multiplier.
 
-<a href="./plots/Endocrine/EpiExercise.jpg"><a href="./plots/Endocrine/EpiExercise.jpg"><img src="./plots/Endocrine/EpiExercise.jpg" width="600"></a></a>
 <center>
-*Figure 1. The increase in epinephrine release during exercise is computed as a fraction of the basal rate.*
+<a href="./plots/Endocrine/EpiExercise.jpg"><img src="./plots/Endocrine/EpiExercise.jpg" width="600"></a>
+<i>@figuredef {EpiExercise} The increase in epinephrine release during exercise is computed as a fraction of the basal rate.</i>
 </center><br>
 
 
@@ -114,13 +114,13 @@ Results and Conclusions
 Validation - Resting Physiologic State
 --------------------------------------
 
-In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic "Drugs Validation's Table 1". At resting physiological levels, epinephrine has no pharmacodynamic effects.
+In the engine, the hormone epinephrine is the same substance as the synthetic epinephrine available for injection. This generic epinephrine substance was validated as part of the drugs validation detailed in the @ref drugs-validation-pharmacodynamic. At resting physiological levels, epinephrine has no pharmacodynamic effects.
 
 Validation - Actions
 --------------------------------------
 @anchor endocrine-acute-stress
 ### Acute Stress
-The effects of epinephrine release on the physiology can be clearly seen by triggering an Acute Stress action. The patient in this scenario undergoes three bouts of Acute Stress, with the first representing mild pain, the second representing mental stress, and the third representing a panic attack. The severity levels were chosen by checking the blood concentration of epinephrine to ensure it met published values. However, a known issue with epinephrine modeling in the current engine release is that higher concentrations of epinephrine are needed to produce the effects noted in literature. In order to achieve the physiological effects, the severity was proportionally scaled up. This shortcoming is the reason for the failing epinephrine concentrations, but it allows for the other effects of epinephrine to be modeled, which has beneficial effects for other systems utilizing epinephrine. Heart rate behaves as expected, but blood pressure effects aren't always in line with expectations. This is likely an effect of baroreceptor reflex counterbalancing epinephrine effects. Figure 2 shows the blood concentration and select effects with the acute stress action.
+The effects of epinephrine release on the physiology can be clearly seen by triggering an Acute Stress action. The patient in this scenario undergoes three bouts of Acute Stress, with the first representing mild pain, the second representing mental stress, and the third representing a panic attack. The severity levels were chosen by checking the blood concentration of epinephrine to ensure it met published values. However, a known issue with epinephrine modeling in the current engine release is that higher concentrations of epinephrine are needed to produce the effects noted in literature. In order to achieve the physiological effects, the severity was proportionally scaled up. This shortcoming is the reason for the failing epinephrine concentrations, but it allows for the other effects of epinephrine to be modeled, which has beneficial effects for other systems utilizing epinephrine. Heart rate behaves as expected, but blood pressure effects aren't always in line with expectations. This is likely an effect of baroreceptor reflex counterbalancing epinephrine effects. @figureref {AcuteStress} shows the blood concentration and select effects with the acute stress action.
 
 <center>
 <table border="0">
@@ -133,17 +133,17 @@ The effects of epinephrine release on the physiology can be clearly seen by trig
     <td><a href="./plots/Endocrine/AcuteStressDiastolic.jpg"><img src="./plots/Endocrine/AcuteStressDiastolic.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Endocrine/AcuteStressLegend.jpg"><img src="./plots/Endocrine/AcuteStressLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><center><a href="./plots/Endocrine/AcuteStressLegend.jpg"><img src="./plots/Endocrine/AcuteStressLegend.jpg" width="1100"></a></center></td>
 </tr>
 </table>
 </center>
 <center><i>
-*Figure 2. Epinephrine is released in response to Acute Stress actions.*
+<i>@figuredef {AcuteStress} Epinephrine is released in response to Acute Stress actions.</i>
 </i>
 </center><br>
 
 <center>
-*Table 1. Actions associated with the %Endocrine System were validated by comparing the engine output to expected trends and data. Engine results show favorable agreement (green), some agreement (yellow), or bad agreement (red). Results mostly matched expected trends.*
+<i>@tabledef {EndocrineValidation} Actions associated with the %Endocrine System were validated by comparing the engine output to expected trends and data. Engine results show favorable agreement (green), some agreement (yellow), or bad agreement (red). Results mostly matched expected trends.</i>
 </center>
 
 |	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Arterial Epinephrine (ug/L)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Heart Rate (1/min)	|	Pulmonary Resistance (cmH2O-s/L)	|

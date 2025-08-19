@@ -9,7 +9,7 @@ from typing import List, Optional, Union
 
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import format_float
-from pulse.cdm.engine import eEngineInitializationState
+from pulse.cdm.enums import eEngineInitializationState
 from pulse.cdm.scenario import eScenarioExecutionState, SEScenarioExecStatus
 from pulse.cdm.validation import SEPatientTimeSeriesValidation
 from pulse.pipelines.dataset.timeseries_dataset_reader import gen_patient_targets

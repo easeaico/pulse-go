@@ -53,7 +53,7 @@ def percent_tolerance(expected: float, calculated: float, epsilon: float, verbos
         return abs(calculated - expected) / expected * 100.0
 
 
-def percent_difference(expected: float, calculated: float, epsilon: float, verbose: bool = True):
+def percent_difference(expected: float, calculated: float, epsilon: float = 1e-10, verbose: bool = True):
     # Check for 'invalid' numbers
     if np.isnan(expected) or np.isnan(calculated) or np.isinf(expected) or np.isinf(calculated):
         if verbose:

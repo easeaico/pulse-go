@@ -1,13 +1,11 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
-
-from pulse.cdm.engine import eMergeType
+from pulse.cdm.enums import eMergeType, eAppliedRespiratoryCycle
 from pulse.cdm.equipment_actions import SEEquipmentAction
 from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorSettings, \
                                             eSwitch, eDriverWaveform
 from pulse.cdm.scalars import SEScalarPressure, SEScalar0To1, SEScalarTime, \
                               SEScalarFrequency, SEScalarVolumePerTime, SEScalarVolume
-from pulse.cdm.bind.Actions_pb2 import eAppliedRespiratoryCycle
 from enum import Enum
 
 

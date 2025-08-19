@@ -5,7 +5,6 @@ from pulse.cdm.equipment_actions import SEEquipmentAction
 from pulse.cdm.ecmo import SEECMOSettings, eSwitch
 from pulse.cdm.scalars import SEScalarPressure, SEScalar0To1, SEScalarTime, \
                               SEScalarFrequency, SEScalarVolumePerTime, SEScalarVolume
-from pulse.cdm.bind.Actions_pb2 import eAppliedRespiratoryCycle
 from enum import Enum
 
 

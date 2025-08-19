@@ -2,16 +2,30 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.curve import SECurve
-from pulse.cdm.engine import eSwitch
+from pulse.cdm.enums import eSwitch
 from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarPressure, SEScalarTime, SEScalarUnsigned
 
 from enum import Enum
 
-class eDefaultType(Enum):
+class eDefaultType(int, Enum):
     Model = 0
     Zero = 1
 
-class eLungCompartment(Enum):
+
+class eHeartRhythm(int, Enum):
+    NormalSinus = 0
+    SinusBradycardia = 1
+    SinusTachycardia = 2
+    SinusPulselessElectricalActivity = 3
+    Asystole = 4
+    CoarseVentricularFibrillation = 5
+    FineVentricularFibrillation = 6
+    PulselessVentricularTachycardia = 7
+    StableVentricularTachycardia = 8
+    UnstableVentricularTachycardia = 9
+
+
+class eLungCompartment(int, Enum):
     LeftLung = 0
     RightLung = 1
     # Lobes

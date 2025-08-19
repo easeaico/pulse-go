@@ -20,10 +20,10 @@ from pulse.cdm.engine import SEDataRequest
 from pulse.cdm.validation import SETimeSeriesValidationTarget, SEPatientTimeSeriesValidation
 from pulse.cdm.patient import SEPatient, eSex
 from pulse.cdm.scalars import get_unit, LengthUnit, MassUnit
-from pulse.cdm.scenario import SEScenarioLog
 from pulse.cdm.utils.file_utils import get_data_dir, get_validation_dir
 from pulse.cdm.io.engine import serialize_data_request_list_to_file
 from pulse.cdm.io.patient import serialize_patient_from_file
+from pulse.engine.PulseEngineResults import PulseLog
 from pulse.pipelines.dataset.utils import generate_data_request
 
 _pulse_logger = logging.getLogger('pulse')
@@ -173,24 +173,11 @@ def extract_patient(patient_file: Path) -> SEPatient:
     """
     if patient_file.suffix.lower() == ".json":
         p = SEPatient()
-        serialize_patient_from_file(patient_file, p)
+        serialize_patient_from_file(str(patient_file), p)
         return p
     elif patient_file.suffix.lower() == ".log":
-        class SEScenarioLogPatient(SEScenarioLog):
-            def __init__(self, log_file: Path):
-                super().__init__(
-                    log_file=log_file,
-                    extract_actions=False,
-                    extract_events=False
-                )
-
-                self._process_log()
-
-            def get_patient(self):
-                return self._patient
-
-        log = SEScenarioLogPatient(log_file=patient_file)
-        return log.get_patient()
+        log = PulseLog(log_files=[patient_file])
+        return log.patient
     else:
         raise ValueError("Unknown patient file type: {patient_file}")
 

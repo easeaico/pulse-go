@@ -21,6 +21,8 @@ public:
 
   virtual void Clear();
 
+  virtual bool IsValidPatient(std::string const& patient, eSerializationFormat format) = 0;
+
   //virtual void SetConfigurationOverride(std::string const& config)=0; // Not Implemented
 
   bool SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format);

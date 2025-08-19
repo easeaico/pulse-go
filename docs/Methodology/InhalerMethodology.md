@@ -12,7 +12,7 @@ The %Inhaler Model is a generic representation of a pressurized metered dose inh
 
 <center><a href="./Images/Inhaler/Inhaler_Figure01.png"><img src="./Images/Inhaler/Inhaler_Figure01.png" width="400"></a></center>
 <center>
-<i>Figure 1. A pressurized metered dose inhaler @cite Wikiphoto2016How.</i>
+<i>@figuredef {InhalerDevice} A pressurized metered dose inhaler @cite Wikiphoto2016How.</i>
 </center>
 @anchor inhaler-intro
 Introduction
@@ -32,10 +32,10 @@ Background and Scope
 
 ### Aerosol Deposition 
 
-Most pMDI's deliver 100-200 &mu;g of a substance per actuation, but a large portion of the dose does not actually make it into the lungs. Many studies, including one by Newman @cite newman1991improvement in 1991, showed that as little as 20% of the drugs delivered by the pMDI actually make it into the lung tissue. The actual amount depends strongly on droplet size and the technique of the user. Users categorized as "good coordinators" average 20% lung deposition, but can often get much better depending on how "good" they are.  "Bad coordinators" - those that actuate the inhaler too early, too late, or fail to inhale sufficiently - do much worse. Table 1 summarizes the results from Newman's study.  
+Most pMDI's deliver 100-200 &mu;g of a substance per actuation, but a large portion of the dose does not actually make it into the lungs. Many studies, including one by Newman @cite newman1991improvement in 1991, showed that as little as 20% of the drugs delivered by the pMDI actually make it into the lung tissue. The actual amount depends strongly on droplet size and the technique of the user. Users categorized as "good coordinators" average 20% lung deposition, but can often get much better depending on how "good" they are.  "Bad coordinators" - those that actuate the inhaler too early, too late, or fail to inhale sufficiently - do much worse. @tableref {InhalerDepositionSites} summarizes the results from Newman's study.  
 
 <center>
-<i>Table 1. Mean percentage or aerosol dose located at various sites after inhalation by Good and Bad coordinators @cite newman1991improvement . </i>
+<i>@tabledef {InhalerDepositionSites} Mean percentage or aerosol dose located at various sites after inhalation by Good and Bad coordinators @cite newman1991improvement . </i>
 </center>
 
 | Site | Correct: "Good Coordinators" | Incorrect: "Bad Coordinators" |
@@ -47,9 +47,10 @@ Most pMDI's deliver 100-200 &mu;g of a substance per actuation, but a large port
 
 Regardless of how coordinated the user is with the device, a large portion of the dose is generally deposited the oropharynx, lost in the actuator and nozzle, or is exhaled. In engine, the portion of aerosolized dose lost to deposition in oropharynx region is estimated using an empirical relation developed for a study conducted by Yeh in 1996 @cite yeh1996comparisons ,
 
-\f[ODF = \frac{1}{{1 + {{\left( {\frac{{\rho {d^2}Q}}{{30000}}} \right)}^{ - 1.37}}}}\f]
 <center>
-*Equation 1.*
+\f[ODF = \frac{1}{{1 + {{\left( {\frac{{\rho {d^2}Q}}{{30000}}} \right)}^{ - 1.37}}}}\f]
+
+<i>@equationdef {drug_fraction}</i>
 </center><br> 
 
 In this relation, the oral deposition fraction (ODF) is a function of droplet density, <i>&rho;</i>(g/cm<SUP>3</SUP>), droplet diameter, d (&mu;m), and flow rate, Q (cm<SUP>3</SUP>/sec). Nozzle and actuator losses are generally design dependent and will vary depending on the specific pMDI used. In the engine, nozzle losses are treated as a property of the pMDI.
@@ -58,14 +59,15 @@ In this relation, the oral deposition fraction (ODF) is a function of droplet de
 The inhaler implementation is used to meet the requirement to administer a beta agonist (e.g., albuterol) as an intervention action for acute asthma.
 
 ### Approach
-The pMDI is modeled as a simple circuit (Figure 2) conditionally appended to the existing %Respiratory System circuit model. The inhaler circuit consists of a single inhaler node with a fixed volume connected to the external environment &ldquo;ground.&rdquo; If a spacer is specified in the scenario, the volume of the spacer is added to the inhaler node volume. When the pMDI is actuated during a scenario, the inhaler circuit is connected to the mouth node of the respiratory model, replacing the connection from the mouth to the external environment. Atmospheric air initially fills the inhaler volume and airflow into and out of the respiratory system temporarily passes through the inhaler node. 
+The pMDI is modeled as a simple circuit (@figureref {InhalerCircuit}) conditionally appended to the existing %Respiratory System circuit model. The inhaler circuit consists of a single inhaler node with a fixed volume connected to the external environment &ldquo;ground.&rdquo; If a spacer is specified in the scenario, the volume of the spacer is added to the inhaler node volume. When the pMDI is actuated during a scenario, the inhaler circuit is connected to the mouth node of the respiratory model, replacing the connection from the mouth to the external environment. Atmospheric air initially fills the inhaler volume and airflow into and out of the respiratory system temporarily passes through the inhaler node. 
 
-<a href="./Images/Inhaler/Inhaler_Figure02.png"><img src="./Images/Inhaler/Inhaler_Figure02.png"></a>
 <center>
-<i>Figure 2. %Inhaler circuit (red) connected to the %Respiratory System circuit. The inhaler circuit consists of a single inhaler node that is added the respiratory circuit when the pMDI is actuated.</i>
+<a href="./Images/Inhaler/Inhaler_Figure02.png"><img src="./Images/Inhaler/Inhaler_Figure02.png"></a>
+
+<i>@figuredef {InhalerCircuit} %Inhaler circuit (red) connected to the %Respiratory System circuit. The inhaler circuit consists of a single inhaler node that is added the respiratory circuit when the pMDI is actuated.</i>
 </center><br>
 
-To model coordinated use of the pMDI, conscious breathing actions were implemented.  The end volumes and time lengths for exhalation, inhalation, and holding breath are specified as parameters for these actions, along with pMDI actuation timing.  When the pMDI is actuated, the drug dose is added to the atmospheric air in the inhaler node. Depending on airflow direction, the air/drug mixture in the inhaler node flows into the mouth or out into the external environment. A fraction of the drug that flows through the mouth and trachea is removed from the system per Equation 1. The remaining drug mass flows into and out of the lungs and alveoli. The drug mass in the inhaler node is assessed each time step during the scenario. When the drug mass in the inhaler node drops to approximately zero, the inhaler is disconnected from the respiratory circuit.
+To model coordinated use of the pMDI, conscious breathing actions were implemented.  The end volumes and time lengths for exhalation, inhalation, and holding breath are specified as parameters for these actions, along with pMDI actuation timing.  When the pMDI is actuated, the drug dose is added to the atmospheric air in the inhaler node. Depending on airflow direction, the air/drug mixture in the inhaler node flows into the mouth or out into the external environment. A fraction of the drug that flows through the mouth and trachea is removed from the system per @equationref {drug_fraction}. The remaining drug mass flows into and out of the lungs and alveoli. The drug mass in the inhaler node is assessed each time step during the scenario. When the drug mass in the inhaler node drops to approximately zero, the inhaler is disconnected from the respiratory circuit.
 
 Once in the alveoli, the drug diffuses into the blood stream. See the @ref DrugsMethodology for pD and pK effects. 
 @anchor inhaler-dataflow
@@ -112,7 +114,7 @@ When the pMDI is used by a patient, there is a direct connection that allows air
 
 #### pMDI (Inhaler) Settings
 <center>
-*Table 2. The table shows the basic settings parameters used in the engine as inputs to use the pMDI*
+*@tabledef {InhalerSettings} The table shows the basic settings parameters used in the engine as inputs to use the pMDI*
 </center>
 
 | Preset Parameter | Description |
@@ -127,7 +129,7 @@ Losses due to drug deposition in the oropharynx region are estimated based on th
 @anchor inhaler-dependencies
 
 ### Dependencies
-The pMDI interacts with the %Respiratory System through a connection that delivers atmospheric air and drugs into the %Respiratory System (@ref RespiratoryMethodology). The two systems are connected to each other at the mouth node through a path that connects the mouth node of the %Respiratory System to the inhaler node (see Figure 2). Before and after the pMDI is actuated, the mouth node of the %Respiratory System is connected to the atmosphere through the %Environment System that serves as a ground node for the %Respiratory System. 
+The pMDI interacts with the %Respiratory System through a connection that delivers atmospheric air and drugs into the %Respiratory System (@ref RespiratoryMethodology). The two systems are connected to each other at the mouth node through a path that connects the mouth node of the %Respiratory System to the inhaler node (see @figureref {InhalerCircuit}). Before and after the pMDI is actuated, the mouth node of the %Respiratory System is connected to the atmosphere through the %Environment System that serves as a ground node for the %Respiratory System. 
 
 When the pMDI is actuated, a network of combined circuits that include the elements from both the %Respiratory System and the inhaler is created. When the combined circuit is generated at the run-time, the ground environment node connected to the mouth node of the %Respiratory System is replaced by the inhaler node that represents the nozzle, becoming one combined circuit.
 
@@ -161,10 +163,10 @@ Results and Conclusions
 Validation - Actions
 --------------------
 
-pMDI actuation and coordinated breathing actions were validated in several scenarios. A summary of this validation is shown in Table 3. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
+pMDI actuation and coordinated breathing actions were validated in several scenarios. A summary of this validation is shown in @tableref {InhalerValidationSummary}. For each scenario, the table shows the total number of results in each category. For many investigated scenarios, the model shows good agreement with the expected trends. For the scenarios that did not match with the expected trends, improvements are planned for future engine releases.
 
 <center><br>
-*Table 3. Cumulative validation results for %Inhaler specific conditions and actions scenarios.*
+*@tabledef {InhalerValidationSummary} Cumulative validation results for %Inhaler specific conditions and actions scenarios.*
 </center>
 
 |	Key	|
@@ -194,10 +196,10 @@ The single actuation scenarios with and without a spacer use the same setup and 
 </tr>
 </table>
 </center>
-<center><i>Figure 4. Select outputs from the single actuation scenario. With and without a spacer give extremely similar results.</i></center>
+<center><i>@figuredef {InhalerSingleActuation} Select outputs from the single actuation scenario. With and without a spacer give extremely similar results.</i></center>
 
 <center><br>
-<i>Table 4. Validation matrix for physiological responses due to inhaler single actuation with correct use. With and without a spacer give the same results.</i>
+<i>@tabledef {InhalerSingleActuationCorrect} Validation matrix for physiological responses due to inhaler single actuation with correct use. With and without a spacer give the same results.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Albuterol Mass in Alveoli (ug)	|	Trachea Flow - Peak Flow  (L/min)	|	Total Lung Volume (mL)	|
@@ -223,7 +225,7 @@ The incorrect use, single actuation scenarios with and without a spacer use the 
 </tr>
 </table>
 </center>
-<center><i>Figure 5. Select outputs from the single actuation scenario with incorrect use and without the use of a spacer.</i></center>
+<center><i>@figuredef {InhalerIncorrectUse} Select outputs from the single actuation scenario with incorrect use and without the use of a spacer.</i></center>
 
 #### With Spacer
 
@@ -237,10 +239,10 @@ When the spacer is included with the inhaler, a small amount of alburterol still
 </tr>
 </table>
 </center>
-<center><i>Figure 6. Select outputs from the single actuation scenario with incorrect use and with the use of a spacer.</i></center>
+<center><i>@figuredef {InhalerIncorrectUseSpacer} Select outputs from the single actuation scenario with incorrect use and with the use of a spacer.</i></center>
 
 <center><br>
-<i>Table 5. Validation matrix for physiological responses due to inhaler single actuation with incorrect use. The same matrix can be used to analyze both with and without the spacer.</i>
+<i>@tabledef {InhalerSingleActuationIncorrect} Validation matrix for physiological responses due to inhaler single actuation with incorrect use. The same matrix can be used to analyze both with and without the spacer.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Albuterol Mass in Alveoli (ug)	|	Trachea Flow - Peak Flow  (L/min)	|	Total Lung Volume (mL)	|
@@ -263,10 +265,10 @@ Below are validation results for two non-concurrent pMDI actuations using a mete
 </tr>
 </table>
 </center>
-<center><i>Figure 7. Select outputs from the double actuation scenario with correct use.</i></center>
+<center><i>@figuredef {InhalerDoubleActuation} Select outputs from the double actuation scenario with correct use.</i></center>
 
 <center><br>
-<i>Table 6. Validation matrix for physiological responses due to inhaler double actuation with correct use.</i>
+<i>@tabledef {InhalerDoubleActuation} Validation matrix for physiological responses due to inhaler double actuation with correct use.</i>
 </center>
 
 |	Segment	|	Notes	|	Action Occurance Time (s)	|	Sampled Scenario Time (s)	|	Albuterol Mass in Alveoli (ug)	|	Trachea Flow - Peak Flow  (L/min)	|	Total Lung Volume (mL)	|

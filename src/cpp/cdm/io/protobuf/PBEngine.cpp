@@ -47,13 +47,13 @@ POP_PROTO_WARNINGS
 #include "cdm/system/environment/actions/SEThermalApplication.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
-#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h"
@@ -64,6 +64,7 @@ POP_PROTO_WARNINGS
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
+#include "cdm/system/equipment/ecmo/actions/SEECMOConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
@@ -78,6 +79,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
+#include "cdm/patient/actions/SECardiovascularMechanicsModification.h"
 #include "cdm/patient/actions/SEChestCompressionAutomated.h"
 #include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
@@ -100,6 +102,8 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEPneumoniaExacerbation.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsModification.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SESubstanceBolus.h"
 #include "cdm/patient/actions/SESubstanceInfusion.h"
@@ -284,6 +288,9 @@ void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::Actio
   if (src.HasBagValveMaskSqueeze())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskSqueeze));
 
+  if (src.HasECMOConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ECMOConfiguration));
+
   if (src.HasInhalerConfiguration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InhalerConfiguration));
 
@@ -324,11 +331,12 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BrainInjury));
   if (src.HasBronchoconstriction())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Bronchoconstriction));
-
-  if (src.HasChestCompressionInstantaneous())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionInstantaneous));
+  if (src.HasCardiovascularMechanicsModification())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_CardiovascularMechanicsModification));
   else if (src.HasChestCompressionAutomated())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionAutomated));
+  if (src.HasChestCompressionInstantaneous())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionInstantaneous));
   if (src.HasLeftChestOcclusiveDressing())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftChestOcclusiveDressing));
   if (src.HasRightChestOcclusiveDressing())
@@ -373,20 +381,12 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PulmonaryShuntExacerbation));
   if (src.HasRespiratoryFatigue())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryFatigue));
+  if (src.HasRespiratoryMechanicsConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryMechanicsConfiguration));
+  if (src.HasRespiratoryMechanicsModification())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryMechanicsModification));
   if (src.HasSupplementalOxygen())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_SupplementalOxygen));
-  if (src.HasLeftClosedTensionPneumothorax())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftClosedTensionPneumothorax));
-  if (src.HasLeftOpenTensionPneumothorax())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftOpenTensionPneumothorax));
-  if (src.HasRightClosedTensionPneumothorax())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightClosedTensionPneumothorax));
-  if (src.GetRightOpenTensionPneumothorax())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightOpenTensionPneumothorax));
-  if (src.HasLeftTubeThoracostomy())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftTubeThoracostomy));
-  if (src.HasRightTubeThoracostomy())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightTubeThoracostomy));
   for (auto b : src.m_SubstanceBoluses)
   {
     if(b->IsActive())
@@ -402,6 +402,18 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     if(ci->IsActive())
       dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*ci));
   }
+  if (src.HasLeftClosedTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftClosedTensionPneumothorax));
+  if (src.HasLeftOpenTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftOpenTensionPneumothorax));
+  if (src.HasRightClosedTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightClosedTensionPneumothorax));
+  if (src.GetRightOpenTensionPneumothorax())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightOpenTensionPneumothorax));
+  if (src.HasLeftTubeThoracostomy())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftTubeThoracostomy));
+  if (src.HasRightTubeThoracostomy())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightTubeThoracostomy));
   if (src.HasUrinate())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Urinate));
 }

@@ -8,7 +8,7 @@ import json
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 import PyPulse
 from pulse.cdm.validation import SEPatientTimeSeriesValidation, generate_percentage_span

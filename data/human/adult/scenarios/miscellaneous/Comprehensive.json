@@ -710,7 +710,14 @@
             "Value": 10.0,
             "Unit": "N"
           }
-        }
+        },
+         "CompressionPeriod": {
+          "ScalarTime": {
+           "Value": 0.48,
+           "Unit": "s",
+           "ReadOnly": false
+          }
+         }
       }
     }
   }, {

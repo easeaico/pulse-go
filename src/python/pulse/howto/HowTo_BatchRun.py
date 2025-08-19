@@ -19,7 +19,6 @@ from pulse.cdm.utils.csv_utils import concat_csv_into_df
 from pulse.cdm.utils.plotter import multi_header_series_plotter
 
 from pulse.engine.PulseScenarioExec import PulseScenarioExec
-from pulse.engine.io.PulseScenarioExec import serialize_pulse_scenario_exec_to_file
 
 _log = logging.getLogger("pulse")
 

@@ -1,8 +1,8 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat, \
-                             SEDataRequest, SEDataRequestManager
+from pulse.cdm.enums import eSerializationFormat
+from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
 from pulse.cdm.patient_actions import SEHemothorax, \
                                       SETubeThoracostomy, \
                                       eSide

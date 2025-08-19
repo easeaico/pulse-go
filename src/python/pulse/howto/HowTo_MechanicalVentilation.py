@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.patient_actions import SEMechanicalVentilation, eSwitch
 from pulse.cdm.scalars import VolumePerTimeUnit, PressureUnit
 from pulse.engine.PulseEngine import PulseEngine

@@ -4,12 +4,13 @@
 import logging
 
 from pathlib import Path
+from typing import NamedTuple, Dict, List
 
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, IEventHandler, SEEventChange, eEvent
 from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhage_Compartment, SESubstanceCompoundInfusion
 from pulse.cdm.scalars import FrequencyUnit, PressureUnit, TemperatureUnit, VolumeUnit, VolumePerTimeUnit
-from pulse.cdm.utils.logger import PulseLog
 from pulse.engine.PulseEngine import PulseEngine
+from pulse.engine.PulseEngineResults import PulseLog, PulseEngineReprocessor, PulseResultsProcessor, PulseLogAction
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -104,23 +105,24 @@ def run_engine(out_dir: Path, total_duration_min: float, sample_step_s: float):
 
 
 def process_results(csv_file: Path, log_file: Path):
-    log = PulseLog()
-    log.parse(log_file)
+    # You can read the log file and get information from it
+    log = PulseLog([log_file])
     # You can get the SEPatient used in the simulation
     _pulse_logger.info(f"This simulation used {log.patient.get_name()}")
-    # You can get a [LogAction] for all the actions in the simulation
-    for a in log.actions:
-        _pulse_logger.info(f"A {a.name} was provided at time {a.time}s")
-        text = a.text.replace('\n', ' ')
-        _pulse_logger.info(f"\t{text}")
-    # You can get a [LogEvent] for all the events in the simulation
-    for e in log.events:
-        _pulse_logger.info(f"A {e.event} was {e.active} time {e.time}s")
-        _pulse_logger.info(f"\t{e.text}")
+    # You can get a {time_s, [LogAction]} dict for all the actions in the simulation
+    for time_s, actions in log.actions.items():
+        for action in actions:
+            _pulse_logger.info(f"A {action.name} was provided at time {time_s}s")
+            text = action.text.replace('\n', ' ')
+            _pulse_logger.info(f"\t{text}")
+    # You can get a {time_s, [LogEvent]} dict for all the events in the simulation
+    for time_s, events in log.events.items():
+        for event in events:
+            _pulse_logger.info(f"\t{repr(event)}")
     # You can get the time windows for when all events were active
-    for e, windows in log.event_windows.items():
+    for event, windows in log.event_windows.items():
         for w in windows:
-            _pulse_logger.info(f"{e} was active from {w[0]}s to {w[1]}s")
+            _pulse_logger.info(f"{event} was active from {w[0]}s to {w[1]}s")
     # You can get the status of an event for a specific window
     activities = log.get_active_events_in_window(200.0, 300.0)
     for e, info in activities.items():
@@ -131,6 +133,50 @@ def process_results(csv_file: Path, log_file: Path):
     # You can get the state of an event at a specific time
     status = log.get_event_status(eEvent.HypovolemicShock, 260.0)
     _pulse_logger.info(f"HypovolemicShock was {status} at 260s")
+
+    # You can replay the simulation and run customized modules to collect the results you need
+    playback = PulseEngineReprocessor(csv_files=[csv_file], log_files=[log_file])
+
+    # Create some processing modules to gather information for us as the simulation is replayed
+    class TestProcessor(PulseResultsProcessor):
+        __slots__ = ["shock_detected", "massive_bleeding"]
+
+        def __init__(self):
+            super().__init__()
+            self.shock_detected = None
+            self.massive_bleeding = None
+
+        def process_time_step(self,
+                              data_slice: NamedTuple,
+                              header_idx: Dict[str, int],
+                              event_changes: List[SEEventChange],
+                              action_changes: List[PulseLogAction]) -> None:
+            # Time is always index 0 of the data_slice
+            curr_time_s = data_slice[0]
+
+            # Generally, you should process event/action changes every time step
+            for event_change in event_changes:
+                if event_change.event == eEvent.HypovolemicShock and event_change.active:
+                    self.shock_detected = True
+
+            for action_change in action_changes:
+                if "Hemorrhage" == action_change.name:
+                    self.massive_bleeding = True
+
+            # You may want to perform certain logic at a lower rate than the time step
+            if curr_time_s % 1.0:  # Check if the patient MAP is below 60 every second
+                if data_slice[header_idx["MeanArterialPressure(mmHg)"]] < 60:
+                    # If you have met criteria to stop processing this simulation, you can throw this
+                    raise StopIteration("Patient has reached catastrophic hemorrhage")
+
+    module = TestProcessor()
+    playback.replay([module])
+
+    # Now we can do what we want with the data we gathered
+    if module.massive_bleeding:
+        _pulse_logger.info(f"Patient has massive bleeding at time {module.massive_bleeding}s")
+    if module.shock_detected:
+        _pulse_logger.info(f"Patient entered hypovolemic shock at time {module.shock_detected}")
 
 
 if __name__ == "__main__":

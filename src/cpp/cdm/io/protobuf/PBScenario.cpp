@@ -275,10 +275,17 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecStatusData& src, SEScenar
   PBEngine::Serialize(src.initializationstatus(), (SEEngineInitializationStatus&)dst);
   if (!src.scenariofilename().empty())
     dst.SetScenarioFilename(src.scenariofilename());
-  dst.SetScenarioExecutionState((eScenarioExecutionState)src.scenarioexecutionstate());
-  dst.SetRuntimeError(src.runtimeerror());
-  dst.SetFatalRuntimeError(src.fatalruntimeerror());
-  dst.SetFinalSimulationTime_s(src.finalsimulationtime_s());
+  eScenarioExecutionState status = (eScenarioExecutionState)src.scenarioexecutionstate();
+  if (status == eScenarioExecutionState::Running)
+    // If we are loading, this run is no longer running, so change back to waiting
+    dst.SetScenarioExecutionState(eScenarioExecutionState::Waiting);
+  else
+  {
+    dst.SetScenarioExecutionState(status);
+    dst.SetRuntimeError(src.runtimeerror());
+    dst.SetFatalRuntimeError(src.fatalruntimeerror());
+    dst.SetFinalSimulationTime_s(src.finalsimulationtime_s());
+  }
 }
 CDM_BIND::ScenarioExecStatusData* PBScenario::Unload(const SEScenarioExecStatus& src)
 {

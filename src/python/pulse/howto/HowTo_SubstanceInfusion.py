@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.scalars import VolumePerTimeUnit, MassPerVolumeUnit
 from pulse.cdm.patient_actions import SESubstanceInfusion
 from pulse.engine.PulseEngine import PulseEngine

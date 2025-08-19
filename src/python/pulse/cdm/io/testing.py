@@ -3,7 +3,7 @@
 
 from pulse.cdm.testing import *
 from pulse.cdm.bind.TestReport_pb2 import *
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.io.scalars import serialize_scalar_time_from_bind, serialize_scalar_time_to_bind
 from pulse.cdm.io.properties import serialize_function_from_bind, serialize_function_to_bind
 from google.protobuf import json_format

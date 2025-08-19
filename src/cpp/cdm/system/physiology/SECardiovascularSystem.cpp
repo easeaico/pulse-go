@@ -177,6 +177,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetHeartEjectionFraction();
   if (name.compare("HeartRate") == 0)
     return &GetHeartRate();
+  if (name.compare("HeartRhythm") == 0)
+    return &m_HeartRhythm;
   if (name.compare("HeartStrokeVolume") == 0)
     return &GetHeartStrokeVolume();
   if (name.compare("IntracranialPressure") == 0)
@@ -456,7 +458,7 @@ double SECardiovascularSystem::GetHeartRate(const FrequencyUnit& unit) const
 
 eHeartRhythm SECardiovascularSystem::GetHeartRhythm() const
 {
-  return m_HeartRhythm;
+  return m_HeartRhythm.GetEnum();
 }
 void SECardiovascularSystem::SetHeartRhythm(eHeartRhythm rhythm)
 {

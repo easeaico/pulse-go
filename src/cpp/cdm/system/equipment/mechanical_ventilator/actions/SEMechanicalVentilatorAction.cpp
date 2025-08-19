@@ -19,6 +19,11 @@ void SEMechanicalVentilatorAction::Clear()
   SEEquipmentAction::Clear();
 }
 
+bool SEMechanicalVentilatorAction::IsActive() const
+{
+  return SEEquipmentAction::IsActive();
+}
+
 bool SEMechanicalVentilatorAction::IsValid() const
 {
   return SEEquipmentAction::IsValid();

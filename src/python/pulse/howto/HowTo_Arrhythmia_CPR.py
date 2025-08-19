@@ -1,8 +1,8 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.patient_actions import SEArrhythmia, eHeartRhythm, \
-                                      SEChestCompression, SEChestCompressionInstantaneous
+from pulse.cdm.patient_actions import SEArrhythmia, SEChestCompression, SEChestCompressionInstantaneous
+from pulse.cdm.physiology import eHeartRhythm
 from pulse.cdm.scalars import ForceUnit, TimeUnit, LengthUnit
 from pulse.engine.PulseEngine import PulseEngine
 

@@ -6,55 +6,11 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
+from pulse.cdm.enums import eEngineInitializationState
 from pulse.cdm.scalars import SEScalarTime, SEScalarUnit, TimeUnit
 
 
-class eEngineInitializationState(Enum):
-    Uninitialized = 0
-    FailedState = 1
-    FailedPatientSetup = 2
-    FailedStabilization = 3
-    Initialized = 4
-
-
-class eSerializationFormat(Enum):
-    JSON = 0
-    BINARY = 1
-    VERBOSE_JSON = 2
-    TEXT = 3
-
-
-class eCharge(Enum):
-    NullCharge = 0
-    Negative = 1
-    Neutral = 2
-    Positive = 3
-
-
-class eGate(Enum):
-    NullGate = 0
-    Open = 1
-    Closed = 2
-
-
-class eMergeType(Enum):
-    Append = 0
-    Replace = 1
-
-
-class eSide(Enum):
-    NullSide = 0
-    Left = 1
-    Right = 2
-
-
-class eSwitch(Enum):
-    NullSwitch = 0
-    Off = 1
-    On = 2
-
-
-class eEvent(Enum):
+class eEvent(int, Enum):
     Antidiuresis = 0
     Bradycardia = 1
     Bradypnea = 2
@@ -150,24 +106,28 @@ class SEEventChange:
 
     def __init__(
         self,
-        event: Optional[eEvent] = None,
-        active: Optional[bool] = None,
-        sim_time_s: Optional[float] = None
+        event: eEvent,
+        active: bool,
+        sim_time_s: float
     ):
         self.event = event
         self.active = active
-        self.sim_time = SEScalarTime(sim_time_s, TimeUnit.s) if sim_time_s is not None else SEScalarTime()
+        self.sim_time = SEScalarTime(sim_time_s, TimeUnit.s)
+
+    def __str__(self) -> str:
+        return "{} is {}".format(self.event, "Active" if self.active else "Inactive")
 
     def __repr__(self) -> str:
-        return_text = ("{} is {}").format(self.event, "Active" if self.active else "Inactive")
+        return_text = self.__str__()
         if self.sim_time.is_valid():
-            return_text += (" @ {}").format(self.sim_time)
+            return_text += " @ {}".format(self.sim_time)
         return return_text
 
 
 class IEventHandler:
     def __init__(self, active_events_only=False):
         self._active = active_events_only
+
     def handle_event(self, change: SEEventChange):
         pass
 
@@ -290,8 +250,13 @@ class SECondition(ABC):
     def is_active(self):
         pass
 
+
 from pulse.cdm.environment_conditions import SEInitialEnvironmentalConditions
-from pulse.cdm.patient_conditions import *
+from pulse.cdm.patient_conditions import (SEAcuteRespiratoryDistressSyndrome, SEChronicAnemia, SEChronicHeartFailure,
+                                          SEChronicObstructivePulmonaryDisease, SEChronicPericardialEffusion,
+                                          SEChronicRenalStenosis, SEChronicVentricularSystolicDysfunction,
+                                          SEDehydration, SEImpairedAlveolarExchange, SEPneumonia, SEPulmonaryFibrosis,
+                                          SEPulmonaryShunt, SESepsis)
 
 class SEConditionManager():
     __slots__ = ["_ards", "_anemia", "_copd", "_cvsd", "_impaired_alveolar_exchange",
@@ -472,7 +437,7 @@ class eDecimalFormat_type(Enum):
     SignificantDigits = 3
 
 
-class SEDecimalFormat():
+class SEDecimalFormat:
     __slots__ = ["_precision", "_notation"]
 
     def __init__(self, precision: Optional[int]=None, notation: Optional[eDecimalFormat_type]=None) -> None:
@@ -515,6 +480,7 @@ class eDataRequest_category(Enum):
     ECMO = 12
     Inhaler = 13
     MechanicalVentilator = 14
+
 
 class SEDataRequest(SEDecimalFormat):
     __slots__ = ['_category', '_action_name', '_compartment_name', '_substance_name', '_property_name', '_unit']
@@ -692,7 +658,7 @@ class SEDataRequest(SEDecimalFormat):
         return self._unit
 
 
-class SEDataRequested: # Event and Log support
+class SEDataRequested:  # Event and Log support
     __slots__ = ['_id', '_is_active', '_headers', '_header_idxs', '_segments']
 
     @dataclass

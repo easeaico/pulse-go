@@ -22,8 +22,7 @@ The human %Respiratory System consists of the upper airways (region above the cr
 @htmlonly
 <center>
 <a href="./Images/Respiratory/RespiratorySystemDiagram.png"><img src="./Images/Respiratory/RespiratorySystemDiagram.png"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {RespiratorySystemDiagram}. The %Respiratory System consists of the upper and lower airways. The diaphragm acts as a respiratory muscle taking part in the ventilatory driver mechanics. The trachea branches into the right and left bronchi, each of which further bifurcates into multiple generations of smaller bronchioles. These bronchioles form the tracheobronchial tree, which terminates at the alveoli. @cite LadyofHats2014Respiratory </i>
@@ -45,16 +44,16 @@ elastic behavior that can be represented with a single compliance or multiple
 compliances. The compliance *C* is calculated by taking the ratio of the volume <i>&delta;V</i>
 and the pressure <i>&delta;P</i> variations as:
 
-\f[C=\frac{\delta V}{\delta P} \f] 
 <center>
+\f[C=\frac{\delta V}{\delta P} \f] 
 <i>@equationdef {compliance}.</i>
 </center><br> 
 
 As a first-order approximation, the volume of the functional unit can be
 approximated as:
 
-\f[V(P+\delta P)=V(P)+C\delta P\f] 
 <center>
+\f[V(P+\delta P)=V(P)+C\delta P\f] 
 <i>@equationdef {volume}.</i>
 </center><br> 
 
@@ -64,8 +63,8 @@ using the lumped parameter model select functional units for these regions and
 designate the variable <i>R</i> for pneumatic flow resistance. The pressure drop <i>&Delta;P</i> across
 the respiratory tree can thus be calculated by using Ohm's law analogue as
 
-\f[\Delta P=RQ\f] 
 <center>
+\f[\Delta P=RQ\f] 
 <i>@equationdef {deltaP}.</i>
 </center><br> 
 
@@ -74,15 +73,15 @@ is laminar and the gas is incompressible. For laminar, viscous, and
 incompressible flow, the Hagen-Poiseuille equation relates the pressure drop <i>&Delta;P</i>
 in a fluid flowing through a cylindrical pipe of length <i>l</i> and radius <i>r</i> as
 
-\f[\Delta P=\frac{8\mu l}{\pi r^{4} } Q\f] 
 <center>
+\f[\Delta P=\frac{8\mu l}{\pi r^{4} } Q\f] 
 <i>@equationdef {hagen}.</i>
 </center><br> 
 
 where <i>&Mu;</i> is the dynamic viscosity. By defining the flow resistance <i>R</i> as
 
-\f[R=\frac{8\mu l}{\pi r^{4} } \f] 
 <center>
+\f[R=\frac{8\mu l}{\pi r^{4} } \f] 
 <i>@equationdef {resistance}.</i>
 </center><br> 
 
@@ -214,8 +213,7 @@ interconnections.
 @htmlonly
 <center>
 <a href="./Images/Respiratory/RespiratoryCircuit.png"><img src="./Images/Respiratory/RespiratoryCircuit.png" width="650"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {RespiratoryCircuit}. Circuit diagram of the %Respiratory System. The diagram depicts a
@@ -302,18 +300,19 @@ based on clinical data. The single breath waveform segments are defined by fract
 
 Each segment is given as a fraction of the total breath, with all summing to a value of 1 whole breath. The inpsiratory rise (inhale) period (segment 1: <i>T<sub>ins</sub></i>) and inspiratory release (exhale) period (segment 3: <i>T<sub>exp</sub></i>) is calculated as a fraction of the total breath period (<i>T<sub>tot</sub></i>) knowing the muscle driver ventilation frequency (<i>f<sub>v</sub></i>) by @cite Fresnel2014musclePressure,
 
-\f[\frac{{{T_{ins}}}}{{{T_{tot}}}} = 0.0125\left( {{f_v}[bpm] + 4} \right) + 0.125\f]
 <center>
+\f[\frac{{{T_{ins}}}}{{{T_{tot}}}} = 0.0125\left( {{f_v}[bpm] + 4} \right) + 0.125\f]
 <i>@equationdef {tb1}.</i>
 </center><br> 
 
-\f[\frac{{{T_{\exp }}}}{{{T_{tot}}}} = {T_{tot}} - {T_{ins}}\f]
 <center>
+\f[\frac{{{T_{\exp }}}}{{{T_{tot}}}} = {T_{tot}} - {T_{ins}}\f]
 <i>@equationdef {tb2}.</i>
 </center><br> 
 
 Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series(<i>t</i>) of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is based on empirical data @cite kondili2010estimation as,
 
+<center>
 \f[{P_{mus}} = \left\{ {\begin{array}{*{20}{l}}
 {{P_{\min }} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{t}{{{t_1}}}} \right),}&{0 < t \le {t_1}}\\
 {{P_{\min }},}&{{t_1} < t \le {t_2}}\\
@@ -324,8 +323,6 @@ Unless a conscious respiration action is called, all other segment fractions are
 {{P_{max}} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{{t + {t_7} - 2{t_6}}}{{{t_7} - {t_6}}}} \right),}&{{t_6} < t \le {t_7}}\\
 {0,}&{{t_7} < t \le {t_{\max }}}
 \end{array}} \right.\f]
-
-<center>
 <i>@equationdef {pmus}.</i>
 </center><br> 
 
@@ -335,8 +332,7 @@ Where <i>P<sub>min</sub></i> is the largest negative pressure value during inhal
 <center>
 <a href="./plots/Respiratory/DriverWaveform.jpg">
 <img src="./plots/Respiratory/DriverWaveform.jpg" width="600"></a>
-<br> 
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {DriverWaveform}. Conscious respiration muscle pressure waveform showing all segments with a duration of 1s each to minimum and maximum pressure.  These segment functions are presented in the equation above. The fraction of each segment duration compared to the total breath duration is set based on the inspiratory-expiratory ratio - many often set to zero. The total time of each breath is determined from a target respiration rate.</i>
@@ -344,15 +340,15 @@ Where <i>P<sub>min</sub></i> is the largest negative pressure value during inhal
 
 At the beginning of each breath, a target volume (i.e., tidal volume) is determined and mapped to the <i>P<sub>min</sub></i> value using simple circuit math and assuming constant lung and chest wall compliances. This is given by,
 
-\f[{P_{min }} = \frac{{ - V + FRC}}{{{C_{total}}}}\f]
 <center>
+\f[{P_{min }} = \frac{{ - V + FRC}}{{{C_{total}}}}\f]
 <i>@equationdef {targetV}.</i>
 </center><br> 
 
 Where <i>V</i> is the target volume, <i>FRC</i> is the functional residual capacity and <i>C<sub>total</sub></i> is the total compliance of the respiratory system. The total compliance is determined from the baseline constant compliances of the left chest wall (<i>C<sub>LCW</sub></i>), left lung (<i>C<sub>LL</sub></i>), right chest wall (<i>C<sub>RCW</sub></i>), and right lung (<i>C<sub>RL</sub></i>) by,
 
-\f[{C_{total}} = \frac{1}{{\frac{1}{{{C_{LCW}}}} + \frac{1}{{{C_{LL}}}}}} + \frac{1}{{\frac{1}{{{C_{RCW}}}} + \frac{1}{{{C_{RL}}}}}}\f]
 <center>
+\f[{C_{total}} = \frac{1}{{\frac{1}{{{C_{LCW}}}} + \frac{1}{{{C_{LL}}}}}} + \frac{1}{{\frac{1}{{{C_{RCW}}}} + \frac{1}{{{C_{RL}}}}}}\f]
 <i>@equationdef {totC}.</i>
 </center><br> 
 
@@ -361,22 +357,22 @@ Where <i>V</i> is the target volume, <i>FRC</i> is the functional residual capac
 
 The Fresnel model uses pre-selected ventilation frequencies to model various physiological and pathological conditions. The %Respiratory System extended the Fresnel, et. al. model by incorporating a chemical stimuli feedback mechanism that contributes to the overall blood gas regulation. As a chemical feedback mechanism, past works used empirical relationships between minute ventilation, <i>V<sup><b>.</b></sup><sub>E</sub></i>, or alveolar ventilation, <i>V<sup><b>.</b></sup><sub>A</sub></i>, and the blood gas partial pressures that represent the respiratory response to chemical stimuli at the peripheral and central chemoreceptors @cite Khoo1982chemicalFeedback , @cite Batzel2005chemicalFeedback . The %Respiratory Model adopted the mathematical relation  that links the alveolar ventilation with the blood gas levels. The resulting mathematical relationship implemented in the %Respiratory System is 
 
-\f[\dot{V}_{A} =G_{p} e^{-0.05P_{a} O_{2} } \max (0,P_{aCO_{2} } -I_{p} )+G_{c} \max (0,P_{aCO_{2} } -I_{c} )\f] 
 <center>
+\f[\dot{V}_{A} =G_{p} e^{-0.05P_{a} O_{2} } \max (0,P_{aCO_{2} } -I_{p} )+G_{c} \max (0,P_{aCO_{2} } -I_{c} )\f] 
 <i>@equationdef {fresnel}.</i>
 </center><br> 
 
 <i>P<sub>aO</sub><sub>2</sub></i> and <i>P<sub>aCO</sub><sub>2</sub></i> are the arterial oxygen and carbon dioxide partial pressures, respectively. <i>I<sub>p</sub></i> and <i>I<sub>c</sub></i> are the cutoff threshold constants, and <i>G<sub>p</sub></i> and <i>G<sub>c</sub></i> are the peripheral and central controller gain constants, respectively. The value of <i>f<sub>v</sub></i> used in the pressure source corresponds to the target  respiration rate that the engine must attain to ensure accurate blood gas levels. It is related to the minute ventilation, <i>V<sup><b>.</b></sup><sub>E</sub></i>, as shown in the equation below
 
-\f[f_{v} =\dot{V}_{E} /V_{T} \f] 
 <center>
+\f[f_{v} =\dot{V}_{E} /V_{T} \f] 
 <i>@equationdef {fV}.</i>
 </center><br> 
 
 where <i>V<sup><b>.</b></sup><sub>E</sub></i> is calculated using the relation
 
-\f[\dot{V}_{E} =\dot{V}_{A} +\dot{V}_{D} \f] 
 <center>
+\f[\dot{V}_{E} =\dot{V}_{A} +\dot{V}_{D} \f] 
 <i>@equationdef {ve1}.</i>
 </center><br> 
 
@@ -386,8 +382,7 @@ where <i>V<sup><b>.</b></sup><sub>E</sub></i> is calculated using the relation
 <center>
 <a href="./Images/Respiratory/Respiratory_Figure05.png">
 <img src="./Images/Respiratory/Respiratory_Figure05.png" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Respiratory_Figure05}. The figure shows data from literature that presents the linear relationship between the minute ventilation 
@@ -399,8 +394,8 @@ can be described by two intersecting straight lines.
 Up to about half of the vital capacity <i>V<sub>C</sub></i>, the minute ventilation,  
 <i>V<sup><b>.</b></sup><sub>E</sub></i>, and the tidal volume, <i>V<sub>T</sub></i>, are related as
 
-\f[\dot{V}_{E} =m(V_{T} -c)\f] 
 <center>
+\f[\dot{V}_{E} =m(V_{T} -c)\f] 
 <i>@equationdef {ve2}.</i>
 </center><br> 
 
@@ -409,8 +404,8 @@ shows that the minute ventilation is constant above half of the vital capacity. 
 %Respiratory Model employs the linear relation given below to predict the target tidal 
 volume from the minute ventilation.
 
-\f[V_{T} =\left\{\begin{array}{l} {c+\dot{V}_{E} /m,V_{T} \le V_{C} } \\ {0.5*V_{C} ,V_{T} >V_{C} } \end{array}\right. \f] 
 <center>
+\f[V_{T} =\left\{\begin{array}{l} {c+\dot{V}_{E} /m,V_{T} \le V_{C} } \\ {0.5*V_{C} ,V_{T} >V_{C} } \end{array}\right. \f] 
 <i>@equationdef {vr}.</i>
 </center><br> 
 
@@ -455,6 +450,8 @@ The respiratory muscle driver pressure is dynamically adjusted based on pulmonar
 </table>
 <br>
 </center>
+<br>
+</center>
 @endhtmlonly
 <center>
 <i>@figuredef {pressures}. The driver pressure, or pressure source, that serves as an electrical analogue voltage source for the respiratory circuit is plotted along with the alveolar, intrapleural, and transpulmonary pressures.  The pressure source generates a subatmospheric intrapleural pressure that facilitates the inspiration and expiration phases of spontaneous breathing.</i>
@@ -462,14 +459,13 @@ The respiratory muscle driver pressure is dynamically adjusted based on pulmonar
 
 #### Compliances
 
-The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure 6) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. @figureref {ComplianceCurve} shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
+The Pulse respiratory system is separated into four compliances (see @figureref {RespiratoryCircuit}) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. @figureref {ComplianceCurve} shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
 
 @htmlonly
 <center>
 <a href="./Images/Respiratory/ComplianceCurve.png">
 <img src="./Images/Respiratory/ComplianceCurve.png" width="550"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {ComplianceCurve}. The healthy single lung compliance curve is determined by standard patient lung volume parameters and a baseline compliance (C<sub>baseline</sub>) value.</i>
@@ -477,66 +473,66 @@ The Pulse respiratory system is separated into four compliances (see the circuit
 
 The waveform in @figureref {ComplianceCurve} is defined by these mathematical relationships,
 
+<center>
 \f[V = RV + \frac{{VC}}{{1 + {e^{{{ - \left( {P - c} \right)} \mathord{\left/
  {\vphantom {{ - \left( {P - c} \right)} d}} \right.
  \kern-\nulldelimiterspace} d}}}}}\f]
-<center>
 <i>@equationdef {ccVolume}.</i>
 </center><br> 
- 
-\f[{P_{cl}} = c - 2d\f]
+
 <center>
+\f[{P_{cl}} = c - 2d\f]
 <i>@equationdef {ccPcl}.</i>
 </center><br> 
 
-\f[{P_{cu}} = c + 2d\f]
 <center>
+\f[{P_{cu}} = c + 2d\f]
 <i>@equationdef {ccPcu}.</i>
 </center><br> 
 
 Where (<i>V</i>) is the individual lung volume, (<i>P</i>) is the intrapulmonary pressure, and the other variables are defined in @figureref {ComplianceCurve}. These equations can be rearranged and input with known parameters to determine the instantaneous expected pressure (<i>P</i>) of each lung. First, the baseline side compliance (<i>C<sub>sb</sub></i>) is determined knowing the baseline chest wall (<i>C<sub>cwb</sub></i>) and baseline lung (<i>C<sub>lb</sub></i>) compliances,
 
-\f[{C_{sb}} = \frac{1}{{\frac{1}{{{C_{cwb}}}} + \frac{1}{{{C_{lb}}}}}}\f]
 <center>
+\f[{C_{sb}} = \frac{1}{{\frac{1}{{{C_{cwb}}}} + \frac{1}{{{C_{lb}}}}}}\f]
 <i>@equationdef {baseC}.</i>
 </center><br> 
 
 The expected intrapulmonary pressure (<i>P</i>) at the a given volume (<i>V</i>) can be calculated knowing the individual lung functional residual capacity (<i>FRC</i>), residual volume (<i>RV</i>), and vital capacity (<i>VC</i>) by the following,
 
-\f[\lambda  = \ln \left( {\frac{{FRC - RV}}{{RV + VC - FRC}}} \right)\f]
 <center>
+\f[\lambda  = \ln \left( {\frac{{FRC - RV}}{{RV + VC - FRC}}} \right)\f]
 <i>@equationdef {lambda}.</i>
 </center><br> 
 
-\f[{P_{cu}} = \frac{{VC - FRC}}{{{C_{sb}}}}\f]
 <center>
+\f[{P_{cu}} = \frac{{VC - FRC}}{{{C_{sb}}}}\f]
 <i>@equationdef {iPcu}.</i>
 </center><br> 
 
-\f[c =  - \frac{{{P_{cu}}\lambda \left( {2 - \lambda } \right)}}{2}\f]
 <center>
+\f[c =  - \frac{{{P_{cu}}\lambda \left( {2 - \lambda } \right)}}{2}\f]
 <i>@equationdef {ic}.</i>
 </center><br> 
 
-\f[d = \frac{{{P_{cu}} - c}}{2}\f]
 <center>
+\f[d = \frac{{{P_{cu}} - c}}{2}\f]
 <i>@equationdef {id}.</i>
 </center><br> 
 
-\f[P = d \cdot \ln \left( {\frac{{V - RV}}{{RV + VC - V}}} \right) + c\f]
 <center>
+\f[P = d \cdot \ln \left( {\frac{{V - RV}}{{RV + VC - V}}} \right) + c\f]
 <i>@equationdef {iP}.</i>
 </center><br> 
 
 Then, the instantaneous chest wall compliance (<i>C<sub>cw</sub></i>) to apply at the current timestep is found using the side compliance (<i>C<sub>s</sub></i>) by,
 
-\f[{C_s} = \frac{{V - FRC}}{P}\f]
 <center>
+\f[{C_s} = \frac{{V - FRC}}{P}\f]
 <i>@equationdef {Cs}.</i>
 </center><br> 
 
-\f[{C_{cw}} = \frac{1}{{\frac{1}{{{C_s}}} - \frac{1}{{{C_{lb}}}}}}\f]
 <center>
+\f[{C_{cw}} = \frac{1}{{\frac{1}{{{C_s}}} - \frac{1}{{{C_{lb}}}}}}\f]
 <i>@equationdef {Ccw}.</i>
 </center><br> 
 
@@ -576,8 +572,8 @@ to those found in the literature @cite silverthorn2013human .
 ERV is the maximum volume below the tidal volume that can be expired during
 maximal forced expiration. ERV can be calculated as
 
-\f[ERV=FRC-RV\f] 
 <center>
+\f[ERV=FRC-RV\f] 
 <i>@equationdef {ERV}.</i>
 </center><br> 
 
@@ -605,8 +601,7 @@ function of time.
 <center>
 <a href="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg">
 <img src="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {TidalVolume_from_TotalLungVolume}. This shows the relationship of the total lung volume with the tidal
@@ -620,8 +615,8 @@ IRV is the additional volume, above the tidal volume, that can be inspired
 during maximal forced inspiration. IRV can be calculated from total lung
 capacity (TLC) using the relation
 
-\f[IRV=TLC-FRC-V_{T} \f] 
 <center>
+\f[IRV=TLC-FRC-V_{T} \f] 
 <i>@equationdef {IRV}.</i>
 </center><br> 
 
@@ -638,15 +633,15 @@ the model.
 V<sub>C</sub>  is the volume of air that can be expired after maximal inspiration. V<sub>C</sub> can be
 calculated as
 
-\f[V_{C} =IRV+V_{T} +ERV\f] 
 <center>
+\f[V_{C} =IRV+V_{T} +ERV\f] 
 <i>@equationdef {VsubC}.</i>
 </center><br> 
 
 V<sub>C</sub>  can also be calculated using TLC as:
 
-\f[V_{C} =TLC-RV\f] 
 <center>
+\f[V_{C} =TLC-RV\f] 
 <i>@equationdef {TLC_VsubC}.</i>
 </center><br> 
 
@@ -661,8 +656,8 @@ a weight-based vital capacity.
 The inspiratory capacity is another standard lung capacity that can be
 calculated from TLC and FRC as
 
-\f[IC=TLC-FRC\f] 
 <center>
+\f[IC=TLC-FRC\f] 
 <i>@equationdef {IC}.</i>
 </center><br> 
 
@@ -691,8 +686,8 @@ The total pulmonary ventilation (or minute ventilation or minute volume) is the
 volume of air moved into the lungs per minute. Minute ventilation (V<sup><b>.</b></sup><sub>E</sub>) is the
 product of tidal volume (V<sub>T</sub>) and respiration rate (RR), i.e.,
 
-\f[\dot{V}_{E} =V_{T} *RR\f] 
 <center>
+\f[\dot{V}_{E} =V_{T} *RR\f] 
 <i>@equationdef {dotV}.</i>
 </center><br> 
 
@@ -723,8 +718,7 @@ calculation, the alveolar ventilation predicted from the model is close to the e
 <center>
 <a href="./plots/Respiratory/Alveoli_and_Dead_Space_Volumes.jpg">
 <img src="./plots/Respiratory/Alveoli_and_Dead_Space_Volumes.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Alveoli_and_Dead_Space_Volumes}. The right and left anatomic dead space volumes together with the right and left 
@@ -740,8 +734,8 @@ fixed resistance. The %Respiratory Model measures tracheal airflow
 <i>Q<sub>trachea</sub></i> by using the instantaneous pressure difference across the tracheal
 resistance <i>R<sub>trachea</sub></i> as:
 
-\f[Q_{trachea} =\frac{P_{mouth} -P_{carina} }{R_{trachea} } \f] 
 <center>
+\f[Q_{trachea} =\frac{P_{mouth} -P_{carina} }{R_{trachea} } \f] 
 <i>@equationdef {Qtrachea}.</i>
 </center><br> 
 
@@ -752,8 +746,7 @@ respectively. The figure shown below presents the absolute flow rate (no distinc
 <center>
 <a href="./plots/Respiratory/Total_Flow_Through_Trachea.jpg">
 <img src="./plots/Respiratory/Total_Flow_Through_Trachea.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Total_Flow_Through_Trachea}. Tracheal airflow and total lung volume during one typical breathing
@@ -778,8 +771,7 @@ found in the literature @cite otis1947measurement .
 <center>
 <a href="./plots/Respiratory/Lung_Pressure_And_Volume.jpg">
 <img src="./plots/Respiratory/Lung_Pressure_And_Volume.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Lung_Pressure_And_Volume}. Typical lung pressures. The plot shows the instantaneous pressure of
@@ -818,6 +810,8 @@ Transpulmonary pressure is defined as the difference between the alveolar
 </table>
 <br>
 </center>
+<br>
+</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Guyton_Lung_Pressures}. A plot showing the transpulmonary pressure obtained from the engine with 
@@ -848,6 +842,8 @@ hysteresis of the P-V curve.
 </table>
 <br>
 </center>
+<br>
+</center>
 @endhtmlonly
 <center>
 <i>@figuredef {Guyton_Pulmonary_Compliance}. The pressure-volume curve for the standard patient of the %Respiratory Model 
@@ -862,8 +858,8 @@ For any gas mixture, the partial pressure P<sub>gas</sub> of a particular gas in
 mixture can be calculated based on the total pressure P<sub>total</sub> of all gases in the
 mixture and the fractional concentration F<sub>gas</sub> of the gas as
 
-\f[P_{gas} =F_{gas} *P_{total} \f] 
 <center>
+\f[P_{gas} =F_{gas} *P_{total} \f] 
 <i>@equationdef {Pgas}.</i>
 </center><br> 
 
@@ -881,8 +877,8 @@ The engine calculates the O<SUB>2</SUB> partial pressure P<sub>Lung<sub>O<SUB>2<
 alveoli node by using the oxygen volume fraction VF<sub>Lung<sub>O<SUB>2</SUB></sub/></sub/> and the total
 pressure P<sub>Lung</sub/> at the alveoli nodes as
 
-\f[P_{LungO_{2} } =VF_{LungO_{2} } *P_{Lung} \f] 
 <center>
+\f[P_{LungO_{2} } =VF_{LungO_{2} } *P_{Lung} \f] 
 <i>@equationdef {P_LungO2_1}.</i>
 </center><br> 
 
@@ -896,8 +892,8 @@ pressure at normal body temperature (P<sub>H<SUB>2</SUB>O</sub>=47 mm Hg) is sub
 standard atmospheric pressure of P<sub>B</sub>=760 mm Hg when the gas partial pressure is
 calculated using the absolute lung pressure, i.e.,
 
-\f[P_{LungO_{2} } =VF_{LungO_{2} } *(P_{B} -P_{H_{2} O} +P_{Lung} )\f] 
 <center>
+\f[P_{LungO_{2} } =VF_{LungO_{2} } *(P_{B} -P_{H_{2} O} +P_{Lung} )\f] 
 <i>@equationdef {P_LungO2_2}.</i>
 </center><br> 
 
@@ -910,8 +906,7 @@ of the standard patient. Typically, the average alveolar partial pressure of oxy
 <center>
 <a href="./plots/Respiratory/Alveolar_Oxygen_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Alveolar_Oxygen_Partial_Pressure.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Alveolar_Oxygen_Partial_Pressure}. Alveolar O<SUB>2</SUB> partial pressure. The partial pressure of O<SUB>2</SUB> at the two
@@ -932,8 +927,7 @@ literature value.
 <center>
 <a href="./plots/Respiratory/Alveolar_Carbon_Dioxide_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Alveolar_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Alveolar_Carbon_Dioxide_Partial_Pressure}. Alveolar CO<SUB>2</SUB> partial pressure. The partial pressure of CO<SUB>2</SUB> at the two
@@ -956,8 +950,7 @@ CO<SUB>2</SUB> partial pressure appears similar to those found in normal capnogr
 <center>
 <a href="./plots/Respiratory/Trachea_Carbon_Dioxide_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Trachea_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Trachea_Carbon_Dioxide_Partial_Pressure}. Tracheal CO<SUB>2</SUB> partial pressure. The partial pressure of CO<SUB>2</SUB> at the
@@ -977,8 +970,7 @@ pressure calculation is presented in @figureref {Trachea_Oxygen_Partial_Pressure
 <center>
 <a href="./plots/Respiratory/Trachea_Oxygen_Partial_Pressure.jpg">
 <img src="./plots/Respiratory/Trachea_Oxygen_Partial_Pressure.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {Trachea_Oxygen_Partial_Pressure}. Tracheal O<SUB>2</SUB> partial pressure. The partial pressure of O<SUB>2</SUB> at the
@@ -997,7 +989,10 @@ The concept of the Recruited Fraction is central to this model. It represents th
 This relationship is visually depicted in @figureref {recruitment}, which illustrates the mapping of reduced alveolar volume to the shunt scaling factor across different cardiopulmonary compartments.
 
 @htmlonly
-<center><a href="./Images/Respiratory/RecruitmentShunting.png"><img src="./Images/Respiratory/RecruitmentShunting.png" style="width:60%;"></a></center>
+<center>
+<a href="./Images/Respiratory/RecruitmentShunting.png"><img src="./Images/Respiratory/RecruitmentShunting.png" style="width:60%;"></a>
+<br>
+</center>
 @endhtmlonly
 <center>
 <i>@figuredef {recruitment}. The mapping of reduced alveolar volume to shunt scaling factor for each cardiopulmonary compartment.</i>
@@ -1087,16 +1082,16 @@ Other values, like the pulmonary resistance and compliance, are determined insta
 the pressure difference between the mouth <i>P<sub>mouth</sub></i> and the alveoli <i>P<sub>alveoli</sub></i> and 
 the flow across the trachea <i>Q<sub>trachea</sub></i> as
 
-\f[R_{pulm} =\frac{P_{mouth} -P_{alveoli} }{Q_{trachea} } \f] 
 <center>
+\f[R_{pulm} =\frac{P_{mouth} -P_{alveoli} }{Q_{trachea} } \f] 
 <i>@equationdef {Rplum}.</i>
 </center><br> 
 
 The %Respiratory Model calculates the pulmonary compliance <i>C<sub>pulm</sub></i> by dividing the tidal 
 volume <i>V<sub>T</sub></i> by the intrapleural pressure <i>P<sub>pleu</sub></i> difference as
 
-\f[C_{pulm} =\frac{V_{T} }{P_{pleau(max )} -P_{pleu(min )} } \f] 
 <center>
+\f[C_{pulm} =\frac{V_{T} }{P_{pleau(max )} -P_{pleu(min )} } \f] 
 <i>@equationdef {Cplum}.</i>
 </center><br> 
  
@@ -1361,8 +1356,7 @@ Modifications to respiratory circuit resistances and compliances can further be 
 <center>
 <a href="./plots/Respiratory/FlowVolumeCurves.jpg">
 <img src="./plots/Respiratory/FlowVolumeCurves.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {FlowVolumeCurves}. A spirometry simulation comparing healthy, obstructive (COPD), and restrictive (ARDS) forced breath loops. COPD and ARDS severities of 0.6 and conscious respiration actions are used in the simulation. Results match those expected and presented in literature @cite barreiro2004approach.</i>
@@ -1372,8 +1366,7 @@ Modifications to respiratory circuit resistances and compliances can further be 
 <center>
 <a href="./plots/Respiratory/SpirometryVolumeCurves.jpg">
 <img src="./plots/Respiratory/SpirometryVolumeCurves.jpg" width="800"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {SpirometryVolumeCurves}. Volume vs. time results from the same pulmonary function test as @figureref {FlowVolumeCurves}. This scenario uses the COPD and ARDS exacerbation action to simulate all three modalities with the conscious respiration action to complete a full exhale-inhale cycle. Changes in the functional residual capacity, residual volume, and total lung capacity can be seen at the maximum and minimum points. Results match those expected and presented in literature @cite kliegman2007nelson.</i>
@@ -1542,8 +1535,7 @@ intrapleural pressure and leakage in the airflow of the respiratory circuit.
 <center>
 <a href="./Images/Respiratory/PneumoCirucit.png">
 <img src="./Images/Respiratory/PneumoCirucit.png" width="550"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {PneumoCirucit}. Both lungs in the engine have elements to mimic the effects of open and closed tension pneumothorax insults as well as chest occlusive dressing (for open) and needle decompression (for both) interventions. The red boxes denote these additional elements.</i>
@@ -1594,8 +1586,7 @@ The seal resistance in each circuit dictates how much air escapes due to be secu
 <center>
 <a href="./Images/Respiratory/SupplementalOxygenCirucits.png">
 <img src="./Images/Respiratory/SupplementalOxygenCirucits.png" width="1000"></a>
-<br>
-</center>
+<br></center>
 @endhtmlonly
 <center>
 <i>@figuredef {SupplementalOxygenCirucits}. Each supplemental oxygen device has a different circuit to mimic the air mixing nuances of each.</i>
@@ -1620,6 +1611,8 @@ Conscious respiration has any number of potential applications and is likely to 
     <td><a href="./plots/Respiratory/Experimental_Cough_Flow.jpg"><img src="./plots/Respiratory/Experimental_Cough_Flow.jpg" width="550"></a></td>
 </tr>
 </table>
+<br>
+</center>
 <br>
 </center>
 @endhtmlonly
@@ -1797,7 +1790,7 @@ The pneumonia condition was validated against three scenarios; severe pneumonia 
 
 ### Pulmonary Fibrosis
 
-The pulmonary fibrosis condition was validated with a severe pulmonary fibrosis scenario by applying a severity of 0.9 to the patient.The severity decreased the lung compliance and increased the airway resistance making it difficult to breathe.The resulting outputs are shown in Table 11 for common clinical parameters.
+The pulmonary fibrosis condition was validated with a severe pulmonary fibrosis scenario by applying a severity of 0.9 to the patient.The severity decreased the lung compliance and increased the airway resistance making it difficult to breathe.The resulting outputs are shown in @tableref {fibrosis} for common clinical parameters.
 
 <center><br>
 <i>@tabledef {fibrosis}. Validation matrix for severe pulmonary fibrosis. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
@@ -1832,6 +1825,8 @@ The bronchoconstriction action was validated with a scenario that applies varyin
     <td colspan="2"><a href="./plots/Respiratory/BronchoConstrictionVariedLegend.jpg"><img src="./plots/Respiratory/BronchoConstrictionVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
+<br>
+</center>
 <br>
 </center>
 @endhtmlonly
@@ -1873,6 +1868,8 @@ It is important to note nervous system responses of a conscious patient due to p
     <td colspan="2"><a href="./plots/Respiratory/TensionPneumothoraxOpenVariedLegend.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
+<br>
+</center>
 <br>
 </center>
 @endhtmlonly
@@ -2055,7 +2052,8 @@ The acute asthma action was validated against three scenarios: moderate (severit
     <td><a href="./plots/Respiratory/AsthmaAttackModerateAcute_RR.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcute_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackModerateAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcuteLegend.jpg" width="300"></a></center></td>
+    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackModerateAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcuteLegend.jpg" width="300"></a><br>
+</center></td>
 </tr>
 </table>
 <br>
@@ -2086,7 +2084,8 @@ The acute asthma action was validated against three scenarios: moderate (severit
     <td><a href="./plots/Respiratory/AsthmaAttackSevereAcute_RR.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcute_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackSevereAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcuteLegend.jpg" width="300"></a></center></td>
+    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackSevereAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcuteLegend.jpg" width="300"></a><br>
+</center></td>
 </tr>
 </table>
 <br>
@@ -2117,7 +2116,8 @@ The acute asthma action was validated against three scenarios: moderate (severit
     <td><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_RR.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcuteLegend.jpg" width="300"></a></center></td>
+    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcuteLegend.jpg" width="300"></a><br>
+</center></td>
 </tr>
 </table>
 <br>

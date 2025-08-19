@@ -1,12 +1,19 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from enum import Enum
-from pulse.cdm.engine import eSerializationFormat
+import logging
+from pathlib import Path
+
+from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
 from pulse.cdm.patient_actions import SEAirwayObstruction, eAirwayObstructionResistanceType
+from pulse.cdm.scalars import FrequencyUnit, PressureUnit, VolumePerTimeUnit, VolumeUnit
 from pulse.engine.PulseEngine import PulseEngine
 
-def HowTo_AirwayObstruction():
+
+_log = logging.getLogger("pulse")
+
+
+def how_to_airway_obstruction():
     pulse = PulseEngine()
     pulse.set_log_filename("./test_results/howto/HowTo_AirwayObstruction.py.log")
     pulse.log_to_console(True)
@@ -31,5 +38,12 @@ def HowTo_AirwayObstruction():
     results = pulse.pull_data()
     pulse.print_results()
 
-HowTo_AirwayObstruction()
+
+def main():
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    how_to_airway_obstruction()
+
+
+if __name__ == "__main__":
+    main()
 

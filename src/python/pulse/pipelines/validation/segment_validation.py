@@ -13,12 +13,11 @@ import PyPulse
 
 from pulse.cdm.engine import SEDataRequested, eEvent
 from pulse.cdm.validation import SESegmentValidationTarget, generate_percentage_span, format_float
-from pulse.cdm.utils.logger import PulseLog
 from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import percent_change, percent_difference
 from pulse.cdm.io.engine import serialize_data_requested_result_from_file
 from pulse.cdm.io.validation import serialize_segment_validation_segment_list_from_file
-
+from pulse.engine.PulseEngineResults import PulseLog
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -76,13 +75,13 @@ def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str =
                     #  Note: If we want to also allow referencing other workbook books, maybe add another [a-zA-Z]+:
                     sheet_references = re.findall(r"\{[a-zA-Z]+:[0-9]+\}", formula, re.DOTALL)
                     for sheet_reference in sheet_references:
-                        sheet_name = re.findall(r"[a-zA-Z]+", sheet_reference, re.DOTALL)[0]
-                        if sheet_name not in referenced_results:
-                            referenced_segments_filename = Path(str(results_files[0]).replace(target_name, sheet_name))
+                        ref_sheet_name = re.findall(r"[a-zA-Z]+", sheet_reference, re.DOTALL)[0]
+                        if ref_sheet_name not in referenced_results:
+                            referenced_segments_filename = Path(str(results_files[0]).replace(target_name, ref_sheet_name))
                             if not referenced_segments_filename.exists():
                                 _pulse_logger.error(f"Cannot find referenced sheet: {referenced_segments_filename}")
                             else:
-                                referenced_results[sheet_name] = (
+                                referenced_results[ref_sheet_name] = (
                                     serialize_data_requested_result_from_file(str(referenced_segments_filename)))
                                 #  TODO Not supporting referencing event/assessment values from another workbook/sheet
                                 #  Would need to call find_results_files for the referenced sheet, and pass them along
@@ -91,7 +90,6 @@ def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str =
         fields = list(range(len(headers)))
         align = [('<', '<')] * len(headers)
 
-        log = PulseLog()
         for target in targets:
             if not target.has_validation_targets():
                 continue
@@ -111,8 +109,7 @@ def validate(name: str, scenario_dir: Path, results_dir: Path, sheet_name: str =
                         continue
                     seg_start_time = results.get_segment(seg_id - 1).time_s
                     seg_end_time = results.get_segment(seg_id).time_s
-                    if not log.is_valid:
-                        log.parse(results_files[1])
+                    log = PulseLog(log_files=[results_files[1]])
                     if not segment_durations:
                         segment_durations = log.get_active_events_in_window(seg_start_time, seg_end_time)
                     event = eEvent[header[1]]

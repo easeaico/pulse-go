@@ -12,7 +12,7 @@ from typing import Dict, List, Tuple
 
 from pulse.pipelines.dataset.utils import generate_data_request
 from pulse.pipelines.dataset.patient_sheet_reader import process_patient_sheet
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.scenario import SEScenario
 from pulse.cdm.utils.file_utils import get_validation_dir
 from pulse.cdm.validation import SESegmentValidationTarget, SESegmentValidationSegment

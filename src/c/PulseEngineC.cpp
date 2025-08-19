@@ -81,6 +81,12 @@ PULSEC_EXPORT void C_CALL Clear(PhysiologyEngineThunk * thunk)
 }
 
 extern "C"
+PULSEC_EXPORT bool C_CALL IsValidPatient(PhysiologyEngineThunk* thunk, const char* patient, int format)
+{
+  return thunk->IsValidPatient(patient, (eSerializationFormat)format);
+}
+
+extern "C"
 PULSEC_EXPORT bool C_CALL SerializeFromFile(PhysiologyEngineThunk * thunk, const char* filename, const char* data_requests, int data_requests_format)
 {
   return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (eSerializationFormat)data_requests_format);

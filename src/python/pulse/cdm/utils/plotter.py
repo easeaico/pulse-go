@@ -15,6 +15,7 @@ from timeit import default_timer as timer
 
 from pulse.cdm.plots import *
 from pulse.cdm.io.plots import serialize_plotter_list_from_file
+from pulse.cdm.scalars import TimeUnit
 from pulse.cdm.utils.file_utils import get_config_dir
 from pulse.cdm.utils.generate_monitors import generate_monitors
 
@@ -66,8 +67,7 @@ def create_plots(plotters: [], sheet_name: str = "", benchmark: bool = False):
 
 
 def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: bool = False):
-    if benchmark:
-        start = timer()
+    start_of_timer = timer()
 
     if not plotter.has_plot_sources():
         _pulse_logger.error("No plot source provided")
@@ -148,7 +148,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
             config.set_title(generate_title(x_header, series.get_y_headers()[0]))
         if not config.get_output_filename():
             title = config.get_title()
-            if not title: # Empty string title
+            if not title:  # Empty string title
                 if series.has_y_headers():
                     title = generate_title(x_header, series.get_y_headers()[0])
                 else:
@@ -181,8 +181,7 @@ def multi_header_series_plotter(plotter: SEMultiHeaderSeriesPlotter, benchmark: 
             _pulse_logger.info(f'Series Execution Time: {timedelta(seconds=end_series - start_series)}')
 
     if benchmark:
-        end = timer()
-        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
+        _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=timer() - start_of_timer)}')
 
 
 def csv_plotter(csv: Path, benchmark: bool = False):
@@ -229,16 +228,13 @@ def csv_plotter(csv: Path, benchmark: bool = False):
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
         if ps.parse_actions_events():
-            ae = ps.get_actions_events(
-                plot_actions=config.get_plot_actions(),
-                plot_events=config.get_plot_events(),
-                allow_actions_with=config.get_allow_actions_with(),
-                allow_events_with=config.get_allow_events_with(),
-                omit_actions_with=config.get_omit_actions_with(),
-                omit_events_with=config.get_omit_events_with(),
-                count_limit=20
-            )
-            if ae:
+            actions = ps.get_actions(allow_actions_with=config.get_allow_actions_with(),
+                                     omit_actions_with=config.get_omit_actions_with(),
+                                     count_limit=20) if config.get_plot_actions() else []
+            events = ps.get_events(allow_events_with=config.get_allow_events_with(),
+                                   omit_events_with=config.get_omit_events_with(),
+                                   count_limit=20) if config.get_plot_events() else []
+            if len(actions) > 0 or len(events) > 0:
                 config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
                 output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
                 output_filepath = output_dir / output_filename
@@ -263,7 +259,6 @@ def csv_plotter(csv: Path, benchmark: bool = False):
             _pulse_logger.error(f"Failed to create legend {output_dir}")
             config.set_plot_actions(False)
             config.set_plot_events(False)
-
 
     # Plot every header against time
     def _plot_header(sources: List[SEPlotSource]):
@@ -319,7 +314,6 @@ def csv_plotter(csv: Path, benchmark: bool = False):
         _pulse_logger.info(f'Plotter Execution Time: {timedelta(seconds=end - start)}')
 
 
-
 def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     if benchmark:
         start = timer()
@@ -365,17 +359,14 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
     if config.get_plot_actions() or config.get_plot_events():
         legend_success = True
         if computed_source.parse_actions_events():
-            ae = computed_source.get_actions_events(
-                plot_actions=config.get_plot_actions(),
-                plot_events=config.get_plot_events(),
-                allow_actions_with=config.get_allow_actions_with(),
-                allow_events_with=config.get_allow_events_with(),
-                omit_actions_with=config.get_omit_actions_with(),
-                omit_events_with=config.get_omit_events_with(),
-                count_limit=20
-            )
-            if ae:
-                expected_source.set_actions_events(ae)
+            actions = computed_source.get_actions(allow_actions_with=config.get_allow_actions_with(),
+                                                  omit_actions_with=config.get_omit_actions_with(),
+                                                  count_limit=20)
+            events = computed_source.get_events(allow_events_with=config.get_allow_events_with(),
+                                                omit_events_with=config.get_omit_events_with(),
+                                                count_limit=20)
+            if actions or events:
+                expected_source.set_actions_events(actions=actions, events=events)
 
                 config.set_legend_mode(eLegendMode.OnlyActionEventLegend)
                 output_filename = "ActionEventLegend" + config.get_image_properties().get_file_format()
@@ -392,7 +383,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
                 else:
                     legend_success = False
                 clear_current_plot()
-            else: # No actions/events to plot
+            else:  # No actions/events to plot
                 config.set_plot_actions(False)
                 config.set_plot_events(False)
         else:
@@ -406,6 +397,7 @@ def compare_plotter(plotter: SEComparePlotter, benchmark: bool = False):
         Default = 0
         Pass = 1
         Fail = 2
+
     # Helper function to plot every header against x_header
     def _plot_header(sources: List[SEPlotSource], color_mode: _eColorMode=_eColorMode.Default):
         if benchmark:
@@ -777,23 +769,20 @@ def create_plot(plot_sources: [SEPlotSource],
                 return False
 
         # Plot all actions and events
-        for ae in ps.get_actions_events(
-            plot_actions=plot_config.get_plot_actions(),
-            plot_events=plot_config.get_plot_events(),
-            allow_actions_with=plot_config.get_allow_actions_with(),
-            allow_events_with=plot_config.get_allow_events_with(),
-            omit_actions_with=plot_config.get_omit_actions_with(),
-            omit_events_with=plot_config.get_omit_events_with(),
-            count_limit=20
-        ):
-            color = next(action_event_fmt_cycler)['color']
-            if isinstance(ae, LogAction):
-                category = "Action"
-            elif isinstance(ae, LogEvent):
-                category = "Event"
-            else:
-                category = "Unknown"
-            ax3.axvline(x=ae.time, color=color, label=f"{category}:{ae.text}\nt={ae.time}")
+        actions = ps.get_actions(allow_actions_with=plot_config.get_allow_actions_with(),
+                                 omit_actions_with=plot_config.get_omit_actions_with(),
+                                 count_limit=20) if plot_config.get_plot_actions() else {}
+        for time, a_list in actions.items():
+            for a in a_list:
+                c = next(action_event_fmt_cycler)['color']
+                ax3.axvline(x=time, color=c, label=f"Action:{a.text}\nt={time}")
+        events = ps.get_events(allow_events_with=plot_config.get_allow_events_with(),
+                               omit_events_with=plot_config.get_omit_events_with(),
+                               count_limit=20) if plot_config.get_plot_events() else {}
+        for time, e_list in events.items():
+            for e in e_list:
+                c = next(action_event_fmt_cycler)['color']
+                ax3.axvline(x=time, color=c, label=f"Event:{e.event.name}\nt={time}")
 
     # Plot validation data if needed
     if validation_source:
@@ -828,7 +817,6 @@ def create_plot(plot_sources: [SEPlotSource],
         if l < 0:
             l = 0
         ax1.set_xlim(l, u)
-
 
     # Dual axis for action/event plots
     if (plot_config.get_plot_actions() or plot_config.get_plot_events()) and ax2 is None:

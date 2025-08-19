@@ -5,15 +5,18 @@
 /docs/Doxygen/panel_header.html
 /docs/Doxygen/panel_footer.html
 
+# PyCharm project
+.idea/*
+
 # Eclipse Build Directory
 .eclipse/pulse/build
 .eclipse/bind/build
 .classpath
 .project
+proj/eclipse/build
 
 # PyCharm Files
 /src/python/.idea/*
 /src/python/pulse.egg*
 
 /proj/eclipse/build
-

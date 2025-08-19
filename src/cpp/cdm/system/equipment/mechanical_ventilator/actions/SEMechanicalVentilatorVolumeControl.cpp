@@ -175,9 +175,6 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
 
 bool SEMechanicalVentilatorVolumeControl::IsValid() const
 {
-  if (!IsActive())
-    return true;
-
   if (m_MergeType == eMergeType::Replace)
   {
     return SEMechanicalVentilatorMode::IsValid() &&

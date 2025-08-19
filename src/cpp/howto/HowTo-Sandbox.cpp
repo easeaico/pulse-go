@@ -47,7 +47,7 @@ public:
 void HowToSandbox()
 {
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_Sandbox.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Sandbox.log");
   pe->GetLogger()->Info("HowTo_Sandbox");
   ActionLogger handler;
   pe->GetLogger()->AddForward(&handler);

@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include "cdm/properties/SEScalar.h"
 #include "cdm/system/SESystem.h"
 
 // Keep enums in sync with appropriate schema/cdm/Physiology.proto file !!
@@ -206,7 +207,7 @@ protected:
   SEScalarPressure*                      m_DiastolicRightHeartPressure;
   SEScalar0To1*                          m_HeartEjectionFraction;
   SEScalarFrequency*                     m_HeartRate;
-  eHeartRhythm                           m_HeartRhythm;
+  SEScalarEnum<eHeartRhythm>             m_HeartRhythm;
   SEScalarVolume*                        m_HeartStrokeVolume;
   SEScalarPressure*                      m_IntracranialPressure;
   SEScalarPressure*                      m_MeanArterialPressure;

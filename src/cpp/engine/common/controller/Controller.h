@@ -372,7 +372,6 @@ namespace pulse
     void ForwardFatal(const std::string& /*msg*/) override
     {
       m_Events.SetEvent(eEvent::IrreversibleState, true, m_CurrentTime);
-      throw IrreversibleStateException(); // Caught in Common::AdvanceModelTime, so we do not do anything more in the engine
     }
 
   protected:

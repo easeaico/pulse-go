@@ -3,8 +3,9 @@
 from enum import Enum
 from pulse.cdm.patient import SENutrition
 from pulse.cdm.physiology import SERespiratoryMechanics, eLungCompartment, \
-                                 SECardiovascularMechanicsModifiers, SERespiratoryMechanicsModifiers
-from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
+    SECardiovascularMechanicsModifiers, SERespiratoryMechanicsModifiers, eHeartRhythm
+from pulse.cdm.engine import SEAction
+from pulse.cdm.enums import eSwitch, eSide, eGate
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, \
                               SEScalarForce, SEScalarLength, SEScalarMassPerVolume, \
                               SEScalarPressure, SEScalarTime, \
@@ -133,17 +134,6 @@ class SEAirwayObstruction(SEPatientAction):
                 "  Severity: {}\n"
                 "  Resistance Type: {}").format(self._severity, self._resistance_type)
 
-class eHeartRhythm(Enum):
-    NormalSinus = 0
-    SinusBradycardia = 1
-    SinusTachycardia = 2
-    SinusPulselessElectricalActivity = 3
-    Asystole = 4
-    CoarseVentricularFibrillation = 5
-    FineVentricularFibrillation = 6
-    PulselessVentricularTachycardia = 7
-    StableVentricularTachycardia = 8
-    UnstableVentricularTachycardia = 9
 
 class SEArrhythmia(SEPatientAction):
     __slots__ = ["_rhythm"]

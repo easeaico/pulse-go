@@ -14,6 +14,8 @@ public:
 
   bool SetConfigurationOverride(std::string const& cfg, eSerializationFormat format);
 
+  bool IsValidPatient(std::string const& patient, eSerializationFormat format) override;
+
   static bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format, Logger* logger=nullptr);
 
 protected:

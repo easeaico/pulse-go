@@ -167,7 +167,7 @@ protected:
   /// To override default functionality with those
   /// actions override the ProcessActions method
   bool ProcessAction(PhysiologyEngine& pe, SEAction& action);
-  void AdvanceEngine(PhysiologyEngine& pe);
+  bool AdvanceEngine(PhysiologyEngine& pe);
 
   eSwitch     m_LogToConsole;
   std::string m_DataRootDirectory;
@@ -213,7 +213,7 @@ protected:
   std::stringstream          m_SerializationActions;
 };
 
-enum class eScenarioExecutionState { Waiting = 0, Executing, Complete };
+enum class eScenarioExecutionState { Waiting = 0, Running, Complete };
 extern CDM_DECL const std::string& eScenarioExecutionState_Name(eScenarioExecutionState s);
 
 class CDM_DECL SEScenarioExecStatus : public SEEngineInitializationStatus

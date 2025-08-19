@@ -23,12 +23,13 @@ The %Gastrointestinal tract is responsible for consuming and digesting food, abs
 The tract consists of the stomach and intestines breaking down food into usable nutrients for the body. 
 After being eaten, food is stored in the stomach, gradually digested, then released into the gut chyme. 
 At this point, nutrients are either quickly absorbed into the blood through the intestinal wall or further broken down prior to absorption. 
-An overview of the digestive tract is shown in Figure 1.
+An overview of the digestive tract is shown in @figureref {DigestiveTract}.
 
-<a href="./Images/GI/DigestiveTractDetail.png"><img src="./Images/GI/DigestiveTractDetail.png"></a>
 <center>
+<a href="./Images/GI/DigestiveTractDetail.png"><img src="./Images/GI/DigestiveTractDetail.png"></a>
+
 <i>
-Figure 1. The human digestive tract is composed of several distinct sections @cite LadyofHats2006Digestive. 
+@figuredef {DigestiveTract} The human digestive tract is composed of several distinct sections @cite LadyofHats2006Digestive. 
 Currently, the gastrointestinal model replicates the behavior of the stomach and small intestine.
 </i>
 </center><br>
@@ -114,11 +115,11 @@ Features, Capabilities, and Dependencies
 ----------------------
 ### Circuit
 
+<center>
 @anchor GI-circuit
 <a href="./Images/GI/GICircuit.png"><img src="./Images/GI/GICircuit.png"></a>
-<center>
 <i>
-Figure 2. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
+@figuredef {GICircuit} The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.
 </i>
 </center><br>
 
@@ -144,7 +145,7 @@ Water is absorbed via the osmotic gradient that either naturally exists between 
 | Sodium        | Sodium              | N/A                                                              | 1.0                                    | M<sub>g</sub> = M<sub>s</sub>/V<sub>H2O</sub><i>R<sub>H2O</sub></i>&Delta;T |
 | Water         | Water               | 0.417 mL/s @cite Peronnet2012Pharmacokinetic                     | 1.0                                    | V<sub>H2O</sub> = R*&Delta;T                                                |
 
-*Table 1. How macronutrients are converted into substances.*
+*@tabledef {GIMacronutrientConversion} How macronutrients are converted into substances.*
 </center>
 
 Water is transported into the cardiovascular circuit at a maximum flow rate of 3.3mL/s.
@@ -173,7 +174,7 @@ the gut volumes and small intestine volume and substance masses. The transport t
 Concentrations are not solely a function of GI; other systems are potentially using substances in the blood.
 
 <center>
-*Table 2. Macronutrient mass in the stomach, and blood as a function of time.*
+*@tabledef {GIMacronutrientMass} Macronutrient mass in the stomach, and blood as a function of time.*
 
 |Macronutrient/Substance|                                    Stomach Mass(g) / Volume(mL)  vs. Time(s)                                         |                               Blood Concentration (ug/mL) / Volume (mL) vs. Time (s)                                   |
 |:---:                  |:---:                                                                                                                 |:---:                                                                                                                   |
@@ -185,7 +186,7 @@ Concentrations are not solely a function of GI; other systems are potentially us
 |Water                  |<a href="./plots/GI/6hr_StomachWater.jpg"><img src="./plots/GI/6hr_StomachWater.jpg" height="200" width="400"></a>    |<a href="./plots/GI/6hr_BV.jpg"><img src="./plots/GI/6hr_BV.jpg" height="200" width="400"></a>                          |
 </center>
 
-As seen in Table 2, the macronutrient masses in the stomach are depleted based on different digestion rates and eventually reach zero. 
+As seen in @tableref {GIMacronutrientMass}, the macronutrient masses in the stomach are depleted based on different digestion rates and eventually reach zero. 
 Concentrations are provided on the right column demonstrating the effect of the increasing mass on the blood concentrations.
 These overall trends meet the expectations of the model performance.
 

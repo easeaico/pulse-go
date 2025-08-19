@@ -3,7 +3,7 @@
 
 from pulse.cdm.plots import *
 from pulse.cdm.bind.Plots_pb2 import *
-from pulse.cdm.engine import eSerializationFormat
+from pulse.cdm.enums import eSerializationFormat
 from google.protobuf import json_format
 
 def serialize_plotter_list_from_file(filename: str, dst: [SEPlotter]):
