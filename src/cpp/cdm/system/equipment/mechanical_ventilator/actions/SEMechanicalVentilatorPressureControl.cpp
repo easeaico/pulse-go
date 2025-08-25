@@ -95,7 +95,7 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
 {
   if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr, mt))
     return false;
-  if (SEMechanicalVentilatorMode::IsActive())
+  if (SEMechanicalVentilatorMode::IsActive() && GetSupplementalSettings().GetConnection() != eSwitch::Off)
   {
     // Translate ventilator settings
     double totalPeriod_s = 60.0 / GetRespirationRate(FrequencyUnit::Per_min);

@@ -95,7 +95,7 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
 {
   if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr, mt))
     return false;
-  if (SEMechanicalVentilatorMode::IsActive())
+  if (SEMechanicalVentilatorMode::IsActive() && GetSupplementalSettings().GetConnection() != eSwitch::Off)
   {
     // Translate ventilator settings
     double inspirationWaveformPeriod_s = 0.0;
