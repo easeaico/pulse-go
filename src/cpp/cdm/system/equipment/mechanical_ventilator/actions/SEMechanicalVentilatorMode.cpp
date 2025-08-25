@@ -6,7 +6,6 @@
 
 SEMechanicalVentilatorMode::SEMechanicalVentilatorMode(Logger* logger) : SEMechanicalVentilatorAction(logger)
 {
-  m_Connection = eSwitch::Off;
   m_SupplementalSettings = nullptr;
   m_SupplementalSettingsFile = "";
   m_MergeType = eMergeType::Replace;
@@ -14,7 +13,6 @@ SEMechanicalVentilatorMode::SEMechanicalVentilatorMode(Logger* logger) : SEMecha
 
 SEMechanicalVentilatorMode::~SEMechanicalVentilatorMode()
 {
-  m_Connection = eSwitch::Off;
   m_SupplementalSettings = nullptr;
   m_SupplementalSettingsFile = "";
   m_MergeType = eMergeType::Replace;
@@ -23,7 +21,6 @@ SEMechanicalVentilatorMode::~SEMechanicalVentilatorMode()
 void SEMechanicalVentilatorMode::Clear()
 {
   SEMechanicalVentilatorAction::Clear();
-  m_Connection = eSwitch::Off;
   if (m_SupplementalSettings)
     m_SupplementalSettings->Clear();
   m_SupplementalSettingsFile = "";
@@ -32,14 +29,18 @@ void SEMechanicalVentilatorMode::Clear()
 
 bool SEMechanicalVentilatorMode::IsValid() const
 {
-  if (m_Connection == eSwitch::NullSwitch && !HasSupplementalSettings() && !HasSupplementalSettingsFile())
-    return false;
-  return SEMechanicalVentilatorAction::IsValid();
+  if (HasSupplementalSettingsFile())
+    return SEMechanicalVentilatorAction::IsValid();
+  if (HasSupplementalSettings() && GetSupplementalSettings()->HasConnection())
+    return SEMechanicalVentilatorAction::IsValid();
+  return false;
 }
 
 bool SEMechanicalVentilatorMode::IsActive() const
 {
-  if (m_Connection == eSwitch::On || HasSupplementalSettings() || HasSupplementalSettingsFile())
+  if (HasSupplementalSettingsFile())
+    return true;
+  if (HasSupplementalSettings() && m_SupplementalSettings->GetConnection() == eSwitch::On)
     return SEMechanicalVentilatorAction::IsActive();
   return false;
 }
@@ -61,18 +62,17 @@ bool SEMechanicalVentilatorMode::ToSettings(SEMechanicalVentilatorSettings& s, S
       Error("Unable to load settings file");
     s.Merge(GetSupplementalSettings(), subMgr);
   }
-  s.SetConnection(m_Connection);
 
   return true;
 }
 
 void SEMechanicalVentilatorMode::SetConnection(eSwitch c)
 {
-  m_Connection = c;
+  GetSupplementalSettings().SetConnection(c);
 }
 eSwitch SEMechanicalVentilatorMode::GetConnection() const
 {
-  return m_Connection;
+  return GetSupplementalSettings()->GetConnection();
 }
 
 bool SEMechanicalVentilatorMode::HasSupplementalSettings() const

@@ -863,7 +863,6 @@ void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorModeData& src, 
 void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorModeData& src, SEMechanicalVentilatorMode& dst, const SESubstanceManager& subMgr)
 {
   PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
-  dst.m_Connection = (eSwitch)src.connection();
   if (!src.supplementalsettingsfile().empty())
     dst.SetSupplementalSettingsFile(src.supplementalsettingsfile());
   else if (src.has_supplementalsettings())
@@ -879,7 +878,6 @@ CDM_BIND::MechanicalVentilatorModeData* PBEquipmentAction::Unload(const SEMechan
 void PBEquipmentAction::Serialize(const SEMechanicalVentilatorMode& src, CDM_BIND::MechanicalVentilatorModeData& dst)
 {
   PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatoraction());
-  dst.set_connection((CDM_BIND::eSwitch)src.m_Connection);
   if (src.HasSupplementalSettingsFile())
     dst.set_supplementalsettingsfile(src.m_SupplementalSettingsFile);
   else if (src.HasSupplementalSettings())

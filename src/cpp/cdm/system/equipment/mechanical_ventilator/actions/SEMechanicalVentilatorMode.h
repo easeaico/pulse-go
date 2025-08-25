@@ -37,7 +37,6 @@ public:
 
 protected:
 
-  eSwitch                         m_Connection;
   SEMechanicalVentilatorSettings* m_SupplementalSettings;
   std::string                     m_SupplementalSettingsFile;
   eMergeType                      m_MergeType;

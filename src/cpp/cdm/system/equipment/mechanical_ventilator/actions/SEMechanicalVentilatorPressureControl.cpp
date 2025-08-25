@@ -175,12 +175,19 @@ bool SEMechanicalVentilatorPressureControl::IsValid() const
 {
   if (m_MergeType == eMergeType::Replace)
   {
-    return SEMechanicalVentilatorMode::IsValid() &&
-      HasFractionInspiredOxygen() &&
-      HasInspiratoryPressure() &&
-      HasPositiveEndExpiratoryPressure() &&
-      HasRespirationRate();
-    // Everything else is optional
+    if (!SEMechanicalVentilatorMode::IsValid())
+      return false;
+    if (HasSupplementalSettings())
+      if (GetConnection() == eSwitch::Off)
+        return true;
+
+      return HasFractionInspiredOxygen() &&
+             HasInspiratoryPressure() &&
+             HasPositiveEndExpiratoryPressure() &&
+             HasRespirationRate();
+             // Everything else is optional
+
+    // Revisit how setting file works when in usage
   }
   return true;
 }
