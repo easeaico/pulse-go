@@ -157,12 +157,7 @@
    "EquipmentAction": {
     "MechanicalVentilatorVolumeControl": {
      "MechanicalVentilatorMode": {
-      "MechanicalVentilatorAction": {
-       "EquipmentAction": {
-        "Action": {}
-       }
-      },
-      "Connection": "On"
+      "SupplementalSettings": {"Connection": "On"}
      },
      "Flow": {
       "ScalarVolumePerTime": {
@@ -228,12 +223,7 @@
    "EquipmentAction": {
     "MechanicalVentilatorVolumeControl": {
      "MechanicalVentilatorMode": {
-      "MechanicalVentilatorAction": {
-       "EquipmentAction": {
-        "Action": {}
-       }
-      },
-      "Connection": "On"
+      "SupplementalSettings": {"Connection": "On"}
      },
      "Flow": {
       "ScalarVolumePerTime": {
@@ -295,12 +285,7 @@
    "EquipmentAction": {
     "MechanicalVentilatorVolumeControl": {
      "MechanicalVentilatorMode": {
-      "MechanicalVentilatorAction": {
-       "EquipmentAction": {
-        "Action": {}
-       }
-      },
-      "Connection": "On"
+      "SupplementalSettings": {"Connection": "On"}
      },
      "Flow": {
       "ScalarVolumePerTime": {

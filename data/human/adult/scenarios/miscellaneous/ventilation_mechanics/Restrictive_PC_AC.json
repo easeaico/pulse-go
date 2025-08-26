@@ -204,12 +204,7 @@
    "EquipmentAction": {
     "MechanicalVentilatorPressureControl": {
      "MechanicalVentilatorMode": {
-      "MechanicalVentilatorAction": {
-       "EquipmentAction": {
-        "Action": {}
-       }
-      },
-      "Connection": "On"
+      "SupplementalSettings": {"Connection": "On"}
      },
      "FractionInspiredOxygen": {
       "Scalar0To1": {

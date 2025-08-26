@@ -42,12 +42,7 @@
     "EquipmentAction": {
       "MechanicalVentilatorVolumeControl": {
         "MechanicalVentilatorMode": {
-          "MechanicalVentilatorAction": {
-            "EquipmentAction": {
-              "Action": {}
-            }
-          },
-          "Connection": "On"
+          "SupplementalSettings": {"Connection": "On"}
         },
         "Mode": "ContinuousMandatoryVentilation",
         "InspirationWaveform": "Square",
