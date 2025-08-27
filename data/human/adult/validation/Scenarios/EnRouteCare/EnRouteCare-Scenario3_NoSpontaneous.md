@@ -66,24 +66,6 @@ En Route Care Scenario 3 - NoSpontaneous {#EnRouteCareScenario3_NoSpontaneous}
 
 @insert ./validation/tables/EnRouteCare/Scenario3_NoSpontaneous/Segment3SegmentTable.md
 
-#### Segment 4
-
-@insert ./validation/tables/EnRouteCare/Scenario3_NoSpontaneous/Segment4ValidationTable.md
-
-@htmlonly
-<center>
-<a href="./plots/EnRouteCare/Scenario3_NoSpontaneous-vitals_monitor_4.jpg"><img src="./plots/EnRouteCare/Scenario3_NoSpontaneous-vitals_monitor_4.jpg" width="1100"></a>
-<br>
-<a href="./plots/EnRouteCare/Scenario3_NoSpontaneous-ventilator_monitor_4.jpg"><img src="./plots/EnRouteCare/Scenario3_NoSpontaneous-ventilator_monitor_4.jpg" width="1100"></a>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>@figuredef {Scenario3_NoSpontaneousSegment4Monitors}. Vitals and ventilator monitors for Segment 4.</i>
-</center><br>
-
-@insert ./validation/tables/EnRouteCare/Scenario3_NoSpontaneous/Segment4SegmentTable.md
-
 ### Scenario Output Plots
 
 @htmlonly
