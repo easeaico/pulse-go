@@ -6,7 +6,7 @@ En Route Care Scenario 3 {#EnRouteCareScenario3}
 @htmlonly
 <a href="./Images/EnRouteCare/Placeholder.png"><img src="./Images/EnRouteCare/Placeholder.png" width="400"></a>
 <center>
-<i>@figuredef {Scenario2XRay}. Chest radiograph demonstrates bilateral patchy opacities and ground glass appearance.</i>
+<i>@figuredef {Scenario3XRay}. Chest radiograph demonstrates bilateral patchy opacities and ground glass appearance.</i>
 </center><br>
 @endhtmlonly
 
