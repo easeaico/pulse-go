@@ -38,11 +38,11 @@ namespace pulse { namespace human_adult_whole_body
     void CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory);
     void CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory);
     void CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(const std::string& sTestDirectory);
-    void CardiovascularAndExpandedLungsCircuitAndTransportTest(const std::string& sTestDirectory);
+    void ExpandedLungsCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
     void FullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
-    void FullExpandedLungsCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
+    void ExpandedLungsFullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
     void CardiovascularBloodGasesTest(const std::string& sTestDirectory);// Everything with Saturation
-    void CardiovascularExpandedLungsBloodGasesTest(const std::string& sTestDirectory);// Everything with Saturation
+    void ExpandedLungsCardiovascularBloodGasesTest(const std::string& sTestDirectory);// Everything with Saturation
     // Cardiovascular Utilities //
     void TuneCardiovascularCircuitTest(const std::string& sTestDirectory);
     void CardiovascularCircuitScaleTests(const std::string& sTestDirectory);
@@ -84,10 +84,21 @@ namespace pulse { namespace human_adult_whole_body
     // Respiratory //
     /////////////////
     void RespiratoryCircuitAndTransportTest(const std::string& sTestDirectory);
-    void RespiratoryExpandedLungsCircuitAndTransportTest(const std::string& sTestDirectory);
+    void ExpandedLungsRespiratoryCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryDriverTest(const std::string& sTestDirectory);
   protected:
-    enum RespiratoryConfiguration { RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation, MechanicalVentilatorSolo, RespiratoryWithMechanicalVentilator
+    enum RespiratoryConfiguration { RespiratorySolo,
+                                    ExpandedLungsRespiratorySolo,
+                                    AnesthesiaMachineSolo,
+                                    RespiratoryWithAnesthesiaMachine,
+                                    ExpandedLungsRespiratoryWithAnesthesiaMachine,
+                                    RespiratoryWithInhaler,
+                                    ExpandedLungsRespiratoryWithInhaler,
+                                    RespiratoryWithMechanicalVentilation,
+                                    ExpandedLungsRespiratoryWithMechanicalVentilation,
+                                    MechanicalVentilatorSolo,
+                                    RespiratoryWithMechanicalVentilator,
+                                    ExpandedLungsRespiratoryWithMechanicalVentilator
     };
     void RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory);
 
@@ -97,9 +108,17 @@ namespace pulse { namespace human_adult_whole_body
     ////////////////////////
     void AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
-    void RespiratoryExpandedLungsWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
+    void ExpandedLungsRespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
     void AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory);
+
+  public:
+    /////////////
+    // Inhaler //
+    /////////////
+    void RespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory);
+    void ExpandedLungsRespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory);
+  protected:
 
   public:
     ///////////////////////////
@@ -107,24 +126,16 @@ namespace pulse { namespace human_adult_whole_body
     ///////////////////////////
     void MechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
-    void RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
+    void ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
     void MechanicalVentilatorCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string& sTestDirectory);
-
-  public:
-    /////////////
-    // Inhaler //
-    /////////////
-    void RespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory);
-    void RespiratoryExpandedLungsWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory);
-  protected:
 
   public:
     ////////////////////////////
     // Mechanical Ventilation //
     ////////////////////////////
     void RespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory);
-    void RespiratoryExpandedLungsWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory);
+    void ExpandedLungsRespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
 
   public:

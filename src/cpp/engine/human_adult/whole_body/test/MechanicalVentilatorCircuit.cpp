@@ -47,10 +47,11 @@ namespace pulse { namespace human_adult_whole_body
     DataTrack outTrkGraph;
     std::ofstream fileCircuit;
     std::ofstream fileGraph;
+    std::string prefix = expandedLungs ? "ExpandedLungs" : "";
 
     Engine pe;
     Controller& pc = (Controller&)pe.GetController();
-    pc.GetLogger()->SetLogFile(sTestDirectory + "/MechanicalVentilatorCircuitAndTransportTest.log");
+    pc.GetLogger()->SetLogFile(sTestDirectory + "/"+prefix+"MechanicalVentilatorCircuitAndTransportTest.log");
     SEPatient patient(pc.GetLogger());
     patient.SerializeFromFile("./patients/StandardMale.json");
     pc.SetupPatient(patient);
@@ -85,8 +86,8 @@ namespace pulse { namespace human_adult_whole_body
     {
       mvCircuit = &pc.GetCircuits().GetMechanicalVentilatorCircuit();
       mvGraph = &pc.GetCompartments().GetMechanicalVentilatorGraph();
-      sCircuitFileName = "/MechanicalVentilatorCircuitOutput.csv";
-      sTransportFileName = "/MechanicalVentilatorTransportOutput.csv";
+      sCircuitFileName = "/"+prefix+"MechanicalVentilatorCircuitOutput.csv";
+      sTransportFileName = "/"+prefix+"MechanicalVentilatorTransportOutput.csv";
 
       //Allow things to flow to ground, since the respiratory circuit isn't here
       //This approximates the total respiratory system resistance
@@ -95,14 +96,14 @@ namespace pulse { namespace human_adult_whole_body
       MechanicalVentilatorConnectionToEnvironment->GetPressureSourceBaseline().SetValue(0.1, PressureUnit::cmH2O);
       MechanicalVentilatorConnectionToEnvironment->GetNextPressureSource().SetValue(0.1, PressureUnit::cmH2O);
     }
-    else if (config == RespiratoryWithMechanicalVentilator)
+    else if (config == RespiratoryWithMechanicalVentilator || config == ExpandedLungsRespiratoryWithMechanicalVentilator)
     {
       pc.GetSubstances().InitializeGasCompartments();
 
       mvCircuit = &pc.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit();
       mvGraph = &pc.GetCompartments().GetRespiratoryAndMechanicalVentilatorGraph();
-      sCircuitFileName = "/RespiratoryAndMechanicalVentilatorCircuitOutput.csv";
-      sTransportFileName = "/RespiratoryAndMechanicalVentilatorTransportOutput.csv";
+      sCircuitFileName = "/"+prefix+"RespiratoryAndMechanicalVentilatorCircuitOutput.csv";
+      sTransportFileName = "/"+prefix+"RespiratoryAndMechanicalVentilatorTransportOutput.csv";
 
       //Precharge the stomach to prevent negative volume
       mvCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
@@ -178,8 +179,8 @@ namespace pulse { namespace human_adult_whole_body
     MechanicalVentilatorCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, false, sTestDirectory);
   }
 
-  void EngineTest::RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
+  void EngineTest::ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    MechanicalVentilatorCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, true, sTestDirectory);
+    MechanicalVentilatorCircuitAndTransportTest(ExpandedLungsRespiratoryWithMechanicalVentilator, true, sTestDirectory);
   }
 END_NAMESPACE_EX

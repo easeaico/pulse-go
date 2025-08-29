@@ -47,10 +47,11 @@ namespace pulse { namespace human_adult_whole_body
     DataTrack outTrkGraph;
     std::ofstream fileCircuit;
     std::ofstream fileGraph;
+    std::string prefix = expandedLungs ? "ExpandedLungs" : "";
 
     Engine pe;
     Controller& pc = (Controller&)pe.GetController();
-    pc.GetLogger()->SetLogFile(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
+    pc.GetLogger()->SetLogFile(sTestDirectory + "/"+prefix+"AnesthesiaMachineCircuitAndTransportTest.log");
     SEPatient patient(pc.GetLogger());
     patient.SerializeFromFile("./patients/StandardMale.json");
     pc.SetupPatient(patient);
@@ -85,8 +86,8 @@ namespace pulse { namespace human_adult_whole_body
     {
       amCircuit = &pc.GetCircuits().GetAnesthesiaMachineCircuit();
       amGraph = &pc.GetCompartments().GetAnesthesiaMachineGraph();
-      sCircuitFileName = "/AnesthesiaMachineCircuitOutput.csv";
-      sTransportFileName = "/AnesthesiaMachineTransportOutput.csv";
+      sCircuitFileName = "/"+prefix+"AnesthesiaMachineCircuitOutput.csv";
+      sTransportFileName = "/"+prefix+"AnesthesiaMachineTransportOutput.csv";
 
       //Allow things to flow to ground, since the respiratory circuit isn't here
       //This approximates the total respiratory system resistance
@@ -94,14 +95,14 @@ namespace pulse { namespace human_adult_whole_body
       AnesthesiaConnectionToEnvironment->GetResistanceBaseline().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       AnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
-    else if (config == RespiratoryWithAnesthesiaMachine)
+    else if (config == RespiratoryWithAnesthesiaMachine || config == ExpandedLungsRespiratoryWithAnesthesiaMachine)
     {
       pc.GetSubstances().InitializeGasCompartments();
 
       amCircuit = &pc.GetCircuits().GetRespiratoryAndAnesthesiaMachineCircuit();
       amGraph = &pc.GetCompartments().GetRespiratoryAndAnesthesiaMachineGraph();
-      sCircuitFileName = "/RespiratoryAndAnesthesiaMachineCircuitOutput.csv";
-      sTransportFileName = "/RespiratoryAndAnesthesiaMachineTransportOutput.csv";
+      sCircuitFileName = "/"+prefix+"RespiratoryAndAnesthesiaMachineCircuitOutput.csv";
+      sTransportFileName = "/"+prefix+"RespiratoryAndAnesthesiaMachineTransportOutput.csv";
 
       //Precharge the stomach to prevent negative volume
       amCircuit->GetNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().Set(env.GetAtmosphericPressure());
@@ -183,8 +184,8 @@ namespace pulse { namespace human_adult_whole_body
     AnesthesiaMachineCircuitAndTransportTest(RespiratoryWithAnesthesiaMachine, false, sTestDirectory);
   }
 
-  void EngineTest::RespiratoryExpandedLungsWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
+  void EngineTest::ExpandedLungsRespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    AnesthesiaMachineCircuitAndTransportTest(RespiratoryWithAnesthesiaMachine, true, sTestDirectory);
+    AnesthesiaMachineCircuitAndTransportTest(ExpandedLungsRespiratoryWithAnesthesiaMachine, true, sTestDirectory);
   }
 END_NAMESPACE_EX

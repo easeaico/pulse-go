@@ -808,7 +808,8 @@ def create_plot(plot_sources: [SEPlotSource],
                     max_y = 0.001
                 if min_y is not None and min_y >= 0:
                     min_y = -0.01
-                if min_y is not None and not np.isnan(min_y):
+                if (min_y is not None and not np.isnan(min_y) and not np.isinf(min_y) and
+                        max_y is not None and not np.isnan(max_y) and not np.isinf(max_y)):
                     ax.set_ylim(min_y-0.05*abs(min_y), max_y+0.15*abs(max_y))
 
     # Ensure negative times aren't shown

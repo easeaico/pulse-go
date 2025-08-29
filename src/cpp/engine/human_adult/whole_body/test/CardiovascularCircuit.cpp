@@ -62,9 +62,9 @@ namespace pulse { namespace human_adult_whole_body
     CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, true, false, false, false, sTestDirectory, "CardiovascularAndCerebrospinalFluid", false);
   }
 
-  void EngineTest::CardiovascularAndExpandedLungsCircuitAndTransportTest(const std::string& sTestDirectory)
+  void EngineTest::ExpandedLungsCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, false, true, sTestDirectory, "CardiovascularAndCerebrospinalFluid", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, false, true, sTestDirectory, "ExpandedLungsCardiovascular", false);
   }
 
   void EngineTest::FullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
@@ -72,9 +72,9 @@ namespace pulse { namespace human_adult_whole_body
     CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, true, false, sTestDirectory, "FullCardiovascular", false);
   }
 
-  void EngineTest::FullExpandedLungsCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
+  void EngineTest::ExpandedLungsFullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
   {// \todo enable csf when ready
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, true, true, sTestDirectory, "FullCardiovascular", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, true, true, sTestDirectory, "ExpandedLungsFullCardiovascular", false);
   }
 
   void EngineTest::CardiovascularBloodGasesTest(const std::string& sTestDirectory)
@@ -82,9 +82,9 @@ namespace pulse { namespace human_adult_whole_body
     CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, true, true, false, sTestDirectory, "CardiovascularBloodGasesTest", false);
   }
 
-  void EngineTest::CardiovascularExpandedLungsBloodGasesTest(const std::string& sTestDirectory)
+  void EngineTest::ExpandedLungsCardiovascularBloodGasesTest(const std::string& sTestDirectory)
   {// \todo enable csf when ready
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, true, true, true, sTestDirectory, "CardiovascularBloodGasesTest", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, true, true, true, sTestDirectory, "ExpandedLungsCardiovascularBloodGasesTest", false);
   }
 
   void EngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDirectory)

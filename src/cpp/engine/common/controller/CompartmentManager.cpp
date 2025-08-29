@@ -345,10 +345,13 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     {
       Error("Could not find required Graph " + std::string(pulse::Graph::Cardiovascular));
     }
-    m_RenalGraph = GetLiquidGraph(pulse::Graph::Renal);
-    if (m_RenalGraph == nullptr)
+    if (m_data.GetConfiguration().UseExpandedKidneys() == eSwitch::On)
     {
-      Error("Could not find required Graph " + std::string(pulse::Graph::Renal));
+      m_RenalGraph = GetLiquidGraph(pulse::Graph::Renal);
+      if (m_RenalGraph == nullptr)
+      {
+        Error("Could not find required Graph " + std::string(pulse::Graph::Renal));
+      }
     }
     m_RespiratoryGraph = GetGasGraph(pulse::Graph::Respiratory);
     if (m_RespiratoryGraph == nullptr)
@@ -453,6 +456,9 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
       // Don't add it to the aerosol compartments (Liquid version of Respiratory cmpts)
       const std::vector<std::string>& p = pulse::PulmonaryCompartment::GetValues();
       if (std::find(p.begin(), p.end(), cmpt.GetName()) != p.end())
+        return false;
+      const std::vector<std::string>& eL = pulse::ExpandedLungsPulmonaryCompartment::GetValues();
+      if (std::find(eL.begin(), eL.end(), cmpt.GetName()) != eL.end())
         return false;
       // Don't add it to aerosol cmpts either
       const std::vector<std::string>& bvm = pulse::BagValveMaskCompartment::GetValues();

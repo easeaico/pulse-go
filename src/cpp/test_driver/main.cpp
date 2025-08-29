@@ -15,12 +15,12 @@ int main(int argc, char* argv[])
   Logger cdmLogger(cdmDir + "/CDMUnitTests.log");
   CommonDataModelTest cdmTest(&cdmLogger);
 
-  std::string hawbDir = "./test_results/unit_tests/human_adult/whole_body";
+  std::string hawbDir = "./test_results/unit_tests/pulse"; // TODO when we have different engines, human_adult/whole_body";
   Logger hawbLogger(hawbDir + "/PulseUnitTests.log");
   pulse::human_adult_whole_body::EngineTest hawbTest(&hawbLogger);
 
-  std::string havmDir = "./test_results/unit_tests/human_adult/ventilation_mechanics";
-  Logger havmLogger(havmDir + "/RespiratoryEngineUnitTests.log");
+  std::string havmDir = "./test_results/unit_tests/pulse";  // TODO when we have different engines, human_adult / ventilation_mechanics";
+  Logger havmLogger(havmDir + "/PulseEngineUnitTests.log");
   pulse::human_adult_ventilation_mechanics::EngineTest havmTest(&havmLogger);
 
   if (argc == 1)
@@ -51,11 +51,11 @@ int main(int argc, char* argv[])
       //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndTissueCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(hawbDir);
-      hawbTest.CardiovascularAndExpandedLungsCircuitAndTransportTest(hawbDir);
+//      hawbTest.ExpandedLungsCardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.FullCardiovascularCircuitAndTransportTest(hawbDir);
-      hawbTest.FullExpandedLungsCardiovascularCircuitAndTransportTest(hawbDir);
+//      hawbTest.ExpandedLungsFullCardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularBloodGasesTest(hawbDir);
-      hawbTest.CardiovascularExpandedLungsBloodGasesTest(hawbDir);
+//      hawbTest.ExpandedLungsCardiovascularBloodGasesTest(hawbDir);
       //hawbTest.TuneCardiovascularCircuitTest(hawbDir);
 
       //hawbTest.RenalCircuitAndTransportTest(hawbDir);
@@ -66,17 +66,17 @@ int main(int argc, char* argv[])
 
       //hawbTest.RespiratoryDriverTest(hawbDir);
       //hawbTest.RespiratoryCircuitAndTransportTest(hawbDir);
-      hawbTest.RespiratoryExpandedLungsCircuitAndTransportTest(hawbDir);
+//      hawbTest.ExpandedLungsRespiratoryCircuitAndTransportTest(hawbDir);
       //hawbTest.AnesthesiaMachineCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(hawbDir);
-      hawbTest.RespiratoryExpandedLungsWithAnesthesiaMachineCircuitAndTransportTest(hawbDir);
+//      hawbTest.ExpandedLungsRespiratoryWithAnesthesiaMachineCircuitAndTransportTest(hawbDir);
       //hawbTest.MechanicalVentilatorCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
-      hawbTest.RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
+//      hawbTest.ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithInhalerCircuitAndTransportTest(hawbDir);
-      hawbTest.RespiratoryExpandedLungsWithInhalerCircuitAndTransportTest(hawbDir);
+      hawbTest.ExpandedLungsRespiratoryWithInhalerCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
-      hawbTest.RespiratoryExpandedLungsWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
+//      hawbTest.ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
 
       //hawbTest.InternalTemperatureVariableBMRCircuitTest(hawbDir);
       //hawbTest.InternalTemperatureVariableSkinCircuitTest(hawbDir);

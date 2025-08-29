@@ -1296,14 +1296,6 @@ namespace pulse
         liquidLink.MapPath(*gasLink->GetPath());
       lAerosol.AddLink(liquidLink);
     }
-
-    SEGasCompartment* gasCmpt = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Airway);
-    SELiquidCompartment& liquidCmpt = m_Compartments->CreateLiquidCompartment(pulse::PulmonaryCompartment::Airway);
-    if (gasCmpt->HasNodeMapping())
-    {
-      for (auto node : gasCmpt->GetNodeMapping().GetNodes())
-        liquidCmpt.MapNode(*node);
-    }
     lAerosol.StateChange();
   }
 
