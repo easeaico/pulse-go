@@ -382,6 +382,8 @@ namespace pulse
     SEFluidCircuitPath& AirwayToPharynx = cRespiratory.CreatePath(Airway, Pharynx, pulse::RespiratoryPath::AirwayToPharynx);
     SEFluidCircuitPath& PharynxToCarina = cRespiratory.CreatePath(Pharynx, Carina, pulse::RespiratoryPath::PharynxToCarina);
     PharynxToCarina.GetResistanceBaseline().SetValue(TracheaResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    SEFluidCircuitPath& PharynxToEnvironment = cRespiratory.CreatePath(Pharynx, Ambient, pulse::RespiratoryPath::PharynxToEnvironment);
+    PharynxToEnvironment.GetResistanceBaseline().SetValue(openResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
     SEFluidCircuitPath& CarinaToRightMainBronchus = cRespiratory.CreatePath(Carina, RightMainBronchus, pulse::ExpandedLungsRespiratoryPath::CarinaToRightMainBronchus);
     SEFluidCircuitPath& RightMainBronchusToRightIntermediateBronchus = cRespiratory.CreatePath(RightMainBronchus, RightIntermediateBronchus, pulse::ExpandedLungsRespiratoryPath::RightMainBronchusToRightIntermediateBronchus);
@@ -919,6 +921,8 @@ namespace pulse
     pAirwayToPharynx.MapPath(AirwayToPharynx);
     SEGasCompartmentLink& pPharynxToCarina = m_Compartments->CreateGasLink(pPharynx, pCarina, pulse::PulmonaryLink::PharynxToCarina);
     pPharynxToCarina.MapPath(PharynxToCarina);
+    SEGasCompartmentLink& pPharynxToEnvironment = m_Compartments->CreateGasLink(pPharynx, *gEnvironment, pulse::PulmonaryLink::PharynxToEnvironment);
+    pPharynxToEnvironment.MapPath(PharynxToEnvironment);
     SEGasCompartmentLink& pAirwayToStomach = m_Compartments->CreateGasLink(pAirway, pStomach, pulse::PulmonaryLink::AirwayToStomach);
     pAirwayToStomach.MapPath(AirwayToStomach);
 
@@ -1170,6 +1174,7 @@ namespace pulse
     gRespiratory.AddLink(pAirwayToPharynx);
     gRespiratory.AddLink(pAirwayToStomach);
     gRespiratory.AddLink(pPharynxToCarina);
+    gRespiratory.AddLink(pPharynxToEnvironment);
 
     gRespiratory.AddLink(pCarinaToRightMainBronchus);
     gRespiratory.AddLink(pRightMainBronchusToRightIntermediateBronchus);

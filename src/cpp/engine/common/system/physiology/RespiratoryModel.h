@@ -57,7 +57,7 @@ namespace pulse
     virtual void PostProcess(bool solve_and_transport=true) override;
 
   protected:
-    void ComputeExposedModelParameters() override;
+    void ComputeExposedModelParameters() override;/*TODO ExpandedLungs*/
     eLungCompartment GetLungCompartment(const std::string& cmpt);
     std::string GetCompartmentName(eLungCompartment m);
 
@@ -67,20 +67,19 @@ namespace pulse
     //PreProcess
     void CalculateWork();
     void CalculateFatigue();
-    void UpdateChestWallCompliances();
-    void UpdateVolumes();
-    void UpdateResistances();
+    void UpdateChestWallCompliances();/*TODO ExpandedLungs*/
+    /**/SESegment* GetSegement(const std::vector<SESegment*>& segments, double volume_L);
     void UpdateAlveolarCompliances();
-    double CalculateSuctioningPattern(double baseResistance_cmH2O_s_Per_L, double flow_L_Per_s);
+    void UpdateVolumes();
+    void UpdateResistances();/*TODO ExpandedLungs*/
+    /**/double CalculateSuctioningPattern(double baseResistance_cmH2O_s_Per_L, double flow_L_Per_s);
     void UpdateInspiratoryExpiratoryRatio();
     void UpdateDiffusion();
-    void UpdatePulmonaryCapillary();
-    void UpdatePulmonaryShunt();
-    SESegment* GetSegement(const std::vector<SESegment*>& segments, double volume_L);
-    //Overrides
-    void SetRespiratoryResistance();
-    void SetRespiratoryCompliance();
-
+    // If Cardiovascular
+    /**/void UpdatePulmonaryCapillary();
+    /**/void UpdatePulmonaryShunt();
+    // Aerosol Deposition and various Effects
+    void ProcessAerosolSubstances();
     //Actions
     void Pneumothorax();
     void Hemothorax();
@@ -91,13 +90,14 @@ namespace pulse
     void ApplyDriver();
     /**/void SetBreathCycleFractions();
     /**/void ConsciousRespiration();
-    /**/double VolumeToDriverPressure(double TargetVolume);
+    /**/double VolumeToDriverPressure(double TargetVolume);/*TODO ExpandedLungs*/
     /**/void UpdateDriverPressure();
     /****/void CalculateMechanoreceptors();
     /**/void UpdateDriverPeriod();
     /**/double UpdateTargetVentilation(double targetAlveolarVentilation_L_Per_min);
-    // Aerosol Deposition and various Effects
-    void ProcessAerosolSubstances();
+    //Overrides
+    void SetRespiratoryResistance();
+    void SetRespiratoryCompliance();
 
     //Process
     void CalculateVitalSigns();
@@ -201,28 +201,86 @@ namespace pulse
     // Patient
     SEPatientActionCollection* m_PatientActions;
 
+    // Variables independent of how the lungs are modelled
+    SEFluidCircuit* m_RespiratoryCircuit;
+    SEFluidCircuitCalculator* m_Calculator;
+    SEGasTransporter* m_GasTransporter;
+    SELiquidTransporter* m_AerosolTransporter;
+    // Nodes
+    SEFluidCircuitNode* m_AirwayNode;
+    SEFluidCircuitNode* m_RespiratoryMuscleNode;
+    SEFluidCircuitNode* m_LeftPleuralNode;
+    SEFluidCircuitNode* m_RightPleuralNode;
+    SEFluidCircuitNode* m_AmbientNode;
+    SEFluidCircuitNode* m_StomachNode;
+    // Paths
+    SEFluidCircuitPath* m_LeftPleuralToRespiratoryMuscle;
+    SEFluidCircuitPath* m_RightPleuralToRespiratoryMuscle;
+    SEFluidCircuitPath* m_DriverPressurePath;
+    SEFluidCircuitPath* m_AirwayToPharynx;
+    SEFluidCircuitPath* m_PharynxToEnvironment;
+    SEFluidCircuitPath* m_PharynxToCarina;
+    SEFluidCircuitPath* m_AirwayToStomach;
+    SEFluidCircuitPath* m_ConnectionToAirway;
+    SEFluidCircuitPath* m_GroundToConnection;
     // Compartments
     SEGasCompartment* m_Environment;
+    SEGasCompartment* m_Carina;
+    SEGasSubstanceQuantity* m_CarinaO2;
     SEGasCompartment* m_Lungs;
-    SEGasCompartment* m_LeftAlveoli;
-    SEGasCompartment* m_RightAlveoli;
+    SEGasCompartment* m_LeftLung;
+    SEGasCompartment* m_RightLung;
     SEGasCompartment* m_PleuralCavity;
     SEGasCompartment* m_LeftPleuralCavity;
     SEGasCompartment* m_RightPleuralCavity;
-    SEGasCompartment* m_Carina;
-    SEGasCompartment* m_LeftLung;
-    SEGasCompartment* m_RightLung;
     SEGasCompartment* m_AnatomicDeadSpace;
     SEGasCompartment* m_AlveolarDeadSpace;
     SEGasCompartment* m_RightAlveolarDeadSpace;
     SEGasCompartment* m_LeftAlveolarDeadSpace;
     SEGasCompartment* m_Alveoli;
-    SEGasSubstanceQuantity* m_CarinaO2;
+    SEGasCompartment* m_LeftAlveoli;
+    SEGasCompartment* m_RightAlveoli;
     SEGasSubstanceQuantity* m_LeftAlveoliO2;
     SEGasSubstanceQuantity* m_RightAlveoliO2;
     // Mechanical Ventilation
     SEGasCompartment* m_MechanicalVentilationConnection;
     SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
+    // Cardiovascular
+    SELiquidSubstanceQuantity* m_AortaO2;
+    SELiquidSubstanceQuantity* m_AortaCO2;
+    // Substance
+    SESubstance* m_Oversedation;
+
+    ///////////////////////////////////////////
+    // Lung Configuration Specific Variables //
+    ///////////////////////////////////////////
+
+    // These are the lung components we will iterate on for actions
+    struct LungComponent
+    {
+      eSide                    Side;
+      SEFluidCircuitNode*      AlveoliNode;
+      SEFluidCircuitNode*      DeadSpaceNode;
+      SEFluidCircuitPath*      ResistancePath;
+      SEFluidCircuitPath*      CompliancePath;
+      SEFluidCircuitPath*      ShuntPath;
+      SEFluidCircuitPath*      ArteriesPath;
+      SEFluidCircuitPath*      VeinsPath;
+      SEGasCompartment*        AlveoliCompartment;
+      SELiquidCompartment*     CapillaryCompartment;
+      SELiquidCompartmentLink* ShuntLink;
+      SELiquidCompartmentLink* ArteriesLink;
+      SELiquidCompartmentLink* VeinsLink;
+    };
+    std::map<eLungCompartment, LungComponent> m_LungComponents;
+    // Paths
+    SEFluidCircuitPath* m_CarinaToRightLung;
+    SEFluidCircuitPath* m_CarinaToLeftLung;
+
+    ///////////////////////////////////////////////////
+    // Currently only for default lung configuration //
+    ///////////////////////////////////////////////////
+
     // Aerosol
     SELiquidCompartment* m_AerosolAirway;
     SELiquidCompartment* m_AerosolCarina;
@@ -235,65 +293,20 @@ namespace pulse
     std::vector<SELiquidCompartment*> m_AerosolEffects;
     SELiquidCompartment* m_LeftLungExtravascular;
     SELiquidCompartment* m_RightLungExtravascular;
-    // Cardiovascular
-    SELiquidCompartment* m_LeftPulmonaryCapillaries;
-    SELiquidCompartment* m_RightPulmonaryCapillaries;
-    SELiquidSubstanceQuantity* m_AortaO2;
-    SELiquidSubstanceQuantity* m_AortaCO2;
 
-    // Circuits
-    SEFluidCircuit* m_RespiratoryCircuit;
+    SEFluidCircuitPath* m_CarinaToLeftAnatomicDeadSpace;
+    SEFluidCircuitPath* m_CarinaToRightAnatomicDeadSpace;
+    SEFluidCircuitPath* m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace;
+    SEFluidCircuitPath* m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace;
+    SEFluidCircuitPath* m_LeftAlveolarDeadSpaceToLeftAlveoli;
+    SEFluidCircuitPath* m_RightAlveolarDeadSpaceToRightAlveoli;
 
-    // These are the components we will iterate on for actions
-    struct LungComponent
-    {
-      eSide                    Side;
-      SEFluidCircuitNode*      AlveoliNode;
-      SEFluidCircuitNode*      DeadSpaceNode;
-      SEFluidCircuitPath*      ResistancePath;
-      SEFluidCircuitPath*      CompliancePath;
-      SELiquidCompartmentLink* ShuntLink;
-      SELiquidCompartmentLink* ArteriesLink;
-      SELiquidCompartmentLink* VeinsLink;
-      SEFluidCircuitPath*      ShuntPath;
-      SEFluidCircuitPath*      ArteriesPath;
-      SEFluidCircuitPath*      VeinsPath;
-      SEGasCompartment*        AlveoliCompartment;
-      SELiquidCompartment*     CapillaryCompartment;
-    };
-    std::map<eLungCompartment, LungComponent> m_LungComponents;
-    // Nodes
-    SEFluidCircuitNode* m_AirwayNode;
-    SEFluidCircuitNode* m_LeftPleuralNode;
-    SEFluidCircuitNode* m_RespiratoryMuscleNode;
-    SEFluidCircuitNode* m_RightPleuralNode;
-    SEFluidCircuitNode* m_AmbientNode;
-    SEFluidCircuitNode* m_StomachNode;
-    // Paths
-    SEFluidCircuitPath* m_CarinaToLeftAnatomicDeadSpace; // base only
-    SEFluidCircuitPath* m_CarinaToRightAnatomicDeadSpace; // base only
-    SEFluidCircuitPath* m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace; // base only
-    SEFluidCircuitPath* m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace; // base only
-    SEFluidCircuitPath* m_LeftAlveolarDeadSpaceToLeftAlveoli; // base only
-    SEFluidCircuitPath* m_RightAlveolarDeadSpaceToRightAlveoli; // base only
-
-    SEFluidCircuitPath* m_LeftPleuralToRespiratoryMuscle;
-    SEFluidCircuitPath* m_RightPleuralToRespiratoryMuscle;
-    SEFluidCircuitPath* m_DriverPressurePath;
-    SEFluidCircuitPath* m_AirwayToPharynx;
-    SEFluidCircuitPath* m_PharynxToEnvironment;
-    SEFluidCircuitPath* m_PharynxToCarina;
-    SEFluidCircuitPath* m_AirwayToStomach;
     SEFluidCircuitPath* m_EnvironmentToLeftChestLeak;
     SEFluidCircuitPath* m_EnvironmentToRightChestLeak;
     SEFluidCircuitPath* m_LeftAlveoliLeakToLeftPleural;
     SEFluidCircuitPath* m_RightAlveoliLeakToRightPleural;
     SEFluidCircuitPath* m_LeftNeedleToLeftPleural;
     SEFluidCircuitPath* m_RightNeedleToRightPleural;
-    SEFluidCircuitPath* m_LeftPulmonaryCapillary;
-    SEFluidCircuitPath* m_RightPulmonaryCapillary;
-    SEFluidCircuitPath* m_ConnectionToAirway;
-    SEFluidCircuitPath* m_GroundToConnection;
 
     SEFluidCircuitPath* m_LeftCardiovascularLeak;
     SEFluidCircuitPath* m_RightCardiovascularLeak;
@@ -302,12 +315,5 @@ namespace pulse
 
     SEFluidCircuitPath* m_LeftAlveoliToLeftPleuralConnection;
     SEFluidCircuitPath* m_RightAlveoliToRightPleuralConnection;
-
-    SEFluidCircuitCalculator* m_Calculator;
-    SEGasTransporter* m_GasTransporter;
-    SELiquidTransporter* m_AerosolTransporter;
-
-    // Substance
-    SESubstance* m_Oversedation;
   };
 END_NAMESPACE
