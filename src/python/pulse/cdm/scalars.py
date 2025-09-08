@@ -467,7 +467,7 @@ class SEScalarForce(SEScalarQuantity):
 class FrequencyUnit(SEScalarUnit):
     @staticmethod
     def from_string(string: str):
-        if string == FrequencyUnit.Per_min.get_string():
+        if string == FrequencyUnit.Per_min.get_string() or string == "bpm":
             return FrequencyUnit.Per_min
         if string == FrequencyUnit.Per_s.get_string():
             return FrequencyUnit.Per_s
