@@ -37,7 +37,8 @@ class EngineConfig(Enum):
 
 
 def gen_patient_targets(
-        log_file: Path
+        log_file: Path,
+        config: EngineConfig
 ) -> SEPatientTimeSeriesValidation:
     """
     Generate patient validation timeseries validation targets.
@@ -46,6 +47,7 @@ def gen_patient_targets(
      2. Validate that the stabilized patient meets the expected values cited from literature
 
     :param log_file: Path to log file. Could alternatively be the relevant patient file.
+    :param config: Engine configuration identifies which sheets to use from our SystemValidation xls file
 
     :return: validation targets, or None if was not successful.
     """
@@ -56,6 +58,8 @@ def gen_patient_targets(
     # If no name, set to filename for potential table filenames
     if not p.has_name() or not p.get_name():
         p.set_name(log_file.stem)
+    elif config == EngineConfig.ExpandedLungs:
+        p.set_name(f"{p.get_name()}-{EngineConfig.ExpandedLungs.name}")
 
     table_name = "Patient"
     if table_name not in patient_validation.get_targets():
@@ -161,7 +165,7 @@ def gen_patient_targets(
     xls_file = Path(get_validation_dir() + "/SystemValidationData.xlsx")
     generate_validation_targets(
         xls_file=xls_file,
-        config=EngineConfig.Standard,
+        config=config,
         patient_validation=patient_validation
     )
     return patient_validation
@@ -225,6 +229,10 @@ def generate_validation_targets(
         ignore_sheets.append("CardiovascularExpandedLungs")
         ignore_sheets.append("RespiratoryExpandedLungs")
         ignore_sheets.append("CardiovascularComputationalLife")
+    elif config == EngineConfig.ExpandedLungs:
+        ignore_sheets.append("CardiovascularComputationalLife")
+    else:
+        raise Exception("Unsupported engine configuration for validation")
 
     try:
         # Update patient sheet so formulas can be re-evaluated with correct parameters

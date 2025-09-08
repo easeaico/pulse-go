@@ -18,7 +18,7 @@ from pulse.cdm.utils.markdown import table
 from pulse.cdm.utils.math_utils import percent_tolerance
 from pulse.cdm.validation import SETimeSeriesValidationTarget
 from pulse.cdm.io.validation import serialize_patient_time_series_validation_to_file
-
+from pulse.pipelines.dataset.timeseries_dataset_reader import EngineConfig
 
 _pulse_logger = logging.getLogger('pulse')
 
@@ -278,13 +278,15 @@ def gen_engine_val_str(tgt: SETimeSeriesValidationTarget) -> str:
 
 def generate_validation_tables(
     target_map: SEPatientTimeSeriesValidation,
-    table_dir: Path
+    table_dir: Path,
+    config: EngineConfig
 ) -> None:
     """
     Generates validation tables for given target map.
 
     :param target_map: Validation targets.
     :param table_dir: Tables will be saved to this directory.
+    :param config: Engine Configuration used for this patient
 
     :raises ValueError: Unknown comparison type
     :raises ValueError: Unknown patient (patient has no name so table file cannot be named)
@@ -295,6 +297,8 @@ def generate_validation_tables(
 
     table_dir.mkdir(parents=True, exist_ok=True)
     patient_name = target_map.get_patient().get_name()
+    if config == EngineConfig.ExpandedLungs:
+        patient_name = patient_name + EngineConfig.ExpandedLungs.name
     if not patient_name:
         # Shouldn't really happen as dataset reader sets to patient filename if one doesn't exist
         raise ValueError("Unknown patient found, cannot write table as I don't know what to name it.")
