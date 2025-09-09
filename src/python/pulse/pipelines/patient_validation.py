@@ -270,12 +270,14 @@ def main():
     # Only write a html file for test results
     if opts.input != "verification" and ".json" not in opts.input:
         if "test_results" == opts.input:
+            names = [tgt.get_patient().get_name() for tgt in all_validation]
             # Push Standard patients to the front
-            standards = [tgt.get_patient().get_name()
-                         for tgt in all_validation if "Standard" in tgt.get_patient().get_name()]
+            standards = ["StandardFemale-ExpandedLungs", "StandardFemale",
+                         "StandardMale-ExpandedLungs", "StandardMale"]
             for standard in standards:
-                all_validation.insert(0, all_validation.pop(
-                    [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == standard][0]))
+                if standard in names:
+                    all_validation.insert(0, all_validation.pop(
+                        [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == standard][0]))
         html_file = "./test_results/PatientSystemValidation.html"
         _pulse_logger.info(f"Writing {html_file}")
         f = open(html_file, "w")
