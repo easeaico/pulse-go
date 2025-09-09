@@ -278,7 +278,7 @@ def main():
                 if standard in names:
                     all_validation.insert(0, all_validation.pop(
                         [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == standard][0]))
-        html_file = "./test_results/PatientSystemValidation.html"
+        html_file = "./test_results/PatientValidation.html"
         _pulse_logger.info(f"Writing {html_file}")
         f = open(html_file, "w")
         f.write("<html>\n")

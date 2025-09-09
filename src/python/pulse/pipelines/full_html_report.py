@@ -18,8 +18,8 @@ if __name__ == "__main__":
     reports.append(Path("./test_results/EngineUnitTests.html"))
     reports.append(Path("./test_results/ScenarioVerification.html"))
     reports.append(Path("./test_results/DrugPKVerification.html"))
-    reports.append(Path("./test_results/PatientSystemVerification.html"))
-    reports.append(Path("./test_results/PatientSystemValidation.html"))
+    reports.append(Path("./test_results/PatientVerification.html"))
+    reports.append(Path("./test_results/PatientValidation.html"))
 
     html_file = "./test_results/PulseTestReport.html"
     _pulse_logger.info(f"Writing {html_file}")
