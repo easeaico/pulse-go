@@ -19,4 +19,4 @@ proj/eclipse/build
 /src/python/.idea/*
 /src/python/pulse.egg*
 
-/proj/eclipse/build
+/proj/*
