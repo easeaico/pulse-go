@@ -28,6 +28,9 @@ if __name__ == "__main__":
     f.write("<body>\n")
     for report in reports:
         f.writelines("<br>\n")
+        if not report.exists():
+            f.write(f"Missing Report: {str(report)}")
+            continue
         with open(report) as file:
             while line := file.readline():
                 line = line.replace("<html>", "")

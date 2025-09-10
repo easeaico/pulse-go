@@ -30,6 +30,7 @@ class SEMechanicalVentilation;
 class SENeedleDecompression;
 class SEPericardialEffusion;
 class SEPneumoniaExacerbation;
+class SEPrimaryBlastLungInjury;
 class SEPulmonaryShuntExacerbation;
 class SERespiratoryFatigue;
 class SERespiratoryMechanicsConfiguration;
@@ -203,6 +204,11 @@ public:
   const SEPneumoniaExacerbation* GetPneumoniaExacerbation() const;
   void RemovePneumoniaExacerbation();
 
+  bool HasPrimaryBlastLungInjury() const;
+  SEPrimaryBlastLungInjury& GetPrimaryBlastLungInjury();
+  const SEPrimaryBlastLungInjury* GetPrimaryBlastLungInjury() const;
+  void RemovePrimaryBlastLungInjury();
+
   bool HasPulmonaryShuntExacerbation() const;
   SEPulmonaryShuntExacerbation& GetPulmonaryShuntExacerbation();
   const SEPulmonaryShuntExacerbation* GetPulmonaryShuntExacerbation() const;
@@ -327,6 +333,7 @@ protected:
   SENeedleDecompression*                            m_RightNeedleDecompression;
   SEPericardialEffusion*                            m_PericardialEffusion;
   SEPneumoniaExacerbation*                          m_PneumoniaExacerbation;
+  SEPrimaryBlastLungInjury*                         m_PrimaryBlastLungInjury;
   SEPulmonaryShuntExacerbation*                     m_PulmonaryShuntExacerbation;
   SERespiratoryFatigue*                             m_RespiratoryFatigue;
   SERespiratoryMechanicsConfiguration*              m_RespiratoryMechanicsConfiguration;

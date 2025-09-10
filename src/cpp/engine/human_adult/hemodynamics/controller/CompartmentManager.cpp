@@ -50,7 +50,7 @@ namespace pulse { namespace human_adult_hemodynamics
           Warning("Could not find expected Extravascular compartment, " + name + " in compartment manager");
       }
     }
-    if (m_data.GetConfiguration().IsRenalEnabled())
+    if (m_data.GetConfiguration().UseExpandedKidneys() == eSwitch::On)
     {
       SORT_CMPTS(Urine, Liquid);
     }

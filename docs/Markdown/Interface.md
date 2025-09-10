@@ -337,6 +337,7 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem MechanicalVentilationTable "Mechanical Ventilation"
   @refitem NeedleDecompressionTable "Needle Decompression"
   @refitem PericardialEffusionTable "Pericardial Effusion"
+  @refitem PrimaryBlastLungInjuryTable "Primary Blast Lung Injury"
   @refitem PulmonaryShuntExacerbationTable "Pulmonary Shunt Exacerbation"
   @refitem RespiratoryFatigueTable "Respiratory Fatigue"
   @refitem RespiratoryMechanicsConfigurationTable "Respiratory Mechanics Configuration"

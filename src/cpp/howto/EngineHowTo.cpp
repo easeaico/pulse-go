@@ -14,7 +14,7 @@ int main()
 
   //HowToSandbox();
 
-  //HowToEngineUse();
+  HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
@@ -39,6 +39,8 @@ int main()
   //HowToExercise();
   //HowToHemorrhage();
   //HowToIsoShuntAnalysis();
+  //HowToExpandedRespiratory();
+  //HowToExpandedRespiratoryAnalysis();
   //HowToExpandedVasculature();
   //HowToHemorrhage();
   //HowToHemothorax();

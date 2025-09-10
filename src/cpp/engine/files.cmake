@@ -91,8 +91,8 @@ set(ENGINE_CPP_FILES
   engine/common/controller/CompartmentManager.cpp
   engine/common/controller/Controller.cpp
   engine/common/controller/SetupCircuitsAndCompartments.cpp
-  engine/common/controller/SetupExpandedCardiovascular.cpp
-  engine/common/controller/SetupExpandedRespiratory.cpp
+  engine/common/controller/SetupComputationalLifeExpansion.cpp
+  engine/common/controller/SetupExpandedLungs.cpp
   engine/common/controller/SubstanceManager.cpp
   engine/common/system/environment/EnvironmentModel.cpp
   engine/common/system/equipment/AnesthesiaMachineModel.cpp

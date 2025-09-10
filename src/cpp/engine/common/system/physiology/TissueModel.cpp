@@ -216,7 +216,7 @@ namespace pulse
     m_LeftPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries);
     m_RightPulmonaryCapillaries = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries);
 
-    std::string BrainCmpt = m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On ? pulse::ExpandedVascularCompartment::Intracranial : pulse::VascularCompartment::Brain;
+    std::string BrainCmpt = m_data.GetConfiguration().UseComputationalLifeExpansion() == eSwitch::On ? pulse::ComputationalLifeVascularCompartment::Intracranial : pulse::VascularCompartment::Brain;
     //Store tissue-blood pairs
     m_TissueToVascular.clear();
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat);
@@ -226,8 +226,12 @@ namespace pulse
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
-    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLung);
-    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLung);
+    //TODO: Make this work for the expanded model
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::Off)
+    {
+      m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLung);
+      m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLung);
+    }
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Myocardium)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin);
@@ -1890,7 +1894,7 @@ namespace pulse
         {
           //TODO: Why doesn't this work?
           //quantity->GetMass().SetReadOnly(false);
-          //quantity->GetMass().IncrementValue(-massLost_g, MassUnit::g);
+          //quantity->GetMass().Increment(-massLost_g, MassUnit::g);
           //quantity->GetMass().SetReadOnly(true);
         }
         else

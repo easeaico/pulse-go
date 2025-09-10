@@ -197,6 +197,12 @@ public abstract class SEPatientAction extends SEAction
       SEPneumoniaExacerbation.load(c.getPneumoniaExacerbation(), dst);
       return dst;
     }
+    case PRIMARYBLASTLUNGINJURY:
+    {
+      SEPrimaryBlastLungInjury dst = new SEPrimaryBlastLungInjury();
+      SEPrimaryBlastLungInjury.load(c.getPrimaryBlastLungInjury(), dst);
+      return dst;
+    }
     case PULMONARYSHUNTEXACERBATION:
     {
       SEPulmonaryShuntExacerbation dst = new SEPulmonaryShuntExacerbation();
@@ -387,6 +393,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEPneumoniaExacerbation)
     {
       dst.setPneumoniaExacerbation(SEPneumoniaExacerbation.unload((SEPneumoniaExacerbation)c));
+      return dst.build();
+    }
+    if(c instanceof SEPrimaryBlastLungInjury)
+    {
+      dst.setPrimaryBlastLungInjury(SEPrimaryBlastLungInjury.unload((SEPrimaryBlastLungInjury)c));
       return dst.build();
     }
     if(c instanceof SEMechanicalVentilation)

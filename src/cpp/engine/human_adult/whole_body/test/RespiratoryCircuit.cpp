@@ -32,7 +32,7 @@
 
 namespace pulse { namespace human_adult_whole_body
 {
-  void EngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string & sTestDirectory)
+  void EngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, bool expandedLungs, const std::string & sTestDirectory)
   {
     TimingProfile tmr;
     tmr.Start("Test");
@@ -43,18 +43,20 @@ namespace pulse { namespace human_adult_whole_body
     std::ofstream fileCircuit;
     std::ofstream fileGraph;
     std::ofstream fAerosolGraph;
+    std::string prefix = expandedLungs ? "ExpandedLungs" :"";
 
     Engine pe;
     Controller& pc = (Controller&)pe.GetController();
-    pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
+    pc.GetLogger()->SetLogFile(sTestDirectory + "/"+prefix+"RespiratoryCircuitAndTransportTest.log");
     SEPatient patient(pc.GetLogger());
     patient.SerializeFromFile("./patients/StandardMale.json");
     pc.SetupPatient(patient);
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
+    pc.m_Config->UseExpandedLungs(expandedLungs ? eSwitch::On : eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
     pc.GetSubstances().InitializeGasCompartments();
     SEEnvironmentalConditions& env = pc.GetEnvironment().GetEnvironmentalConditions();
@@ -65,23 +67,23 @@ namespace pulse { namespace human_adult_whole_body
     std::string sCircuitFileName;
     std::string sTransportFileName;
     std::string sAerosolTxptFileName;
-    if (config == RespiratorySolo)
+    if (config == RespiratorySolo || config == ExpandedLungsRespiratorySolo)
     {
       rCircuit = &pc.GetCircuits().GetRespiratoryCircuit();
       rGraph = &pc.GetCompartments().GetRespiratoryGraph();
       aGraph = nullptr;
-      sCircuitFileName = "/RespiratoryCircuitOutput.csv";
-      sTransportFileName = "/RespiratoryTransportOutput.csv";
+      sCircuitFileName = "/"+prefix+"RespiratoryCircuitOutput.csv";
+      sTransportFileName = "/" + prefix + "RespiratoryTransportOutput.csv";
       sAerosolTxptFileName = "";
     }
-    else if (config == RespiratoryWithInhaler)
+    else if (config == RespiratoryWithInhaler || config == ExpandedLungsRespiratoryWithInhaler)
     {
       rCircuit = &pc.GetCircuits().GetRespiratoryAndInhalerCircuit();
       rGraph = &pc.GetCompartments().GetRespiratoryAndInhalerGraph();
       aGraph = &pc.GetCompartments().GetAerosolAndInhalerGraph();
-      sCircuitFileName = "/RespiratoryAndInhalerCircuitOutput.csv";
-      sTransportFileName = "/RespiratoryAndInhalerTransportOutput.csv";
-      sAerosolTxptFileName = "/AerosolInhalerTransportOutput.csv";
+      sCircuitFileName = "/"+prefix+"RespiratoryAndInhalerCircuitOutput.csv";
+      sTransportFileName = "/"+prefix+"RespiratoryAndInhalerTransportOutput.csv";
+      sAerosolTxptFileName = "/"+prefix+"AerosolInhalerTransportOutput.csv";
 
       // Get an aerosolized substance
       SESubstance* albuterol = pc.GetSubstances().GetSubstance("Albuterol");
@@ -97,14 +99,14 @@ namespace pulse { namespace human_adult_whole_body
         mouthpiece->Balance(BalanceLiquidBy::Mass);
       }
     }
-    else if (config == RespiratoryWithMechanicalVentilation)
+    else if (config == RespiratoryWithMechanicalVentilation || config == ExpandedLungsRespiratoryWithMechanicalVentilation)
     {
       rCircuit = &pc.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit();
       rGraph = &pc.GetCompartments().GetRespiratoryAndMechanicalVentilationGraph();
       aGraph = &pc.GetCompartments().GetAerosolAndMechanicalVentilationGraph();
-      sCircuitFileName = "/RespiratoryAndMechanicalVentilationCircuitOutput.csv";
-      sTransportFileName = "/RespiratoryAndMechanicalVentilationTransportOutput.csv";
-      sAerosolTxptFileName = "/AerosolMechanicalVentilationTransportOutput.csv";
+      sCircuitFileName = "/"+prefix+"RespiratoryAndMechanicalVentilationCircuitOutput.csv";
+      sTransportFileName = "/"+prefix+"RespiratoryAndMechanicalVentilationTransportOutput.csv";
+      sAerosolTxptFileName = "/"+prefix+"AerosolMechanicalVentilationTransportOutput.csv";
 
       // Get an aerosolized substance
       SESubstance* albuterol = pc.GetSubstances().GetSubstance("Albuterol");
@@ -194,17 +196,32 @@ namespace pulse { namespace human_adult_whole_body
 
   void EngineTest::RespiratoryCircuitAndTransportTest(const std::string & sTestDirectory)
   {
-    RespiratoryCircuitAndTransportTest(RespiratorySolo, sTestDirectory);
+    RespiratoryCircuitAndTransportTest(RespiratorySolo, false, sTestDirectory);
+  }
+
+  void EngineTest::ExpandedLungsRespiratoryCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    RespiratoryCircuitAndTransportTest(ExpandedLungsRespiratorySolo, true, sTestDirectory);
   }
 
   void EngineTest::RespiratoryWithInhalerCircuitAndTransportTest(const std::string & sTestDirectory)
   {
-    RespiratoryCircuitAndTransportTest(RespiratoryWithInhaler, sTestDirectory);
+    RespiratoryCircuitAndTransportTest(RespiratoryWithInhaler, false, sTestDirectory);
+  }
+
+  void EngineTest::ExpandedLungsRespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    RespiratoryCircuitAndTransportTest(ExpandedLungsRespiratoryWithInhaler, true, sTestDirectory);
   }
 
   void EngineTest::RespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string & sTestDirectory)
   {
-    RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilation, sTestDirectory);
+    RespiratoryCircuitAndTransportTest(RespiratoryWithMechanicalVentilation, false, sTestDirectory);
+  }
+
+  void EngineTest::ExpandedLungsRespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    RespiratoryCircuitAndTransportTest(ExpandedLungsRespiratoryWithMechanicalVentilation, true, sTestDirectory);
   }
 
   void EngineTest::RespiratoryDriverTest(const std::string & sTestDirectory)
@@ -220,7 +237,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetSubstances().LoadSubstanceDirectory("./");
     pc.GetSaturationCalculator().Setup();
     pc.m_Config->Initialize("./", &pc.GetSubstances());
-    pc.m_Config->EnableRenal(eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(eSwitch::Off);
     pc.m_Config->EnableTissue(eSwitch::Off);
     pc.CreateCircuitsAndCompartments();
     SEEnvironmentalConditions env(pc.GetLogger());

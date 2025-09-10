@@ -29,6 +29,7 @@
 #include "cdm/patient/actions/SENeedleDecompression.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 #include "cdm/patient/actions/SEPneumoniaExacerbation.h"
+#include "cdm/patient/actions/SEPrimaryBlastLungInjury.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
@@ -81,6 +82,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_RespiratoryMechanicsModification = nullptr;
   m_PericardialEffusion = nullptr;
   m_PneumoniaExacerbation = nullptr;
+  m_PrimaryBlastLungInjury = nullptr;
   m_PulmonaryShuntExacerbation = nullptr;
   m_SupplementalOxygen = nullptr;
   m_LeftOpenTensionPneumothorax = nullptr;
@@ -121,6 +123,7 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_RightNeedleDecompression);
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PneumoniaExacerbation);
+  SAFE_DELETE(m_PrimaryBlastLungInjury);
   SAFE_DELETE(m_PulmonaryShuntExacerbation);
   SAFE_DELETE(m_RespiratoryFatigue);
   SAFE_DELETE(m_RespiratoryMechanicsConfiguration);
@@ -168,6 +171,7 @@ void SEPatientActionCollection::Clear()
   RemoveRightNeedleDecompression();
   RemovePericardialEffusion();
   RemovePneumoniaExacerbation();
+  RemovePrimaryBlastLungInjury();
   RemovePulmonaryShuntExacerbation();
   RemoveRespiratoryFatigue();
   RemoveRespiratoryMechanicsConfiguration();
@@ -538,6 +542,16 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_PneumoniaExacerbation->Activate();
     if (!m_PneumoniaExacerbation->IsActive())
       RemovePneumoniaExacerbation();
+    return true;
+  }
+
+  const SEPrimaryBlastLungInjury* pbli = dynamic_cast<const SEPrimaryBlastLungInjury*>(&action);
+  if (pbli != nullptr)
+  {
+    GetPrimaryBlastLungInjury().Copy(*pbli, true);
+    m_PrimaryBlastLungInjury->Activate();
+    if (!m_PrimaryBlastLungInjury->IsActive())
+      RemovePrimaryBlastLungInjury();
     return true;
   }
 
@@ -1333,6 +1347,26 @@ void SEPatientActionCollection::RemovePneumoniaExacerbation()
     m_PneumoniaExacerbation->Deactivate();
 }
 
+bool SEPatientActionCollection::HasPrimaryBlastLungInjury() const
+{
+  return m_PrimaryBlastLungInjury == nullptr ? false : m_PrimaryBlastLungInjury->IsActive();
+}
+SEPrimaryBlastLungInjury& SEPatientActionCollection::GetPrimaryBlastLungInjury()
+{
+  if (m_PrimaryBlastLungInjury == nullptr)
+    m_PrimaryBlastLungInjury = new SEPrimaryBlastLungInjury(GetLogger());
+  return *m_PrimaryBlastLungInjury;
+}
+const SEPrimaryBlastLungInjury* SEPatientActionCollection::GetPrimaryBlastLungInjury() const
+{
+  return m_PrimaryBlastLungInjury;
+}
+void SEPatientActionCollection::RemovePrimaryBlastLungInjury()
+{
+  if (m_PrimaryBlastLungInjury)
+    m_PrimaryBlastLungInjury->Deactivate();
+}
+
 bool SEPatientActionCollection::HasPulmonaryShuntExacerbation() const
 {
   return m_PulmonaryShuntExacerbation == nullptr ? false : m_PulmonaryShuntExacerbation->IsActive();
@@ -1781,6 +1815,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetPericardialEffusion());
   if (HasPneumoniaExacerbation())
     actions.push_back(GetPneumoniaExacerbation());
+  if (HasPrimaryBlastLungInjury())
+    actions.push_back(GetPrimaryBlastLungInjury());
   if (HasPulmonaryShuntExacerbation())
     actions.push_back(GetPulmonaryShuntExacerbation());
   if (HasRespiratoryFatigue())
@@ -1884,6 +1920,8 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetPericardialEffusion().GetScalar(property);
   if (actionName == "PneumoniaExacerbation")
     return GetPneumoniaExacerbation().GetScalar(property);
+  if (actionName == "PrimaryBlastLungInjury")
+    return GetPrimaryBlastLungInjury().GetScalar(property);
   if (actionName == "PulmonaryShuntExacerbation")
     return GetPulmonaryShuntExacerbation().GetScalar(property);
   if (actionName == "RespiratoryFatigue")

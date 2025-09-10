@@ -44,32 +44,47 @@ namespace pulse { namespace human_adult_whole_body
   // We use 1,1,1,0 to run our test without any scaling of the circuit and using the HeartRate Baseline in the standard patient file
   void EngineTest::CardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, false, sTestDirectory, "Cardiovascular", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, false, false, sTestDirectory, "Cardiovascular", false);
   }
 
   void EngineTest::CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, true, false, false, sTestDirectory, "CardiovascularAndRenal", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, true, false, sTestDirectory, "CardiovascularAndRenal", false);
   }
 
   void EngineTest::CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, false, false, sTestDirectory, "CardiovascularAndTissue", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, false, false, sTestDirectory, "CardiovascularAndTissue", false);
   }
 
   void EngineTest::CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(const std::string& sTestDirectory)
   {
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, false, sTestDirectory, "CardiovascularAndCerebrospinalFluid", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, true, false, false, false, sTestDirectory, "CardiovascularAndCerebrospinalFluid", false);
+  }
+
+  void EngineTest::ExpandedLungsCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
+  {
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, false, true, sTestDirectory, "ExpandedLungsCardiovascular", false);
   }
 
   void EngineTest::FullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
   {// \todo enable csf when ready
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, false, false, sTestDirectory, "FullCardiovascular", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, true, false, sTestDirectory, "FullCardiovascular", false);
+  }
+
+  void EngineTest::ExpandedLungsFullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
+  {// \todo enable csf when ready
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, true, true, sTestDirectory, "ExpandedLungsFullCardiovascular", false);
   }
 
   void EngineTest::CardiovascularBloodGasesTest(const std::string& sTestDirectory)
   {// \todo enable csf when ready
-    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, false, true, sTestDirectory, "CardiovascularBloodGasesTest", false);
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, true, true, false, sTestDirectory, "CardiovascularBloodGasesTest", false);
+  }
+
+  void EngineTest::ExpandedLungsCardiovascularBloodGasesTest(const std::string& sTestDirectory)
+  {// \todo enable csf when ready
+    CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, true, true, true, sTestDirectory, "ExpandedLungsCardiovascularBloodGasesTest", false);
   }
 
   void EngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDirectory)
@@ -143,7 +158,7 @@ namespace pulse { namespace human_adult_whole_body
     testSuite.GetLogger()->Info("Running " + sTestName);
     pc.SetDataRoot("./");
     pc.Initialize(patient);
-    pc.m_Config->EnableRenal(eSwitch::On);
+    pc.m_Config->UseExpandedKidneys(eSwitch::On);
     pc.m_Config->EnableTissue(eSwitch::On);
 
     SETestCase& testCase = testSuite.CreateTestCase();
@@ -166,8 +181,8 @@ namespace pulse { namespace human_adult_whole_body
     double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
     double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale,
     double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale,
-    bool connectTissue, bool connectRenal, bool connectCSF, bool balanceBloodGases, const std::string& sTestDirectory,
-    const std::string& sTestName, bool breakOutResults)
+    bool balanceBloodGases, bool connectCSF, bool connectTissue, bool expandedKidneys, bool expandedLungs,
+    const std::string& sTestDirectory, const std::string& sTestName, bool breakOutResults)
   {
     //breakOutResults True = seperate files for different types (i.e. volumes, flows, etc.); False = one file with everything
     double testTime_s = 120;
@@ -221,9 +236,10 @@ namespace pulse { namespace human_adult_whole_body
       pc.GetCurrentPatient().GetHeartRateBaseline().SetValue(heartRate_bpm, FrequencyUnit::Per_min);
     }
 
-    pc.m_Config->EnableRenal(connectRenal ? eSwitch::On : eSwitch::Off);
     pc.m_Config->EnableTissue(connectTissue ? eSwitch::On : eSwitch::Off);
     pc.m_Config->EnableCerebrospinalFluid(connectCSF ? eSwitch::On : eSwitch::Off);
+    pc.m_Config->UseExpandedLungs(expandedLungs ? eSwitch::On : eSwitch::Off);
+    pc.m_Config->UseExpandedKidneys(expandedKidneys ? eSwitch::On : eSwitch::Off);
     pc.m_Config->TuneCardiovascularCircuit(eSwitch::On);// Run the circuit as constructed
     //pc.m_Config->CardiovascularTuningFile("./test_results/unit_tests/Pulse/"+ sTestName+"Tuning.csv");
     pc.CreateCircuitsAndCompartments();
@@ -257,7 +273,7 @@ namespace pulse { namespace human_adult_whole_body
       SEScalarMassPerVolume N2_ug_per_mL;
       N2_ug_per_mL.SetValue(0.5, MassPerVolumeUnit::ug_Per_mL);
       subMgr.SetSubstanceConcentration(subMgr.GetN2(), pc.GetCompartments().GetVascularLeafCompartments(), N2_ug_per_mL);
-      if (connectRenal)
+      if (expandedKidneys)
       {
         subMgr.SetSubstanceConcentration(subMgr.GetN2(), pc.GetCompartments().GetUrineLeafCompartments(), N2_ug_per_mL);
       }
@@ -705,7 +721,7 @@ namespace pulse { namespace human_adult_whole_body
             {
               for (double vcFactor = 0.5; vcFactor < 1.51; vcFactor += 0.25)
               {
-                CardiovascularCircuitAndTransportTest(Heart, comp, res, vol, heartRate_bpm, srFactor, scFactor, arFactor, acFactor, vrFactor, vcFactor, false, false, false, false, sTestDirectory, "CVScale", true);
+                CardiovascularCircuitAndTransportTest(Heart, comp, res, vol, heartRate_bpm, srFactor, scFactor, arFactor, acFactor, vrFactor, vcFactor, false, false, false, false, false, sTestDirectory, "CVScale", true);
 
                 cvLastMeanPressureTrk.Track("SystemicResistanceScale", testNo, srFactor);
                 cvLastMeanPressureTrk.Track("SystemicComplianceScale", testNo, scFactor);

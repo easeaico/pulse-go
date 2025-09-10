@@ -1,0 +1,91 @@
+{
+  "Configuration": {
+    "RespiratoryConfiguration" : { "ExpandedLungs" : "On" }
+  },
+  "Scenario": {
+    "Name": "HeterogeneousARDSExacerbation",
+    "Description": "Increasing severities of ARDS.",
+    "PatientConfiguration": { "PatientFile": "StandardMale.json" },
+    "DataRequestFile": [
+      "StandardDataRequests.json",
+      "RespiratoryDataRequests.json",
+      "ExpandedLungsDataRequests.json"
+    ],
+    "AnyAction":
+    [
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}},
+      { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
+        {
+          "Severity": [ 
+            { "Compartment": "RightSuperiorLobeApical", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightSuperiorLobePosterior", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightSuperiorLobeAnterior", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightMiddleLobeLateral", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightMiddleLobeMedial", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightInferiorLobeSuperior", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightInferiorLobeMedialBasal", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightInferiorLobeAnteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightInferiorLobeLateralBasal", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "RightInferiorLobePosteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftInferiorLobePosteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftInferiorLobeLateralBasal", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftInferiorLobeAnteromedialBasal", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftInferiorLobeSuperior", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftSuperiorLobeInferiorLingula", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftSuperiorLobeSuperiorLingula", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftSuperiorLobeAnterior", "Severity": { "Scalar0To1": { "Value": 0.3 }}},
+            { "Compartment": "LeftSuperiorLobeApicoposterior", "Severity": { "Scalar0To1": { "Value": 0.3 }}}]
+        }}
+      },
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}},
+      { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
+        {
+          "Severity": [ 
+            { "Compartment": "RightSuperiorLobeApical", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightSuperiorLobePosterior", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightSuperiorLobeAnterior", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightMiddleLobeLateral", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightMiddleLobeMedial", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightInferiorLobeSuperior", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightInferiorLobeMedialBasal", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightInferiorLobeAnteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightInferiorLobeLateralBasal", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "RightInferiorLobePosteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftInferiorLobePosteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftInferiorLobeLateralBasal", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftInferiorLobeAnteromedialBasal", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftInferiorLobeSuperior", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftSuperiorLobeInferiorLingula", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftSuperiorLobeSuperiorLingula", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftSuperiorLobeAnterior", "Severity": { "Scalar0To1": { "Value": 0.6 }}},
+            { "Compartment": "LeftSuperiorLobeApicoposterior", "Severity": { "Scalar0To1": { "Value": 0.6 }}}]
+        }}
+      },
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}},
+      { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation":
+        {
+          "Severity": [ 
+            { "Compartment": "RightSuperiorLobeApical", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightSuperiorLobePosterior", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightSuperiorLobeAnterior", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightMiddleLobeLateral", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightMiddleLobeMedial", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightInferiorLobeSuperior", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightInferiorLobeMedialBasal", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightInferiorLobeAnteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightInferiorLobeLateralBasal", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "RightInferiorLobePosteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftInferiorLobePosteriorBasal", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftInferiorLobeLateralBasal", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftInferiorLobeAnteromedialBasal", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftInferiorLobeSuperior", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftSuperiorLobeInferiorLingula", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftSuperiorLobeSuperiorLingula", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftSuperiorLobeAnterior", "Severity": { "Scalar0To1": { "Value": 0.9 }}},
+            { "Compartment": "LeftSuperiorLobeApicoposterior", "Severity": { "Scalar0To1": { "Value": 0.9 }}}]
+        }}
+      },
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" }}}}
+    ]
+  }
+}

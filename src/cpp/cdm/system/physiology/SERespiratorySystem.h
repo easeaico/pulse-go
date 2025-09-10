@@ -13,7 +13,26 @@ enum class eLungCompartment
   LeftInferiorLobe,
   RightSuperiorLobe,
   RightMiddleLobe,
-  RightInferiorLobe
+  RightInferiorLobe,
+
+  RightSuperiorLobeApical,
+  RightSuperiorLobePosterior,
+  RightSuperiorLobeAnterior,
+  RightMiddleLobeLateral,
+  RightMiddleLobeMedial,
+  RightInferiorLobeSuperior,
+  RightInferiorLobeMedialBasal,
+  RightInferiorLobeAnteriorBasal,
+  RightInferiorLobeLateralBasal,
+  RightInferiorLobePosteriorBasal,  
+  LeftInferiorLobePosteriorBasal,
+  LeftInferiorLobeLateralBasal,
+  LeftInferiorLobeAnteromedialBasal,
+  LeftInferiorLobeSuperior,
+  LeftSuperiorLobeInferiorLingula,
+  LeftSuperiorLobeSuperiorLingula,
+  LeftSuperiorLobeAnterior,
+  LeftSuperiorLobeApicoposterior
 };
 extern CDM_DECL const std::string& eLungCompartment_Name(eLungCompartment cmpt);
 using LungImpairmentMap = std::map<eLungCompartment, SEScalar0To1*>;

@@ -32,6 +32,7 @@ CDM_BIND_DECL2(NeedleDecompression)
 CDM_BIND_DECL2(PatientAssessmentRequest)
 CDM_BIND_DECL2(PericardialEffusion)
 CDM_BIND_DECL2(PneumoniaExacerbation)
+CDM_BIND_DECL2(PrimaryBlastLungInjury)
 CDM_BIND_DECL2(PulmonaryShuntExacerbation)
 CDM_BIND_DECL2(RespiratoryFatigue)
 CDM_BIND_DECL2(RespiratoryMechanicsConfiguration)
@@ -231,6 +232,12 @@ public:
   static void Serialize(const CDM_BIND::PneumoniaExacerbationData& src, SEPneumoniaExacerbation& dst);
   static void Serialize(const SEPneumoniaExacerbation& src, CDM_BIND::PneumoniaExacerbationData& dst);
   static void Copy(const SEPneumoniaExacerbation& src, SEPneumoniaExacerbation& dst);
+
+  static void Load(const CDM_BIND::PrimaryBlastLungInjuryData& src, SEPrimaryBlastLungInjury& dst);
+  static CDM_BIND::PrimaryBlastLungInjuryData* Unload(const SEPrimaryBlastLungInjury& src);
+  static void Serialize(const CDM_BIND::PrimaryBlastLungInjuryData& src, SEPrimaryBlastLungInjury& dst);
+  static void Serialize(const SEPrimaryBlastLungInjury& src, CDM_BIND::PrimaryBlastLungInjuryData& dst);
+  static void Copy(const SEPrimaryBlastLungInjury& src, SEPrimaryBlastLungInjury& dst);
 
   static void Load(const CDM_BIND::PulmonaryShuntExacerbationData& src, SEPulmonaryShuntExacerbation& dst);
   static CDM_BIND::PulmonaryShuntExacerbationData* Unload(const SEPulmonaryShuntExacerbation& src);

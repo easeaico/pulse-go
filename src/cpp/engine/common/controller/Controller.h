@@ -283,11 +283,11 @@ namespace pulse
     virtual void SetupTissue();
     virtual void SetupCerebrospinalFluid();
 
-    // Optional Expanded Cardiovascular Circuit Setup Methods
-    virtual void SetupExpandedCardiovascular();
-    virtual void SetupExpandedCardiovascularRenal();
-    virtual void SetupExpandedCardiovascularTissue();
-    virtual void SetupExpandedCardiovascularCerebrospinalFluid();
+    // Optional ComputationalLife Expansion Setup Methods
+    virtual void SetupComputationalLifeCardiovascular();
+    virtual void SetupComputationalLifeRenal();
+    virtual void SetupComputationalLifeTissue();
+    virtual void SetupComputationalLifeCerebrospinalFluid();
 
     // Default/Optimal Gastrointestinal
     virtual void SetupGastrointestinal();
@@ -295,9 +295,9 @@ namespace pulse
     // Default/Optimal Respiratory
     virtual void SetupRespiratory();
 
-    // Optional Expanded Respiratory and Cardiovascular Circuit Setup Methods
-    virtual void SetupExpandedPulmonaryRespiratory();
-    virtual void SetupExpandedPulmonaryCardiovascular();
+    // Optional Expanded Lungs Respiratory and Cardiovascular Circuit Setup Methods
+    virtual void SetupExpandedLungsRespiratory();
+    virtual void SetupExpandedLungsCardiovascular();
 
     // Default/Optimal Equipment
     virtual void SetupAnesthesiaMachine();

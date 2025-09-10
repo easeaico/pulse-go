@@ -24,28 +24,28 @@ message ConfigurationData
   
   message CardiovascularConfigurationData
   {
-    pulse.cdm.bind.ScalarPressurePerVolumeData         LeftHeartElastanceMaximum                             = 1;
-    pulse.cdm.bind.ScalarPressurePerVolumeData         LeftHeartElastanceMinimum                             = 2;
-    pulse.cdm.bind.Scalar0To1Data                      MinimumBloodVolumeFraction                            = 3;
-    pulse.cdm.bind.ScalarPressurePerVolumeData         RightHeartElastanceMaximum                            = 4;
-    pulse.cdm.bind.ScalarPressurePerVolumeData         RightHeartElastanceMinimum                            = 5;
-    pulse.cdm.bind.ScalarData                          StandardPulmonaryCapillaryCoverage                    = 6;
-    pulse.cdm.bind.eSwitch                             UseExpandedVasculature                                = 7;
+    pulse.cdm.bind.eSwitch                             ComputationalLifeExpansion                            = 1;
+    pulse.cdm.bind.ScalarPressurePerVolumeData         LeftHeartElastanceMaximum                             = 2;
+    pulse.cdm.bind.ScalarPressurePerVolumeData         LeftHeartElastanceMinimum                             = 3;
+    pulse.cdm.bind.Scalar0To1Data                      MinimumBloodVolumeFraction                            = 4;
+    pulse.cdm.bind.ScalarPressurePerVolumeData         RightHeartElastanceMaximum                            = 5;
+    pulse.cdm.bind.ScalarPressurePerVolumeData         RightHeartElastanceMinimum                            = 6;
+    pulse.cdm.bind.ScalarData                          StandardPulmonaryCapillaryCoverage                    = 7;
     pulse.cdm.bind.eSwitch                             TuneCardiovascularCircuit                             = 8;
     string                                             CardiovascularTuningFile                              = 9;
   }
   
   message CircuitConfigurationData
   {
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData     CardiovascularOpenResistance                         = 1;;
-    pulse.cdm.bind.ScalarElectricResistanceData        DefaultClosedElectricResistance                      = 2;;
-    pulse.cdm.bind.ScalarElectricResistanceData        DefaultOpenElectricResistance                        = 3;;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData     DefaultClosedFlowResistance                          = 4;;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData     DefaultOpenFlowResistance                            = 5;;
-    pulse.cdm.bind.ScalarHeatResistanceData            DefaultClosedHeatResistance                          = 6;;
-    pulse.cdm.bind.ScalarHeatResistanceData            DefaultOpenHeatResistance                            = 7;;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MachineClosedResistance                              = 8;;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MachineOpenResistance                                = 9;;
+    pulse.cdm.bind.ScalarPressureTimePerVolumeData     CardiovascularOpenResistance                         = 1;
+    pulse.cdm.bind.ScalarElectricResistanceData        DefaultClosedElectricResistance                      = 2;
+    pulse.cdm.bind.ScalarElectricResistanceData        DefaultOpenElectricResistance                        = 3;
+    pulse.cdm.bind.ScalarPressureTimePerVolumeData     DefaultClosedFlowResistance                          = 4;
+    pulse.cdm.bind.ScalarPressureTimePerVolumeData     DefaultOpenFlowResistance                            = 5;
+    pulse.cdm.bind.ScalarHeatResistanceData            DefaultClosedHeatResistance                          = 6;
+    pulse.cdm.bind.ScalarHeatResistanceData            DefaultOpenHeatResistance                            = 7;
+    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MachineClosedResistance                              = 8;
+    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MachineOpenResistance                                = 9;
     pulse.cdm.bind.ScalarPressureTimePerVolumeData     RespiratoryClosedResistance                          = 10;
     pulse.cdm.bind.ScalarPressureTimePerVolumeData     RespiratoryOpenResistance                            = 11;
   }
@@ -140,7 +140,7 @@ message ConfigurationData
   
   message RenalConfigurationData
   {
-    pulse.cdm.bind.eSwitch                             EnableRenal                                          = 1;
+    pulse.cdm.bind.eSwitch                             ExpandedKidneys                                      = 1;
                                                        
     pulse.cdm.bind.ScalarMassPerVolumeData             PlasmaSodiumConcentrationSetPoint                    = 2;
     pulse.cdm.bind.ScalarMassPerVolumeData             PeritubularPotassiumConcentrationSetPoint            = 3;
@@ -163,16 +163,16 @@ message ConfigurationData
   
   message RespiratoryConfigurationData
   {
-    pulse.cdm.bind.ScalarPressureData                  CentralControllerCO2PressureSetPoint                 = 1;
-    pulse.cdm.bind.ScalarData                          CentralVentilatoryControllerGain                     = 2;
-    pulse.cdm.bind.ScalarVolumeData                    MinimumAllowableTidalVolume                          = 3;
-    pulse.cdm.bind.ScalarTimeData                      MinimumAllowableInspiratoryAndExpiratoryPeriod       = 4;
-    pulse.cdm.bind.ScalarPressureData                  PeripheralControllerCO2PressureSetPoint              = 5;
-    pulse.cdm.bind.ScalarData                          PeripheralVentilatoryControllerGain                  = 6;
-    pulse.cdm.bind.ScalarVolumePerTimeData             PulmonaryVentilationRateMaximum                      = 7;
-    pulse.cdm.bind.ScalarVolumeData                    VentilationTidalVolumeIntercept                      = 8;
-    pulse.cdm.bind.ScalarPressureData                  VentilatoryOcclusionPressure                         = 9;
-    pulse.cdm.bind.eSwitch                             UseExpandedRespiratory                               = 10;
+    pulse.cdm.bind.eSwitch                             ExpandedLungs                                        = 1;
+    pulse.cdm.bind.ScalarPressureData                  CentralControllerCO2PressureSetPoint                 = 2;
+    pulse.cdm.bind.ScalarData                          CentralVentilatoryControllerGain                     = 3;
+    pulse.cdm.bind.ScalarVolumeData                    MinimumAllowableTidalVolume                          = 4;
+    pulse.cdm.bind.ScalarTimeData                      MinimumAllowableInspiratoryAndExpiratoryPeriod       = 5;
+    pulse.cdm.bind.ScalarPressureData                  PeripheralControllerCO2PressureSetPoint              = 6;
+    pulse.cdm.bind.ScalarData                          PeripheralVentilatoryControllerGain                  = 7;
+    pulse.cdm.bind.ScalarVolumePerTimeData             PulmonaryVentilationRateMaximum                      = 8;
+    pulse.cdm.bind.ScalarVolumeData                    VentilationTidalVolumeIntercept                      = 9;
+    pulse.cdm.bind.ScalarPressureData                  VentilatoryOcclusionPressure                         = 10;
   }
   
   message TissueConfigurationData
@@ -189,22 +189,20 @@ message ConfigurationData
     pulse.cdm.bind.TimedStabilizationData              TimedStabilization                                   = 4;/**<< @brief */
     pulse.cdm.bind.DynamicStabilizationData            DynamicStabilization                                 = 5;/**<< @brief */
   }
-  pulse.cdm.bind.eSwitch                               WritePatientBaselineFile                             = 6;/**<< @brief Inform execution to write out patient object after all patient values are computed. */
-  string                                               PatientBaselineFilePath                              = 7;/**<< @brief Optional filepath of the original patient file to write, if not it will be written to ./stable */
-  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 8;
-  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 9;
-  CircuitConfigurationData                             CircuitConfiguration                                 = 10;
-  ConstantsConfigurationData                           ConstantsConfiguration                               = 11;
-  DrugsConfigurationData                               DrugsConfiguration                                   = 12;
-  ECGConfigurationData                                 ECGConfiguration                                     = 13;
-  EnergyConfigurationData                              EnergyConfiguration                                  = 14;
-  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 15;
-  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 16;
-  NervousConfigurationData                             NervousConfiguration                                 = 17;
-  RenalConfigurationData                               RenalConfiguration                                   = 18;
-  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 19;
-  TissueConfigurationData                              TissueConfiguration                                  = 20;
-  map<string,pulse.cdm.bind.ScalarData>                Modifiers                                            = 21;
-  map<string,pulse.cdm.bind.ScalarData>                Overrides                                            = 22;
+  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 6;
+  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 7;
+  CircuitConfigurationData                             CircuitConfiguration                                 = 8;
+  ConstantsConfigurationData                           ConstantsConfiguration                               = 9;
+  DrugsConfigurationData                               DrugsConfiguration                                   = 10;
+  ECGConfigurationData                                 ECGConfiguration                                     = 11;
+  EnergyConfigurationData                              EnergyConfiguration                                  = 12;
+  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 13;
+  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 14;
+  NervousConfigurationData                             NervousConfiguration                                 = 15;
+  RenalConfigurationData                               RenalConfiguration                                   = 16;
+  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 17;
+  TissueConfigurationData                              TissueConfiguration                                  = 18;
+  map<string,pulse.cdm.bind.ScalarData>                Modifiers                                            = 19;
+  map<string,pulse.cdm.bind.ScalarData>                Overrides                                            = 20;
 }
  

@@ -29,7 +29,7 @@ namespace pulse { namespace human_adult_hemodynamics
     m_Compartments->Setup();
 
     SetupCardiovascular();
-    if (m_Config->IsRenalEnabled())
+    if (m_Config->UseExpandedKidneys() == eSwitch::On)
       SetupRenal();
     if (m_Config->IsTissueEnabled())
       SetupTissue();

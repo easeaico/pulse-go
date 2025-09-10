@@ -26,14 +26,18 @@ std::vector<std::string> pulse::ChymeCompartment::_values;
 //std::vector<std::string> pulse::ChymeLink::_values;
 std::vector<std::string> pulse::PulmonaryCompartment::_values;
 std::vector<std::string> pulse::PulmonaryLink::_values;
-std::vector<std::string> pulse::ExpandedPulmonaryCompartment::_values;
+std::vector<std::string> pulse::ExpandedLungsPulmonaryCompartment::_values;
+std::vector<std::string> pulse::ExpandedLungsPulmonaryLink::_values;
 std::vector<std::string> pulse::TissueCompartment::_values;
 std::vector<std::string> pulse::ExtravascularCompartment::_values;
 std::vector<std::string> pulse::TemperatureCompartment::_values;
 //std::vector<std::string> pulse::TissueLink::_values;
-std::vector<std::string> pulse::ExpandedVascularCompartment::_values;
 std::vector<std::string> pulse::VascularCompartment::_values;
 std::vector<std::string> pulse::VascularLink::_values;
+std::vector<std::string> pulse::ExpandedLungsVascularCompartment::_values;
+std::vector<std::string> pulse::ExpandedLungsVascularLink::_values;
+std::vector<std::string> pulse::ComputationalLifeVascularCompartment::_values;
+std::vector<std::string> pulse::ComputationalLifeVascularLink::_values;
 std::vector<std::string> pulse::UrineCompartment::_values;
 std::vector<std::string> pulse::UrineLink::_values;
 std::vector<std::string> pulse::EnvironmentCompartment::_values;
@@ -96,14 +100,18 @@ namespace pulse
     m_ChymeLeafCompartments.clear();
     m_PulmonaryCompartments.clear();
     m_PulmonaryLeafCompartments.clear();
-    m_ExpandedPulmonaryCompartments.clear();
-    m_ExpandedPulmonaryLeafCompartments.clear();
+    m_ExpandedLungsPulmonaryCompartments.clear();
+    m_ExpandedLungsPulmonaryLeafCompartments.clear();
     m_TissueCompartments.clear();
     m_TissueLeafCompartments.clear();
     m_UrineCompartments.clear();
     m_UrineLeafCompartments.clear();
     m_VascularCompartments.clear();
     m_VascularLeafCompartments.clear();
+    m_ExpandedLungsVascularCompartments.clear();
+    m_ExpandedLungsVascularLeafCompartments.clear();
+    m_ComputationalLifeVascularCompartments.clear();
+    m_ComputationalLifeVascularLeafCompartments.clear();
     m_AnesthesiaMachineCompartments.clear();
     m_AnesthesiaMachineLeafCompartments.clear();
     m_AerosolCompartments.clear();
@@ -148,22 +156,6 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     m_##bin##LeafCompartments.push_back(cmpt); \
 } 
 
-#define SORT_CMPTS_EXPANDED(bin, type) \
-m_##bin##Compartments.clear(); \
-m_##bin##LeafCompartments.clear(); \
-for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
-{ \
-  SE##type##Compartment* cmpt = Get##type##Compartment(name); \
-  if (cmpt == nullptr) \
-  { \
-    Warning("Could not find expected " + std::string(#bin) + " compartment, " + name + " in compartment manager"); \
-    continue; \
-  } \
-  m_##bin##Compartments.push_back(cmpt); \
-  if (!cmpt->HasChildren()) \
-    m_##bin##LeafCompartments.push_back(cmpt); \
-}
-
   void CompartmentManager::StateChange()
   {
     SECompartmentManager::StateChange();
@@ -172,7 +164,13 @@ for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
     // Anatomy
     SORT_CMPTS(Chyme, Liquid);
     SORT_CMPTS(Pulmonary, Gas);
-    SORT_CMPTS(ExpandedPulmonary, Gas);
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::On)
+    {
+      SORT_CMPTS(ExpandedLungsPulmonary, Gas);
+      // Add Expanded Leafs to Pulmonary Leafs
+      for (SEGasCompartment* leaf : m_ExpandedLungsPulmonaryLeafCompartments)
+        m_PulmonaryLeafCompartments.push_back(leaf);
+    }
     SORT_CMPTS(Temperature, Thermal);
     if (m_data.GetConfiguration().IsTissueEnabled())
     {
@@ -183,17 +181,25 @@ for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
           Warning("Could not find expected Extravascular compartment, " + name + " in compartment manager");
       }
     }
-    if (m_data.GetConfiguration().IsRenalEnabled())
+    if (m_data.GetConfiguration().UseExpandedKidneys() == eSwitch::On)
     {
       SORT_CMPTS(Urine, Liquid);
     }
-    if (m_data.GetConfiguration().UseExpandedVasculature() == eSwitch::On)
+
+    SORT_CMPTS(Vascular, Liquid);
+    if (m_data.GetConfiguration().UseExpandedLungs() == eSwitch::On)
     {
-      SORT_CMPTS_EXPANDED(Vascular, Liquid);
+      SORT_CMPTS(ExpandedLungsVascular, Liquid);
+      // Add Expanded Leafs to Vascular Leafs
+      for (SELiquidCompartment* leaf : m_ExpandedLungsVascularLeafCompartments)
+        m_VascularLeafCompartments.push_back(leaf);
     }
-    else
+    else if (m_data.GetConfiguration().UseComputationalLifeExpansion() == eSwitch::On)
     {
-      SORT_CMPTS(Vascular, Liquid);
+      SORT_CMPTS(ComputationalLifeVascular, Liquid);
+      // Add Expanded Leafs to Vascular Leafs
+      for (SELiquidCompartment* leaf : m_ComputationalLifeVascularLeafCompartments)
+        m_VascularLeafCompartments.push_back(leaf);
     }
 
     // Equipment
@@ -339,10 +345,13 @@ for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
     {
       Error("Could not find required Graph " + std::string(pulse::Graph::Cardiovascular));
     }
-    m_RenalGraph = GetLiquidGraph(pulse::Graph::Renal);
-    if (m_RenalGraph == nullptr)
+    if (m_data.GetConfiguration().UseExpandedKidneys() == eSwitch::On)
     {
-      Error("Could not find required Graph " + std::string(pulse::Graph::Renal));
+      m_RenalGraph = GetLiquidGraph(pulse::Graph::Renal);
+      if (m_RenalGraph == nullptr)
+      {
+        Error("Could not find required Graph " + std::string(pulse::Graph::Renal));
+      }
     }
     m_RespiratoryGraph = GetGasGraph(pulse::Graph::Respiratory);
     if (m_RespiratoryGraph == nullptr)
@@ -447,6 +456,9 @@ for (const std::string& name : pulse::Expanded##bin##Compartment::GetValues()) \
       // Don't add it to the aerosol compartments (Liquid version of Respiratory cmpts)
       const std::vector<std::string>& p = pulse::PulmonaryCompartment::GetValues();
       if (std::find(p.begin(), p.end(), cmpt.GetName()) != p.end())
+        return false;
+      const std::vector<std::string>& eL = pulse::ExpandedLungsPulmonaryCompartment::GetValues();
+      if (std::find(eL.begin(), eL.end(), cmpt.GetName()) != eL.end())
         return false;
       // Don't add it to aerosol cmpts either
       const std::vector<std::string>& bvm = pulse::BagValveMaskCompartment::GetValues();

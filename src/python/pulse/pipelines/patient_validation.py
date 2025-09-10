@@ -12,7 +12,7 @@ from pulse.cdm.utils.math_utils import format_float
 from pulse.cdm.enums import eEngineInitializationState
 from pulse.cdm.scenario import eScenarioExecutionState, SEScenarioExecStatus
 from pulse.cdm.validation import SEPatientTimeSeriesValidation
-from pulse.pipelines.dataset.timeseries_dataset_reader import gen_patient_targets
+from pulse.pipelines.dataset.timeseries_dataset_reader import gen_patient_targets, EngineConfig
 from pulse.pipelines.validation.timeseries_validation import (
     validate, generate_validation_tables,
     gen_expected_str, gen_engine_val_str)
@@ -44,10 +44,14 @@ def timeseries_validation_pipeline(
     :return: Evaluated targets
     """
 
-    patient_validation = gen_patient_targets(log_file=log_file)
+    config = EngineConfig.Standard
+    if EngineConfig.ExpandedLungs.name in str(log_file):
+        config = EngineConfig.ExpandedLungs
+
+    patient_validation = gen_patient_targets(log_file=log_file, config=config)
     if patient_validation is None:
         _pulse_logger.error("Unable to generate patient targets")
-        return False
+        return None
 
     validate(patient_validation=patient_validation,
              csv_filename=csv_file,
@@ -56,7 +60,7 @@ def timeseries_validation_pipeline(
 
     # Generate Tables (Optional)
     if table_dir is not None:
-        generate_validation_tables(target_map=patient_validation, table_dir=table_dir)
+        generate_validation_tables(target_map=patient_validation, table_dir=table_dir, config=config)
 
     # Write the evaluated validation out (Optional)
     if out_file is not None:
@@ -170,7 +174,7 @@ def main():
     parser.add_argument(
         "-t", "--table-dir",
         type=Path,
-        default=None,
+        default=Path("./test_results/tables"),
         help="If provided, generate tables and write them in this directory."
     )
     parser.add_argument(
@@ -183,8 +187,6 @@ def main():
     filename_base_paths = []
     out_file = opts.output_file
     table_dir = opts.table_dir
-    if table_dir is None:
-        table_dir = Path("./test_results/tables")
     serialize_per_file = opts.serialize_per_file
     if 'verification' == opts.input or 'test_results' == opts.input:
         mode = opts.input
@@ -268,18 +270,24 @@ def main():
     # Only write a html file for test results
     if opts.input != "verification" and ".json" not in opts.input:
         if "test_results" == opts.input:
+            names = [tgt.get_patient().get_name() for tgt in all_validation]
             # Push Standard patients to the front
-            all_validation.insert(0, all_validation.pop(
-                [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardFemale"][0]))
-            all_validation.insert(0, all_validation.pop(
-                [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == "StandardMale"][0]))
+            standards = ["StandardFemale-ExpandedLungs", "StandardFemale",
+                         "StandardMale-ExpandedLungs", "StandardMale"]
+            for standard in standards:
+                if standard in names:
+                    all_validation.insert(0, all_validation.pop(
+                        [idx for idx, tgt in enumerate(all_validation) if tgt.get_patient().get_name() == standard][0]))
         html_file = "./test_results/PatientValidation.html"
         _pulse_logger.info(f"Writing {html_file}")
         f = open(html_file, "w")
         f.write("<html>\n")
-        f.writelines("<body>\n")
-        f.write("<h1>Patient Validation</h1>\n")
+        f.write("<body>\n")
+        f.write("<details>\n")
+        f.write("<summary><font size=\"5\"><b>Patient Validation</b></font></summary>\n")
         for validation in all_validation:
+            f.write("<details>\n")
+            f.write(f"<summary>{validation.get_patient().get_name()}</summary><p>\n")
             f.write("<br>\n")
             for type, tgts in validation.get_targets().items():
                 f.writelines("<table border=\"1\">\n")
@@ -305,6 +313,8 @@ def main():
                     f.write(f"<td>{format_float(tgt.get_error_value())}%</td>")
                     f.write("<td>" + tgt.get_notes() + "</td></tr>\n")
                 f.write("</table><br>\n")
+            f.write("</p></details>\n")  # End patient details
+        f.write("</p></details>\n")  # End header details
         f.write("</body>\n")
         f.write("</html>\n")
         f.close()

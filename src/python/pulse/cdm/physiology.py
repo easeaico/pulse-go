@@ -34,6 +34,26 @@ class eLungCompartment(int, Enum):
     RightSuperiorLobe = 4
     RightMiddleLobe = 5
     RightInferiorLobe = 6
+    # Expanded Respiratory
+    RightSuperiorLobeApical = 7
+    RightSuperiorLobePosterior = 8
+    RightSuperiorLobeAnterior = 9
+    RightMiddleLobeLateral = 10
+    RightMiddleLobeMedial = 11
+    RightInferiorLobeSuperior = 12
+    RightInferiorLobeMedialBasal = 13
+    RightInferiorLobeAnteriorBasal = 14
+    RightInferiorLobeLateralBasal = 15
+    RightInferiorLobePosteriorBasal = 16
+    LeftInferiorLobePosteriorBasal = 17
+    LeftInferiorLobeLateralBasal = 18
+    LeftInferiorLobeAnteromedialBasal = 19
+    LeftInferiorLobeSuperior = 20
+    LeftSuperiorLobeInferiorLingula = 21
+    LeftSuperiorLobeSuperiorLingula = 22
+    LeftSuperiorLobeAnterior = 23
+    LeftSuperiorLobeApicoposterior = 24
+
 
 
 class SECardiovascularMechanicsModifiers:

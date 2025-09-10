@@ -337,16 +337,173 @@ namespace pulse
     static std::vector<std::string> _values;
   };
 
-  class ExpandedPulmonaryCompartment
+  class ExpandedLungsPulmonaryCompartment
   {
   public:
+    DEFINE_STATIC_STRING(RightBranches);
+    DEFINE_STATIC_STRING(LeftBranches);
+
+    DEFINE_STATIC_STRING(RightMainBronchus);
+    DEFINE_STATIC_STRING(LeftMainBronchus);
+    DEFINE_STATIC_STRING(RightIntermediateBronchus);
+    DEFINE_STATIC_STRING(RightSuperiorLobarBronchus);
+    DEFINE_STATIC_STRING(RightMiddleLobarBronchus);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus1);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus1);
+    DEFINE_STATIC_STRING(LeftSuperiorLobarBronchus);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus2);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus2);
+    DEFINE_STATIC_STRING(RightSuperiorApicoposteriorBronchus);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus3);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus3);
+    DEFINE_STATIC_STRING(LeftLingularBonchus);
+    DEFINE_STATIC_STRING(LeftSuperiorApicoposteriorBronchus);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus4);
+
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalBronchiole);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorBronchiole);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorBronchiole);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralBronchiole);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalBronchiole);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalBronchiole);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalBronchiole);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalBronchiole);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorBronchiole);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaBronchiole);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaBronchiole);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorBronchiole);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorBronchiole);
+
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalAlveolarDeadSpace);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorAlveolarDeadSpace);
+
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalAlveoli);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorAlveoli);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorAlveoli);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralAlveoli);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalAlveoli);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalAlveoli);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalAlveoli);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalAlveoli);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorAlveoli);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
+        _values.push_back(RightBranches);
+        _values.push_back(LeftBranches);
 
+        _values.push_back(RightMainBronchus);
+        _values.push_back(LeftMainBronchus);
+        _values.push_back(RightIntermediateBronchus);
+        _values.push_back(RightSuperiorLobarBronchus);
+        _values.push_back(RightMiddleLobarBronchus);
+        _values.push_back(RightInferiorLobarBronchus1);
+        _values.push_back(LeftInferiorLobarBronchus1);
+        _values.push_back(LeftSuperiorLobarBronchus);
+        _values.push_back(RightInferiorLobarBronchus2);
+        _values.push_back(LeftInferiorLobarBronchus2);
+        _values.push_back(RightSuperiorApicoposteriorBronchus);
+        _values.push_back(RightInferiorLobarBronchus3);
+        _values.push_back(LeftInferiorLobarBronchus3);
+        _values.push_back(LeftLingularBonchus);
+        _values.push_back(LeftSuperiorApicoposteriorBronchus);
+        _values.push_back(RightInferiorLobarBronchus4);
+
+        _values.push_back(RightSuperiorLobeApicalBronchiole);
+        _values.push_back(RightSuperiorLobePosteriorBronchiole);
+        _values.push_back(RightSuperiorLobeAnteriorBronchiole);
+        _values.push_back(RightMiddleLobeLateralBronchiole);
+        _values.push_back(RightMiddleLobeMedialBronchiole);
+        _values.push_back(RightInferiorLobeSuperiorBronchiole);
+        _values.push_back(RightInferiorLobeMedialBasalBronchiole);
+        _values.push_back(RightInferiorLobeAnteriorBasalBronchiole);
+        _values.push_back(RightInferiorLobeLateralBasalBronchiole);
+        _values.push_back(RightInferiorLobePosteriorBasalBronchiole);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalBronchiole);
+        _values.push_back(LeftInferiorLobeLateralBasalBronchiole);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalBronchiole);
+        _values.push_back(LeftInferiorLobeSuperiorBronchiole);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaBronchiole);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaBronchiole);
+        _values.push_back(LeftSuperiorLobeAnteriorBronchiole);
+        _values.push_back(LeftSuperiorLobeApicoposteriorBronchiole);
+
+        _values.push_back(RightSuperiorLobeApicalAlveolarDeadSpace);
+        _values.push_back(RightSuperiorLobePosteriorAlveolarDeadSpace);
+        _values.push_back(RightSuperiorLobeAnteriorAlveolarDeadSpace);
+        _values.push_back(RightMiddleLobeLateralAlveolarDeadSpace);
+        _values.push_back(RightMiddleLobeMedialAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeSuperiorAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeMedialBasalAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeAnteriorBasalAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeLateralBasalAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobePosteriorBasalAlveolarDeadSpace);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalAlveolarDeadSpace);
+        _values.push_back(LeftInferiorLobeLateralBasalAlveolarDeadSpace);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalAlveolarDeadSpace);
+        _values.push_back(LeftInferiorLobeSuperiorAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeAnteriorAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeApicoposteriorAlveolarDeadSpace);
+
+        _values.push_back(RightSuperiorLobeApicalAlveoli);
+        _values.push_back(RightSuperiorLobePosteriorAlveoli);
+        _values.push_back(RightSuperiorLobeAnteriorAlveoli);
+        _values.push_back(RightMiddleLobeLateralAlveoli);
+        _values.push_back(RightMiddleLobeMedialAlveoli);
+        _values.push_back(RightInferiorLobeSuperiorAlveoli);
+        _values.push_back(RightInferiorLobeMedialBasalAlveoli);
+        _values.push_back(RightInferiorLobeAnteriorBasalAlveoli);
+        _values.push_back(RightInferiorLobeLateralBasalAlveoli);
+        _values.push_back(RightInferiorLobePosteriorBasalAlveoli);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalAlveoli);
+        _values.push_back(LeftInferiorLobeLateralBasalAlveoli);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalAlveoli);
+        _values.push_back(LeftInferiorLobeSuperiorAlveoli);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaAlveoli);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaAlveoli);
+        _values.push_back(LeftSuperiorLobeAnteriorAlveoli);
+        _values.push_back(LeftSuperiorLobeApicoposteriorAlveoli);
       }
       return _values;
     }
@@ -366,16 +523,169 @@ namespace pulse
     static std::vector<std::string> _values;
   };
 
-  class ExpandedPulmonaryLink
+  class ExpandedLungsPulmonaryLink
   {
   public:
+    DEFINE_STATIC_STRING(CarinaToRightMainBronchus);
+    DEFINE_STATIC_STRING(RightMainBronchusToRightIntermediateBronchus);
+    DEFINE_STATIC_STRING(RightMainBronchusToRightSuperiorLobarBronchus);
+    DEFINE_STATIC_STRING(RightIntermediateBronchusToRightMiddleLobarBronchus);
+    DEFINE_STATIC_STRING(RightIntermediateBronchusToRightInferiorLobarBronchus1);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus1ToRightInferiorLobarBronchus2);
+    DEFINE_STATIC_STRING(RightSuperiorLobarBronchusToRightSuperiorApicoposteriorBronchus);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus2ToRightInferiorLobarBronchus3);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus2ToRightInferiorLobarBronchus4);
+
+    DEFINE_STATIC_STRING(CarinaToLeftMainBronchus);
+    DEFINE_STATIC_STRING(LeftMainBronchusToLeftInferiorLobarBronchus1);
+    DEFINE_STATIC_STRING(LeftMainBronchusToLeftSuperiorLobarBronchus);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus1ToLeftInferiorLobarBronchus2);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus2ToLeftInferiorLobarBronchus3);
+    DEFINE_STATIC_STRING(LeftSuperiorLobarBronchusToLeftLingularBonchus);
+    DEFINE_STATIC_STRING(LeftSuperiorLobarBronchusToLeftSuperiorApicoposteriorBronchus);
+
+    DEFINE_STATIC_STRING(RightSuperiorApicoposteriorBronchusToRightSuperiorLobeApicalBronchiole);
+    DEFINE_STATIC_STRING(RightSuperiorApicoposteriorBronchusToRightSuperiorLobePosteriorBronchiole);
+    DEFINE_STATIC_STRING(RightSuperiorLobarBronchusToRightSuperiorLobeAnteriorBronchiole);
+    DEFINE_STATIC_STRING(RightMiddleLobarBronchusToRightMiddleLobeLateralBronchiole);
+    DEFINE_STATIC_STRING(RightMiddleLobarBronchusToRightMiddleLobeMedialBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus1ToRightInferiorLobeSuperiorBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus2ToRightInferiorLobeMedialBasalBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus3ToRightInferiorLobeAnteriorBasalBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus4ToRightInferiorLobeLateralBasalBronchiole);
+    DEFINE_STATIC_STRING(RightInferiorLobarBronchus4ToRightInferiorLobePosteriorBasalBronchiole);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus3ToLeftInferiorLobeLateralBasalBronchiole);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus3ToLeftInferiorLobePosteriorBasalBronchiole);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus2ToLeftInferiorLobeAnteromedialBasalBronchiole);
+    DEFINE_STATIC_STRING(LeftInferiorLobarBronchus1ToLeftInferiorLobeSuperiorBronchiole);
+    DEFINE_STATIC_STRING(LeftLingularBonchusToLeftSuperiorLobeInferiorLingulaBronchiole);
+    DEFINE_STATIC_STRING(LeftLingularBonchusToLeftSuperiorLobeSuperiorLingulaBronchiole);
+    DEFINE_STATIC_STRING(LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeAnteriorBronchiole);
+    DEFINE_STATIC_STRING(LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeApicoposteriorBronchiole);
+
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalBronchioleToRightSuperiorLobeApicalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorBronchioleToRightSuperiorLobePosteriorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorBronchioleToRightSuperiorLobeAnteriorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralBronchioleToRightMiddleLobeLateralAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialBronchioleToRightMiddleLobeMedialAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorBronchioleToRightInferiorLobeSuperiorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalBronchioleToRightInferiorLobeMedialBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalBronchioleToRightInferiorLobeAnteriorBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalBronchioleToRightInferiorLobeLateralBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalBronchioleToRightInferiorLobePosteriorBasalAlveolarDeadSpace);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalBronchioleToLeftInferiorLobePosteriorBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalBronchioleToLeftInferiorLobeLateralBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalBronchioleToLeftInferiorLobeAnteromedialBasalAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorBronchioleToLeftInferiorLobeSuperiorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaBronchioleToLeftSuperiorLobeInferiorLingulaAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaBronchioleToLeftSuperiorLobeSuperiorLingulaAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorBronchioleToLeftSuperiorLobeAnteriorAlveolarDeadSpace);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorBronchioleToLeftSuperiorLobeApicoposteriorAlveolarDeadSpace);
+
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalAlveolarDeadSpaceToRightSuperiorLobeApicalAlveoli);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorAlveolarDeadSpaceToRightSuperiorLobePosteriorAlveoli);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorAlveolarDeadSpaceToRightSuperiorLobeAnteriorAlveoli);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralAlveolarDeadSpaceToRightMiddleLobeLateralAlveoli);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialAlveolarDeadSpaceToRightMiddleLobeMedialAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorAlveolarDeadSpaceToRightInferiorLobeSuperiorAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalAlveolarDeadSpaceToRightInferiorLobeMedialBasalAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalAlveolarDeadSpaceToRightInferiorLobeAnteriorBasalAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalAlveolarDeadSpaceToRightInferiorLobeLateralBasalAlveoli);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalAlveolarDeadSpaceToRightInferiorLobePosteriorBasalAlveoli);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalAlveolarDeadSpaceToLeftInferiorLobePosteriorBasalAlveoli);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalAlveolarDeadSpaceToLeftInferiorLobeLateralBasalAlveoli);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalAlveolarDeadSpaceToLeftInferiorLobeAnteromedialBasalAlveoli);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorAlveolarDeadSpaceToLeftInferiorLobeSuperiorAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaAlveolarDeadSpaceToLeftSuperiorLobeInferiorLingulaAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaAlveolarDeadSpaceToLeftSuperiorLobeSuperiorLingulaAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorAlveolarDeadSpaceToLeftSuperiorLobeAnteriorAlveoli);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorAlveolarDeadSpaceToLeftSuperiorLobeApicoposteriorAlveoli);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
+        _values.push_back(CarinaToRightMainBronchus);
+        _values.push_back(RightMainBronchusToRightIntermediateBronchus);
+        _values.push_back(RightMainBronchusToRightSuperiorLobarBronchus);
+        _values.push_back(RightIntermediateBronchusToRightMiddleLobarBronchus);
+        _values.push_back(RightIntermediateBronchusToRightInferiorLobarBronchus1);
+        _values.push_back(RightInferiorLobarBronchus1ToRightInferiorLobarBronchus2);
+        _values.push_back(RightSuperiorLobarBronchusToRightSuperiorApicoposteriorBronchus);
+        _values.push_back(RightInferiorLobarBronchus2ToRightInferiorLobarBronchus3);
+        _values.push_back(RightInferiorLobarBronchus2ToRightInferiorLobarBronchus4);
 
+        _values.push_back(CarinaToLeftMainBronchus);
+        _values.push_back(LeftMainBronchusToLeftInferiorLobarBronchus1);
+        _values.push_back(LeftMainBronchusToLeftSuperiorLobarBronchus);
+        _values.push_back(LeftInferiorLobarBronchus1ToLeftInferiorLobarBronchus2);
+        _values.push_back(LeftInferiorLobarBronchus2ToLeftInferiorLobarBronchus3);
+        _values.push_back(LeftSuperiorLobarBronchusToLeftLingularBonchus);
+        _values.push_back(LeftSuperiorLobarBronchusToLeftSuperiorApicoposteriorBronchus);
+
+        _values.push_back(RightSuperiorApicoposteriorBronchusToRightSuperiorLobeApicalBronchiole);
+        _values.push_back(RightSuperiorApicoposteriorBronchusToRightSuperiorLobePosteriorBronchiole);
+        _values.push_back(RightSuperiorLobarBronchusToRightSuperiorLobeAnteriorBronchiole);
+        _values.push_back(RightMiddleLobarBronchusToRightMiddleLobeLateralBronchiole);
+        _values.push_back(RightMiddleLobarBronchusToRightMiddleLobeMedialBronchiole);
+        _values.push_back(RightInferiorLobarBronchus1ToRightInferiorLobeSuperiorBronchiole);
+        _values.push_back(RightInferiorLobarBronchus2ToRightInferiorLobeMedialBasalBronchiole);
+        _values.push_back(RightInferiorLobarBronchus3ToRightInferiorLobeAnteriorBasalBronchiole);
+        _values.push_back(RightInferiorLobarBronchus4ToRightInferiorLobeLateralBasalBronchiole);
+        _values.push_back(RightInferiorLobarBronchus4ToRightInferiorLobePosteriorBasalBronchiole);
+
+        _values.push_back(LeftInferiorLobarBronchus3ToLeftInferiorLobeLateralBasalBronchiole);
+        _values.push_back(LeftInferiorLobarBronchus3ToLeftInferiorLobePosteriorBasalBronchiole);
+        _values.push_back(LeftInferiorLobarBronchus2ToLeftInferiorLobeAnteromedialBasalBronchiole);
+        _values.push_back(LeftInferiorLobarBronchus1ToLeftInferiorLobeSuperiorBronchiole);
+        _values.push_back(LeftLingularBonchusToLeftSuperiorLobeInferiorLingulaBronchiole);
+        _values.push_back(LeftLingularBonchusToLeftSuperiorLobeSuperiorLingulaBronchiole);
+        _values.push_back(LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeAnteriorBronchiole);
+        _values.push_back(LeftSuperiorApicoposteriorBronchusToLeftSuperiorLobeApicoposteriorBronchiole);
+
+        _values.push_back(RightSuperiorLobeApicalBronchioleToRightSuperiorLobeApicalAlveolarDeadSpace);
+        _values.push_back(RightSuperiorLobePosteriorBronchioleToRightSuperiorLobePosteriorAlveolarDeadSpace);
+        _values.push_back(RightSuperiorLobeAnteriorBronchioleToRightSuperiorLobeAnteriorAlveolarDeadSpace);
+        _values.push_back(RightMiddleLobeLateralBronchioleToRightMiddleLobeLateralAlveolarDeadSpace);
+        _values.push_back(RightMiddleLobeMedialBronchioleToRightMiddleLobeMedialAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeSuperiorBronchioleToRightInferiorLobeSuperiorAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeMedialBasalBronchioleToRightInferiorLobeMedialBasalAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeAnteriorBasalBronchioleToRightInferiorLobeAnteriorBasalAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobeLateralBasalBronchioleToRightInferiorLobeLateralBasalAlveolarDeadSpace);
+        _values.push_back(RightInferiorLobePosteriorBasalBronchioleToRightInferiorLobePosteriorBasalAlveolarDeadSpace);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalBronchioleToLeftInferiorLobePosteriorBasalAlveolarDeadSpace);
+        _values.push_back(LeftInferiorLobeLateralBasalBronchioleToLeftInferiorLobeLateralBasalAlveolarDeadSpace);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalBronchioleToLeftInferiorLobeAnteromedialBasalAlveolarDeadSpace);
+        _values.push_back(LeftInferiorLobeSuperiorBronchioleToLeftInferiorLobeSuperiorAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaBronchioleToLeftSuperiorLobeInferiorLingulaAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaBronchioleToLeftSuperiorLobeSuperiorLingulaAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeAnteriorBronchioleToLeftSuperiorLobeAnteriorAlveolarDeadSpace);
+        _values.push_back(LeftSuperiorLobeApicoposteriorBronchioleToLeftSuperiorLobeApicoposteriorAlveolarDeadSpace);
+
+        _values.push_back(RightSuperiorLobeApicalAlveolarDeadSpaceToRightSuperiorLobeApicalAlveoli);
+        _values.push_back(RightSuperiorLobePosteriorAlveolarDeadSpaceToRightSuperiorLobePosteriorAlveoli);
+        _values.push_back(RightSuperiorLobeAnteriorAlveolarDeadSpaceToRightSuperiorLobeAnteriorAlveoli);
+        _values.push_back(RightMiddleLobeLateralAlveolarDeadSpaceToRightMiddleLobeLateralAlveoli);
+        _values.push_back(RightMiddleLobeMedialAlveolarDeadSpaceToRightMiddleLobeMedialAlveoli);
+        _values.push_back(RightInferiorLobeSuperiorAlveolarDeadSpaceToRightInferiorLobeSuperiorAlveoli);
+        _values.push_back(RightInferiorLobeMedialBasalAlveolarDeadSpaceToRightInferiorLobeMedialBasalAlveoli);
+        _values.push_back(RightInferiorLobeAnteriorBasalAlveolarDeadSpaceToRightInferiorLobeAnteriorBasalAlveoli);
+        _values.push_back(RightInferiorLobeLateralBasalAlveolarDeadSpaceToRightInferiorLobeLateralBasalAlveoli);
+        _values.push_back(RightInferiorLobePosteriorBasalAlveolarDeadSpaceToRightInferiorLobePosteriorBasalAlveoli);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalAlveolarDeadSpaceToLeftInferiorLobePosteriorBasalAlveoli);
+        _values.push_back(LeftInferiorLobeLateralBasalAlveolarDeadSpaceToLeftInferiorLobeLateralBasalAlveoli);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalAlveolarDeadSpaceToLeftInferiorLobeAnteromedialBasalAlveoli);
+        _values.push_back(LeftInferiorLobeSuperiorAlveolarDeadSpaceToLeftInferiorLobeSuperiorAlveoli);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaAlveolarDeadSpaceToLeftSuperiorLobeInferiorLingulaAlveoli);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaAlveolarDeadSpaceToLeftSuperiorLobeSuperiorLingulaAlveoli);
+        _values.push_back(LeftSuperiorLobeAnteriorAlveolarDeadSpaceToLeftSuperiorLobeAnteriorAlveoli);
+        _values.push_back(LeftSuperiorLobeApicoposteriorAlveolarDeadSpaceToLeftSuperiorLobeApicoposteriorAlveoli);
       }
       return _values;
     }
@@ -793,7 +1103,6 @@ namespace pulse
     DEFINE_STATIC_STRING(RightPeritubularCapillariesToRenalVein);
     // Reusing 'RightKidneyToVenaCava' to connect the Right Renal Vein To Vena Cava);
 
-
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
@@ -899,113 +1208,28 @@ namespace pulse
     static std::vector<std::string> _values;
   };
 
-  class ExpandedVascularCompartment
+  class ExpandedLungsVascularCompartment
   {
   public:
-    // Cardio
-    DEFINE_STATIC_STRING(Aorta);
-    DEFINE_STATIC_STRING(ArterialBuffer);
-    DEFINE_STATIC_STRING(Heart);
-    /**/DEFINE_STATIC_STRING_EX(Myocardium, MyocardiumVasculature);
-    /**/DEFINE_STATIC_STRING(LeftHeart);
-    /**/DEFINE_STATIC_STRING(RightHeart);
-    /**/DEFINE_STATIC_STRING(Pericardium);
-    DEFINE_STATIC_STRING(VenaCava);
-    DEFINE_STATIC_STRING(VenousBuffer);
-    // Pulmonary
-    DEFINE_STATIC_STRING(PulmonaryArteries);
-    DEFINE_STATIC_STRING(PulmonaryCapillaries);
-    DEFINE_STATIC_STRING(PulmonaryVeins);
-    DEFINE_STATIC_STRING_EX(Lungs, LungsVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftLung, LeftLungVasculature);
-    /***/DEFINE_STATIC_STRING(LeftPulmonaryArteries);
-    /***/DEFINE_STATIC_STRING(LeftPulmonaryCapillaries);
-    /***/DEFINE_STATIC_STRING(LeftPulmonaryVeins);
-    /**/DEFINE_STATIC_STRING_EX(RightLung, RightLungVasculature);
-    /***/DEFINE_STATIC_STRING(RightPulmonaryArteries);
-    /***/DEFINE_STATIC_STRING(RightPulmonaryCapillaries);
-    /***/DEFINE_STATIC_STRING(RightPulmonaryVeins);
-    // Renal
-    DEFINE_STATIC_STRING_EX(Kidneys, KidneyVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftKidney, LeftKidneyVasculature);
-    /***/DEFINE_STATIC_STRING(LeftRenalArtery);
-    /***/DEFINE_STATIC_STRING(LeftNephron);
-    /*********/DEFINE_STATIC_STRING(LeftAfferentArteriole);
-    /*********/DEFINE_STATIC_STRING(LeftGlomerularCapillaries);
-    /*********/DEFINE_STATIC_STRING(LeftEfferentArteriole);
-    /*********/DEFINE_STATIC_STRING(LeftPeritubularCapillaries);
-    /*********/DEFINE_STATIC_STRING(LeftBowmansCapsules);
-    /*********/DEFINE_STATIC_STRING(LeftTubules);
-    /***/DEFINE_STATIC_STRING(LeftRenalVein);
-    /**/DEFINE_STATIC_STRING_EX(RightKidney, RightKidneyVasculature);
-    /***/DEFINE_STATIC_STRING(RightRenalArtery);
-    /***/DEFINE_STATIC_STRING(RightNephron);
-    /*********/DEFINE_STATIC_STRING(RightAfferentArteriole);
-    /*********/DEFINE_STATIC_STRING(RightGlomerularCapillaries);
-    /*********/DEFINE_STATIC_STRING(RightEfferentArteriole);
-    /*********/DEFINE_STATIC_STRING(RightPeritubularCapillaries);
-    /*********/DEFINE_STATIC_STRING(RightBowmansCapsules);
-    /*********/DEFINE_STATIC_STRING(RightTubules);
-    /***/DEFINE_STATIC_STRING(RightRenalVein);
-    // General Organs and Periphery
-    DEFINE_STATIC_STRING_EX(Bone, BoneVasculature);
-    DEFINE_STATIC_STRING_EX(Head, HeadVasculature);
-    /**/DEFINE_STATIC_STRING_EX(Extracranial, ExtracranialVasculature);
-    /**/DEFINE_STATIC_STRING_EX(Intracranial, IntracranialVasculature);
-    DEFINE_STATIC_STRING_EX(Fat, FatVasculature);
-    DEFINE_STATIC_STRING_EX(Gut, GutVasculature);
-    /**/DEFINE_STATIC_STRING_EX(Gut1, Gut1Vasculature);
-    /**/DEFINE_STATIC_STRING_EX(Splanchnic, SplanchnicVasculature);
-    /**/DEFINE_STATIC_STRING_EX(SmallIntestine, SmallIntestineVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LargeIntestine, LargeIntestineVasculature);
-    DEFINE_STATIC_STRING_EX(LeftArm, LeftArmVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftArmArterioles, LeftArmArteriolesVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftArmBone, LeftArmBoneVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftArmFat, LeftArmFatVasculature);
-    /**/DEFINE_STATIC_STRING(LeftArmMicrovasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftArmMuscle, LeftArmMuscleVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftArmSkin, LeftArmSkinVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftArmVenules, LeftArmVenulesVasculature);
-    DEFINE_STATIC_STRING_EX(LeftLeg, LeftLegVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftLegArterioles, LeftLegArteriolesVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftLegBone, LeftLegBoneVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftLegFat, LeftLegFatVasculature);
-    /**/DEFINE_STATIC_STRING(LeftLegMicrovasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftLegMuscle, LeftLegMuscleVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftLegSkin, LeftLegSkinVasculature);
-    /**/DEFINE_STATIC_STRING_EX(LeftLegVenules, LeftLegVenulesVasculature);
-    DEFINE_STATIC_STRING_EX(Liver, LiverVasculature);
-    DEFINE_STATIC_STRING_EX(Muscle, MuscleVasculature);
-    DEFINE_STATIC_STRING_EX(RightArm, RightArmVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightArmArterioles, RightArmArteriolesVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightArmBone, RightArmBoneVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightArmFat, RightArmFatVasculature);
-    /**/DEFINE_STATIC_STRING(RightArmMicrovasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightArmMuscle, RightArmMuscleVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightArmSkin, RightArmSkinVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightArmVenules, RightArmVenulesVasculature);
-    DEFINE_STATIC_STRING_EX(RightLeg, RightLegVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightLegArterioles, RightLegArteriolesVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightLegBone, RightLegBoneVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightLegFat, RightLegFatVasculature);
-    /**/DEFINE_STATIC_STRING(RightLegMicrovasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightLegMuscle, RightLegMuscleVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightLegSkin, RightLegSkinVasculature);
-    /**/DEFINE_STATIC_STRING_EX(RightLegVenules, RightLegVenulesVasculature);
-    DEFINE_STATIC_STRING_EX(Skin, SkinVasculature);
-    DEFINE_STATIC_STRING_EX(Spleen, SpleenVasculature);
-    DEFINE_STATIC_STRING_EX(Torso, TorsoVasculature);
-    /**/DEFINE_STATIC_STRING_EX(TorsoArterioles, TorsoArteriolesVasculature);
-    /**/DEFINE_STATIC_STRING_EX(TorsoBone, TorsoBoneVasculature);
-    /**/DEFINE_STATIC_STRING_EX(TorsoFat, TorsoFatVasculature);
-    /**/DEFINE_STATIC_STRING(TorsoMicrovasculature);
-    /**/DEFINE_STATIC_STRING_EX(TorsoMuscle, TorsoMuscleVasculature);
-    /**/DEFINE_STATIC_STRING_EX(TorsoSkin, TorsoSkinVasculature);
-    /**/DEFINE_STATIC_STRING_EX(TorsoVenules, TorsoVenulesVasculature);
-    DEFINE_STATIC_STRING(Abdomen);
-    /**/DEFINE_STATIC_STRING(AbdominalCavity);
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalPulmonaryCapillaries);
 
-    DEFINE_STATIC_STRING(Ground);
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorPulmonaryCapillaries);
 
 
     static const std::vector<std::string>& GetValues()
@@ -1013,104 +1237,25 @@ namespace pulse
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(Aorta);
-        _values.push_back(ArterialBuffer);
-        _values.push_back(Abdomen);
-        _values.push_back(Heart);
-        _values.push_back(Myocardium);
-        _values.push_back(LeftHeart);
-        _values.push_back(RightHeart);
-        _values.push_back(Pericardium);
-        _values.push_back(VenaCava);
-        _values.push_back(VenousBuffer);
-        _values.push_back(PulmonaryArteries);
-        _values.push_back(PulmonaryCapillaries);
-        _values.push_back(PulmonaryVeins);
-        _values.push_back(Lungs);
-        _values.push_back(LeftLung);
-        _values.push_back(LeftPulmonaryArteries);
-        _values.push_back(LeftPulmonaryCapillaries);
-        _values.push_back(LeftPulmonaryVeins);
-        _values.push_back(RightLung);
-        _values.push_back(RightPulmonaryArteries);
-        _values.push_back(RightPulmonaryCapillaries);
-        _values.push_back(RightPulmonaryVeins);
-        _values.push_back(Kidneys);
-        _values.push_back(LeftKidney);
-        _values.push_back(LeftRenalArtery);
-        _values.push_back(LeftNephron);
-        _values.push_back(LeftAfferentArteriole);
-        _values.push_back(LeftGlomerularCapillaries);
-        _values.push_back(LeftEfferentArteriole);
-        _values.push_back(LeftPeritubularCapillaries);
-        _values.push_back(LeftBowmansCapsules);
-        _values.push_back(LeftTubules);
-        _values.push_back(LeftRenalVein);
-        _values.push_back(RightKidney);
-        _values.push_back(RightRenalArtery);
-        _values.push_back(RightNephron);
-        _values.push_back(RightAfferentArteriole);
-        _values.push_back(RightGlomerularCapillaries);
-        _values.push_back(RightEfferentArteriole);
-        _values.push_back(RightPeritubularCapillaries);
-        _values.push_back(RightBowmansCapsules);
-        _values.push_back(RightTubules);
-        _values.push_back(RightRenalVein);
-        _values.push_back(Bone);
-        _values.push_back(Head);
-        _values.push_back(Extracranial);
-        _values.push_back(Intracranial);
-        _values.push_back(Fat);
-        _values.push_back(Gut);
-        _values.push_back(Gut1);
-        _values.push_back(Splanchnic);
-        _values.push_back(SmallIntestine);
-        _values.push_back(LargeIntestine);
-        _values.push_back(Liver);
-        _values.push_back(Spleen);
-        _values.push_back(Skin);
-        _values.push_back(Muscle);
-        _values.push_back(LeftArm);
-        _values.push_back(LeftArmArterioles);
-        _values.push_back(LeftArmFat);
-        _values.push_back(LeftArmMuscle);
-        _values.push_back(LeftArmSkin);
-        _values.push_back(LeftArmBone);
-        _values.push_back(LeftArmMicrovasculature);
-        _values.push_back(LeftArmVenules);
-        _values.push_back(LeftLeg);
-        _values.push_back(LeftLegArterioles);
-        _values.push_back(LeftLegFat);
-        _values.push_back(LeftLegMuscle);
-        _values.push_back(LeftLegSkin);
-        _values.push_back(LeftLegBone);
-        _values.push_back(LeftLegMicrovasculature);
-        _values.push_back(LeftLegVenules);
-        _values.push_back(RightArm);
-        _values.push_back(RightArmArterioles);
-        _values.push_back(RightArmFat);
-        _values.push_back(RightArmMuscle);
-        _values.push_back(RightArmSkin);
-        _values.push_back(RightArmBone);
-        _values.push_back(RightArmMicrovasculature);
-        _values.push_back(RightArmVenules);
-        _values.push_back(RightLeg);
-        _values.push_back(RightLegArterioles);
-        _values.push_back(RightLegFat);
-        _values.push_back(RightLegMuscle);
-        _values.push_back(RightLegSkin);
-        _values.push_back(RightLegBone);
-        _values.push_back(RightLegMicrovasculature);
-        _values.push_back(RightLegVenules);
-        _values.push_back(Torso);
-        _values.push_back(TorsoArterioles);
-        _values.push_back(TorsoBone);
-        _values.push_back(TorsoFat);
-        _values.push_back(TorsoMicrovasculature);
-        _values.push_back(TorsoMuscle);
-        _values.push_back(TorsoSkin);
-        _values.push_back(TorsoVenules);
-        //_values.push_back(Ground);
+        _values.push_back(RightSuperiorLobeApicalPulmonaryCapillaries);
+        _values.push_back(RightSuperiorLobePosteriorPulmonaryCapillaries);
+        _values.push_back(RightSuperiorLobeAnteriorPulmonaryCapillaries);
+        _values.push_back(RightMiddleLobeLateralPulmonaryCapillaries);
+        _values.push_back(RightMiddleLobeMedialPulmonaryCapillaries);
+        _values.push_back(RightInferiorLobeSuperiorPulmonaryCapillaries);
+        _values.push_back(RightInferiorLobeMedialBasalPulmonaryCapillaries);
+        _values.push_back(RightInferiorLobeAnteriorBasalPulmonaryCapillaries);
+        _values.push_back(RightInferiorLobeLateralBasalPulmonaryCapillaries);
+        _values.push_back(RightInferiorLobePosteriorBasalPulmonaryCapillaries);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalPulmonaryCapillaries);
+        _values.push_back(LeftInferiorLobeLateralBasalPulmonaryCapillaries);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalPulmonaryCapillaries);
+        _values.push_back(LeftInferiorLobeSuperiorPulmonaryCapillaries);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaPulmonaryCapillaries);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries);
+        _values.push_back(LeftSuperiorLobeAnteriorPulmonaryCapillaries);
+        _values.push_back(LeftSuperiorLobeApicoposteriorPulmonaryCapillaries);
       }
       return _values;
     }
@@ -1130,24 +1275,273 @@ namespace pulse
     static std::vector<std::string> _values;
   };
 
-  class ExpandedVascularLink
+  class ExpandedLungsVascularLink
+  {
+  public:
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightSuperiorLobeApicalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightSuperiorLobePosteriorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightSuperiorLobeAnteriorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightMiddleLobeLateralPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightMiddleLobeMedialPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightInferiorLobeSuperiorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightInferiorLobeMedialBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightInferiorLobeAnteriorBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightInferiorLobeLateralBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(RightPulmonaryArteriesToRightInferiorLobePosteriorBasalPulmonaryCapillaries);
+
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftInferiorLobePosteriorBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftInferiorLobeLateralBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftInferiorLobeAnteromedialBasalPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftInferiorLobeSuperiorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftSuperiorLobeInferiorLingulaPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftSuperiorLobeAnteriorPulmonaryCapillaries);
+    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToLeftSuperiorLobeApicoposteriorPulmonaryCapillaries);
+
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalPulmonaryCapillariesToRightPulmonaryVeins);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalPulmonaryCapillariesToRightPulmonaryVeins);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalPulmonaryCapillariesToLeftPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalPulmonaryCapillariesToLeftPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalPulmonaryCapillariesToLeftPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorPulmonaryCapillariesToLeftPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorPulmonaryCapillariesToLeftPulmonaryVeins);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorPulmonaryCapillariesToLeftPulmonaryVeins);
+
+    DEFINE_STATIC_STRING(RightSuperiorLobeApicalShunt);
+    DEFINE_STATIC_STRING(RightSuperiorLobePosteriorShunt);
+    DEFINE_STATIC_STRING(RightSuperiorLobeAnteriorShunt);
+    DEFINE_STATIC_STRING(RightMiddleLobeLateralShunt);
+    DEFINE_STATIC_STRING(RightMiddleLobeMedialShunt);
+    DEFINE_STATIC_STRING(RightInferiorLobeSuperiorShunt);
+    DEFINE_STATIC_STRING(RightInferiorLobeMedialBasalShunt);
+    DEFINE_STATIC_STRING(RightInferiorLobeAnteriorBasalShunt);
+    DEFINE_STATIC_STRING(RightInferiorLobeLateralBasalShunt);
+    DEFINE_STATIC_STRING(RightInferiorLobePosteriorBasalShunt);
+
+    DEFINE_STATIC_STRING(LeftInferiorLobePosteriorBasalShunt);
+    DEFINE_STATIC_STRING(LeftInferiorLobeLateralBasalShunt);
+    DEFINE_STATIC_STRING(LeftInferiorLobeAnteromedialBasalShunt);
+    DEFINE_STATIC_STRING(LeftInferiorLobeSuperiorShunt);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeInferiorLingulaShunt);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeSuperiorLingulaShunt);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeAnteriorShunt);
+    DEFINE_STATIC_STRING(LeftSuperiorLobeApicoposteriorShunt);
+
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(RightPulmonaryArteriesToRightSuperiorLobeApicalPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightSuperiorLobePosteriorPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightSuperiorLobeAnteriorPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightMiddleLobeLateralPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightMiddleLobeMedialPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightInferiorLobeSuperiorPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightInferiorLobeMedialBasalPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightInferiorLobeAnteriorBasalPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightInferiorLobeLateralBasalPulmonaryCapillaries);
+        _values.push_back(RightPulmonaryArteriesToRightInferiorLobePosteriorBasalPulmonaryCapillaries);
+
+        _values.push_back(LeftPulmonaryArteriesToLeftInferiorLobePosteriorBasalPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToLeftInferiorLobeLateralBasalPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToLeftInferiorLobeAnteromedialBasalPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToLeftInferiorLobeSuperiorPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToLeftSuperiorLobeInferiorLingulaPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToLeftSuperiorLobeSuperiorLingulaPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToLeftSuperiorLobeAnteriorPulmonaryCapillaries);
+        _values.push_back(LeftPulmonaryArteriesToLeftSuperiorLobeApicoposteriorPulmonaryCapillaries);
+
+        _values.push_back(RightSuperiorLobeApicalPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightSuperiorLobePosteriorPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightSuperiorLobeAnteriorPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightMiddleLobeLateralPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightMiddleLobeMedialPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightInferiorLobeSuperiorPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightInferiorLobeMedialBasalPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightInferiorLobeAnteriorBasalPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightInferiorLobeLateralBasalPulmonaryCapillariesToRightPulmonaryVeins);
+        _values.push_back(RightInferiorLobePosteriorBasalPulmonaryCapillariesToRightPulmonaryVeins);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalPulmonaryCapillariesToLeftPulmonaryVeins);
+        _values.push_back(LeftInferiorLobeLateralBasalPulmonaryCapillariesToLeftPulmonaryVeins);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalPulmonaryCapillariesToLeftPulmonaryVeins);
+        _values.push_back(LeftInferiorLobeSuperiorPulmonaryCapillariesToLeftPulmonaryVeins);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaPulmonaryCapillariesToLeftPulmonaryVeins);
+        _values.push_back(LeftSuperiorLobeAnteriorPulmonaryCapillariesToLeftPulmonaryVeins);
+        _values.push_back(LeftSuperiorLobeApicoposteriorPulmonaryCapillariesToLeftPulmonaryVeins);
+
+        _values.push_back(RightSuperiorLobeApicalShunt);
+        _values.push_back(RightSuperiorLobePosteriorShunt);
+        _values.push_back(RightSuperiorLobeAnteriorShunt);
+        _values.push_back(RightMiddleLobeLateralShunt);
+        _values.push_back(RightMiddleLobeMedialShunt);
+        _values.push_back(RightInferiorLobeSuperiorShunt);
+        _values.push_back(RightInferiorLobeMedialBasalShunt);
+        _values.push_back(RightInferiorLobeAnteriorBasalShunt);
+        _values.push_back(RightInferiorLobeLateralBasalShunt);
+        _values.push_back(RightInferiorLobePosteriorBasalShunt);
+
+        _values.push_back(LeftInferiorLobePosteriorBasalShunt);
+        _values.push_back(LeftInferiorLobeLateralBasalShunt);
+        _values.push_back(LeftInferiorLobeAnteromedialBasalShunt);
+        _values.push_back(LeftInferiorLobeSuperiorShunt);
+        _values.push_back(LeftSuperiorLobeInferiorLingulaShunt);
+        _values.push_back(LeftSuperiorLobeSuperiorLingulaShunt);
+        _values.push_back(LeftSuperiorLobeAnteriorShunt);
+        _values.push_back(LeftSuperiorLobeApicoposteriorShunt);
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class ComputationalLifeVascularCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(ArterialBuffer);
+    DEFINE_STATIC_STRING(VenousBuffer);
+
+    DEFINE_STATIC_STRING_EX(Head, HeadVasculature);
+    /**/DEFINE_STATIC_STRING_EX(Extracranial, ExtracranialVasculature);
+    /**/DEFINE_STATIC_STRING_EX(Intracranial, IntracranialVasculature);
+
+    /**/DEFINE_STATIC_STRING_EX(Gut1, Gut1Vasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmArterioles, LeftArmArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmBone, LeftArmBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmFat, LeftArmFatVasculature);
+    /**/DEFINE_STATIC_STRING(LeftArmMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmMuscle, LeftArmMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmSkin, LeftArmSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftArmVenules, LeftArmVenulesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegArterioles, LeftLegArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegBone, LeftLegBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegFat, LeftLegFatVasculature);
+    /**/DEFINE_STATIC_STRING(LeftLegMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegMuscle, LeftLegMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegSkin, LeftLegSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(LeftLegVenules, LeftLegVenulesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmArterioles, RightArmArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmBone, RightArmBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmFat, RightArmFatVasculature);
+    /**/DEFINE_STATIC_STRING(RightArmMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmMuscle, RightArmMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmSkin, RightArmSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightArmVenules, RightArmVenulesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegArterioles, RightLegArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegBone, RightLegBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegFat, RightLegFatVasculature);
+    /**/DEFINE_STATIC_STRING(RightLegMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegMuscle, RightLegMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegSkin, RightLegSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(RightLegVenules, RightLegVenulesVasculature);
+    DEFINE_STATIC_STRING_EX(Torso, TorsoVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoArterioles, TorsoArteriolesVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoBone, TorsoBoneVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoFat, TorsoFatVasculature);
+    /**/DEFINE_STATIC_STRING(TorsoMicrovasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoMuscle, TorsoMuscleVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoSkin, TorsoSkinVasculature);
+    /**/DEFINE_STATIC_STRING_EX(TorsoVenules, TorsoVenulesVasculature);
+
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(ArterialBuffer);
+        _values.push_back(VenousBuffer);
+        _values.push_back(Head);
+        _values.push_back(Extracranial);
+        _values.push_back(Intracranial);
+        _values.push_back(Gut1);
+        _values.push_back(LeftArmArterioles);
+        _values.push_back(LeftArmFat);
+        _values.push_back(LeftArmMuscle);
+        _values.push_back(LeftArmSkin);
+        _values.push_back(LeftArmBone);
+        _values.push_back(LeftArmMicrovasculature);
+        _values.push_back(LeftArmVenules);
+        _values.push_back(LeftLegArterioles);
+        _values.push_back(LeftLegFat);
+        _values.push_back(LeftLegMuscle);
+        _values.push_back(LeftLegSkin);
+        _values.push_back(LeftLegBone);
+        _values.push_back(LeftLegMicrovasculature);
+        _values.push_back(LeftLegVenules);
+        _values.push_back(RightArmArterioles);
+        _values.push_back(RightArmFat);
+        _values.push_back(RightArmMuscle);
+        _values.push_back(RightArmSkin);
+        _values.push_back(RightArmBone);
+        _values.push_back(RightArmMicrovasculature);
+        _values.push_back(RightArmVenules);
+        _values.push_back(RightLegArterioles);
+        _values.push_back(RightLegFat);
+        _values.push_back(RightLegMuscle);
+        _values.push_back(RightLegSkin);
+        _values.push_back(RightLegBone);
+        _values.push_back(RightLegMicrovasculature);
+        _values.push_back(RightLegVenules);
+        _values.push_back(Torso);
+        _values.push_back(TorsoArterioles);
+        _values.push_back(TorsoBone);
+        _values.push_back(TorsoFat);
+        _values.push_back(TorsoMicrovasculature);
+        _values.push_back(TorsoMuscle);
+        _values.push_back(TorsoSkin);
+        _values.push_back(TorsoVenules);
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class ComputationalLifeVascularLink
   {
   public:
     // Heart and Lungs
-
     DEFINE_STATIC_STRING(VenousBufferToVenaCava);
-    DEFINE_STATIC_STRING(VenaCavaToRightHeart);
-    DEFINE_STATIC_STRING(RightHeartToLeftPulmonaryArteries);
-    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToCapillaries);
-    DEFINE_STATIC_STRING(LeftPulmonaryArteriesToVeins);
-    DEFINE_STATIC_STRING(LeftPulmonaryCapillariesToVeins);
-    DEFINE_STATIC_STRING(LeftPulmonaryVeinsToLeftHeart);
-    DEFINE_STATIC_STRING(RightHeartToRightPulmonaryArteries);
-    DEFINE_STATIC_STRING(RightPulmonaryArteriesToCapillaries);
-    DEFINE_STATIC_STRING(RightPulmonaryArteriesToVeins);
-    DEFINE_STATIC_STRING(RightPulmonaryCapillariesToVeins);
-    DEFINE_STATIC_STRING(RightPulmonaryVeinsToLeftHeart);
-    DEFINE_STATIC_STRING(LeftHeartToAorta);
     DEFINE_STATIC_STRING(AortaToArterialBuffer);
     // Head
     DEFINE_STATIC_STRING(AortaToIntracranial);
@@ -1169,9 +1563,6 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftArmSkinToLeftArmVenules);
     DEFINE_STATIC_STRING(LeftArmVenulesToVenaCava);
 
-    // Left Kidney
-    DEFINE_STATIC_STRING(AortaToLeftKidney);
-    DEFINE_STATIC_STRING(LeftKidneyToVenaCava);
     // Left Leg
     DEFINE_STATIC_STRING(AortaToLeftLegArterioles);
     DEFINE_STATIC_STRING(LeftLegArteriolesToLeftLegBone);
@@ -1186,26 +1577,10 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftLegMuscleToLeftLegVenules);
     DEFINE_STATIC_STRING(LeftLegSkinToLeftLegVenules);
     DEFINE_STATIC_STRING(LeftLegVenulesToVenaCava);
+
     // Gut
     DEFINE_STATIC_STRING(AortaToGut);
-    //// Large Intestine
-    DEFINE_STATIC_STRING(AortaToLargeIntestine);
-    DEFINE_STATIC_STRING(LargeIntestineToLiver);
-    //// Small Intestine
-    DEFINE_STATIC_STRING(AortaToSmallIntestine);
-    DEFINE_STATIC_STRING(SmallIntestineToLiver);
-    //// Splanchnic
-    DEFINE_STATIC_STRING(AortaToSplanchnic);
-    DEFINE_STATIC_STRING(SplanchnicToLiver);
-    //// Spleen
-    DEFINE_STATIC_STRING(AortaToSpleen);
-    DEFINE_STATIC_STRING(SpleenToLiver);
-    //// Liver
-    DEFINE_STATIC_STRING(AortaToLiver);
-    DEFINE_STATIC_STRING(LiverToVenaCava);
-    // Myocardium
-    DEFINE_STATIC_STRING(AortaToMyocardium);
-    DEFINE_STATIC_STRING(MyocardiumToVenaCava);
+
     // Right Arm
     DEFINE_STATIC_STRING(AortaToRightArmArterioles);
     DEFINE_STATIC_STRING(RightArmArteriolesToRightArmBone);
@@ -1221,9 +1596,6 @@ namespace pulse
     DEFINE_STATIC_STRING(RightArmSkinToRightArmVenules);
     DEFINE_STATIC_STRING(RightArmVenulesToVenaCava);
 
-    // Right Kidney
-    DEFINE_STATIC_STRING(AortaToRightKidney);
-    DEFINE_STATIC_STRING(RightKidneyToVenaCava);
     // Right Leg
     DEFINE_STATIC_STRING(AortaToRightLegArterioles);
     DEFINE_STATIC_STRING(RightLegArteriolesToRightLegBone);
@@ -1253,8 +1625,6 @@ namespace pulse
     DEFINE_STATIC_STRING(TorsoFatToTorsoVenules);
     DEFINE_STATIC_STRING(TorsoBoneToTorsoVenules);
     DEFINE_STATIC_STRING(TorsoVenulesToVenaCava);
-    // Hemorrhage and IV
-    DEFINE_STATIC_STRING(VenaCavaIV);
 
     // Vascular To Tissue Links
     DEFINE_STATIC_STRING(TorsoBoneVascularToTissue);
@@ -1289,92 +1659,40 @@ namespace pulse
     DEFINE_STATIC_STRING(RightLegSkinVascularToTissue);
     DEFINE_STATIC_STRING(SpleenVascularToTissue);
 
-    // Renal Links
-    // Reusing 'AortaToLeftKidney' to connect the Aorta To Left Renal Artery
-    DEFINE_STATIC_STRING(LeftRenalArteryToAfferentArteriole);
-    DEFINE_STATIC_STRING(LeftAfferentArterioleToGlomerularCapillaries);
-    DEFINE_STATIC_STRING(LeftGlomerularCapillariesToEfferentArteriole);
-    DEFINE_STATIC_STRING(LeftGlomerularCapillariesToBowmansCapsules);
-    DEFINE_STATIC_STRING(LeftBowmansCapsulesToTubules);
-    DEFINE_STATIC_STRING(LeftTubulesToPeritubularCapillaries);
-    DEFINE_STATIC_STRING(LeftEfferentArterioleToPeritubularCapillaries);
-    DEFINE_STATIC_STRING(LeftPeritubularCapillariesToRenalVein);
-    // Reusing 'LeftKidneyToVenaCava' to connect the Left Renal Vein To Vena Cava
-
-    // Reusing 'AortaToRightKidney' to connect the Aorta To Right Renal Artery
-    DEFINE_STATIC_STRING(RightRenalArteryToAfferentArteriole);
-    DEFINE_STATIC_STRING(RightAfferentArterioleToGlomerularCapillaries);
-    DEFINE_STATIC_STRING(RightGlomerularCapillariesToEfferentArteriole);
-    DEFINE_STATIC_STRING(RightGlomerularCapillariesToBowmansCapsules);
-    DEFINE_STATIC_STRING(RightBowmansCapsulesToTubules);
-    DEFINE_STATIC_STRING(RightTubulesToPeritubularCapillaries);
-    DEFINE_STATIC_STRING(RightEfferentArterioleToPeritubularCapillaries);
-    DEFINE_STATIC_STRING(RightPeritubularCapillariesToRenalVein);
-    // Reusing 'RightKidneyToVenaCava' to connect the Right Renal Vein To Vena Cava);   
-
-
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(VenaCavaToRightHeart);
-        _values.push_back(RightHeartToLeftPulmonaryArteries);
-        _values.push_back(LeftPulmonaryArteriesToCapillaries);
-        _values.push_back(LeftPulmonaryArteriesToVeins);
-        _values.push_back(LeftPulmonaryCapillariesToVeins);
-        _values.push_back(LeftPulmonaryVeinsToLeftHeart);
-        _values.push_back(RightHeartToRightPulmonaryArteries);
-        _values.push_back(RightPulmonaryArteriesToCapillaries);
-        _values.push_back(RightPulmonaryArteriesToVeins);
-        _values.push_back(RightPulmonaryCapillariesToVeins);
-        _values.push_back(RightPulmonaryVeinsToLeftHeart);
-        _values.push_back(LeftHeartToAorta);
         _values.push_back(AortaToIntracranial);
         _values.push_back(IntracranialToVenaCava);
         _values.push_back(AortaToExtracranial);
         _values.push_back(ExtracranialToVenaCava);
-        _values.push_back(AortaToLargeIntestine);
-        _values.push_back(LargeIntestineToLiver);
+
         _values.push_back(LeftArmArteriolesToLeftArmBone);
         _values.push_back(LeftArmArteriolesToLeftArmFat);
         _values.push_back(LeftArmArteriolesToLeftArmMicrovasculature);
         _values.push_back(LeftArmArteriolesToLeftArmMuscle);
         _values.push_back(LeftArmArteriolesToLeftArmSkin);
 
-        _values.push_back(AortaToLeftKidney);
-        _values.push_back(LeftKidneyToVenaCava);
         _values.push_back(LeftLegArteriolesToLeftLegBone);
         _values.push_back(LeftLegArteriolesToLeftLegFat);
         _values.push_back(LeftLegArteriolesToLeftLegMicrovasculature);
         _values.push_back(LeftLegArteriolesToLeftLegMuscle);
         _values.push_back(LeftLegArteriolesToLeftLegSkin);
-        _values.push_back(AortaToLiver);
-        _values.push_back(LiverToVenaCava);
-        _values.push_back(AortaToMyocardium);
-        _values.push_back(MyocardiumToVenaCava);
+
         _values.push_back(RightArmArteriolesToRightArmBone);
         _values.push_back(RightArmArteriolesToRightArmFat);
         _values.push_back(RightArmArteriolesToRightArmMicrovasculature);
         _values.push_back(RightArmArteriolesToRightArmMuscle);
         _values.push_back(RightArmArteriolesToRightArmSkin);
 
-        _values.push_back(AortaToRightKidney);
-        _values.push_back(RightKidneyToVenaCava);
         _values.push_back(RightLegArteriolesToRightLegBone);
         _values.push_back(RightLegArteriolesToRightLegFat);
         _values.push_back(RightLegArteriolesToRightLegMicrovasculature);
         _values.push_back(RightLegArteriolesToRightLegMuscle);
         _values.push_back(RightLegArteriolesToRightLegSkin);
 
-
-
-        _values.push_back(AortaToSmallIntestine);
-        _values.push_back(SmallIntestineToLiver);
-        _values.push_back(AortaToSplanchnic);
-        _values.push_back(SplanchnicToLiver);
-        _values.push_back(AortaToSpleen);
-        _values.push_back(SpleenToLiver);
         _values.push_back(AortaToTorsoArterioles);
         _values.push_back(TorsoArteriolesToTorsoBone);
         _values.push_back(TorsoArteriolesToTorsoFat);
@@ -1441,23 +1759,6 @@ namespace pulse
         _values.push_back(RightArmSkinVascularToTissue);
         _values.push_back(RightLegSkinVascularToTissue);
         _values.push_back(SpleenVascularToTissue);
-
-        _values.push_back(LeftRenalArteryToAfferentArteriole);
-        _values.push_back(LeftAfferentArterioleToGlomerularCapillaries);
-        _values.push_back(LeftGlomerularCapillariesToEfferentArteriole);
-        _values.push_back(LeftGlomerularCapillariesToBowmansCapsules);
-        _values.push_back(LeftBowmansCapsulesToTubules);
-        _values.push_back(LeftTubulesToPeritubularCapillaries);
-        _values.push_back(LeftEfferentArterioleToPeritubularCapillaries);
-        _values.push_back(LeftPeritubularCapillariesToRenalVein);
-        _values.push_back(RightRenalArteryToAfferentArteriole);
-        _values.push_back(RightAfferentArterioleToGlomerularCapillaries);
-        _values.push_back(RightGlomerularCapillariesToEfferentArteriole);
-        _values.push_back(RightGlomerularCapillariesToBowmansCapsules);
-        _values.push_back(RightBowmansCapsulesToTubules);
-        _values.push_back(RightTubulesToPeritubularCapillaries);
-        _values.push_back(RightEfferentArterioleToPeritubularCapillaries);
-        _values.push_back(RightPeritubularCapillariesToRenalVein);
       }
       return _values;
     }
@@ -1476,7 +1777,6 @@ namespace pulse
   protected:
     static std::vector<std::string> _values;
   };
-
 
   class UrineCompartment
   {

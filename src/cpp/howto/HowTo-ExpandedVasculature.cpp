@@ -18,7 +18,7 @@ void HowToExpandedVasculature()
   pc.SetPatientFile("./patients/StandardMale.json");
 
   PulseConfiguration config;
-  config.UseExpandedVasculature(eSwitch::On);
+  config.UseComputationalLifeExpansion(eSwitch::On);
 
   pe->SetConfigurationOverride(&config);
   pe->InitializeEngine(pc);

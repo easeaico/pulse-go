@@ -59,13 +59,13 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_StandardOxygenDiffusionCoefficient = nullptr;
 
   // Cardiovascular
+  m_UseComputationalLifeExpansion = eSwitch::NullSwitch;
   m_LeftHeartElastanceMaximum = nullptr;
   m_LeftHeartElastanceMinimum = nullptr;
   m_MinimumBloodVolumeFraction = nullptr;
   m_RightHeartElastanceMaximum = nullptr;
   m_RightHeartElastanceMinimum = nullptr;
   m_StandardPulmonaryCapillaryCoverage = nullptr;
-  m_UseExpandedVasculature = eSwitch::NullSwitch;
   m_TuneCardiovascularCircuit = eSwitch::On;
   m_CardiovascularTuningFile = "";
 
@@ -145,7 +145,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_VenousComplianceDistributedTimeDelay = nullptr;
 
   // Renal
-  m_RenalEnabled = eSwitch::On;
+  m_UseExpandedKidneys = eSwitch::On;
   m_PlasmaSodiumConcentrationSetPoint = nullptr;
   m_PeritubularPotassiumConcentrationSetPoint = nullptr;
   m_LeftGlomerularFluidPermeabilityBaseline = nullptr;
@@ -162,6 +162,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   
 
   // Respiratory
+  m_UseExpandedLungs = eSwitch::NullSwitch;
   m_CentralControllerCO2PressureSetPoint = nullptr;
   m_CentralVentilatoryControllerGain = nullptr;
   m_MinimumAllowableInpiratoryAndExpiratoryPeriod = nullptr;
@@ -171,7 +172,6 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_PulmonaryVentilationRateMaximum = nullptr;
   m_VentilationTidalVolumeIntercept = nullptr;
   m_VentilatoryOcclusionPressure = nullptr;
-  m_UseExpandedRespiratory = eSwitch::NullSwitch;
 
   // Tissue
   m_TissueEnabled = eSwitch::On;
@@ -180,7 +180,6 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
 PulseConfiguration::~PulseConfiguration()
 {
   SAFE_DELETE(m_TimeStep);
-  m_AllowDynamicTimeStep = eSwitch::Off;
   m_Overrides.clear();
   m_Modifiers.clear();
 
@@ -197,9 +196,6 @@ PulseConfiguration::~PulseConfiguration()
   SAFE_DELETE(m_RightHeartElastanceMaximum);
   SAFE_DELETE(m_RightHeartElastanceMinimum);
   SAFE_DELETE(m_StandardPulmonaryCapillaryCoverage);
-  m_UseExpandedVasculature = eSwitch::NullSwitch;
-  m_TuneCardiovascularCircuit = eSwitch::On;
-  m_CardiovascularTuningFile = "";
 
   // Circuit
   SAFE_DELETE(m_CardiovascularOpenResistance);
@@ -297,7 +293,6 @@ PulseConfiguration::~PulseConfiguration()
   SAFE_DELETE(m_PulmonaryVentilationRateMaximum);
   SAFE_DELETE(m_VentilationTidalVolumeIntercept);
   SAFE_DELETE(m_VentilatoryOcclusionPressure);
-  m_UseExpandedRespiratory = eSwitch::NullSwitch;
 
   //Tissue
 }
@@ -317,13 +312,13 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_StandardOxygenDiffusionCoefficient);
 
   // Cardiovascular
+  m_UseComputationalLifeExpansion = eSwitch::NullSwitch;
   INVALIDATE_PROPERTY(m_LeftHeartElastanceMaximum);
   INVALIDATE_PROPERTY(m_LeftHeartElastanceMinimum);
   INVALIDATE_PROPERTY(m_MinimumBloodVolumeFraction);
   INVALIDATE_PROPERTY(m_RightHeartElastanceMaximum);
   INVALIDATE_PROPERTY(m_RightHeartElastanceMinimum);
   INVALIDATE_PROPERTY(m_StandardPulmonaryCapillaryCoverage);
-  m_UseExpandedVasculature = eSwitch::NullSwitch;
   m_TuneCardiovascularCircuit = eSwitch::On;
   m_CardiovascularTuningFile = "";
 
@@ -406,7 +401,7 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_VenousComplianceDistributedTimeDelay);
 
   // Renal
-  m_RenalEnabled = eSwitch::On;
+  m_UseExpandedKidneys = eSwitch::On;
   INVALIDATE_PROPERTY(m_PlasmaSodiumConcentrationSetPoint);
   INVALIDATE_PROPERTY(m_PeritubularPotassiumConcentrationSetPoint);
   INVALIDATE_PROPERTY(m_LeftGlomerularFluidPermeabilityBaseline);
@@ -422,6 +417,7 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_TargetSodiumDelivery);
 
   // Respiratory
+  m_UseExpandedLungs = eSwitch::NullSwitch;
   INVALIDATE_PROPERTY(m_CentralControllerCO2PressureSetPoint);
   INVALIDATE_PROPERTY(m_CentralVentilatoryControllerGain);
   INVALIDATE_PROPERTY(m_MinimumAllowableInpiratoryAndExpiratoryPeriod);
@@ -431,7 +427,6 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_PulmonaryVentilationRateMaximum);
   INVALIDATE_PROPERTY(m_VentilationTidalVolumeIntercept);
   INVALIDATE_PROPERTY(m_VentilatoryOcclusionPressure);
-  m_UseExpandedRespiratory = eSwitch::NullSwitch;
 
   //Tissue
   m_TissueEnabled = eSwitch::On;
@@ -491,15 +486,16 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetStandardOxygenDiffusionCoefficient().SetValue(0.00000000246, AreaPerTimePressureUnit::cm2_Per_min_mmHg);
 
   // Cardiovascular
+  m_UseComputationalLifeExpansion = eSwitch::Off;
   GetLeftHeartElastanceMaximum().SetValue(2.49, PressurePerVolumeUnit::mmHg_Per_mL);
   GetLeftHeartElastanceMinimum().SetValue(0.049, PressurePerVolumeUnit::mmHg_Per_mL);
   GetMinimumBloodVolumeFraction().SetValue(0.65); // \cite Guyton 11th ed p.279
   GetRightHeartElastanceMaximum().SetValue(0.523, PressurePerVolumeUnit::mmHg_Per_mL);
   GetRightHeartElastanceMinimum().SetValue(0.0243, PressurePerVolumeUnit::mmHg_Per_mL);
   GetStandardPulmonaryCapillaryCoverage().SetValue(0.70);
-  UseExpandedVasculature(eSwitch::Off);// Call the function to set defaults
   m_TuneCardiovascularCircuit = eSwitch::On;
   m_CardiovascularTuningFile = "";
+  InitializeCardiovascularModifiers();
 
   // Circuits
   GetCardiovascularOpenResistance().SetValue(100.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -598,7 +594,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetVenousComplianceDistributedTimeDelay().SetValue(60.0, TimeUnit::s);
 
   // Renal
-  m_RenalEnabled = eSwitch::On;
+  m_UseExpandedKidneys = eSwitch::On;
   GetPlasmaSodiumConcentrationSetPoint().SetValue(3.23, MassPerVolumeUnit::mg_Per_mL);
   GetPeritubularPotassiumConcentrationSetPoint().SetValue(0.0185, MassPerVolumeUnit::g_Per_dL);
   GetLeftGlomerularFluidPermeabilityBaseline().SetValue(3.67647, VolumePerTimePressureAreaUnit::mL_Per_min_mmHg_m2);
@@ -615,6 +611,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetTargetSodiumDelivery().SetValue(0.201, MassPerTimeUnit::g_Per_min);
 
   // Respiratory
+  m_UseExpandedLungs = eSwitch::Off;
   GetCentralControllerCO2PressureSetPoint().SetValue(35.5, PressureUnit::mmHg);
   GetCentralVentilatoryControllerGain().SetValue(1.44); //How much to add to the amplitude when the CO2 is off
   GetMinimumAllowableInpiratoryAndExpiratoryPeriod().SetValue(0.25, TimeUnit::s);
@@ -624,7 +621,6 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetPulmonaryVentilationRateMaximum().SetValue(150.0, VolumePerTimeUnit::L_Per_min);
   GetVentilationTidalVolumeIntercept().SetValue(0.3, VolumeUnit::L);
   GetVentilatoryOcclusionPressure().SetValue(0.75, PressureUnit::cmH2O); //This increases the absolute max driver pressure
-  UseExpandedRespiratory(eSwitch::Off);
 
   // Tissue
   m_TissueEnabled = eSwitch::On;
@@ -727,6 +723,88 @@ SEScalarProperties& PulseConfiguration::GetModifiers()
 const SEScalarProperties& PulseConfiguration::GetModifiers() const
 {
   return m_Modifiers;
+}
+void PulseConfiguration::InitializeCardiovascularModifiers()
+{
+  m_Modifiers.clear();
+  // Circuit Modifiers
+  if (m_UseComputationalLifeExpansion == eSwitch::On)
+  {
+    // Circuit Modifiers
+    m_Modifiers[pulse::CardiovascularPath::Aorta3ToAorta1] = SEScalarPair(1.2902894293208438);// 1.12
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftArm1ToLeftArmBone1] = SEScalarPair(1.0923362183174377);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftArm1ToLeftArmFat1] = SEScalarPair(1.0923362183174377);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftArm1ToLeftArmMicrovasculature1] = SEScalarPair(1.0923362183174377);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftArm1ToLeftArmMuscle1] = SEScalarPair(1.0923362183174377);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftArm1ToLeftArmSkin1] = SEScalarPair(1.0923362183174377);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightArm1ToRightArmFat1] = SEScalarPair(1.0923362199627225);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightArm1ToRightArmMuscle1] = SEScalarPair(1.0923362199627225);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightArm1ToRightArmSkin1] = SEScalarPair(1.0923362199627225);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightArm1ToRightArmBone1] = SEScalarPair(1.0923362199627225);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightArm1ToRightArmMicrovasculature1] = SEScalarPair(1.0923362199627225);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Extracranial1ToExtracranial2] = SEScalarPair(0.99455963021629035);// 1.0
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Intracranial1ToIntracranial2] = SEScalarPair(0.99455963021629035);// 1.0
+    m_Modifiers[pulse::CardiovascularPath::VenaCava1ToRightHeart2] = SEScalarPair(0.009);
+    m_Modifiers[pulse::CardiovascularPath::LeftKidney1ToLeftKidney2] = SEScalarPair(1.5);
+    m_Modifiers[pulse::CardiovascularPath::RightKidney1ToRightKidney2] = SEScalarPair(1.5);
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Gut1ToLargeIntestine1] = SEScalarPair(0.98471147698642625);// 1.05
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftLeg1ToLeftLegBone1] = SEScalarPair(1.055513327833395);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftLeg1ToLeftLegFat1] = SEScalarPair(1.055513327833395);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftLeg1ToLeftLegMicrovasculature1] = SEScalarPair(1.055513327833395);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftLeg1ToLeftLegMuscle1] = SEScalarPair(1.055513327833395);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::LeftLeg1ToLeftLegSkin1] = SEScalarPair(1.055513327833395);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightLeg1ToRightLegBone1] = SEScalarPair(1.0555133289980438);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightLeg1ToRightLegFat1] = SEScalarPair(1.0555133289980438);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightLeg1ToRightLegMicrovasculature1] = SEScalarPair(1.0555133289980438);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightLeg1ToRightLegMuscle1] = SEScalarPair(1.0555133289980438);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::RightLeg1ToRightLegSkin1] = SEScalarPair(1.0555133289980438);// 1.1
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Gut1ToLiver1] = SEScalarPair(1.5008836959051552);// 1.1
+    m_Modifiers[pulse::CardiovascularPath::Myocardium1ToMyocardium2] = SEScalarPair(0.9623041322717929);// 0.95
+    m_Modifiers[pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1] = SEScalarPair(0.79184301394230017);// 1.0
+    m_Modifiers[pulse::CardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1] = SEScalarPair(1.0917195273914668);// 1.0
+    m_Modifiers[pulse::CardiovascularPath::RightIntermediatePulmonaryArteries1ToRightPulmonaryArteries1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::LeftIntermediatePulmonaryArteries1ToLeftPulmonaryArteries1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1] = SEScalarPair(0.84990272641328168);// 1.0
+    m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1] = SEScalarPair(1.0802879539709094);// 1.0
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Gut1ToSmallIntestine1] = SEScalarPair(0.97271586393584319);// 1.14
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Gut1ToSplanchnic1] = SEScalarPair(0.98750749786051784);// 0.95
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Gut1ToSpleen1] = SEScalarPair(0.96800874795093717);// 0.95
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Torso1ToTorsoBone1] = SEScalarPair(1.0265141845356056);// 1.02
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Torso1ToTorsoFat1] = SEScalarPair(1.0154101337135821);// 1.02
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Torso1ToTorsoMuscle1] = SEScalarPair(1.0968290345983671);// 1.15
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::TorsoMuscle1ToTorso2] = SEScalarPair(0.81318313089396543);// 1.0
+    m_Modifiers[pulse::ComputationalLifeCardiovascularPath::Torso1ToTorsoSkin1] = SEScalarPair(0.99621251983966808);// 1.0
+    m_Modifiers[pulse::CardiovascularPath::VenaCava1ToGround] = SEScalarPair(0.9);
+  }
+  else
+  {
+    m_Modifiers[pulse::CardiovascularPath::Aorta3ToAorta1] = SEScalarPair(1.12);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftArm1] = SEScalarPair(1.15);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightArm1] = SEScalarPair(1.15);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToBone1] = SEScalarPair(1.02);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToBrain1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToFat1] = SEScalarPair(1.02);
+    m_Modifiers[pulse::CardiovascularPath::VenaCava1ToRightHeart2] = SEScalarPair(0.009);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftKidney1] = SEScalarPair(1.5);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightKidney1] = SEScalarPair(1.5);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLargeIntestine1] = SEScalarPair(1.05);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftLeg1] = SEScalarPair(1.1);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightLeg1] = SEScalarPair(1.1);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLiver1] = SEScalarPair(1.1);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToMuscle1] = SEScalarPair(1.15);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToMyocardium1] = SEScalarPair(0.95);
+    m_Modifiers[pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::RightIntermediatePulmonaryArteries1ToRightPulmonaryArteries1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::LeftIntermediatePulmonaryArteries1ToLeftPulmonaryArteries1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSkin1] = SEScalarPair(1.0);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSmallIntestine1] = SEScalarPair(1.14);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSplanchnic1] = SEScalarPair(0.95);
+    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSpleen1] = SEScalarPair(0.95);
+    m_Modifiers[pulse::CardiovascularPath::VenaCava1ToGround] = SEScalarPair(0.9);
+  }
 }
 
 //////////////////////
@@ -838,89 +916,12 @@ double PulseConfiguration::GetLeftHeartElastanceMinimum(const PressurePerVolumeU
   return m_LeftHeartElastanceMinimum->GetValue(unit);
 }
 
-void PulseConfiguration::UseExpandedVasculature(eSwitch s)
+void PulseConfiguration::UseComputationalLifeExpansion(eSwitch s)
 {
   if (s == eSwitch::NullSwitch)
     return;
-  m_UseExpandedVasculature = s;
-  // Circuit Modifiers
-  if (m_UseExpandedVasculature == eSwitch::On)
-  {
-    // Circuit Modifiers
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Aorta3ToAorta1] =                                               SEScalarPair(1.2902894293208438);// 1.12
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmBone1] =                                       SEScalarPair(1.0923362183174377);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmFat1] =                                        SEScalarPair(1.0923362183174377);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMicrovasculature1] =                           SEScalarPair(1.0923362183174377);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmMuscle1] =                                     SEScalarPair(1.0923362183174377);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftArm1ToLeftArmSkin1] =                                       SEScalarPair(1.0923362183174377);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightArm1ToRightArmFat1] =                                      SEScalarPair(1.0923362199627225);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMuscle1] =                                   SEScalarPair(1.0923362199627225);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightArm1ToRightArmSkin1] =                                     SEScalarPair(1.0923362199627225);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightArm1ToRightArmBone1] =                                     SEScalarPair(1.0923362199627225);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightArm1ToRightArmMicrovasculature1] =                         SEScalarPair(1.0923362199627225);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Extracranial1ToExtracranial2] =                                 SEScalarPair(0.99455963021629035);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Intracranial1ToIntracranial2] =                                 SEScalarPair(0.99455963021629035);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::VenaCava1ToRightHeart2] =                                       SEScalarPair(0.009);
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftKidney1ToLeftKidney2] =                                     SEScalarPair(1.5);
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightKidney1ToRightKidney2] =                                   SEScalarPair(1.5);
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Gut1ToLargeIntestine1] =                                        SEScalarPair(0.98471147698642625);// 1.05
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegBone1] =                                       SEScalarPair(1.055513327833395);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegFat1] =                                        SEScalarPair(1.055513327833395);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMicrovasculature1] =                           SEScalarPair(1.055513327833395);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegMuscle1] =                                     SEScalarPair(1.055513327833395);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftLeg1ToLeftLegSkin1] =                                       SEScalarPair(1.055513327833395);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegBone1] =                                     SEScalarPair(1.0555133289980438);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegFat1] =                                      SEScalarPair(1.0555133289980438);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMicrovasculature1] =                         SEScalarPair(1.0555133289980438);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegMuscle1] =                                   SEScalarPair(1.0555133289980438);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightLeg1ToRightLegSkin1] =                                     SEScalarPair(1.0555133289980438);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Gut1ToLiver1] =                                                 SEScalarPair(1.5008836959051552);// 1.1
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Myocardium1ToMyocardium2] =                                     SEScalarPair(0.9623041322717929);// 0.95
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1] =          SEScalarPair(0.79184301394230017);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1] =             SEScalarPair(1.0917195273914668);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::RightIntermediatePulmonaryArteries1ToRightPulmonaryArteries1] = SEScalarPair(1.0);
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftIntermediatePulmonaryArteries1ToLeftPulmonaryArteries1] =   SEScalarPair(1.0);
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1] =            SEScalarPair(0.84990272641328168);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1] =               SEScalarPair(1.0802879539709094);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Gut1ToSmallIntestine1] =                                        SEScalarPair(0.97271586393584319);// 1.14
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Gut1ToSplanchnic1] =                                            SEScalarPair(0.98750749786051784);// 0.95
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Gut1ToSpleen1] =                                                SEScalarPair(0.96800874795093717);// 0.95
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Torso1ToTorsoBone1] =                                           SEScalarPair(1.0265141845356056);// 1.02
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Torso1ToTorsoFat1] =                                            SEScalarPair(1.0154101337135821);// 1.02
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Torso1ToTorsoMuscle1] =                                         SEScalarPair(1.0968290345983671);// 1.15
-    m_Modifiers[pulse::ExpandedCardiovascularPath::TorsoMuscle1ToTorso2] =                                         SEScalarPair(0.81318313089396543);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::Torso1ToTorsoSkin1] =                                           SEScalarPair(0.99621251983966808);// 1.0
-    m_Modifiers[pulse::ExpandedCardiovascularPath::VenaCava1ToGround] =                                            SEScalarPair(0.9);
-  }
-  else
-  {
-    m_Modifiers[pulse::CardiovascularPath::Aorta3ToAorta1] =                                                       SEScalarPair(1.12);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftArm1] =                                                     SEScalarPair(1.15);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightArm1] =                                                    SEScalarPair(1.15);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToBone1] =                                                        SEScalarPair(1.02);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToBrain1] =                                                       SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToFat1] =                                                         SEScalarPair(1.02);
-    m_Modifiers[pulse::CardiovascularPath::VenaCava1ToRightHeart2] =                                               SEScalarPair(0.009);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftKidney1] =                                                  SEScalarPair(1.5);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightKidney1] =                                                 SEScalarPair(1.5);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLargeIntestine1] =                                              SEScalarPair(1.05);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftLeg1] =                                                     SEScalarPair(1.1);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightLeg1] =                                                    SEScalarPair(1.1);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToLiver1] =                                                       SEScalarPair(1.1);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToMuscle1] =                                                      SEScalarPair(1.15);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToMyocardium1] =                                                  SEScalarPair(0.95);
-    m_Modifiers[pulse::CardiovascularPath::RightPulmonaryArteries1ToRightPulmonaryCapillaries1] =                  SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::RightPulmonaryCapillaries1ToRightPulmonaryVeins1] =                     SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::RightIntermediatePulmonaryArteries1ToRightPulmonaryArteries1] =         SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::LeftIntermediatePulmonaryArteries1ToLeftPulmonaryArteries1] =           SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryArteries1ToLeftPulmonaryCapillaries1] =                    SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryCapillaries1ToLeftPulmonaryVeins1] =                       SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSkin1] =                                                        SEScalarPair(1.0);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSmallIntestine1] =                                              SEScalarPair(1.14);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSplanchnic1] =                                                  SEScalarPair(0.95);
-    m_Modifiers[pulse::CardiovascularPath::Aorta1ToSpleen1] =                                                      SEScalarPair(0.95);
-    m_Modifiers[pulse::CardiovascularPath::VenaCava1ToGround] =                                                    SEScalarPair(0.9);
-  }
+  m_UseComputationalLifeExpansion = s;
+  InitializeCardiovascularModifiers();
 }
 
 bool PulseConfiguration::HasMinimumBloodVolumeFraction() const
@@ -1952,6 +1953,13 @@ double PulseConfiguration::GetVenousComplianceDistributedTimeDelay(const TimeUni
 /** Renal */
 ////////////
 
+void PulseConfiguration::UseExpandedKidneys(eSwitch s)
+{
+  if (s == eSwitch::NullSwitch)
+    return;
+  m_UseExpandedKidneys = s;
+}
+
 bool PulseConfiguration::HasPlasmaSodiumConcentrationSetPoint() const
 {
   return m_PlasmaSodiumConcentrationSetPoint == nullptr ? false : m_PlasmaSodiumConcentrationSetPoint->IsValid();
@@ -2170,6 +2178,14 @@ SEScalarMassPerTime& PulseConfiguration::GetTargetSodiumDelivery()
 //////////////////
 /** Respiratory */
 //////////////////
+
+void PulseConfiguration::UseExpandedLungs(eSwitch s)
+{
+  if (s == eSwitch::NullSwitch)
+    return;
+  m_UseExpandedLungs = s;
+}
+
 bool PulseConfiguration::HasCentralControllerCO2PressureSetPoint() const
 {
   return m_CentralControllerCO2PressureSetPoint == nullptr ? false : m_CentralControllerCO2PressureSetPoint->IsValid();
@@ -2323,9 +2339,3 @@ double PulseConfiguration::GetVentilationTidalVolumeIntercept(const VolumeUnit& 
   return m_VentilationTidalVolumeIntercept->GetValue(unit);
 }
 
-void PulseConfiguration::UseExpandedRespiratory(eSwitch s)
-{
-  if (s == eSwitch::NullSwitch)
-    return;
-  m_UseExpandedRespiratory = s;
-}

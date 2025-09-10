@@ -18,6 +18,7 @@ namespace pulse { namespace human_adult_whole_body
   {
     try
     {
+      Info("Writing artifacts to: " + sOutputDirectory);
       //If you find the test name, run it
       if (testMap.find(testName) != testMap.end())
       {
@@ -57,29 +58,22 @@ namespace pulse { namespace human_adult_whole_body
 
   void EngineTest::FillFunctionMap()
   {
-    //A few functions have overloads, so we have to use the pointer clarify which one we want
-    testFunction cardioCTTest = &EngineTest::CardiovascularCircuitAndTransportTest;
-    testFunction cardioBGTest = &EngineTest::CardiovascularBloodGasesTest;
-    testFunction cardioTuneCircuitTest = &EngineTest::TuneCardiovascularCircuitTest;
-    testFunction respCTTest = &EngineTest::RespiratoryCircuitAndTransportTest;
-    testFunction anesthCTTest = &EngineTest::AnesthesiaMachineCircuitAndTransportTest;
-    testFunction ventCTTest = &EngineTest::MechanicalVentilatorCircuitAndTransportTest;
-    testFunction setupPatientTest = &EngineTest::SetupPatientTest;
-
-
     testMap.insert(std::make_pair("ReadScenarios", &EngineTest::ReadScenarios));
     testMap.insert(std::make_pair("ReuseEngine", &EngineTest::ReuseEngine));
     testMap.insert(std::make_pair("SerializationTest", &EngineTest::SerializationTest));
-    testMap.insert(std::make_pair("SetupPatientTest", setupPatientTest));
+    testMap.insert(std::make_pair("SetupPatientTest", &EngineTest::SetupPatientTest));
 
     //Fill a map that ties unit test names to their actual functions
-    testMap.insert(std::make_pair("CardiovascularCircuitAndTransportTest", cardioCTTest));
+    testMap.insert(std::make_pair("CardiovascularCircuitAndTransportTest", (testFunction) &EngineTest::CardiovascularCircuitAndTransportTest));
     testMap.insert(std::make_pair("CardiovascularAndRenalCircuitAndTransportTest", &EngineTest::CardiovascularAndRenalCircuitAndTransportTest));
     testMap.insert(std::make_pair("CardiovascularAndTissueCircuitAndTransportTest", &EngineTest::CardiovascularAndTissueCircuitAndTransportTest));
     testMap.insert(std::make_pair("CardiovascularAndCerebrospinalFluidCircuitAndTransportTest", &EngineTest::CardiovascularAndCerebrospinalFluidCircuitAndTransportTest));
+    testMap.insert(std::make_pair("ExpandedLungsCardiovascularCircuitAndTransportTest", &EngineTest::ExpandedLungsCardiovascularCircuitAndTransportTest));
     testMap.insert(std::make_pair("FullCardiovascularCircuitAndTransportTest", &EngineTest::FullCardiovascularCircuitAndTransportTest));
-    testMap.insert(std::make_pair("CardiovascularBloodGasesTest", cardioBGTest));
-    testMap.insert(std::make_pair("TuneCardiovascularCircuitTest", cardioTuneCircuitTest));
+    testMap.insert(std::make_pair("ExpandedLungsFullCardiovascularCircuitAndTransportTest", &EngineTest::ExpandedLungsFullCardiovascularCircuitAndTransportTest));
+    testMap.insert(std::make_pair("CardiovascularBloodGasesTest", &EngineTest::CardiovascularBloodGasesTest));
+    testMap.insert(std::make_pair("ExpandedLungsCardiovascularBloodGasesTest", &EngineTest::ExpandedLungsCardiovascularBloodGasesTest));
+    testMap.insert(std::make_pair("TuneCardiovascularCircuitTest", (testFunction) & EngineTest::TuneCardiovascularCircuitTest));
     testMap.insert(std::make_pair("CardiovascularCircuitScaleTests", &EngineTest::CardiovascularCircuitScaleTests));
 
     testMap.insert(std::make_pair("RenalCircuitAndTransportTest", &EngineTest::RenalCircuitAndTransportTest));
@@ -88,18 +82,23 @@ namespace pulse { namespace human_adult_whole_body
     testMap.insert(std::make_pair("RenalSecretionTest", &EngineTest::RenalSecretionTest));
     testMap.insert(std::make_pair("RenalUrinateTest", &EngineTest::RenalUrinateTest));
 
-    testMap.insert(std::make_pair("RespiratoryCircuitAndTransportTest", respCTTest));
+    testMap.insert(std::make_pair("RespiratoryCircuitAndTransportTest", (testFunction) & EngineTest::RespiratoryCircuitAndTransportTest));
+    testMap.insert(std::make_pair("ExpandedLungsRespiratoryCircuitAndTransportTest", &EngineTest::ExpandedLungsRespiratoryCircuitAndTransportTest));
     testMap.insert(std::make_pair("RespiratoryDriverTest", &EngineTest::RespiratoryDriverTest));
 
-    testMap.insert(std::make_pair("AnesthesiaMachineCircuitAndTransportTest", anesthCTTest));
+    testMap.insert(std::make_pair("AnesthesiaMachineCircuitAndTransportTest", (testFunction) & EngineTest::AnesthesiaMachineCircuitAndTransportTest));
     testMap.insert(std::make_pair("RespiratoryWithAnesthesiaMachineCircuitAndTransportTest", &EngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest));
+    testMap.insert(std::make_pair("ExpandedLungsRespiratoryWithAnesthesiaMachineCircuitAndTransportTest", &EngineTest::ExpandedLungsRespiratoryWithAnesthesiaMachineCircuitAndTransportTest));
 
-    testMap.insert(std::make_pair("MechanicalVentilatorCircuitAndTransportTest", ventCTTest));
+    testMap.insert(std::make_pair("MechanicalVentilatorCircuitAndTransportTest", (testFunction) & EngineTest::MechanicalVentilatorCircuitAndTransportTest));
     testMap.insert(std::make_pair("RespiratoryWithMechanicalVentilatorCircuitAndTransportTest", &EngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest));
+    testMap.insert(std::make_pair("ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest", &EngineTest::ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest));
 
     testMap.insert(std::make_pair("RespiratoryWithInhalerCircuitAndTransportTest", &EngineTest::RespiratoryWithInhalerCircuitAndTransportTest));
+    testMap.insert(std::make_pair("ExpandedLungsRespiratoryWithInhalerCircuitAndTransportTest", &EngineTest::ExpandedLungsRespiratoryWithInhalerCircuitAndTransportTest));
 
     testMap.insert(std::make_pair("RespiratoryWithMechanicalVentilationCircuitAndTransportTest", &EngineTest::RespiratoryWithMechanicalVentilationCircuitAndTransportTest));
+    testMap.insert(std::make_pair("ExpandedLungsRespiratoryWithMechanicalVentilationCircuitAndTransportTest", &EngineTest::ExpandedLungsRespiratoryWithMechanicalVentilationCircuitAndTransportTest));
 
     testMap.insert(std::make_pair("InternalTemperatureVariableBMRCircuitTest", &EngineTest::InternalTemperatureVariableBMRCircuitTest));
     testMap.insert(std::make_pair("InternalTemperatureVariableSkinCircuitTest", &EngineTest::InternalTemperatureVariableSkinCircuitTest));
