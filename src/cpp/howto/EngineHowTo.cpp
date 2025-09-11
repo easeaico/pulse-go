@@ -46,14 +46,14 @@ int main()
   //HowToHemothorax();
   //HowToPneumonia();
   //HowToMechanicalVentilation();
-  HowToMechanicalVentilator();
+  //HowToMechanicalVentilator();
   //HowToPulmonaryFibrosis();
   //HowToRespiratoryMechanics();
   //HowToRespiratoryMechanicsModification();
   //HowToRunToStable();
   //HowToSmoke();
   //HowToTensionPneumothorax();
-  //HowToVentilatorFeedbackLoop();
+  HowToVentilatorFeedbackLoop();
 
   // These ones do not really run, pure examples
   //HowToRunScenario();

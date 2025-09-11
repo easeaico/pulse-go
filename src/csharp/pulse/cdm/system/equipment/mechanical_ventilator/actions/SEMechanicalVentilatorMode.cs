@@ -5,7 +5,6 @@ namespace Pulse.CDM
 {
   public class SEMechanicalVentilatorMode : SEMechanicalVentilatorAction
   {
-    protected eSwitch connection;
     protected eMergeType mergeType = eMergeType.Append;
     protected SEMechanicalVentilatorSettings SupplementalSettings = null;
     protected string SupplementalSettingsFile = "";
@@ -23,7 +22,6 @@ namespace Pulse.CDM
     public void Copy(SEMechanicalVentilatorMode other)
     {
       base.Copy(other);
-      connection = other.connection;
       mergeType = other.mergeType;
       if (other.SupplementalSettings != null)
         this.GetSupplementalSettings().Copy(other.SupplementalSettings);
@@ -33,7 +31,6 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      connection = eSwitch.Off;
       mergeType = eMergeType.Append;
       if (this.SupplementalSettings != null)
         this.SupplementalSettings.Clear();
@@ -47,11 +44,11 @@ namespace Pulse.CDM
 
     public eSwitch GetConnection()
     {
-      return connection;
+      return GetSupplementalSettings().GetConnection();
     }
     public void SetConnection(eSwitch s)
     {
-      connection = s;
+      GetSupplementalSettings().SetConnection(s);
     }
 
     public eMergeType GetMergeType()
@@ -90,7 +87,6 @@ namespace Pulse.CDM
     public override string ToString()
     {
       string str = "Mechanical Ventilator Mode";
-      str += "\n\tConnection: " + this.connection;
       str += "\n\tMerge Type: " + this.mergeType;
       if (this.HasSupplementalSettingsFile())
         str += "\n\tSupplemental Settings File: " + this.SupplementalSettingsFile;

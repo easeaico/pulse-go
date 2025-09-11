@@ -23,14 +23,16 @@
   
   { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
   
-  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": { "MechanicalVentilatorMode": 
-    { "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {} } }, "Connection": "On",
-    "SupplementalSettings": { "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 20, "Unit": "cmH2O" } },
-    "HighPressureCycleOption": "Off",
-    "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
-    "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
-    "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
-    "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
+  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": {
+    "MechanicalVentilatorMode": {
+      "SupplementalSettings": {
+        "Connection": "On",
+        "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 20, "Unit": "cmH2O" } },
+                     "HighPressureCycleOption": "Off",
+                     "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
+                     "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
+                     "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
+                     "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
     "Mode": "AssistedControl", 
     "InspirationWaveform": "Square",
     "Flow": { "ScalarVolumePerTime": { "Value": 23, "Unit": "L/min" } },
@@ -59,14 +61,16 @@
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
   
-  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": { "MechanicalVentilatorMode": 
-    { "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {} } }, "Connection": "On",
-    "SupplementalSettings": { "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 20, "Unit": "cmH2O" } },
-    "HighPressureCycleOption": "On",
-    "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
-    "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
-    "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
-    "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
+  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": {
+    "MechanicalVentilatorMode": {
+      "SupplementalSettings": {
+        "Connection": "On", 
+        "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 20, "Unit": "cmH2O" } },
+                     "HighPressureCycleOption": "On",
+                     "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
+                     "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
+                     "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
+                     "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
     "Mode": "AssistedControl", 
     "InspirationWaveform": "Square",
     "Flow": { "ScalarVolumePerTime": { "Value": 23, "Unit": "L/min" } },
@@ -81,14 +85,16 @@
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
   
-  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": { "MechanicalVentilatorMode": 
-    { "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {} } }, "Connection": "On",
-    "SupplementalSettings": { "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 50, "Unit": "cmH2O" } },
-    "HighPressureCycleOption": "On",
-    "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
-    "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
-    "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
-    "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
+  { "EquipmentAction": { "MechanicalVentilatorVolumeControl": {
+    "MechanicalVentilatorMode": {
+      "SupplementalSettings": {
+        "Connection": "On",
+        "Alarms" : { "HighPressureThreshold" : { "ScalarPressure": { "Value": 50, "Unit": "cmH2O" } },
+                     "HighPressureCycleOption": "On",
+                     "ApneaTimeThreshold" : { "ScalarTime": { "Value": 10, "Unit": "s" } },
+                     "OxygenSupplyFailureThreshold" : { "Scalar0To1": { "Value": 0.3 } },
+                     "LowOxygenSaturationThreshold" : { "Scalar0To1": { "Value": 0.9 } },
+                     "CircuitLeakThreshold" : { "Scalar0To1": { "Value": 0.05 } } } } },
     "Mode": "AssistedControl", 
     "InspirationWaveform": "Square",
     "Flow": { "ScalarVolumePerTime": { "Value": 23, "Unit": "L/min" } },

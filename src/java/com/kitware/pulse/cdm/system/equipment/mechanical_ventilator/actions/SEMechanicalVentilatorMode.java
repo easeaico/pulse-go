@@ -12,7 +12,6 @@ import com.kitware.pulse.utilities.Log;
 public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
 {
   private static final long serialVersionUID = -1487014080271791164L;
-  protected eSwitch connection;
   protected eMergeType                     mergeType=eMergeType.Replace;
   protected SEMechanicalVentilatorSettings supplementalSettings=null;
   protected String                         supplementalSettingsFile="";
@@ -31,7 +30,6 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
   public void copy(SEMechanicalVentilatorMode other)
   {
     super.copy(other);
-    connection = other.connection;
     this.mergeType = other.mergeType;
     if(other.supplementalSettings!=null)
       this.getSupplementalSettings().copy(other.supplementalSettings);
@@ -40,7 +38,6 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
 
   public void clear()
   {
-    connection = eSwitch.Off;
     this.mergeType = eMergeType.Replace;
     if (this.supplementalSettings != null)
       this.supplementalSettings.clear();
@@ -56,7 +53,6 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
   {
     dst.clear();
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
-    dst.setConnection(src.getConnection());
     dst.setMergeType(src.getMergeType());
     switch(src.getOptionCase())
     {
@@ -74,19 +70,18 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
   protected static void unload(SEMechanicalVentilatorMode src, MechanicalVentilatorModeData.Builder dst)
   {
     SEMechanicalVentilatorAction.unload(src, dst.getMechanicalVentilatorActionBuilder());
-    dst.setConnection(src.getConnection());
     if(src.hasSupplementalSettings())
       dst.setSupplementalSettings(SEMechanicalVentilatorSettings.unload(src.supplementalSettings));
   }
 
   public eSwitch getConnection()
   {
-    return connection;
+    return getSupplementalSettings().getConnection();
   }
 
   public void setConnection(eSwitch s)
   {
-    connection = s;
+    getSupplementalSettings().setConnection(s);
   }
   
   public eMergeType getMergeType()
@@ -126,7 +121,6 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
   public String toString()
   {
     String str = "Mechanical Ventilator Mode";
-    str += "\n\tConnection: " + this.connection;
     if(hasSupplementalSettings())
       str += supplementalSettings.toString();
 

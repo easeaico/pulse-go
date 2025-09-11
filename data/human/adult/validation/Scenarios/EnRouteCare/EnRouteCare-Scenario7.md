@@ -6,7 +6,7 @@ En Route Care Scenario 7 {#EnRouteCareScenario7}
 @htmlonly
 <a href="./Images/EnRouteCare/Placeholder.png"><img src="./Images/EnRouteCare/Placeholder.png" width="400"></a>
 <center>
-<i>@figuredef {Scenario2XRay}. Chest radiograph demonstrates right middle lobe consolidation, flattened diaphragms and hyperinflation in the upper lobes bilaterally, but no signs of barotrauma.</i>
+<i>@figuredef {Scenario7XRay}. Chest radiograph demonstrates right middle lobe consolidation, flattened diaphragms and hyperinflation in the upper lobes bilaterally, but no signs of barotrauma.</i>
 </center><br>
 @endhtmlonly
 

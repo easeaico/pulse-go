@@ -65,12 +65,13 @@ void HowToVentilatorFeedbackLoop()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_VentilatorFeedbackLoop.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_VentilatorFeedbackLoop.log");
   pe->GetLogger()->Info("HowTo_VentilatorFeedbackLoop");
 
+  //--------------------------------------------------------------
   //Load the starting state that was saved at the end of Segment 1
   //Patient has mild ARDS
-  if (!pe->SerializeFromFile("EnRouteCare-Scenario1-InitialHemeostasis.json"))
+  if (!pe->SerializeFromFile("./states/EnRouteCare/Scenario1-InitialHemeostasis.json"))
   {
     pe->GetLogger()->Error("Could not load state, loading Standard Male instead.");
     if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))// Select patient
@@ -98,12 +99,13 @@ void HowToVentilatorFeedbackLoop()
 
   //Remove the virtual ventilator
   SEMechanicalVentilatorVolumeControl vc_ac;
-  vc_ac.Deactivate();
+  vc_ac.SetConnection(eSwitch::Off);
   pe->ProcessAction(vc_ac);
 
   //Simulate one timestep to set the airway mode to free
   pe->AdvanceModelTime();
 
+  //--------------------------------------------------------------
   //Segment 2 changes
 
   //Increase ARDS severity to moderate
@@ -127,6 +129,7 @@ void HowToVentilatorFeedbackLoop()
   SESubstanceFraction& CO2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("CarbonDioxide"));
   SESubstanceFraction& N2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("Nitrogen"));
 
+  //--------------------------------------------------------------
   //We'll mimic inputs from real-time sensors by just driving the mechanical ventilation pressure and FiO2 using a sinusoid
 
   //Pressure waveform parameters
@@ -187,6 +190,7 @@ void HowToVentilatorFeedbackLoop()
     pe->GetLogger()->Info(std::stringstream() << "Respiration Rate: " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation: " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
 
+    //--------------------------------------------------------------
     //Output values for the control system
     //You may need to interpolate one of these values for higher frequency changes
 
@@ -205,6 +209,67 @@ void HowToVentilatorFeedbackLoop()
     pe->GetLogger()->Info(std::stringstream() << "Total Lung Volume Change Rate: " << totalLungVolumeChangeRate_mL_Per_s << VolumePerTimeUnit::mL_Per_s);
     previousTotalLungVolume_mL = totalLungVolume_mL;
 
+    //--------------------------------------------------------------
+    //Determine application-specific values
+    //Carotid artery pulse
+    pe->GetLogger()->Info(std::stringstream() << "Carotid Artery Pulse Pressure: " << pe->GetCardiovascularSystem()->GetPulsePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+
+
+    // Breath sounds (normal + simple abnormal cues)
+    // Signals
+    double inspFlow_mL_Per_s = pe->GetRespiratorySystem()->GetInspiratoryFlow(VolumePerTimeUnit::mL_Per_s);
+    double tidalVolume_mL = pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
+
+    // Simple "loudness" proxy from flow magnitude (arbitrary scaling for logs/UX hooks)
+    double intensity = std::abs(inspFlow_mL_Per_s) / 1000.0;
+
+    // Normal breath sound log
+    if (inspFlow_mL_Per_s > 0.0)
+    {
+      pe->GetLogger()->Info(std::stringstream()
+        << "Breath Sound: Inspiration, Flow = " << inspFlow_mL_Per_s
+        << " mL/s, Intensity = " << intensity);
+    }
+    else
+    {
+      pe->GetLogger()->Info(std::stringstream()
+        << "Breath Sound: Expiration, Flow = " << inspFlow_mL_Per_s
+        << " mL/s, Intensity = " << intensity);
+    }
+
+    //Abnormal sound heuristics
+    //Thresholds (tune to your scenario/device)
+    const double LOW_TV_mL = 250.0;   // shallow breaths
+    const double HIGH_INSP_FLOW_mL_Per_s = 800.0;   // strong inspiratory draw
+    const double HIGH_EXP_FLOW_mL_Per_s = 600.0;   // strong expiratory push
+    const double CRACKLE_dVdt_mL_Per_s = 150.0;   // abrupt volume recruitment
+
+    //Stridor (inspiratory musical sound): big inspiratory effort but small TV
+    if (inspFlow_mL_Per_s > HIGH_INSP_FLOW_mL_Per_s && tidalVolume_mL < LOW_TV_mL)
+    {
+      pe->GetLogger()->Info("Abnormal Breath Sound: Inspiratory stridor suspected");
+    }
+
+    //Wheeze (often expiratory, obstructive pattern): strong expiratory flow with shallow TV
+    if (inspFlow_mL_Per_s < -HIGH_EXP_FLOW_mL_Per_s && tidalVolume_mL < LOW_TV_mL)
+    {
+      pe->GetLogger()->Info("Abnormal Breath Sound: Expiratory wheeze suspected");
+    }
+
+    //Crackles (discrete pops on early inspiration): abrupt positive dV/dt during inspiration with low TV
+    if (inspFlow_mL_Per_s > 0.0 && totalLungVolumeChangeRate_mL_Per_s > CRACKLE_dVdt_mL_Per_s && tidalVolume_mL < 300.0)
+    {
+      pe->GetLogger()->Info("Abnormal Breath Sound: Inspiratory crackles suspected");
+    }
+
+    //Diminished breath sounds: very low flow and low tidal volume
+    if (std::abs(inspFlow_mL_Per_s) < 100.0 && tidalVolume_mL < LOW_TV_mL)
+    {
+      pe->GetLogger()->Info("Abnormal Breath Sound: Diminished breath sounds");
+    }
+
+    //--------------------------------------------------------------
+    //Increment time
     time_s += timeStep_s;
   }
 

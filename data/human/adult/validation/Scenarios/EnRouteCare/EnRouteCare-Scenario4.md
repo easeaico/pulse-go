@@ -6,7 +6,7 @@ En Route Care Scenario 4 {#EnRouteCareScenario4}
 @htmlonly
 <a href="./Images/EnRouteCare/Placeholder.png"><img src="./Images/EnRouteCare/Placeholder.png" width="400"></a>
 <center>
-<i>@figuredef {Scenario2XRay}. Chest radiograph demonstrates subcutaneous air and small pneumomediastinum. There is no pneumothorax.</i>
+<i>@figuredef {Scenario4XRay}. Chest radiograph demonstrates subcutaneous air and small pneumomediastinum. There is no pneumothorax.</i>
 </center><br>
 @endhtmlonly
 

@@ -701,15 +701,6 @@
         "Header": []
       },
       {
-        "TableName": "Segment4SegmentTable",
-        "ScenarioName": "Scenario3",
-        "Segment": 4,
-        "DataRequestFile": [
-          "EnRouteCareDataRequests.json"
-        ],
-        "Header": []
-      },
-      {
         "TableName": "Segment1SegmentTable",
         "ScenarioName": "Scenario4",
         "Segment": 1,
@@ -902,15 +893,6 @@
         "TableName": "Segment3SegmentTable",
         "ScenarioName": "Scenario3_NoSpontaneous",
         "Segment": 3,
-        "DataRequestFile": [
-          "EnRouteCareDataRequests.json"
-        ],
-        "Header": []
-      },
-      {
-        "TableName": "Segment4SegmentTable",
-        "ScenarioName": "Scenario3_NoSpontaneous",
-        "Segment": 4,
         "DataRequestFile": [
           "EnRouteCareDataRequests.json"
         ],

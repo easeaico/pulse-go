@@ -66,7 +66,7 @@ def timeseries_validation_pipeline(
     if out_file is not None:
         _pulse_logger.info(f"Writing {out_file}")
         out_file.parent.mkdir(parents=True, exist_ok=True)
-        serialize_patient_time_series_validation_to_file(patient_validation, out_file)
+        serialize_patient_time_series_validation_to_file(patient_validation, str(out_file))
 
     return patient_validation
 
@@ -143,7 +143,7 @@ def bulk_timeseries_validation_pipeline(
         if out_file is not None:
             out_file.parent.mkdir(parents=True, exist_ok=True)
             _pulse_logger.info(f"Writing {out_file}")
-            serialize_patient_time_series_validation_list_to_file(all_tgts, out_file)
+            serialize_patient_time_series_validation_list_to_file(all_tgts, str(out_file))
     return all_tgts
 
 

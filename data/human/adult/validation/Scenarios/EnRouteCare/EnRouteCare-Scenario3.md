@@ -6,7 +6,7 @@ En Route Care Scenario 3 {#EnRouteCareScenario3}
 @htmlonly
 <a href="./Images/EnRouteCare/Placeholder.png"><img src="./Images/EnRouteCare/Placeholder.png" width="400"></a>
 <center>
-<i>@figuredef {Scenario2XRay}. Chest radiograph demonstrates bilateral patchy opacities and ground glass appearance.</i>
+<i>@figuredef {Scenario3XRay}. Chest radiograph demonstrates bilateral patchy opacities and ground glass appearance.</i>
 </center><br>
 @endhtmlonly
 
@@ -65,24 +65,6 @@ En Route Care Scenario 3 {#EnRouteCareScenario3}
 </center><br>
 
 @insert ./validation/tables/EnRouteCare/Scenario3/Segment3SegmentTable.md
-
-#### Segment 4
-
-@insert ./validation/tables/EnRouteCare/Scenario3/Segment4ValidationTable.md
-
-@htmlonly
-<center>
-<a href="./plots/EnRouteCare/Scenario3-vitals_monitor_4.jpg"><img src="./plots/EnRouteCare/Scenario3-vitals_monitor_4.jpg" width="1100"></a>
-<br>
-<a href="./plots/EnRouteCare/Scenario3-ventilator_monitor_4.jpg"><img src="./plots/EnRouteCare/Scenario3-ventilator_monitor_4.jpg" width="1100"></a>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>@figuredef {Scenario3Segment4Monitors}. Vitals and ventilator monitors for Segment 4.</i>
-</center><br>
-
-@insert ./validation/tables/EnRouteCare/Scenario3/Segment4SegmentTable.md
 
 ### Scenario Output Plots
 

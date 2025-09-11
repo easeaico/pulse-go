@@ -204,12 +204,7 @@
    "EquipmentAction": {
     "MechanicalVentilatorContinuousPositiveAirwayPressure": {
      "MechanicalVentilatorMode": {
-      "MechanicalVentilatorAction": {
-       "EquipmentAction": {
-        "Action": {}
-       }
-      },
-      "Connection": "On"
+      "SupplementalSettings": {"Connection": "On"}
      },
      "DeltaPressureSupport": {
       "ScalarPressure": {

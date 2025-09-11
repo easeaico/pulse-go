@@ -6,7 +6,7 @@ En Route Care Scenario 6 {#EnRouteCareScenario6}
 @htmlonly
 <a href="./Images/EnRouteCare/Placeholder.png"><img src="./Images/EnRouteCare/Placeholder.png" width="400"></a>
 <center>
-<i>@figuredef {Scenario2XRay}. Chest radiograph demonstrates bilateral infiltrates with right middle and lower lobe consolidation, but no signs of barotrauma.</i>
+<i>@figuredef {Scenario6XRay}. Chest radiograph demonstrates bilateral infiltrates with right middle and lower lobe consolidation, but no signs of barotrauma.</i>
 </center><br>
 @endhtmlonly
 

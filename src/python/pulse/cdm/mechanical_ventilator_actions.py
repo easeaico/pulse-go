@@ -68,20 +68,17 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
 
 
 class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
-    __slots__ = ["_connection",
-                 "_merge_type",
+    __slots__ = ["_merge_type",
                  "_supplemental_settings",
                  "_supplemental_settings_file"]
 
     def __init__(self):
         super().__init__()
         self._merge_type = eMergeType.Replace
-        self._connection = eSwitch.NullSwitch
         self._supplemental_settings = None
         self._supplemental_settings_file = None
 
     def clear(self):
-        self._connection = eSwitch.NullSwitch
         self._merge_type = eMergeType.Replace
         if self._supplemental_settings is not None:
             self._supplemental_settings.invalidate()
@@ -92,7 +89,6 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
             raise Exception("Provided argument must be a SEMechanicalVentilatorMode")
         self.clear()
         super().copy(src)
-        self._connection = src.get_connection()
         self._merge_type = src.get_merge_type()
         if src.has_supplemental_settings_file():
             self._supplemental_settings_file = src.get_supplemental_settings_file()
@@ -106,11 +102,11 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
         return True
 
     def has_connection(self):
-        return self._connection is not eSwitch.NullSwitch
+        return self.get_supplemental_settings().has_connection()
     def get_connection(self):
-        return self._connection
-    def set_connection(self, src : eSwitch):
-        self._connection = src
+        return self.get_supplemental_settings().get_connection()
+    def set_connection(self, c : eSwitch):
+        self.get_supplemental_settings().set_connection(c)
 
     def get_merge_type(self):
         return self._merge_type
@@ -132,7 +128,11 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
         self._supplemental_settings_file = filename
 
     def __repr__(self):
-        return "Mechanical Ventilator Mode" + "\n\tConnection: " + str(self._connection)
+        if self.has_supplemental_settings_file():
+            return f"Mechanical Ventilator Mode\n\tFile {self.get_supplemental_settings_file()}"
+        elif self.has_supplemental_settings():
+            return f"Mechanical Ventilator Mode\n\tConnection: {self.get_connection()}"
+        return "Mechanical Ventilator Mode INVALID"
 
 
 class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentilatorMode):

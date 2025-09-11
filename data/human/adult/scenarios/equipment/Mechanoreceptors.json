@@ -62,12 +62,7 @@
         "EquipmentAction": {
           "MechanicalVentilatorVolumeControl": {
             "MechanicalVentilatorMode": {
-              "MechanicalVentilatorAction": {
-                "EquipmentAction": {
-                  "Action": {}
-                }
-              },
-              "Connection": "On"
+              "SupplementalSettings": {"Connection": "On"}
             },
             "Mode": "AssistedControl",
             "InspirationWaveform": "Square",
@@ -116,12 +111,7 @@
         "EquipmentAction": {
           "MechanicalVentilatorPressureControl": {
             "MechanicalVentilatorMode": {
-              "MechanicalVentilatorAction": {
-                "EquipmentAction": {
-                  "Action": {}
-                }
-              },
-              "Connection": "On"
+              "SupplementalSettings": {"Connection": "On"}
             },
             "Mode": "AssistedControl",
             "InspirationWaveform": "Square",
