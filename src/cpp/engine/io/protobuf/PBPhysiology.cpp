@@ -78,7 +78,7 @@ namespace pulse
     PBProperty::Load(src.heartcompliancemodifier(), *dst.m_HeartComplianceModifier);
     PBProperty::Load(src.aortacompliancemodifier(), *dst.m_AortaComplianceModifier);
     PBProperty::Load(src.venacavacompliancemodifier(), *dst.m_VenaCavaComplianceModifier);
-    PBProperty::Load(src.pulmonarycompliancemodifier(), *dst.m_RespiratoryComplianceModifier);
+    PBProperty::Load(src.pulmonarycompliancemodifier(), *dst.m_PulmonaryComplianceModifier);
     PBProperty::Load(src.systemicvascularresistancemodifier(), *dst.m_SystemicVascularResistanceModifier);
     PBProperty::Load(src.systemicvascularcompliancemodifier(), *dst.m_SystemicVascularComplianceModifier);
 
@@ -149,7 +149,7 @@ namespace pulse
     dst.set_allocated_heartcompliancemodifier(PBProperty::Unload(*src.m_HeartComplianceModifier));
     dst.set_allocated_aortacompliancemodifier(PBProperty::Unload(*src.m_AortaComplianceModifier));
     dst.set_allocated_venacavacompliancemodifier(PBProperty::Unload(*src.m_VenaCavaComplianceModifier));
-    dst.set_allocated_pulmonarycompliancemodifier(PBProperty::Unload(*src.m_RespiratoryComplianceModifier));
+    dst.set_allocated_pulmonarycompliancemodifier(PBProperty::Unload(*src.m_PulmonaryComplianceModifier));
     dst.set_allocated_systemicvascularresistancemodifier(PBProperty::Unload(*src.m_SystemicVascularResistanceModifier));
     dst.set_allocated_systemicvascularcompliancemodifier(PBProperty::Unload(*src.m_SystemicVascularComplianceModifier));
 

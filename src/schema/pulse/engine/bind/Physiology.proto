@@ -23,6 +23,7 @@ message CardiovascularData
   bool                                      FullyCompressedHeart                                = 4;
   double                                    StabilizedHeartRateBaseline_Per_min                 = 5;
   double                                    StabilizedMeanArterialPressureBaseline_mmHg         = 6;
+  double                                    StabilizedMeanPulmonaryPressureBaseline_mmHg         = 6;
   // Driver Variables
   double                                    CurrentDriverCycleTime_s                            = 7;
   double                                    DriverCyclePeriod_s                                 = 8;
