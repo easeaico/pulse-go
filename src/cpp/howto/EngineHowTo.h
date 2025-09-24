@@ -47,7 +47,7 @@ void HowToSmoke();
 void HowToTensionPneumothorax();
 void HowToVentilatorFeedbackLoop();
 
-void HowToRunScenario();
+void HowToRunScenarios();
 void HowToScenarioFromLog();
 void HowToDynamicHemorrhage();
 

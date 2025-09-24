@@ -1,8 +1,30 @@
 ﻿/* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+using pulse.cdm.bind;
+using Pulse.CDM;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+
 namespace Pulse.CDM
 {
+  public enum eEngineInitializationState : int
+  {
+    Uninitialized = 0,
+    FailedState,
+    FailedPatientSetup,
+    FailedStabilization,
+    Initialized
+  }
+
+  public enum eScenarioExecutionState : int
+  {
+    Waiting = 0,
+    Running,
+    Complete
+  }
+
   public class SEScenarioExec
   {
     protected eSwitch log_to_console;
@@ -20,6 +42,7 @@ namespace Pulse.CDM
     protected string scenario_content;
     protected string scenario_filename;
     protected string scenario_directory;
+    protected string scenario_exec_list_filename;
 
     protected string data_request_files_search;
 
@@ -48,6 +71,7 @@ namespace Pulse.CDM
       scenario_content = "";
       scenario_filename = "";
       scenario_directory = "";
+      scenario_exec_list_filename = "";
 
       data_request_files_search = "";
 
@@ -87,6 +111,7 @@ namespace Pulse.CDM
       scenario_content = s;
       scenario_filename = "";
       scenario_directory = "";
+      scenario_exec_list_filename = "";
     }
 
     public string GetScenarioFilename() { return scenario_filename; }
@@ -95,6 +120,7 @@ namespace Pulse.CDM
       scenario_content = "";
       scenario_filename = s;
       scenario_directory = "";
+      scenario_exec_list_filename = "";
     }
 
     public string GetScenarioDirectory() { return scenario_directory; }
@@ -103,6 +129,16 @@ namespace Pulse.CDM
       scenario_content = "";
       scenario_filename = "";
       scenario_directory = s;
+      scenario_exec_list_filename = "";
+    }
+
+    public string GetScenarioExecListFilename() { return scenario_exec_list_filename; }
+    public void SetScenarioExecListFilename(string s)
+    {
+      scenario_content = "";
+      scenario_filename = "";
+      scenario_directory = "";
+      scenario_exec_list_filename = s;
     }
 
     public string GetDataRequestFilesSearch() { return data_request_files_search; }
@@ -113,5 +149,52 @@ namespace Pulse.CDM
 
     public int GetThreadCount() { return thread_count; }
     public void SetThreadCount(int c) { thread_count = c; }
+  }
+
+  public class SEScenarioExecStatus : SEEngineInitializationStatus
+  {
+    protected string scenario_filename;
+    protected eScenarioExecutionState execution_state;
+    protected bool runtime_error;
+    protected bool fatal_runtime_error;
+    protected double final_simulation_time_s;
+
+    public SEScenarioExecStatus() : base() {}
+
+    public override void Clear()
+    {
+      base.Clear();
+      scenario_filename = "";
+      execution_state = eScenarioExecutionState.Waiting;
+      runtime_error = false;
+      fatal_runtime_error = false;
+      final_simulation_time_s = 0;
+    }
+
+    public static bool SerializeFromFile(string filename, List<SEScenarioExecStatus> dst)
+    {
+      return PBScenario.SerializeFromFile(filename, dst);
+    }
+
+    public static bool SerializeToFile(List<SEScenarioExecStatus> src, string filename)
+    {
+      return PBScenario.SerializeToFile(src, filename);
+    }
+
+    public bool HasScenarioFilename() { return scenario_filename.Length != 0; }
+    public string GetScenarioFilename() { return scenario_filename; }
+    public void SetScenarioFilename(string fn) { scenario_filename = fn; }
+
+    public eScenarioExecutionState GetScenarioExecutionState() { return execution_state; }
+    public void SetScenarioExecutionState(eScenarioExecutionState s) { execution_state = s; }
+
+    public bool GetRuntimeError() { return runtime_error; }
+    public void SetRuntimeError(bool e) { runtime_error = e; }
+
+    public bool GetFatalRuntimeError() { return fatal_runtime_error; }
+    public void SetFatalRuntimeError(bool e) { fatal_runtime_error = e; }
+
+    public double GetFinalSimulationTime_s() { return final_simulation_time_s; }
+    public void SetFinalSimulationTime_s(double t) { final_simulation_time_s = t; }
   }
 }

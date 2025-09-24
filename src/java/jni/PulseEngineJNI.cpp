@@ -93,12 +93,16 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseScenarioExec_nativ
 {
   jboolean bRet;
   const char* sceOptsStr = env->GetStringUTFChars(sceOpts, JNI_FALSE);
+  /*
+  Thunking log messages from C++ is a problem with threaded execution on the C++ side
+  The jniEnv is not stable when called from a new thread. Did not investigate, just disabled auto passing log to Java
   Logger logger;
   LoggerForwardJNI jniForward;
   jniForward.jniEnv = env;
   jniForward.jniObj = obj;
   logger.AddForward(&jniForward);
-  bRet = PulseEngineThunk::ExecuteScenario(sceOptsStr, (eSerializationFormat)scenario_format, &logger);
+  */
+  bRet = PulseEngineThunk::ExecuteScenario(sceOptsStr, (eSerializationFormat)scenario_format);
   env->ReleaseStringUTFChars(sceOpts, sceOptsStr);
   return bRet;
 }

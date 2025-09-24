@@ -203,7 +203,7 @@ bool PulseScenarioExec::Execute()
 
 bool PulseScenarioExec::Execute(PulseScenario& sce, SEScenarioExecStatus* status)
 {
-  auto pe = CreatePulseEngine(m_ModelType, sce.GetLogger());
+  auto pe = CreatePulseEngine(m_ModelType);
 
   if (!GetEngineConfigurationFilename().empty())
   {
@@ -294,7 +294,7 @@ void PulseScenarioExec::ControllerLoop(const std::string copy,
     if (sce.SerializeFromFile(working.GetScenarioFilename()))
     {
       sce.GetLogger()->AddConsolePrefix("["+sce.GetName()+"] ");
-      //exec.Info("Executing " + working.GetScenarioFilename());
+      exec.Info("Executing " + working.GetScenarioFilename());
       // Check to see if we want scenario's to log to the console or not
       std::string scenarioPath, scenarioFilename;
       SplitPathFilename(working.GetScenarioFilename(), scenarioPath, scenarioFilename);

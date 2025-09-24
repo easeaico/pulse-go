@@ -71,6 +71,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilization.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilizationEngineConvergence.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEngineConfiguration.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEngineInitializationStatus.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEventHandler.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEventManager.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEPatientConfiguration.java
@@ -202,6 +203,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/properties/SESegmentSigmoidal.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/scenario/SEScenario.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/scenario/SEScenarioExec.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/scenario/SEScenarioExecStatus.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/substance/SESubstance.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/substance/SESubstanceAerosolization.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/substance/SESubstanceClearance.java
@@ -321,7 +323,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_Hemorrhage.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_MechanicalVentilator.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_RespiratoryMechanics.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_RunScenario.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_RunScenarios.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_VentilationMechanics.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/Base64.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/CurrentClass.java

@@ -29,6 +29,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Shifting default to 3 significant digits for values in validation tables
     - Add support for validating event and assessment values
   - Improved Batch Study Support
+    - Threaded execution of a set of scenarios supported in all API languages, check out a HowTo-RunScenarios file
     - Created Python based HowTo for running/analyzing large amounts of patients and insult/intervention combinations
     - Added examples and support for post processing log files
 

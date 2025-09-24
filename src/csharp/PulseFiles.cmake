@@ -83,6 +83,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEConditionManager.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEDataRequest.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEDataRequestManager.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEEngineInitialization.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEEnvironmentActionCollection.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEEquipmentActionCollection.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEEvents.cs
@@ -97,6 +98,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBConditions.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBDataRequest.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBECMO.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEngine.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnums.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironmentActions.cs

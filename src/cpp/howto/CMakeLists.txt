@@ -33,7 +33,7 @@ add_executable_ex(HowToDriver
   HowTo-PulseEnginePool.cpp
   HowTo-RespiratoryMechanics.cpp
   HowTo-RespiratoryModification.cpp
-  HowTo-RunScenario.cpp
+  HowTo-RunScenarios.cpp
   HowTo-RunToStable.cpp
   HowTo-RunThreaded.cpp
   HowTo-RunThreaded.h

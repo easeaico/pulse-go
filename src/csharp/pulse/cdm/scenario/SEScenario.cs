@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Pulse.CDM
 {
@@ -63,6 +64,8 @@ namespace Pulse.CDM
         return false;
       try
       {
+        string directoryPath = Path.GetDirectoryName(filename);
+        Directory.CreateDirectory(directoryPath);
         System.IO.File.WriteAllText(filename, json);
       }
       catch (System.Exception ex)

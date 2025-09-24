@@ -13,6 +13,7 @@ import com.kitware.pulse.cdm.bind.Scenario.ScenarioExecData;
 import com.kitware.pulse.cdm.bind.Scenario.eSerializationFormat;
 import com.kitware.pulse.utilities.Log;
 
+
 public class SEScenarioExec
 {
   protected eSwitch logToConsole;
@@ -30,6 +31,7 @@ public class SEScenarioExec
   protected String  scenarioContent;
   protected String  scenarioFilename;
   protected String  scenarioDirectory;
+  protected String  scenarioExecListFilename;
 
   protected List<String>  dataRequestFilesSearch = new ArrayList<String>();
 
@@ -58,6 +60,7 @@ public class SEScenarioExec
     scenarioContent = "";
     scenarioFilename = "";
     scenarioDirectory = "";
+    scenarioExecListFilename = "";
 
     dataRequestFilesSearch.clear();
 
@@ -95,6 +98,8 @@ public class SEScenarioExec
       dst.scenarioFilename = src.getScenarioFilename();
     else if(src.getScenarioDirectory()!=null)
       dst.scenarioDirectory = src.getScenarioDirectory();
+    else if(src.getScenarioExecListFilename()!=null)
+      dst.scenarioExecListFilename = src.getScenarioExecListFilename();
 
     for(String s : src.getDataRequestFilesSearchList())
       dst.dataRequestFilesSearch.add(s);
@@ -132,6 +137,8 @@ public class SEScenarioExec
       dst.setScenarioFilename(src.scenarioFilename);
     else if (!src.scenarioDirectory.isEmpty())
       dst.setScenarioDirectory(src.scenarioDirectory);
+    else if (!src.scenarioExecListFilename.isEmpty())
+      dst.setScenarioExecListFilename(src.scenarioExecListFilename);
 
     for(String s : src.dataRequestFilesSearch)
       dst.addDataRequestFilesSearch(s);
@@ -190,6 +197,9 @@ public class SEScenarioExec
 
   public String getScenarioDirectory() { return scenarioDirectory; }
   public void setScenarioDirectory(String s) { scenarioDirectory=s; }
+  
+  public String getScenarioExecListFilename() { return scenarioExecListFilename; }
+  public void setScenarioExecListFilename(String s) { scenarioExecListFilename=s; }
 
   public List<String> getDataRequestFilesSearch() { return dataRequestFilesSearch; }
 

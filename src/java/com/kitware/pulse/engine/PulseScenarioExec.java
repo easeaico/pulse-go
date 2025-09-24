@@ -100,6 +100,10 @@ public class PulseScenarioExec extends SEScenarioExec
   ///////////////////////
   // LISTENER/HANDLERS //
   ///////////////////////
+  ///
+  /// NOTE
+  /// Thunking log messages from C++ is a problem with threaded execution on the C++ side 
+  /// The JNI pointer seems to not like being called from a thread, so this is disabled in PulseEngineJNI
   
   protected void handleDebug(String msg)
   {

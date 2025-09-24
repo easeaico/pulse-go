@@ -14,7 +14,7 @@ int main()
 
   //HowToSandbox();
 
-  HowToEngineUse();
+  //HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
@@ -53,10 +53,10 @@ int main()
   //HowToRunToStable();
   //HowToSmoke();
   //HowToTensionPneumothorax();
-  HowToVentilatorFeedbackLoop();
+  //HowToVentilatorFeedbackLoop();
 
   // These ones do not really run, pure examples
-  //HowToRunScenario();
+  HowToRunScenarios();
   //HowToScenarioFromLog();
 
   // More complicated examples that do run
