@@ -24,7 +24,7 @@ namespace Pulse.CDM
 
     public SEAction()
     {
-      comment = null;
+      Clear();
     }
 
     public void Copy(SEAction other)

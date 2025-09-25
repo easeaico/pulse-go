@@ -3,9 +3,7 @@
 
 package com.kitware.pulse.cdm.actions;
 
-import com.kitware.pulse.cdm.bind.Actions.AdvanceTimeData;
 import com.kitware.pulse.cdm.bind.Actions.AdvanceUntilStableData;
-import com.kitware.pulse.cdm.properties.SEScalarTime;
 
 public class SEAdvanceUntilStable extends SEAction 
 {
@@ -15,7 +13,7 @@ public class SEAdvanceUntilStable extends SEAction
   
   public SEAdvanceUntilStable() 
   {
-    criteria = "";
+    
   }
   
   public void copy(SEAdvanceUntilStable other)
@@ -30,7 +28,7 @@ public class SEAdvanceUntilStable extends SEAction
   public void clear() 
   {
     super.clear();
-    criteria = "";
+    criteria = "AdvanceUntilStable";
   }
   
   @Override

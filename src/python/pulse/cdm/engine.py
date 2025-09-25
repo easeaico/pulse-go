@@ -192,12 +192,11 @@ class SEAdvanceUntilStable(SEAction):
 
     def __init__(self) -> None:
         super().__init__()
-        self._criteria = ""
+        self._criteria = "AdvanceUntilStable"
 
     def clear(self) -> None:
         super().clear()
-        if self._criteria is not None:
-            self.invalidate_criteria()
+        self._criteria = "AdvanceUntilStable"
 
     def is_valid(self) -> bool:
         return self.has_criteria()

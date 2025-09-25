@@ -18,13 +18,12 @@ public abstract class SEAction implements Serializable
   private static final long serialVersionUID = -6897889189834880647L;
   
   protected String comment;
-  protected SEScalarTime scenarioTime;
+  protected SEScalarTime scenarioTime = null;
   
   
   public SEAction() 
   {
-    comment = null;
-    scenarioTime = null;
+    clear();
   }
   
   public void copy(SEAction other) 
@@ -36,6 +35,8 @@ public abstract class SEAction implements Serializable
   public void clear() 
   {
     comment = null;
+    if (scenarioTime != null)
+      scenarioTime.invalidate();
   }
   
   public static void load(ActionData src, SEAction dst) 

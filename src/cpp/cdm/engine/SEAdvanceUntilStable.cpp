@@ -3,10 +3,11 @@
 
 #include "cdm/CommonDefs.h"
 #include "cdm/engine/SEAdvanceUntilStable.h"
+#include "cdm/engine/SEEngineStabilization.h"
 
 SEAdvanceUntilStable::SEAdvanceUntilStable(Logger* logger) : SEAction(logger)
 {
- 
+  Clear();
 }
 
 SEAdvanceUntilStable::~SEAdvanceUntilStable()
@@ -17,6 +18,7 @@ SEAdvanceUntilStable::~SEAdvanceUntilStable()
 void SEAdvanceUntilStable::Clear()
 {
   SEAction::Clear();
+  m_Criteria = SEEngineStabilization::AdvanceUntilStable;
 }
 
 bool SEAdvanceUntilStable::IsValid() const
@@ -39,10 +41,10 @@ void SEAdvanceUntilStable::SetCriteria(const std::string& criteria)
 }
 void SEAdvanceUntilStable::InvalidateCriteria()
 {
-  m_Criteria = "";
+  m_Criteria = SEEngineStabilization::AdvanceUntilStable;
 }
 
-const SEScalar* SEAdvanceUntilStable::GetScalar(const std::string& name)
+const SEScalar* SEAdvanceUntilStable::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

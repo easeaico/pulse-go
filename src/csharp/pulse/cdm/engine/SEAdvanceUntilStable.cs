@@ -9,13 +9,13 @@ namespace Pulse.CDM
 
     public SEAdvanceUntilStable()
     {
-      criteria = "";
+      
     }
 
     public override void Clear()
     {
       base.Clear();
-      criteria = "";
+      criteria = "AdvanceUntilStable";
     }
 
     public override bool IsValid()

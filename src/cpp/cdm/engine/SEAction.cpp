@@ -10,12 +10,12 @@
 
 SEAction::SEAction(Logger* logger) : Loggable(logger)
 {
-  m_Comment="";
+  Clear();
 }
 
 SEAction::~SEAction()
 {
-  m_Comment = "";
+  Clear();
 }
 
 void SEAction::Clear()

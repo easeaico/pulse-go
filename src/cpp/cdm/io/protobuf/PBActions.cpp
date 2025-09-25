@@ -201,7 +201,8 @@ void PBAction::Load(const CDM_BIND::AdvanceUntilStableData& src, SEAdvanceUntilS
 void PBAction::Serialize(const CDM_BIND::AdvanceUntilStableData& src, SEAdvanceUntilStable& dst)
 {
   PBAction::Serialize(src.action(), dst);
-  dst.SetCriteria(src.criteria());
+  if (!src.criteria().empty())
+    dst.SetCriteria(src.criteria());
 }
 CDM_BIND::AdvanceUntilStableData* PBAction::Unload(const SEAdvanceUntilStable& src)
 {

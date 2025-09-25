@@ -681,9 +681,14 @@ namespace pulse
     {
       m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
       m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
-      std::string criteria = SEEngineStabilization::AdvanceUntilStable;
+      std::string criteria;
       if (adv2Stable->HasCriteria())
         criteria = adv2Stable->GetCriteria();
+      else
+      {
+        criteria = SEEngineStabilization::AdvanceUntilStable;
+        Warning("AdvanceUntilStable does not have a criteria, using default criteria.");
+      }
       if (!m_Config->GetStabilization()->HasConvergenceCriteria(criteria))
         Error("Provided criteria not found: " + criteria);
       else
