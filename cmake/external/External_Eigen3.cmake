@@ -5,10 +5,12 @@ message(STATUS "Processing External_Eigen3")
 include(AddExternalProject)
 define_external_dirs_ex( Eigen3 )
 add_external_project_ex( Eigen3
-  URL "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip"
-  URL_HASH MD5=a83cb9a2cbba2dd52c137ac62d33d847
+  URL "https://gitlab.com/libeigen/eigen/-/archive/5.0.0/eigen-5.0.0.zip"
+  URL_HASH MD5=3804ac4802bb18a75874d7a165c5c6f3
   CMAKE_CACHE_ARGS 
     -DBUILD_TESTING:BOOL=OFF
+    -DEIGEN_BUILD_DEMOS:BOOL=OFF
+    -DEIGEN_BUILD_DOC:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${Eigen3_PREFIX}/install
   RELATIVE_INCLUDE_PATH ""
   DEPENDENCIES ""
