@@ -63,7 +63,7 @@ def gen_test_cache(configs: List[Path]) -> Dict[Path, Dict[str, str]]:
                 continue
 
             def_idx = line.find("=")
-            test_key = line[:def_idx].strip()
+            test_key = line[:def_idx].strip().replace('/', '_')
             test_value = line[def_idx+1:]
 
             if test_value.rstrip().endswith("\\"):    # Beginning of multi-line definition
@@ -101,6 +101,8 @@ def gen_rebase_config(test_cache: Dict[Path, Dict[str, str]]) -> None:
         if test_report.get_num_errors() > 0 or test_report.get_num_warnings() > 0:
             test_suites = test_report.get_test_suites()
             for ts in test_suites:
+                # if "Primary" in ts.get_name():
+                #     print("Here")
                 if ts.get_num_errors() > 0 or ts.get_num_warnings() > 0:
                     if ts.get_name() in tests:  # Unit test or assessment test
                         if ts.get_num_errors() > 0:
@@ -141,11 +143,11 @@ if __name__ == "__main__":
 
     config_dir = Path(get_config_dir())
     configs = [
-        "CDMUnitTests.config",
-        "EngineUnitTests.config",
-        "LongVerificationScenarios.config",
-        "DrugPKVerification.config",
-        "PatientVerification.config",
+        #"CDMUnitTests.config",
+        #"EngineUnitTests.config",
+        #"LongVerificationScenarios.config",
+        #"DrugPKVerification.config",
+        #"PatientVerification.config",
         "ScenarioVerification.config"
     ]
     configs = [config_dir / c for c in configs]
