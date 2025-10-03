@@ -8,9 +8,10 @@ add_library_ex(CircuitOptimizationEngine STATIC
   INSTALL_HEADER_DIR
     study/circuit_optimization
   NO_INSTALL
+  PRIVATE_DEPENDS
+    Eigen3::Eigen
   )
 set_target_properties(CircuitOptimizationEngine PROPERTIES FOLDER "Studies//Circuit Optimization")
-target_include_directories(CircuitOptimizationEngine PRIVATE ${EIGEN3_INCLUDE_DIR})
 
 add_executable_ex(CircuitOptimizationDriver main.cpp)
 set_target_properties(CircuitOptimizationDriver PROPERTIES FOLDER "Studies//Circuit Optimization")
