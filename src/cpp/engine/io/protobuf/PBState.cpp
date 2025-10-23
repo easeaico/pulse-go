@@ -314,6 +314,11 @@ namespace pulse
     // Good to go, save it off and carry on!
     dst.m_State = EngineState::Active;
     // TODO CheckDataRequirements/IsValid() or something
+
+    // Ask the engine tracker to reconnect to all its scalars
+    // Compartments and Circuits configurations can change from state to state
+    // So they are all new objects when a state is loaded, so we need to hook up any cmpt based requests to those new objects
+    dst.m_EngineTrack->ForceConnection();
     return true;
   }
 
