@@ -275,7 +275,7 @@ def main():
     else:
         # In the future, we will do all xlsx in the data/validation dir
         # But for now, we are just hard coding the automated xlsx files
-        #folders.append("AirwayObstruction")
+        folders.append("AirwayObstruction")
         folders.append("Dehydration")
         folders.append("EnRouteCare")
         folders.append("Hemorrhage")
