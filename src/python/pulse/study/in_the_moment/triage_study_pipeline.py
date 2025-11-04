@@ -497,7 +497,6 @@ class TriageStudy:
                 else:
                     pulse_injuries.append(action)
             casualty["pulse_injuries"] = pulse_injuries
-            final_time = next(reversed(states.keys()))
 
             # Check to see when/if the casualty died
             death_module = DeathCheckModule(r.patient.get_heart_rate_maximum().get_value(FrequencyUnit.Per_min))
@@ -514,13 +513,21 @@ class TriageStudy:
                                  "cause": death_module.cause_of_death,
                                  "triage": triage}
 
+            # Get the last time that we have a state file for (maybe the patient died before all save times)
+            final_time = None
             # dict of triage times of interest for this casualty to triage vitals
             casualty["visits"] = {}
             # Data needed for tagging protocols for every triage time for this casualty
             for time_min, injury_state in states.items():
                 time_s = time_min * 60
-                if death_module.time_of_death and time_s >= death_module.time_of_death:
+                if Path(injury_state).exists():
+                    final_time = time_min
+                elif death_module.time_of_death and time_s >= death_module.time_of_death:
                     continue
+                else:
+                    _log.error(f"No state found for time {time_min}min, but the casualty did not die?")
+                    continue
+
                 self._pulse_data.set_values(r.get_values_at_time(time_s))
                 # Get active events from the last minute of this triage time
                 active_events = r.get_active_events_in_window(time_s - 60, time_s)
@@ -544,6 +551,7 @@ class TriageStudy:
                     "vitals_description": self._dataset.vitals_description(vitals)
                 }
                 casualty["visits"][time_min] = {"triage": triage}
+
             # Take the last visit out, and it will be our final state (no intervention)
             if "death" not in casualty and final_time in casualty["visits"]:
                 final_visit = casualty["visits"].pop(final_time)

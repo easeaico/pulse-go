@@ -251,48 +251,68 @@ def create_align_dataset(study_run: dict, scenario_id: str) -> list:
             return 2
         return 3
 
+    def triage_case(_triage: dict, _time: float):
+        prompt = ("".join(_triage["injury_description"]) + "\n" +
+                  "\n".join(_triage["vitals_description"]))
+        tags = _triage["tags"]
+        choices = [{}, {}, {}, {}]
+        for i, choice in enumerate(choices):
+            choice["action_id"] = i
+            choice["unstructured"] = responses[i]
+            choice["kdma_association"] = {}
+        labels = [{}, {}, {}, {}]
+        reasonings = [{}, {}, {}, {}]
+        # START
+        i = _tag_index(tags["start"])
+        choices[i]["kdma_association"]["START"] = 1.0
+        labels[i]["START"] = 1.0
+        reasonings[i]["START"] = tags["start_reason"]
+        # SALT
+        i = _tag_index(tags["salt"])
+        choices[i]["kdma_association"]["SALT"] = 1.0
+        labels[i]["SALT"] = 1.0
+        reasonings[i]["SALT"] = tags["salt_reason"]
+        # BCD Sieve
+        i = _tag_index(tags["bcd_sieve"])
+        choices[i]["kdma_association"]["BCD_SIEVE"] = 1.0
+        labels[i]["BCD_SIEVE"] = 1.0
+        reasonings[i]["BCD_SIEVE"] = tags["bcd_sieve_reason"]
+
+        case = {"input": {
+                    "scenario_id": scenario_id,
+                    "full_state": {
+                        "unstructured": prompt,
+                        "meta_info": {"scene_id": f"Casualty_{pid}_at_{_time}min"},
+                        "scenario_complete": False,
+                        "characters": [{
+                            "id": "Patient A",
+                            "name": "Patient A",
+                            "unstructured": prompt,
+                            "demographics": {
+                              "sex": "Unknown",
+                              "race": "Unknown"
+                            },
+                            "rapport": "neutral",
+                            "unseen": False,
+                            "vitals": _triage["vitals"]
+                        }]
+                    },
+                    "state": prompt,
+                    "choices": choices
+                    },
+                "label": labels,
+                "reasoning": reasonings}
+        return case
+
     cases = []
     for pid, run in study_run.items():
-        for time, visit in run["visits"].items():
-            triage = visit["triage"]
-            prompt = ("".join(triage["injury_description"]) + "\n" +
-                      "\n".join(triage["vitals_description"]))
-            tags = triage["tags"]
-            choices = [{}, {}, {}, {}]
-            for i, choice in enumerate(choices):
-                choice["action_id"] = i
-                choice["unstructured"] = responses[i]
-                choice["kdma_association"] = {}
-            labels = [{}, {}, {}, {}]
-            reasonings = [{}, {}, {}, {}]
-            # START
-            i = _tag_index(tags["start"])
-            choices[i]["kdma_association"]["START"] = 1.0
-            labels[i]["START"] = 1.0
-            reasonings[i]["START"] = tags["start_reason"]
-            # SALT
-            i = _tag_index(tags["salt"])
-            choices[i]["kdma_association"]["SALT"] = 1.0
-            labels[i]["SALT"] = 1.0
-            reasonings[i]["SALT"] = tags["salt_reason"]
-            # BCD Sieve
-            i = _tag_index(tags["bcd_sieve"])
-            choices[i]["kdma_association"]["BCD_SIEVE"] = 1.0
-            labels[i]["BCD_SIEVE"] = 1.0
-            reasonings[i]["BCD_SIEVE"] = tags["bcd_sieve_reason"]
-
-            case = {"input": {
-                       "scenario_id": scenario_id,
-                       "full_state": {
-                           "unstructured": prompt,
-                           "meta_info": {"scene_id": f"Casualty_{pid}_at_{time}min"},
-                           "scenario_complete": False},
-                       "state": prompt,
-                       "choices": choices
-                        },
-                    "label": labels,
-                    "reasoning": reasonings}
-            cases.append(case)
+        if "visits" in run:
+            for time, visit in run["visits"].items():
+                cases.append(triage_case(visit["triage"], time))
+        if "final" in run:
+            cases.append(triage_case(run["final"]["triage"], run["final"]["time"]))
+        if "death" in run:
+            cases.append(triage_case(run["death"]["triage"], run["death"]["time"]))
 
     return cases
 

@@ -399,15 +399,13 @@ class PulseEngineReprocessor(PulseLog):
         self._df = df
 
     def get_values_at_time(self, time_s: float):
-        headers = self._df.columns.tolist()
-        rows = self._df.loc[self._df[headers[0]] == time_s].values.tolist()
-        if len(rows) == 0:
-            _pulse_logger.error(f"Could not find time {time_s}")
-            return []
-        if len(rows) > 1:
-            _pulse_logger.error(f"Found more than 1 entry for time {time_s}")
-            return []
-        return rows[0]
+        # time_s does not need to be in the dataframe
+        # Find the nearest time in the data frame to time_s
+        for index, row in self._df.iterrows():
+            if row[0] >= time_s:
+                return row.values.tolist()
+        _pulse_logger.error(f"Could not find time {time_s}")
+        return []
 
     def replay(self, modules: List[PulseResultsProcessor]):
         stop = False
@@ -439,19 +437,48 @@ class PulseEngineReprocessor(PulseLog):
                 self._df[header] = df[header] 
         """
 
+        event_times = []
+        event_changes = []
+        events = self._events.copy()
+
+        action_times = []
+        action_changes = []
+        actions = self._actions.copy()
+
         idx = {name: i for i, name in enumerate(list(self._df), start=0)}  # for faster named tuple look-up
         for data_slice in self._df.itertuples(index=False, name="DataSlice"):  # itertuples is faster than iterrows
             time_s = data_slice[idx[self._time_header]]
 
             # Send data to each module for processing
-            events = self._events[time_s] if time_s in self._events else []
-            actions = self._actions[time_s] if time_s in self._actions else []
+
+            # The data frame times can be at a different sampling rate than the events and actions
+            # So grab any events or action sets on this time or that we might have passed
+            for et, e in events.items():
+                if time_s >= et:
+                    event_times.append(et)
+                    event_changes.extend(e)
+            for et in event_times:
+                del events[et]
+
+            for at, a in actions.items():
+                if time_s >= at:
+                    action_times.append(at)
+                    action_changes.extend(a)
+            for at in action_times:
+                del actions[at]
+
             for module in modules:
                 try:
                     module.process_time_step(data_slice=data_slice, header_idx=idx,
-                                             event_changes=events, action_changes=actions)
+                                             event_changes=event_changes, action_changes=action_changes)
                 except StopIteration:
                     stop = True
             if stop:
                 _pulse_logger.info("StopIteration received, stopping early")
                 break
+
+            event_times.clear()
+            event_changes.clear()
+
+            action_times.clear()
+            action_changes.clear()
