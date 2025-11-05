@@ -99,7 +99,7 @@ namespace HowTo_UseEngine
       // You must provide an event listener to get events
       pulse.SetEventHandler(new MyEventHandler());
 
-      InitializationType initType = InitializationType.StateFileName;
+      InitializationType initType = InitializationType.PatientObject;
       switch (initType)
       {
         case InitializationType.StateFileName:
@@ -163,6 +163,12 @@ namespace HowTo_UseEngine
             patient.GetDiastolicArterialPressureBaseline().SetValue(72, PressureUnit.mmHg);
             patient.GetHeartRateBaseline().SetValue(67, FrequencyUnit.Per_min);
             patient.GetRespirationRateBaseline().SetValue(12, FrequencyUnit.Per_min);
+            // You can test if this patient meets the Pulse patient requirements
+            if (!pulse.IsValidPatient(patient))
+            {
+              Console.WriteLine("Error Invalid Patient Specification");
+              return;
+            }
             // You really only need to set the name
             // All other patient values will be computed based on
             // https://pulse.kitware.com/_patient_methodology.html

@@ -7,7 +7,7 @@ namespace HowToDriver
   {
     static void Main(string[] args)
     {
-      //HowTo_UseEngine.Example.Run();
+      HowTo_UseEngine.Example.Run();
       //HowTo_CreateState.Example.Run();
       //HowTo_PatientStates.Example.Run();
 
@@ -24,7 +24,7 @@ namespace HowToDriver
       //HowTo_RespiratoryMechanics.Example.Run();
       //HowTo_SystemModifiers.Example.Run();
       //HowTo_DeathState.Example.Run();
-      HowTo_RunScenarios.Example.Run();
+      //HowTo_RunScenarios.Example.Run();
       //HowTo_VentilationMechanics.Example.Run();
       //HowTo_UseStates.Example.Run();
     }

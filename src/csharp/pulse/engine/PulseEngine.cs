@@ -58,6 +58,13 @@ namespace Pulse
       BaseClear();
     }
 
+    protected abstract bool BaseIsValidPatient(string patient, int patient_format);
+    public bool IsValidPatient(SEPatient patient)
+    {
+      string patient_str = PBPatient.SerializeToString(patient);
+      return BaseIsValidPatient(patient_str, (int)thunk_as);
+    }
+
     protected abstract double BaseGetTimeStep(string unit);
     public double GetTimeStep_s()
     {
@@ -384,6 +391,13 @@ namespace Pulse
     protected override void BaseClear()
     {
       Clear(pulse_cptr);
+    }
+
+    [DllImport(Attribute)]
+    private static extern bool IsValidPatient(IntPtr pulse, string patient, int patient_format);
+    protected override bool BaseIsValidPatient(string patient, int patient_format)
+    {
+      return IsValidPatient(pulse_cptr, patient, patient_format);
     }
 
     [DllImport(Attribute)]
