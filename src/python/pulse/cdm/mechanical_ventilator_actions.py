@@ -596,12 +596,12 @@ class SEMechanicalVentilatorHold(SEMechanicalVentilatorAction):
     def __init__(self):
         super().__init__()
         self._state = eSwitch.Off
-        self._applied_respiratory_cycle = eAppliedRespiratoryCycle.Expiration
+        self._applied_respiratory_cycle = eAppliedRespiratoryCycle.Expiratory
 
     def clear(self):
         super().clear()
         self._state = eSwitch.Off
-        self._applied_respiratory_cycle = eAppliedRespiratoryCycle.Expiration
+        self._applied_respiratory_cycle = eAppliedRespiratoryCycle.Expiratory
 
     def copy(self, src):
         super().copy(src)

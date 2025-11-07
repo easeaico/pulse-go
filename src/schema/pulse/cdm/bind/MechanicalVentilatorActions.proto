@@ -46,10 +46,10 @@ message MechanicalVentilatorModeData
 
   oneof Option
   {
-    MechanicalVentilatorSettingsData           SupplementalSettings                      = 3; /**<< @brief Additional settings to apply with the mode (ex. Drugs). */
-    string                                     SupplementalSettingsFile                  = 4; /**<< @brief File containing a settings object with properties to set in the system object. */
+    MechanicalVentilatorSettingsData           SupplementalSettings                      = 2; /**<< @brief Additional settings to apply with the mode (ex. Drugs). */
+    string                                     SupplementalSettingsFile                  = 3; /**<< @brief File containing a settings object with properties to set in the system object. */
   }
-  eMergeType                                   MergeType                                 = 5; /**<< @brief How to apply provided properties to internal data model. */
+  eMergeType                                   MergeType                                 = 4; /**<< @brief How to apply provided properties to internal data model. */
 }
 
 message MechanicalVentilatorContinuousPositiveAirwayPressureData
