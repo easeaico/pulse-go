@@ -32,14 +32,14 @@ _log = logging.getLogger("pulse")
 
 
 population_distributions = {
-    "heart_rate": {"mean": 72, "std": 11},
+    "heart_rate_bpm": {"mean": 72, "std": 11},
     "sex": {
-              "male": {"percent": 84.6, "height": {"mean": 177, "std": 7.1}, "bmi": {"mean": 26.4, "std": 3.4}},
-              "female": {"percent": 15.4, "height": {"mean": 163.5, "std": 7.7}, "bmi": {"mean": 24.7, "std": 2.8}}
+              "male": {"percent": 84.6, "height_cm": {"mean": 177, "std": 7.1}, "bmi": {"mean": 26.4, "std": 3.4}},
+              "female": {"percent": 15.4, "height_cm": {"mean": 163.5, "std": 7.7}, "bmi": {"mean": 24.7, "std": 2.8}}
             },
-    "age": {"bins": [18, 25, 30, 35, 40, 55],
-            "percents": [41.6, 22.4, 15.3, 11.3, 9.4],
-            "counts": [191975, 103628, 70783, 52055, 43215]}
+    "age_yr": {"bins": [18, 25, 30, 35, 40, 55],
+               "percents": [41.6, 22.4, 15.3, 11.3, 9.4],
+               "counts": [191975, 103628, 70783, 52055, 43215]}
 }
 
 injury_distributions = {  # Location -> Type -> Severity mean/std or explicit value/percent
@@ -228,9 +228,9 @@ class ArmyDataset(TriageDataset):
                                       {"location": "thorax", "type": "hemorrhage", "sub_type": None, "cmpt": None,
                                        "severity": 3.0, "can_intervene": False}])
 
-            casualties = {"age": [], "state": []}
+            casualties = {"age_yr": [], "state": []}
             for _ in range(len(casualty_injuries)):
-                casualties["age"].append(44.0)
+                casualties["age_yr"].append(44.0)
                 casualties["state"].append("./states/StandardMale@0s.json")
         else:
             _log.info(f"Creating dataset of {population_size} casualties")
@@ -283,7 +283,7 @@ class ArmyDataset(TriageDataset):
         else:  # AVPU.Unresponsive
             description.append("The casualty is unresponsive to any stimuli.")
 
-        rr = vitals["respiratory_rate"]
+        rr = vitals["respiratory_rate_bpm"]
         if not vitals["breathing"]:
             if "reposition_airway" in vitals["interventions"]:
                 description.append("Casualty was not breathing.")
@@ -302,7 +302,7 @@ class ArmyDataset(TriageDataset):
         if vitals["breathing_distressed"]:
             description.append("The casualty's breathing is distressed.")
 
-        hr = vitals["heart_rate"]
+        hr = vitals["heart_rate_bpm"]
         if not vitals["peripheral_pulse"]:
             description.append("Casualty does not have a peripheral pulse.")
         else:
@@ -661,24 +661,24 @@ class ArmyDataset(TriageDataset):
             healthy_capillary_refill_time = False
         peripheral_pulse = healthy_capillary_refill_time
 
-        return {"age": synthetic_patient["age"],
+        return {"age_yr": synthetic_patient["age_yr"],
                 "avpu": avpu,
                 "ambulatory": ambulatory,
                 "blunt_trauma": blunt_trauma,
-                "brain_o2_pp": brain_o2_pp,
+                "brain_o2_pp_mmHg": brain_o2_pp,
                 "breathing": breathing,
                 "breathing_distressed": breathing_distressed,
                 "healthy_capillary_refill_time": healthy_capillary_refill_time,
-                "heart_rate": pulse_data.get_hr(FrequencyUnit.Per_min),
+                "heart_rate_bpm": pulse_data.get_hr(FrequencyUnit.Per_min),
                 "heart_rhythm": pulse_data.get_heart_rhythm().name,
                 "interventions": interventions,
                 "iss": iss,
                 "major_injuries": True if max_severity > 3 else False,
                 "peripheral_pulse": peripheral_pulse,
-                "respiratory_rate": pulse_data.get_rr(FrequencyUnit.Per_min),
+                "respiratory_rate_bpm": pulse_data.get_rr(FrequencyUnit.Per_min),
                 "spO2": pulse_data.get_spo2(),
-                "systolic_pressure": pulse_data.get_systolic_pressure(PressureUnit.mmHg),
-                "diastolic_pressure": pulse_data.get_diastolic_pressure(PressureUnit.mmHg),
+                "systolic_pressure_mmHg": pulse_data.get_systolic_pressure(PressureUnit.mmHg),
+                "diastolic_pressure_mmHg": pulse_data.get_diastolic_pressure(PressureUnit.mmHg),
                 "survivable_injuries": survivable_injuries,
                 "visible_hemorrhage_severity": visible_hemorrhage_severity,
                 }

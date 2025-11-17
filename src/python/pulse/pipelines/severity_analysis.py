@@ -439,7 +439,7 @@ def main():
         HEMORRHAGE_ABDOMINAL = 4
         HEMORRHAGE_EXTREMITY = 5
         PNEUMOTHORAX = 6
-    mode = Mode.AIRWAY_OBSTRUCTION
+    mode = Mode.HEMORRHAGE_ABDOMINAL
 
     tenth_ranges = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
     hundredth_ranges = list(np.arange(0.01, 1.01, 0.01))

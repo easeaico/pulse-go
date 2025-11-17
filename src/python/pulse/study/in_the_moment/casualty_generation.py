@@ -71,12 +71,12 @@ def casualty_population_generation(size: int, distributions: dict) -> dict:
     num_males = sexes.count("male")
 
     # Height
-    female_heights = np.random.normal(loc=female_distributions["height"]["mean"],
-                                      scale=female_distributions["height"]["std"],
+    female_heights = np.random.normal(loc=female_distributions["height_cm"]["mean"],
+                                      scale=female_distributions["height_cm"]["std"],
                                       size=num_females)
 
-    male_heights = np.random.normal(loc=male_distributions["height"]["mean"],
-                                    scale=male_distributions["height"]["std"],
+    male_heights = np.random.normal(loc=male_distributions["height_cm"]["mean"],
+                                    scale=male_distributions["height_cm"]["std"],
                                     size=num_males)
 
     # BMI
@@ -102,42 +102,42 @@ def casualty_population_generation(size: int, distributions: dict) -> dict:
             male_idx += 1
 
     # Heart Rate
-    heart_rates = list(np.random.normal(loc=distributions["heart_rate"]["mean"],
-                                        scale=distributions["heart_rate"]["std"],
+    heart_rates = list(np.random.normal(loc=distributions["heart_rate_bpm"]["mean"],
+                                        scale=distributions["heart_rate_bpm"]["std"],
                                         size=size))
 
     # Age
-    num_bins = len(distributions["age"]["bins"])
-    num_percents = len(distributions["age"]["percents"])
+    num_bins = len(distributions["age_yr"]["bins"])
+    num_percents = len(distributions["age_yr"]["percents"])
     if num_bins != num_percents+1:
         _log.error("Age bins must be 1 more that the percents length")
-        _log.error(f"Provided {len(distributions['age']['bins'])} bins")
-        _log.error(f"Provided {len(distributions['age']['percents'])} percents")
+        _log.error(f"Provided {len(distributions['age_yr']['bins'])} bins")
+        _log.error(f"Provided {len(distributions['age_yr']['percents'])} percents")
         return population_data
 
     age_bins = []
     for i in range(num_percents):
-        age_min = distributions["age"]["bins"][i]
-        age_max = distributions["age"]["bins"][i+1]
+        age_min = distributions["age_yr"]["bins"][i]
+        age_max = distributions["age_yr"]["bins"][i+1]
         if i > 0:
             age_min += 1
         age_bins.append(f"{age_min}-{age_max}")
 
     ages = []
-    age_groups = _weighted_choices(choices=age_bins, percents=distributions["age"]["percents"], size=size)
+    age_groups = _weighted_choices(choices=age_bins, percents=distributions["age_yr"]["percents"], size=size)
     for age_group in age_groups:
         idx = age_bins.index(age_group)
-        low = distributions["age"]["bins"][idx]
-        high = distributions["age"]["bins"][idx+1]
+        low = distributions["age_yr"]["bins"][idx]
+        high = distributions["age_yr"]["bins"][idx+1]
         if idx > 0:
             low += 1
         ages.append(np.random.randint(low, high+1))
 
     population_data["sex"] = sexes
-    population_data["age"] = ages
-    population_data["height"] = heights
+    population_data["age_yr"] = ages
+    population_data["height_cm"] = heights
     population_data["bmi"] = bmi
-    population_data["heart_rate"] = heart_rates
+    population_data["heart_rate_bpm"] = heart_rates
 
     return population_data
 
@@ -472,7 +472,7 @@ def population_injury_generation(population_size: int, distributions: dict, opts
                             acceptable_distribution = True
                             break
                 if not acceptable_distribution:
-                    _log.error(f"DId not generate valid random severity distribution for {location}-{injury_type}:")
+                    _log.error(f"Did not generate valid random severity distribution for {location}-{injury_type}:")
                     _log.error(f"\t% Diff of {pdiff:.2f}% for len={len(randomized_severities)}; "
                                f"Expected: {severity_dist['mean']}, Generated: {mean}")
                     if opts.halt_on_error:

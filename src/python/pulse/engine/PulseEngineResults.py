@@ -402,7 +402,7 @@ class PulseEngineReprocessor(PulseLog):
         # time_s does not need to be in the dataframe
         # Find the nearest time in the data frame to time_s
         for index, row in self._df.iterrows():
-            if row[0] >= time_s:
+            if row.iloc[0] >= time_s:
                 return row.values.tolist()
         _pulse_logger.error(f"Could not find time {time_s}")
         return []

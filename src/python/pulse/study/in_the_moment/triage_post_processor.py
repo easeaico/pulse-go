@@ -38,11 +38,11 @@ def _create_table(triage: dict) -> str:
 
     vitals = triage["vitals"]
     # Clean up some float formatting
-    vitals["heart_rate"] = int(vitals["heart_rate"])
-    vitals["respiratory_rate"] = int(vitals["respiratory_rate"])
+    vitals["heart_rate_bpm"] = int(vitals["heart_rate_bpm"])
+    vitals["respiratory_rate_bpm"] = int(vitals["respiratory_rate_bpm"])
     vitals["spO2"] = int(vitals['spO2']*100)
-    vitals["systolic_pressure"] = int(vitals["systolic_pressure"])
-    vitals["diastolic_pressure"] = int(vitals["diastolic_pressure"])
+    vitals["systolic_pressure_mmHg"] = int(vitals["systolic_pressure_mmHg"])
+    vitals["diastolic_pressure_mmHg"] = int(vitals["diastolic_pressure_mmHg"])
     if "brain_o2_pp" in vitals:
         vitals["brain_o2_pp"] = int(vitals["brain_o2_pp"])
     vitals = json2html.convert(json=json.dumps(vitals),
@@ -145,7 +145,7 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
         if cmpt:
             extra += f"_[{cmpt}]"
         if "death" in run:
-            extra += f"_[{int(run['death']['time'])}min]"
+            extra += f"_[{int(run['death']['time_min'])}min]"
         tgts[loc][typ].append((filename, f"casualty_{pid}_({sev}{intervention}){extra}"))
 
         with open(filename, 'w') as file:
@@ -164,7 +164,7 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
             if "death" in run:
                 file.write(f"### Death\n\n")
                 file.write(f"If left untreated, "
-                           f"casualty will die <b>~{int(run['death']['time'])} min</b> from the initial injury.\n\n")
+                           f"casualty will die <b>~{int(run['death']['time_min'])} min</b> from the initial injury.\n\n")
                 file.write(f"<b>Cause of Death:</b>  {run['death']['cause']}\n\n")
 
             for time, visit in run["visits"].items():
@@ -174,7 +174,8 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
                 file.write(table)
                 file.write("\n\n")
                 if "intervention" in visit:
-                    file.write(f"#### Intervention\n\n")
+                    final_triage = visit["intervention"]
+                    file.write(f"#### Intervention state at time {final_triage['final']['time_min']}min \n\n")
                     for intervention in triage["vitals"]["interventions"]:
                         if intervention == Intervention.RepositionAirway:
                             file.write(f"The casualty's head was repositioned to open the airway.\n")
@@ -183,10 +184,9 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
                             file.write(f"A tourniquet was applied to the casualty's wounded extremity.\n")
                         if intervention == Intervention.WoundPack:
                             file.write(f"Gauze was use to pack the casualty's wounded.\n")
-                    final_triage = visit["intervention"]
-                    if "vitals" in final_triage:
-                        file.write(f"Casualty state an hour after the intervention is performed.\n\n")
-                        table = _create_table(final_triage)
+                    if "final" in final_triage:
+                        file.write(f"\n")
+                        table = _create_table(final_triage["final"]["triage"])
                     elif "death" in final_triage:
                         file.write(f"Casualty dies at time {final_triage['death']['time']:.1f} min. "
                                    f"{final_triage['death']['cause']}")
@@ -195,7 +195,7 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
                         triage = final_triage["death"]["triage"]
                         table = _create_table(triage)
                     else:
-                        _log.fatal("Casualty has not vitals and did not die???")
+                        _log.fatal("Casualty has no vitals and did not die???")
                         exit(1)
 
                     file.write(table)
@@ -205,14 +205,14 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
                 triage = run["death"]["triage"]
                 table = _create_table(triage)
                 file.write(f"### Final State if no interventions are applied: "
-                           f"Death occurs {run['death']['time']:.1f} min from point of injury\n\n")
+                           f"Death occurs {run['death']['time_min']:.1f} min from point of injury\n\n")
                 file.write(table)
                 file.write("\n\n")
             elif "final" in run:
                 triage = run["final"]["triage"]
                 table = _create_table(triage)
                 file.write(f"### Final State if no interventions are applied: "
-                           f"{run['final']['time']:.1f} min from point of injury\n\n")
+                           f"{run['final']['time_min']:.1f} min from point of injury\n\n")
                 file.write(table)
                 file.write("\n\n")
 
@@ -306,13 +306,15 @@ def create_align_dataset(study_run: dict, scenario_id: str) -> list:
 
     cases = []
     for pid, run in study_run.items():
-        if "visits" in run:
-            for time, visit in run["visits"].items():
-                cases.append(triage_case(visit["triage"], time))
-        if "final" in run:
-            cases.append(triage_case(run["final"]["triage"], run["final"]["time"]))
-        if "death" in run:
+        if not run["specification"]["pulse"]:
+            continue  # Casualty not run in Pulse
+
+        if "15.0" in run["visits"]:
+            visit = run["visits"]["15.0"]
+            cases.append(triage_case(visit["triage"], 15.0))
+        elif "death" in run:
             cases.append(triage_case(run["death"]["triage"], run["death"]["time"]))
+        # Not adding the "final" state, only the initial visit
 
     return cases
 
@@ -426,6 +428,9 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
             survivability_counts[protocol][f"ais-{i+1}.0"] = copy.deepcopy(ledger)
 
     for pid, run in study_run.items():
+        if not run["specification"]["pulse"]:
+            continue  # Casualty not run through Pulse
+
         # Find the chart axes this casualty applies to:
         axes = set()
         axes.add("overall")  # Always adding to overall count
@@ -440,9 +445,9 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
         if "final" in run:
             no_intervention_death = max_time
             if "ais-6.0" in axes:
-                _log.info("here")
+                _log.info("Found ais-6.0")
         elif "death" in run:
-            no_intervention_death = run["death"]["time"]
+            no_intervention_death = run["death"]["time_min"]
         else:
             _log.info(f"{pid} has no final or death?")
             exit(1)
@@ -531,6 +536,8 @@ def count_tags(study_run: dict):
 
     time_of_interest = "15.0"
     for pid, run in study_run.items():
+        if not run["specification"]["pulse"]:
+            continue  # This casualty was not run through Pulse
         injuries = injury_list_to_dict(run["specification"]["injuries"])
         visits = run["visits"]
         if time_of_interest not in visits:
@@ -553,6 +560,10 @@ def count_tags(study_run: dict):
             tags = visits[time_of_interest]["triage"]["tags"]
             for protocol in protocol_counts.keys():
                 color = tags[protocol]
+                if color == TriageColor.Black and "death" not in run:
+                    _log.info(f"{pid} is black tagged but not dead")
+                    _log.info(f"\t{run['specification']['injuries']}")
+                    _log.info(f"\t{run['pulse_injuries']}")
                 counts["tags"][protocol][color] += 1
                 ais_set = set()
                 for loc, types in injuries.items():
@@ -793,13 +804,13 @@ def main():
     parser.add_argument(
         "-ev1k", "--eval_1k_file",
         type=Path,
-        default=Path("./test_results/itm/triage_study/1000_casualties.json"),
+        default=Path("./skip"),  # Path("./test_results/itm/triage_study/1000_casualties.json"),
         help="Triage study evaluation file"
     )
     parser.add_argument(
         "-ev10k", "--eval_10k_file",
         type=Path,
-        default=Path("./test_results/itm/triage_study/10000_casualties.json"),
+        default=Path("./skip"),  # Path("./test_results/itm/triage_study/10000_casualties.json"),
         help="Triage study evaluation file"
     )
     parser.add_argument(
@@ -846,7 +857,7 @@ def main():
     if opts.create_plots:
         output_img_dir = Path(f"./docs/html/Images/itm/{dataset.value}")
         output_img_dir.mkdir(parents=True, exist_ok=True)
-        plot_population(army_population_distributions["age"], output_img_dir)
+        plot_population(army_population_distributions["age_yr"], output_img_dir)
 
     output_md_dir = None
     if opts.markdown:
@@ -857,12 +868,12 @@ def main():
             return f"mean: {d['mean']:.1f}<br> stdev: {d['std']:.1f}"
         # Generate demographic table
         pop = army_population_distributions
-        hr = _severity(pop['heart_rate'])
+        hr = _severity(pop['heart_rate_bpm'])
         male_p = f"{pop['sex']['male']['percent']:.1f}"
-        male_ht = _severity(pop['sex']['male']['height'])
+        male_ht = _severity(pop['sex']['male']['height_cm'])
         male_bmi = _severity(pop['sex']['male']['bmi'])
         female_p = f"{pop['sex']['female']['percent']:.1f}"
-        female_ht = _severity(pop['sex']['female']['height'])
+        female_ht = _severity(pop['sex']['female']['height_cm'])
         female_bmi = _severity(pop['sex']['female']['bmi'])
         with open(output_md_dir / "army_population_table.md", 'w') as file:
             file.write(f"|                                   |  Male     | Female     |\n")
@@ -936,41 +947,31 @@ def main():
         else:
             _log.error(f"Unable to find markdown file: {src}")
 
-    if opts.example_file.exists():
-        with open(opts.example_file, 'r') as file:
-            study = json.load(file)
-
-        if opts.markdown:
-            create_markdown(dataset.value, "example", study, output_md_dir)
-
-        if opts.to_align_input:
-            align = create_align_dataset(study, "example")
-            filename = output_dir/f"align_{opts.example_file.stem}.json"
-            _log.info(f"Writing {filename}")
-            with open(filename, 'w') as file:
-                json.dump(align, file, indent=2)
-            dl_file = downloads_dir / "itm_example_align.json"
-            _log.info(f"Copying to {dl_file}")
-            shutil.copyfile(filename, dl_file)
-
     def _process_eval_file(eval_file: Path, set_name: str):
         if eval_file.exists():
             with open(eval_file, 'r') as ef:
                 eval_study = json.load(ef)
             _log.info(f"There are {len(eval_study)} casualties in {eval_file}")
+            pulse_casualties = 0
+            for pid, run in eval_study.items():
+                if run["specification"]["pulse"]:
+                    pulse_casualties += 1
+            _log.info(f"There are {pulse_casualties} pulse casualties in {eval_file}")
+            _log.info(f"That is {pulse_casualties/len(eval_study)*100.0}% of this dataset")
 
             if opts.create_plots:
                 dst_dir = output_img_dir / f"{set_name}"
                 dst_dir.mkdir(exist_ok=True, parents=True)
                 results_stem = str(dst_dir) + "/eval_casualties"
 
-                # Write out the error images for this generated dataset
-                spec = to_specification_lists(eval_study)
-                population_error = calculate_population_error(spec, army_population_distributions)
-                plot_population_error(population_error, results_stem)
+                if set_name != "example":
+                    # Write out the error images for this generated dataset
+                    spec = to_specification_lists(eval_study)
+                    population_error = calculate_population_error(spec, army_population_distributions)
+                    plot_population_error(population_error, results_stem)
 
-                injury_error = calculate_injury_error(spec["injuries"], army_injury_distributions)
-                plot_injury_error(injury_error, results_stem)
+                    injury_error = calculate_injury_error(spec["injuries"], army_injury_distributions)
+                    plot_injury_error(injury_error, results_stem)
 
                 # Result plots/tables
                 tag_counts = count_tags(eval_study)
@@ -985,14 +986,16 @@ def main():
 
             if opts.to_align_input:
                 eval_align = create_align_dataset(eval_study, "")
-                eval_out = output_dir/f"align_eval{set_name}.json"
+                eval_out = output_dir/f"align_eval_{set_name}.json"
                 _log.info(f"Writing {eval_out}")
                 with open(eval_out, 'w') as eval_file:
                     json.dump(eval_align, eval_file, indent=2)
-                eval_dl_file = downloads_dir / f"itm_eval{set_name}_align.json"
+                eval_dl_file = downloads_dir / f"itm_eval_{set_name}_align.json"
                 _log.info(f"Copying to {eval_dl_file}")
                 shutil.copyfile(eval_out, eval_dl_file)
 
+    if opts.example_file.exists():
+        _process_eval_file(opts.example_file, "example")
     if opts.eval_1k_file.exists():
         _process_eval_file(opts.eval_1k_file, "1k")
     if opts.eval_10k_file.exists():

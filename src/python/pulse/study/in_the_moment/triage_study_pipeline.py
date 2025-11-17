@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 import argparse
+import copy
 import json
 import logging
 import math
@@ -44,7 +45,7 @@ def _exec_status_to_dict(status: SEScenarioExecStatus):
 
 
 class DeathCheckModule(PulseResultsProcessor):
-    __slots__ = ["_cause_of_death", "_time_of_death",
+    __slots__ = ["_cause_of_death", "_time_of_death_s",
                  "_brain_O2_deficit", "_start_brain_O2_deficit_s",
                  "_myocardium_O2_deficit", "_start_myocardium_O2_deficit_s",
                  "_spO2_deficit", "_start_spO2_deficit_s",
@@ -53,7 +54,7 @@ class DeathCheckModule(PulseResultsProcessor):
 
     def __init__(self, max_hr_bpm):
         super().__init__()
-        self._time_of_death = None
+        self._time_of_death_s = None
         self._cause_of_death = ""
         self._brain_O2_deficit = False
         self._start_brain_O2_deficit_s = 0.
@@ -67,7 +68,7 @@ class DeathCheckModule(PulseResultsProcessor):
     def cause_of_death(self): return self._cause_of_death
 
     @property
-    def time_of_death(self): return self._time_of_death
+    def time_of_death_s(self): return self._time_of_death_s
 
     def process_time_step(self,
                           data_slice: NamedTuple,
@@ -82,15 +83,16 @@ class DeathCheckModule(PulseResultsProcessor):
         # Generally, you should process event/action changes every time step
         for event_change in event_changes:
             if event_change.event == eEvent.IrreversibleState and event_change.active:
-                self._time_of_death = curr_time_s
+                self._time_of_death_s = curr_time_s
                 self._cause_of_death = f"Death from irreversible state."
                 raise StopIteration(self._cause_of_death)
 
             if event_change.event == eEvent.CardiovascularCollapse and event_change.active:
-                self._time_of_death = curr_time_s
+                self._time_of_death_s = curr_time_s
                 self._cause_of_death = f"Death from cardiovascular collapse."
                 raise StopIteration(self._cause_of_death)
 
+        """ A medic would not be able to tell declare these types of death on the battle field
             if event_change.event == eEvent.BrainOxygenDeficit:
                 if event_change.active:
                     if not self._brain_O2_deficit:
@@ -100,7 +102,7 @@ class DeathCheckModule(PulseResultsProcessor):
                     self._brain_O2_deficit = False
                     self._start_brain_O2_deficit_s = 0
             if self._brain_O2_deficit and (curr_time_s - self._start_brain_O2_deficit_s) > 180:
-                self._time_of_death = curr_time_s
+                self._time_of_death_s = curr_time_s
                 self._cause_of_death = f"Death from a brain O2 deficit lasting 180s."
                 raise StopIteration(self._cause_of_death)
 
@@ -113,12 +115,12 @@ class DeathCheckModule(PulseResultsProcessor):
                     self._myocardium_O2_deficit = False
                     self._start_myocardium_O2_deficit_s = 0
             if self._myocardium_O2_deficit and (curr_time_s - self._start_myocardium_O2_deficit_s) > 180:
-                self._time_of_death = curr_time_s
+                self._time_of_death_s = curr_time_s
                 self._cause_of_death = f"Death from a myocardium O2 deficit lasting 180s."
                 raise StopIteration(self._cause_of_death)
 
         if hr_bpm >= self._max_hr_bpm:
-            self._time_of_death = curr_time_s
+            self._time_of_death_s = curr_time_s
             self._cause_of_death = f"Death from reaching max hr of {self._max_hr_bpm}."
             raise StopIteration(self._cause_of_death)
 
@@ -127,11 +129,12 @@ class DeathCheckModule(PulseResultsProcessor):
                 self._spO2_deficit = True
                 self._start_spO2_deficit_s = curr_time_s
             elif (curr_time_s - self._start_spO2_deficit_s) > 140:
-                self._time_of_death = curr_time_s
+                self._time_of_death_s = curr_time_s
                 self._cause_of_death = f"Death from SpO2 < 85 for 140s."
                 raise StopIteration(self._cause_of_death)
         else:
             self._spO2_deficit = False
+        """
 
 
 class TriageStudy:
@@ -195,8 +198,20 @@ class TriageStudy:
         for key in keys_to_remove:
             casualty.pop(key)
 
-    def triage(self, num_casualties: int, tgt_id: int = None, skip_visited: bool = False,
-               untreated_injury_time_min: int = 5, state_interval_min: int = 5, total_injury_duration_min: int = 60):
+    def triage(self, num_casualties: int, intervention_visit_times_min: List[float],
+               final_injury_state_min: float, final_intervention_state_min: float,
+               tgt_id: int = None, skip_visited: bool = False):
+        """
+        :param num_casualties: Number of casualties to generate.
+        :param intervention_visit_times_min: Times to visit a casualty and apply any protocol treatments
+            This will result in a new simulation to see how casualty fairs from the intervention.
+        :param final_injury_state_min: Duration to simulate the initial injury
+            Vitals will be recorded at this time
+        :param final_intervention_state_min: Duration to simulate the intervention of the injury
+            Vitals will be recorded at this time
+        :param tgt_id: A specific casualty number to triage, no other casualties will be triaged
+        :param skip_visited: To triage a casualty if it already has triage information or not
+        """
         start_time = timer()
         if num_casualties == 0:
             file = self._output_dir / f"example_casualties.json"
@@ -239,11 +254,11 @@ class TriageStudy:
                 p.clear()
                 if spec["sex"] == "female":
                     p.set_sex(eSex.Female)
-                p.get_age().set_value(spec["age"], TimeUnit.yr)
-                p.get_height().set_value(spec["height"], LengthUnit.cm)
+                p.get_age().set_value(spec["age_yr"], TimeUnit.yr)
+                p.get_height().set_value(spec["height_cm"], LengthUnit.cm)
                 p.get_body_mass_index().set_value(spec["bmi"])
                 # HR range is too wide, not using it for now
-                # p.get_heart_rate_baseline().set_value(spec["heart_rate"], FrequencyUnit.Per_min)
+                # p.get_heart_rate_baseline().set_value(spec["heart_rate_bpm"], FrequencyUnit.Per_min)
                 if not pulse.is_valid_patient(p):
                     spec["pulse"] = False
                     _log.warning(f"Pulse cannot simulate casualty {i}\n{spec}")
@@ -254,48 +269,64 @@ class TriageStudy:
             with open(file, 'w') as f:
                 json.dump(self._triage_study, f, indent=2)
         _log.info(f"Study has {self._num_pulse_casualties}/{len(self._triage_study)} Pulse compatible casualties")
-        self._triage(file, tgt_id, skip_visited,
-                     untreated_injury_time_min=untreated_injury_time_min,
-                     state_interval_min=state_interval_min,
-                     total_injury_duration_min=total_injury_duration_min)
+        self._triage(out_file=file,
+                     intervention_visit_times_min=intervention_visit_times_min,
+                     final_injury_state_min=final_injury_state_min,
+                     final_intervention_state_min=final_intervention_state_min,
+                     tgt_id=tgt_id, skip_visited=skip_visited)
         elapsed_time = timer() - start_time
         _log.info(f"Execution took {elapsed_time/60:.1f} min")
 
-    def _triage(self, out_file: Path, tgt_id: int = None, skip_visited: bool = False,
-                untreated_injury_time_min: int = 15, state_interval_min: int = 45, total_injury_duration_min: int = 60):
+    def _triage(self, out_file: Path,
+                intervention_visit_times_min: List[float],
+                final_injury_state_min: float,
+                final_intervention_state_min: float,
+                tgt_id: int = None, skip_visited: bool = False):
+        """
+        :param out_file: File to write all casualty information to.
+        :param intervention_visit_times_min: Times to visit a casualty and apply any protocol treatments
+            This will result in a new simulation to see how casualty fairs from the intervention.
+        :param final_injury_state_min: Duration to simulate the initial injury
+            Vitals will be recorded at this time
+        :param final_intervention_state_min: Duration to simulate the intervention of the injury
+            Vitals will be recorded at this time
+        :param tgt_id: A specific casualty number to triage, no other casualties will be triaged
+        :param skip_visited: To triage a casualty if it already has triage information or not
+        """
         self._tgt_id = tgt_id
 
         # Add a subdir to the output dir for this population size
         self._set_artifact_folder_name(out_file.stem)
 
         # Simulate the injuries and create states
-        start_time = timer()
-        self._generate_initial_injury_states(untreated_injury_time_min=untreated_injury_time_min,
-                                             state_interval_min=state_interval_min,
-                                             total_injury_duration_min=total_injury_duration_min)
-        elapsed_time = timer() - start_time
-        _log.info(f"It took {elapsed_time / 60:.1f} min to simulate injuries")
+        start_time_s = timer()
+        self._generate_initial_injury_states(intervention_visit_times_min=intervention_visit_times_min,
+                                             final_injury_state_min=final_injury_state_min)
+        elapsed_time_s = timer() - start_time_s
+        _log.info(f"It took {elapsed_time_s / 60:.1f} min to simulate injuries")
 
         # Triage all the injury states
-        start_time = timer()
-        self._triage_injured_states(out_file)
-        elapsed_time = timer() - start_time
-        _log.info(f"It took {elapsed_time / 60:.1f} min to triage injuries")
+        start_time_s = timer()
+        self._triage_injured_states(intervention_visit_times_min=intervention_visit_times_min,
+                                    final_injury_state_min=final_injury_state_min)
+        elapsed_time_s = timer() - start_time_s
+        _log.info(f"It took {elapsed_time_s / 60:.1f} min to triage injuries")
 
+        # Save out the study file to preserve our triage data
         with open(out_file, 'w') as f:
             json.dump(self._triage_study, f, indent=2)
 
         # Simulate intervened casualties
-        start_time = timer()
-        self._simulate_interventions(total_simulation_duration_min=total_injury_duration_min)
-        elapsed_time = timer() - start_time
-        _log.info(f"It took {elapsed_time / 60:.1f} min to simulate interventions")
+        start_time_s = timer()
+        self._simulate_interventions(total_simulation_duration_min=final_intervention_state_min)
+        elapsed_time_s = timer() - start_time_s
+        _log.info(f"It took {elapsed_time_s / 60:.1f} min to simulate interventions")
 
         # Assess final casualty state after each visit
-        start_time = timer()
-        self._assess_interventions(duration_min=total_injury_duration_min)
-        elapsed_time = timer() - start_time
-        _log.info(f"It took {elapsed_time / 60:.1f} min to assess interventions")
+        start_time_s = timer()
+        self._assess_interventions(duration_min=final_intervention_state_min)
+        elapsed_time_s = timer() - start_time_s
+        _log.info(f"It took {elapsed_time_s / 60:.1f} min to assess interventions")
 
         # Write out all the data we collected
         with open(out_file, 'w') as f:
@@ -306,30 +337,31 @@ class TriageStudy:
                       injuries: List[dict],
                       pulse_injuries: List[dict],
                       vitals: dict):
-        vitals["avpu"] = AVPU.Unresponsive
-        vitals["ambulatory"] = False
-        vitals["brain_o2_pp"] = 0.0
-        vitals["breathing"] = False
-        vitals["breathing_distressed"] = None
-        vitals["healthy_capillary_refill_time"] = False
-        vitals["heart_rate"] = 0.0
-        vitals["heart_rhythm"] = eHeartRhythm.Asystole.name
-        vitals["peripheral_pulse"] = False
-        vitals["respiratory_rate"] = 0.0
-        vitals["spO2"] = 0.0
-        vitals["systolic_pressure"] = 0
-        vitals["diastolic_pressure"] = 0
-        vitals["survivable_injuries"] = False
+        dead_vitals = copy.deepcopy(vitals)
+        dead_vitals["avpu"] = AVPU.Unresponsive
+        dead_vitals["ambulatory"] = False
+        dead_vitals["brain_o2_pp"] = 0.0
+        dead_vitals["breathing"] = False
+        dead_vitals["breathing_distressed"] = None
+        dead_vitals["healthy_capillary_refill_time"] = False
+        dead_vitals["heart_rate"] = 0.0
+        dead_vitals["heart_rhythm"] = eHeartRhythm.Asystole.name
+        dead_vitals["peripheral_pulse"] = False
+        dead_vitals["respiratory_rate"] = 0.0
+        dead_vitals["spO2"] = 0.0
+        dead_vitals["systolic_pressure"] = 0
+        dead_vitals["diastolic_pressure"] = 0
+        dead_vitals["survivable_injuries"] = False
 
         # interventions will not work
-        vitals["interventions"].clear()
+        dead_vitals["interventions"].clear()
 
-        start_color, start_reason = self.start_tag(vitals)
-        salt_color, salt_reason = self.salt_tag(vitals)
-        bcd_color, bcd_reason = self.bcd_sieve_tag(vitals)
+        start_color, start_reason = self.start_tag(dead_vitals)
+        salt_color, salt_reason = self.salt_tag(dead_vitals)
+        bcd_color, bcd_reason = self.bcd_sieve_tag(dead_vitals)
         triage = {
             "state": None,
-            "vitals": vitals,
+            "vitals": dead_vitals,
             "tags": {"start": start_color,
                      "start_reason": start_reason,
                      "salt": salt_color,
@@ -338,15 +370,26 @@ class TriageStudy:
                      "bcd_sieve_reason": bcd_reason},
             "triss": 0.0,
             "news": 0.0,
-            "injury_description": self._dataset.injury_description(time_min, injuries, pulse_injuries, vitals),
-            "vitals_description": self._dataset.vitals_description(vitals)
+            "injury_description": self._dataset.injury_description(time_min, injuries, pulse_injuries, dead_vitals),
+            "vitals_description": self._dataset.vitals_description(dead_vitals)
         }
         return triage
 
     def _generate_initial_injury_states(self,
-                                        untreated_injury_time_min: float,
-                                        state_interval_min: float,
-                                        total_injury_duration_min: float):
+                                        intervention_visit_times_min: List[float],
+                                        final_injury_state_min: float):
+        """
+        :param intervention_visit_times_min: Times to visit a casualty and apply any protocol treatments
+            This will result in a new simulation to see how casualty fairs from the intervention.
+        :param final_injury_state_min: Duration to simulate the initial injury
+            Vitals will be recorded at this time
+        """
+        # Let's make sure the final time is greater than visit times
+        if final_injury_state_min < max(intervention_visit_times_min):
+            raise ValueError(f"Conflicting data provided to _generate_initial_injury_states. \n"
+                             f"final_injury_state_min ({final_injury_state_min}) is less than the maximum time "
+                             f"provided in intervention_visit_times_min ({intervention_visit_times_min})")
+
         executor = PulseScenarioExec()
         injury_scenarios: List[SEScenarioExecStatus] = []
 
@@ -371,13 +414,17 @@ class TriageStudy:
                     p = s.get_patient_configuration().get_patient()
                     p.set_sex(eSex.Male if spec["sex"] == "male" else eSex.Female)
                     p.set_name(f"Casualty_{i}")
-                    p.get_age().set_value(spec["age"], TimeUnit.yr)
-                    p.get_height().set_value(spec["height"], LengthUnit.cm)
+                    p.get_age().set_value(spec["age_yr"], TimeUnit.yr)
+                    p.get_height().set_value(spec["height_cm"], LengthUnit.cm)
                     p.get_body_mass_index().set_value(spec["bmi"])
                     # HR demographic range causing invalid patients
-                    # p.get_heart_rate_baseline().set_value(sp["heart_rate"], FrequencyUnit.Per_min)
+                    # p.get_heart_rate_baseline().set_value(sp["heart_rate_bpm"], FrequencyUnit.Per_min)
                     _log.info(f"Creating casualty {i}: "
-                              f"{spec['sex']}-{spec['age']}yr-{spec['height']}cm-{spec['bmi']}bmi-{spec['heart_rate']}bpm")
+                              f"{spec['sex']}-"
+                              f"{spec['age_yr']}yr-"
+                              f"{spec['height_cm']}cm-"
+                              f"{spec['bmi']}bmi-"
+                              f"{spec['heart_rate_bpm']}bpm")
 
                 s.get_data_request_manager().set_samples_per_second(1.0)
                 s.get_data_request_manager().set_data_requests(self._pulse_data.data_requests)
@@ -391,27 +438,33 @@ class TriageStudy:
                     s.get_actions().append(action)
                     _log.info(f"\t{action}")
 
-                # Advance the minimum injury time
-                adv = SEAdvanceTime()
-                adv.get_time().set_value(untreated_injury_time_min, TimeUnit.min)
-                s.get_actions().append(adv)
-                injury_duration_min += adv.get_time().get_value(TimeUnit.min)
+                # Advance the simulation
+                times_of_interest_min = set()
+                for time_min in intervention_visit_times_min:
+                    times_of_interest_min.add(time_min)
+                times_of_interest_min.add(final_injury_state_min)
+                times_of_interest_min = sorted(times_of_interest_min)
+                # Now turn these into durations
+                last_time_min = 0.0
+                advance_times_min = []
+                for idx, time_min in enumerate(times_of_interest_min):
+                    if idx == 0:
+                        advance_times_min.append(time_min)
+                    else:
+                        advance_times_min.append(time_min - last_time_min)
+                    last_time_min = time_min
 
-                state = SESerializeState()
-                state.set_comment(f"Injury Duration: {injury_duration_min} min")
-                state.set_filename(str(self._injury_states_dir/f"casualty_{i}/injury@{injury_duration_min}min.json"))
-                s.get_actions().append(state)
-
-                # Simulate casualty saving new states at specified intervals
-                while injury_duration_min < total_injury_duration_min:
+                sim_time_min = 0
+                for time_min in advance_times_min:
                     adv = SEAdvanceTime()
-                    adv.get_time().set_value(state_interval_min, TimeUnit.min)
+                    adv.get_time().set_value(time_min, TimeUnit.min)
                     s.get_actions().append(adv)
                     injury_duration_min += adv.get_time().get_value(TimeUnit.min)
 
+                    sim_time_min += time_min
                     state = SESerializeState()
                     state.set_comment(f"Injury Duration: {injury_duration_min} min")
-                    state.set_filename(str(self._injury_states_dir/f"casualty_{i}/injury@{injury_duration_min}min.json"))
+                    state.set_filename(str(self._injury_states_dir/f"casualty_{i}/injury@{sim_time_min}min.json"))
                     s.get_actions().append(state)
 
                 # Write the scenario to disk
@@ -453,7 +506,7 @@ class TriageStudy:
             self._triage_study[i]["injury_exec_status"] = _exec_status_to_dict(status)
             # TODO Check if runs were successful or not
 
-    def _triage_injured_states(self, out_file: Path):
+    def _triage_injured_states(self, intervention_visit_times_min: List[float], final_injury_state_min: float):
         _log.info("Triaging injured casualties")
         for i, casualty in self._triage_study.items():
             spec = casualty["specification"]
@@ -475,8 +528,12 @@ class TriageStudy:
             injuries = spec["injuries"]
             exec_status = casualty["injury_exec_status"]
             # Pull the results from our exec status
-            r = PulseEngineReprocessor(csv_files=[Path(exec_status["InitializationStatus"]["CSVFilename"])],
-                                       log_files=[Path(exec_status["InitializationStatus"]["LogFilename"])])
+            try:
+                r = PulseEngineReprocessor(csv_files=[Path(exec_status["InitializationStatus"]["CSVFilename"])],
+                                           log_files=[Path(exec_status["InitializationStatus"]["LogFilename"])])
+            except ValueError:
+                _log.error(f"Unable to find results for casualty {i}")
+                continue
 
             states = {}
             pulse_injuries = []
@@ -499,76 +556,81 @@ class TriageStudy:
             casualty["pulse_injuries"] = pulse_injuries
 
             # Check to see when/if the casualty died
+            death = None
             death_module = DeathCheckModule(r.patient.get_heart_rate_maximum().get_value(FrequencyUnit.Per_min))
             r.replay([death_module])
             if death_module.cause_of_death:
-                _log.info(f"{casualty_name} cause of death: "
-                          f"{death_module.cause_of_death} at {death_module.time_of_death/60}")
+                _log.info(f"\t{casualty_name} cause of death: "
+                          f"{death_module.cause_of_death} at {death_module.time_of_death_s/60}min")
                 # Grab some vitals from the time of death
                 self._pulse_data.set_values(r.get_values_at_time(r.end_time_s-1))
                 active_events = r.get_active_events_in_window(r.start_time_s, r.end_time_s)
                 vitals = self._dataset.calculate_triage_vitals(spec, active_events, self._pulse_data)
-                triage = self._death_triage(death_module.time_of_death/60, injuries, pulse_injuries, vitals)
-                casualty["death"] = {"time": death_module.time_of_death/60,
-                                 "cause": death_module.cause_of_death,
-                                 "triage": triage}
+                triage = self._death_triage(death_module.time_of_death_s/60, injuries, pulse_injuries, vitals)
+                death = {"time_min": death_module.time_of_death_s/60,
+                         "cause": death_module.cause_of_death,
+                         "triage": triage,
+                         "pulse_vitals": vitals}
 
-            # Get the last time that we have a state file for (maybe the patient died before all save times)
-            final_time = None
-            # dict of triage times of interest for this casualty to triage vitals
-            casualty["visits"] = {}
-            # Data needed for tagging protocols for every triage time for this casualty
-            for time_min, injury_state in states.items():
-                time_s = time_min * 60
-                if Path(injury_state).exists():
-                    final_time = time_min
-                elif death_module.time_of_death and time_s >= death_module.time_of_death:
-                    continue
+            def _triage_time(_time_min: float):
+                if _time_min not in states:
+                    _log.error(f"A state for intervention at time {_time_min}min was not in the scenario")
+                    return None
+                # We have results for this time, let's triage
+                _time_s = _time_min * 60
+                _injury_state = states[_time_min]
+                if death_module.time_of_death_s and _time_s >= death_module.time_of_death_s:
+                    return death
+                elif Path(_injury_state).exists():
+                    self._pulse_data.set_values(r.get_values_at_time(_time_s))
+                    # Get active events from the last minute of this triage time
+                    _active_events = r.get_active_events_in_window(_time_s - 60, _time_s)
+                    _vitals = self._dataset.calculate_triage_vitals(spec, _active_events, self._pulse_data)
+                    _start_color, _start_reason = self.start_tag(_vitals)
+                    _salt_color, _salt_reason = self.salt_tag(_vitals)
+                    _bcd_color, _bcd_reason = self.bcd_sieve_tag(_vitals)
+                    return {
+                            "state": _injury_state,
+                            "vitals": _vitals,
+                            "tags": {"start": _start_color,
+                                     "start_reason": _start_reason,
+                                     "salt": _salt_color,
+                                     "salt_reason": _salt_reason,
+                                     "bcd_sieve": _bcd_color,
+                                     "bcd_sieve_reason": _bcd_reason},
+                            "triss": self.calculate_triss_score(_vitals),
+                            "news": self.calculate_news_score(_vitals),
+                            "injury_description": self._dataset.injury_description(_time_min,
+                                                                                   injuries,
+                                                                                   pulse_injuries,
+                                                                                   _vitals),
+                            "vitals_description": self._dataset.vitals_description(_vitals)
+                            }
                 else:
-                    _log.error(f"No state found for time {time_min}min, but the casualty did not die?")
+                    _log.error(f"No state found for time {_time_min}min, but the casualty did not die?")
+                    return None
+
+            # Triage the casualty at all the intervention times
+            casualty["visits"] = {}
+            for time_min in intervention_visit_times_min:
+                triage = _triage_time(time_min)
+                if triage is None:
                     continue
-
-                self._pulse_data.set_values(r.get_values_at_time(time_s))
-                # Get active events from the last minute of this triage time
-                active_events = r.get_active_events_in_window(time_s - 60, time_s)
-
-                vitals = self._dataset.calculate_triage_vitals(spec, active_events, self._pulse_data)
-                start_color, start_reason = self.start_tag(vitals)
-                salt_color, salt_reason = self.salt_tag(vitals)
-                bcd_color, bcd_reason = self.bcd_sieve_tag(vitals)
-                triage = {
-                    "state": injury_state,
-                    "vitals": vitals,
-                    "tags": {"start": start_color,
-                             "start_reason": start_reason,
-                             "salt": salt_color,
-                             "salt_reason": salt_reason,
-                             "bcd_sieve": bcd_color,
-                             "bcd_sieve_reason": bcd_reason},
-                    "triss": self.calculate_triss_score(vitals),
-                    "news": self.calculate_news_score(vitals),
-                    "injury_description": self._dataset.injury_description(time_min, injuries, pulse_injuries, vitals),
-                    "vitals_description": self._dataset.vitals_description(vitals)
-                }
                 casualty["visits"][time_min] = {"triage": triage}
 
-            # Take the last visit out, and it will be our final state (no intervention)
-            if "death" not in casualty and final_time in casualty["visits"]:
-                final_visit = casualty["visits"].pop(final_time)
-                final_visit["time"] = final_time
-                casualty["final"] = final_visit
-
-            if self.keep_triage:
-                # Save out the study file to preserve our triage data
-                with open(out_file, 'w') as f:
-                    json.dump(self._triage_study, f, indent=2)
+            if death is None:
+                triage = _triage_time(final_injury_state_min)
+                if triage is not None:
+                    casualty["final"] = {"time_min": final_injury_state_min, "triage": triage}
+            else:
+                casualty["death"] = death
 
     @staticmethod
     def calculate_triss_score(vitals: dict):
         # https://www.mdapp.co/trauma-injury-severity-score-triss-calculator-277/
 
         # Age
-        age = vitals["age"]
+        age = vitals["age_yr"]
         age_index = 0
         if age > 55:
             age_index = 1
@@ -596,7 +658,7 @@ class TriageStudy:
             gcs_code = 4
 
         # Systolic Blood Pressure
-        sbp = vitals["systolic_pressure"]
+        sbp = vitals["systolic_pressure_mmHg"]
         if sbp >= 89:
             sbp_code = 4
         elif 76 <= sbp < 89:
@@ -608,7 +670,7 @@ class TriageStudy:
         else:
             sbp_code = 0
 
-        rr = vitals["respiratory_rate"]
+        rr = vitals["respiratory_rate_bpm"]
         if 10 <= rr <= 29:
             rr_code = 4
         elif rr > 29:
@@ -639,9 +701,9 @@ class TriageStudy:
         news = 0
 
         # Respiration Rate
-        if 8 < vitals["respiratory_rate"] < 12:
+        if 8 < vitals["respiratory_rate_bpm"] < 12:
             news = news+1
-        elif 21 <= vitals["respiratory_rate"] < 25:
+        elif 21 <= vitals["respiratory_rate_bpm"] < 25:
             news = news+2
         else:
             news = news+3
@@ -658,7 +720,7 @@ class TriageStudy:
         # TODO temperature
 
         # Systolic Blood Pressure
-        sbp = vitals["systolic_pressure"]
+        sbp = vitals["systolic_pressure_mmHg"]
         if sbp >= 220 or sbp <= 90:
             news = news+3
         elif 91 < sbp < 100:
@@ -667,7 +729,7 @@ class TriageStudy:
             news = news+1
 
         # Heart Rate
-        hr = vitals["heart_rate"]
+        hr = vitals["heart_rate_bpm"]
         if hr <= 40 or hr >= 131:
             news = news+3
         elif 131 > hr >= 110:
@@ -699,7 +761,7 @@ class TriageStudy:
                 tag.apply(TriageColor.Black, "Casualty is not breathing.\n"
                                              "Repositioning their airway did not help breathing.")
 
-        if vitals["respiratory_rate"] > 30.0:
+        if vitals["respiratory_rate_bpm"] > 30.0:
             tag.apply(TriageColor.Red, "Casualty respiratory rate greater than 30 breaths per minute.")
 
         if not vitals["healthy_capillary_refill_time"]:
@@ -805,10 +867,10 @@ class TriageStudy:
 
         # TODO Should we put in specific values instead of general descriptions?
 
-        if vitals["respiratory_rate"] > 23.0 or vitals["respiratory_rate"] < 12.0:
+        if vitals["respiratory_rate_bpm"] > 23.0 or vitals["respiratory_rate_bpm"] < 12.0:
             tag.apply(TriageColor.Red, "Casualty has abnormal breathing rate.")
 
-        if vitals["heart_rate"] > 100:
+        if vitals["heart_rate_bpm"] > 100:
             tag.apply(TriageColor.Red, "Casualty has elevated heart rate.")
         else:
             tag.apply(TriageColor.Yellow, "Casualty has normal heart rate.")
@@ -913,13 +975,13 @@ class TriageStudy:
             if not spec["pulse"]:
                 continue
 
-            for time, visit in casualty["visits"].items():
+            for time_min, visit in casualty["visits"].items():
                 if "intervention" not in visit:
                     continue
                 sce = Path(intervention_exec_status[v].get_scenario_filename()).parts[-2]
                 sce_id = int(sce[sce.find('_') + 1:])
                 if sce_id != i:
-                    _log.error(f"Mismatch of intervention status for casualty {i}@{time}, found status for {sce_id}")
+                    _log.error(f"Mismatch of intervention status for casualty {i}@{time_min}, found status for {sce_id}")
                     exit(1)
                 visit["intervention"]["intervention_exec_status"] = _exec_status_to_dict(intervention_exec_status[v])
                 v += 1
@@ -937,14 +999,15 @@ class TriageStudy:
                 if i != self._tgt_id:
                     continue
 
-            for time_s, visit in casualty["visits"].items():
+            for time_min, visit in casualty["visits"].items():
                 if "intervention" not in visit:
                     continue
 
                 intervention = visit["intervention"]
                 p += 1
                 _log.info(f"[{p}/{self._total_interventions}]"
-                          f"Assessing casualty {i} treated at time {time_s}")
+                          f"Assessing casualty {i} treated at time {time_min}")
+                _log.info(f"\t{casualty['specification']['injuries']}")
 
                 exec_status = intervention["intervention_exec_status"]
 
@@ -958,15 +1021,15 @@ class TriageStudy:
                 r.replay([death_module])
                 if death_module.cause_of_death:
                     _log.info(f"Intervened casualty {i} died.")
-                    _log.info(f"Cause of death: {death_module.cause_of_death} at {death_module.time_of_death/60} min")
+                    _log.info(f"Cause of death: {death_module.cause_of_death} at {death_module.time_of_death_s/60} min")
                     # Grab some vitals from the time of death
                     self._pulse_data.set_values(r.get_values_at_time(r.end_time_s - 1))
                     active_events = r.get_active_events_in_window(r.start_time_s, r.end_time_s)
                     vitals = self._dataset.calculate_triage_vitals(spec, active_events, self._pulse_data)
-                    triage = self._death_triage(death_module.time_of_death / 60,
+                    triage = self._death_triage(death_module.time_of_death_s / 60,
                                                 casualty["specification"]["injuries"],
                                                 casualty["pulse_injuries"], vitals)
-                    intervention["death"] = {"time": death_module.time_of_death / 60,
+                    intervention["death"] = {"time": death_module.time_of_death_s / 60,
                                              "cause": death_module.cause_of_death,
                                              "triage": triage}
                 else:
@@ -974,21 +1037,25 @@ class TriageStudy:
                     # Get active events from the last minute of this simulation
                     active_events = r.get_active_events_in_window(r.end_time_s - 60, r.end_time_s)
                     vitals = self._dataset.calculate_triage_vitals(spec, active_events, self._pulse_data)
-                    intervention["vitals"] = vitals
                     start_color, start_reason = self.start_tag(vitals)
                     salt_color, salt_reason = self.salt_tag(vitals)
                     bcd_color, bcd_reason = self.bcd_sieve_tag(vitals)
-                    tags = {"start": start_color,
-                            "start_reason": start_reason,
-                            "salt": salt_color,
-                            "salt_reason": salt_reason,
-                            "bcd_sieve": bcd_color,
-                            "bcd_sieve_reason": bcd_reason}
-                    intervention["tags"] = tags
-                    intervention["triss"] = self.calculate_triss_score(vitals)
-                    intervention["news"] = self.calculate_news_score(vitals)
-                    intervention["injury_description"] = [f"Casualty has been waiting {duration_min} min for further care."]
-                    intervention["vitals_description"] = [""]  # TODO Need to improve vitals to handle interventions
+                    intervention["final"] = {
+                        "time_min": r.end_time_s/60,
+                        "triage": {
+                            "vitals": vitals,
+                            "tags": {"start": start_color,
+                                     "start_reason": start_reason,
+                                     "salt": salt_color,
+                                     "salt_reason": salt_reason,
+                                     "bcd_sieve": bcd_color,
+                                     "bcd_sieve_reason": bcd_reason},
+                            "triss": self.calculate_triss_score(vitals),
+                            "news": self.calculate_news_score(vitals),
+                            "injury_description": [f"Casualty has been waiting {duration_min} min for further care."],
+                            "vitals_description": [""]  # TODO Need to improve vitals to handle interventions
+                        }
+                    }
 
 
 def main():
@@ -1071,8 +1138,11 @@ def main():
         triage_study.keep_triage = opts.keep_triage
         triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
-        triage_study.triage(num_casualties=0, tgt_id=opts.id, skip_visited=opts.skip_visited,
-                            untreated_injury_time_min=5, state_interval_min=5, total_injury_duration_min=60)
+        triage_study.triage(num_casualties=0,   # Number of casualties to generate
+                            intervention_visit_times_min=[15.0],  # list(range(5, 60, 5)),
+                            final_injury_state_min=60,
+                            final_intervention_state_min=60,
+                            tgt_id=opts.id, skip_visited=opts.skip_visited)
     elif opts.num_casualties:
         file_handler = logging.FileHandler(output_dir/f"triage_study_pipeline_{opts.num_casualties}-{now}.log", mode='w')
         file_handler.setFormatter(logging.Formatter('%(asctime)s - %(message)s'))
@@ -1082,8 +1152,11 @@ def main():
         triage_study.keep_triage = opts.keep_triage
         triage_study.injury_opts.force_valid_distributions = opts.force_injury_severity_distributions
         triage_study.injury_opts.max_percent_difference = opts.max_injury_severity_percent_difference
-        triage_study.triage(num_casualties=opts.num_casualties, tgt_id=opts.id, skip_visited=opts.skip_visited,
-                            untreated_injury_time_min=15, state_interval_min=45, total_injury_duration_min=60)
+        triage_study.triage(num_casualties=opts.num_casualties,
+                            intervention_visit_times_min=[15.0],
+                            final_injury_state_min=60,
+                            final_intervention_state_min=60,
+                            tgt_id=opts.id, skip_visited=opts.skip_visited)
 
 
 if __name__ == "__main__":
