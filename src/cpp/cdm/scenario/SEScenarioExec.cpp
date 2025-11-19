@@ -260,8 +260,8 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioEx
         remove(m_DataRequestCSVFilename.c_str());
         sce.Info("Creating CSV File : " + m_DataRequestCSVFilename);
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
+        pe.GetEngineTracker()->TrackData(pe.GetSimulationTime(TimeUnit::s));
       }
-      pe.GetEngineTracker()->TrackData(pe.GetSimulationTime(TimeUnit::s));
     }
     else if (sce.HasPatientConfiguration())
     {
@@ -280,6 +280,7 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioEx
         remove(m_DataRequestCSVFilename.c_str());
         sce.Info("Creating CSV File : " + m_DataRequestCSVFilename);
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
+        pe.GetEngineTracker()->TrackData(pe.GetSimulationTime(TimeUnit::s));
       }
       if (status)
         status->SetStabilizationTime_s(pe.GetStabilizationTime(TimeUnit::s));
