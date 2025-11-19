@@ -756,7 +756,7 @@ void DataTrack::CreateFile(const char* fileName, std::ofstream& file)
 {
   size_t idx = 0;
   file.open(fileName, std::ofstream::out | std::ofstream::trunc);
-  // Write our headers  
+  // Write our headers
   file<<"Time(s)"<<m_Delimiter;
   for (Element& e : m_Elements)
   {

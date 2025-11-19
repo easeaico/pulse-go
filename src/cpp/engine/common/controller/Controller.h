@@ -319,6 +319,7 @@ namespace pulse
 
     virtual bool Initialize(const SEPatient& patient);
     virtual bool Stabilize(const SEPatientConfiguration& patient_configuration);
+    virtual void LogPatientStabilizationDiffs();
 
     // Allocate all the models this engine supports
     virtual void Allocate();

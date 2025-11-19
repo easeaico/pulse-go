@@ -121,7 +121,7 @@ public:
 
   virtual bool HasMeanArterialPressureBaseline() const;
   virtual SEScalarPressure& GetMeanArterialPressureBaseline();
-  virtual double GetMeanArterialPressureBaseline(const PressureUnit& unit) const;    
+  virtual double GetMeanArterialPressureBaseline(const PressureUnit& unit) const;
 
   virtual bool HasPulsePressureBaseline() const;
   virtual SEScalarPressure& GetPulsePressureBaseline();

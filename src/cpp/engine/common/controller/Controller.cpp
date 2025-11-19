@@ -49,6 +49,7 @@
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
+#include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/utils/FileUtils.h"
 
 namespace pulse
@@ -351,7 +352,6 @@ namespace pulse
     Info("Looking for files in " + patient_configuration.GetDataRoot());
     m_DataDir = patient_configuration.GetDataRoot();
 
-    m_EngineTrack->ResetFile();
     m_Config->Initialize();
     m_State = EngineState::Initialization;
 
@@ -522,6 +522,10 @@ namespace pulse
     // Copy any changes to the current patient to the initial patient
     m_InitialPatient->Copy(*m_CurrentPatient);
 
+    // Log the patient differences
+    Info("Stabilized to heathly baselines");
+    LogPatientStabilizationDiffs();
+
     // Cache the healthy requested values before we apply any conditions
     // Note, this should not cost much, but we could make this happen if a config v&v flag is enabled
     GetEngineTracker().SetupRequests();
@@ -546,6 +550,85 @@ namespace pulse
     m_EventManager->SetEvent(eEvent::Stabilizing, false, m_SimulationTime);
     return true;
   }
+
+  void Controller::LogPatientStabilizationDiffs()
+  {
+    double pd, s, t;
+    std::stringstream ss;
+
+    if (m_InitialPatient->HasBloodVolumeBaseline())
+    {
+      s = m_InitialPatient->GetBloodVolumeBaseline(VolumeUnit::mL);
+      t = m_CardiovascularModel->GetBloodVolume(VolumeUnit::mL);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "BloodVolume: Expected: " << s << "mL, Engine: " << t << "mL: %Diff: " << pd;
+      Info(ss);
+    }
+
+    if (m_InitialPatient->HasDiastolicArterialPressureBaseline())
+    {
+      s = m_InitialPatient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+      t = m_CardiovascularModel->GetDiastolicArterialPressure(PressureUnit::mmHg);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "DiastolicArterialPressure: Expected: " << s << "mmHg, Engine: " << t << "mmHg: %Diff: " << pd;
+      Info(ss);
+    }
+
+    if (m_InitialPatient->HasHeartRateBaseline())
+    {
+      s = m_InitialPatient->GetHeartRateBaseline(FrequencyUnit::Per_min);
+      t = m_CardiovascularModel->GetHeartRate(FrequencyUnit::Per_min);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "HeartRate: Expected: " << s << "bpm, Engine: " << t << "bpm: %Diff: " << pd;
+      Info(ss);
+    }
+
+    if (m_InitialPatient->HasMeanArterialPressureBaseline())
+    {
+      s = m_InitialPatient->GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+      t = m_CardiovascularModel->GetMeanArterialPressure(PressureUnit::mmHg);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "MeanArterialPressure: Expected: " << s << "mmHg, Engine: " << t << "mmHg: %Diff: " << pd;
+      Info(ss);
+    }
+
+    if (m_InitialPatient->HasPulsePressureBaseline())
+    {
+      s = m_InitialPatient->GetPulsePressureBaseline(PressureUnit::mmHg);
+      t = m_CardiovascularModel->GetPulsePressure(PressureUnit::mmHg);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "PulsePressure: Expected: " << s << "mmHg, Engine: " << t << "mmHg: %Diff: " << pd;
+      Info(ss);
+    }
+
+    if (m_InitialPatient->HasRespirationRateBaseline())
+    {
+      s = m_InitialPatient->GetRespirationRateBaseline(FrequencyUnit::Per_min);
+      t = m_RespiratoryModel->GetRespirationRate(FrequencyUnit::Per_min);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "RespirationRate: Expected: " << s << "bpm, Engine: " << t << "bpm: %Diff: " << pd;
+      Info(ss);
+    }
+
+    if (m_InitialPatient->HasSystolicArterialPressureBaseline())
+    {
+      s = m_InitialPatient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+      t = m_CardiovascularModel->GetSystolicArterialPressure(PressureUnit::mmHg);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "SystolicArterialPressure: Expected: " << s << "mmHg, Engine: " << t << "mmHg: %Diff: " << pd;
+      Info(ss);
+    }
+
+    if (m_InitialPatient->HasTidalVolumeBaseline())
+    {
+      s = m_InitialPatient->GetTidalVolumeBaseline(VolumeUnit::mL);
+      t = m_RespiratoryModel->GetTidalVolume(VolumeUnit::mL);
+      pd = GeneralMath::PercentDifference(s, t);
+      ss << "TidalVolume: Expected: " << s << "mL, Engine: " << t << "mL: %Diff: " << pd;
+      Info(ss);
+    }
+  }
+
 
   void Controller::SetSimulationTime(const SEScalarTime& time)
   {
@@ -580,7 +663,7 @@ namespace pulse
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
     if (m_EngineTrack)
-      m_EngineTrack->ResetFile();
+      m_EngineTrack->Clear();
 
     m_CurrentTime.SetValue(0, TimeUnit::s);
     m_SimulationTime.SetValue(0, TimeUnit::s);

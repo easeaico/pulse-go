@@ -266,6 +266,13 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioEx
     else if (sce.HasPatientConfiguration())
     {
       sce.GetPatientConfiguration().SetDataRoot(m_DataRootDirectory);
+      if (!pe.InitializeEngine(sce.GetPatientConfiguration()))
+      {
+        if (status)
+          status->SetEngineInitializationState(pe.GetInitializationState());
+        pe.GetLogger()->Error("Unable to initialize engine");
+        return false;
+      }
       // Make a copy of the data requests, note this clears out data requests from the engine
       pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager());
       if (sce.GetDataRequestManager().HasDataRequests())
@@ -273,13 +280,6 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioEx
         remove(m_DataRequestCSVFilename.c_str());
         sce.Info("Creating CSV File : " + m_DataRequestCSVFilename);
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
-      }
-      if (!pe.InitializeEngine(sce.GetPatientConfiguration()))
-      {
-        if (status)
-          status->SetEngineInitializationState(pe.GetInitializationState());
-        pe.GetLogger()->Error("Unable to initialize engine");
-        return false;
       }
       if (status)
         status->SetStabilizationTime_s(pe.GetStabilizationTime(TimeUnit::s));

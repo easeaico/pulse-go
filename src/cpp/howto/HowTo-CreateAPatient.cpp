@@ -4,7 +4,8 @@
 #include "EngineHowTo.h"
 #include "PulseEngine.h"
 
-// Include the various types you will be using in your code
+   // Include the various types you will be using in your code
+#include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/patient/SEPatient.h"
 #include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "cdm/compartment/SECompartmentManager.h"
@@ -29,22 +30,38 @@
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarLength.h"
 
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Creating a patient
-///
-/// \details
-/// Creating a customized patient in Pulse
-//--------------------------------------------------------------------------------------------------
-void HowToCreateAPatient()
-{
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_CreateAPatient.log");
-  pe->GetLogger()->Info("HowTo_CreateAPatient");
+#include "cdm/utils/FileUtils.h"
 
+void TrackData(PhysiologyEngine& pe, const std::string& csvFilename)
+{
+  pe.GetLogger()->Info("Tracking data to file: " + csvFilename);
+  // Let's run for 30s and collect some data to plot
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  pe.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(csvFilename);
+
+  // We are ready to execute the engine
+  // simply tell the engine how long you would like it to execute
+  if (!AdvanceAndTrackTime_s(30, pe))// Note this tracker class takes in seconds
+  {
+    pe.GetLogger()->Fatal("Unable to advance engine time");
+    return;
+  }
+}
+
+void PatientAPI(PhysiologyEngine& pe)
+{
+  pe.GetLogger()->Info("Creating a patient using the patient API");
   SEPatientConfiguration pc;
   SEPatient& patient = pc.GetPatient();
-  patient.SetName("HowToCreateAPatient");
+  patient.SetName("Patient");
   //Patient sex is the only thing that is absolutely required to be set.
   //All value not explicitly set based or standard values or calculations.
   //If you do something out of bounds or set something you're not allowed to, it will alert you with a warning/error.
@@ -70,19 +87,62 @@ void HowToCreateAPatient()
   //patient.GetSystolicArterialPressureBaseline().SetValue(118, PressureUnit::mmHg);
 
   // You can save off the patient if you want to use it later
-  patient.SerializeToFile("./patients/HowToCreateAPatient.json");
+  patient.SerializeToFile("./test_results/howto/HowToCreateAPatient.cpp/patient.json");
 
   SEAcuteRespiratoryDistressSyndrome& ards = pc.GetConditions().GetAcuteRespiratoryDistressSyndrome();
   ards.GetSeverity(eLungCompartment::LeftLung).SetValue(0.9);
   ards.GetSeverity(eLungCompartment::RightLung).SetValue(0.9);
 
-
-  if (!pe->InitializeEngine(pc))
+  if (!pe.InitializeEngine(pc))
   {
-    pe->GetLogger()->Error("Could not load state, check the error");
+    pe.GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // You can save off the initial patient state if you want to use it later
-  pe->SerializeToFile("./states/HowToCreateAPatient@0s.json");
+  pe.SerializeToFile("./states/HowToCreateAPatient@0s.json");
+}
+
+void PatientFile(PhysiologyEngine& pe, const std::string& patientFile)
+{
+  pe.GetLogger()->Info("Creating a patient using patient file: " + patientFile);
+
+  SEPatientConfiguration pc;
+  pc.SetPatientFile(patientFile);
+  if (!pe.InitializeEngine(pc))
+  {
+    pe.GetLogger()->Fatal("Could stabilize this patient file");
+    return;
+  }
+  // Check to see how different the engine is from the requested patient
+  SEPatient patient(pe.GetLogger());
+  patient.SerializeFromFile(patientFile);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Creating a patient
+///
+/// \details
+/// Creating a customized patient in Pulse
+//--------------------------------------------------------------------------------------------------
+void HowToCreateAPatient()
+{
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/howto/CreateAPatient.cpp/HowTo_CreateAPatient.log");
+
+  // Create patients using the Pulse patient API
+  //PatientAPI(*pe.get());
+
+  // Use a patient file
+  std::string base, ext;
+  std::vector<std::string> patientFiles;
+  ListFiles("./patients/", patientFiles, false);
+  // ListFiles("./patients/Hemorrhage", patientFiles, false, "Group");
+  for (std::string patientFile : patientFiles)
+  {
+    PatientFile(*pe.get(), patientFile);
+    SplitFilenameExt(patientFile, base, ext);
+    TrackData(*pe.get(), "./test_results/howto/CreateAPatient.cpp/" + base + ".csv");
+  }
 }

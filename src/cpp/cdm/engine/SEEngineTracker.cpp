@@ -7,7 +7,6 @@
 #include "cdm/engine/SEDataRequest.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/PhysiologyEngine.h"
-#include "cdm/patient/SEPatient.h"
 // Compartments
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/compartment/fluid/SEGasCompartment.h"
@@ -121,6 +120,7 @@ void SEEngineTracker::ResetFile()
 {
   if (m_ResultsStream.is_open())
     m_ResultsStream.close();
+  m_ResultsStream.clear();
 }
 
 DataTrack& SEEngineTracker::GetDataTrack()
@@ -185,8 +185,11 @@ bool SEEngineTracker::SetupRequests()
     }
     // Create the file now that all probes and requests have been added to the track
     // So we get columns for all of our data
-    if (!isOpen)
+    if (!isOpen && !m_DataRequestMgr->GetResultFilename().empty())
+    {
+      Info("Creating csv request file: " + m_DataRequestMgr->GetResultFilename());
       m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), m_ResultsStream);
+    }
   }
   else
   {

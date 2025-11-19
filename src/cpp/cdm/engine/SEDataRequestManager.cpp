@@ -11,11 +11,13 @@ SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
 {
   m_DefaultDecimalFormatting = nullptr;
   m_OverrideDecimalFormatting = nullptr;
+  m_ResultsFilename = "";
   m_SamplesPerSecond = 0; // Sample every time step
 }
 
 SEDataRequestManager::~SEDataRequestManager()
 {
+  m_ResultsFilename = "";
   m_SamplesPerSecond = 0; // Sample every time step
   DELETE_VECTOR(m_Requests);
   SAFE_DELETE(m_DefaultDecimalFormatting);
@@ -24,6 +26,7 @@ SEDataRequestManager::~SEDataRequestManager()
 
 void SEDataRequestManager::Clear()
 {
+  m_ResultsFilename = "";
   m_SamplesPerSecond = 0; // Sample every time step
   DELETE_VECTOR(m_Requests);
   SAFE_DELETE(m_DefaultDecimalFormatting);
