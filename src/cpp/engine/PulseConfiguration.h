@@ -56,6 +56,9 @@ public:
   virtual const SEDynamicStabilization* GetDynamicStabilization() const;
   virtual void RemoveDynamicStabilization();
 
+  virtual void TrackStabilization(eSwitch s) { m_TrackStabilization = s; }
+  virtual bool IsTrackingStabilization() const { return m_TrackStabilization == eSwitch::On; }
+
   virtual bool HasOverrides() const;
   virtual SEScalarProperties& GetOverrides();
   virtual const SEScalarProperties& GetOverrides() const;
@@ -70,6 +73,7 @@ protected:
   eSwitch                       m_AllowDynamicTimeStep;
   SETimedStabilization*         m_TimedStabilization;
   SEDynamicStabilization*       m_DynamicStabilization;
+  eSwitch                       m_TrackStabilization;
 
   SEScalarProperties            m_Overrides;
   SEScalarProperties            m_Modifiers;

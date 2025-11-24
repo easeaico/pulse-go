@@ -5,7 +5,7 @@
 #include "EngineHowTo.h"
 #include "PulseEngine.h"
 
-// Include the various types you will be using in your code
+   // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEEventManager.h"
@@ -34,21 +34,21 @@
 class MechVentHandler : public Loggable, public SEEventHandler
 {
 public:
-  MechVentHandler(Logger *logger) : Loggable(logger), SEEventHandler() { }
+  MechVentHandler(Logger* logger) : Loggable(logger), SEEventHandler() {}
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override
   {
     switch (type)
     {
-      case eEvent::IrreversibleState:
-      {
-        if (active)
-          m_Logger->Info("Patient is in an irreversible state. Stop the simulation!");
-        //else
-          // Do nothing
-        break;
-      }
-      default:
-        break;// Nothing
+    case eEvent::IrreversibleState:
+    {
+      if (active)
+        m_Logger->Info("Patient is in an irreversible state. Stop the simulation!");
+      //else
+        // Do nothing
+      break;
+    }
+    default:
+      break;// Nothing
     }
   }
 };
@@ -65,7 +65,7 @@ void HowToVentilatorFeedbackLoop()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_VentilatorFeedbackLoop.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_VentilatorFeedbackLoop.cpp/HowTo_VentilatorFeedbackLoop.log");
   pe->GetLogger()->Info("HowTo_VentilatorFeedbackLoop");
 
   //--------------------------------------------------------------
@@ -124,7 +124,7 @@ void HowToVentilatorFeedbackLoop()
   // Create an SEMechanicalVentilation object
   SEMechanicalVentilation mechVent;
   mechVent.SetState(eSwitch::On);// Turn it on
-                      // Grab the substance fractions so we can quickly modify them
+  // Grab the substance fractions so we can quickly modify them
   SESubstanceFraction& O2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("Oxygen"));
   SESubstanceFraction& CO2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("CarbonDioxide"));
   SESubstanceFraction& N2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("Nitrogen"));

@@ -86,15 +86,57 @@ void HowToMechanicalVentilation()
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_MechanicalVentilation.log");
-  
   pe->GetLogger()->Info("HowTo_MechanicalVentilation");
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("RelativeTotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  drMgr.CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("CardiacIndex", VolumePerTimeAreaUnit::L_Per_min_m2);
+  drMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("PulmonaryVascularResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("PulmonaryVascularResistanceIndex", PressureTimePerVolumeAreaUnit::dyn_s_Per_cm5_m2);
+  drMgr.CreatePhysiologyDataRequest("BloodPH");
+  drMgr.CreatePhysiologyDataRequest("ArterialOxygenPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("ArterialCarbonDioxidePressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("VenousOxygenPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("VenousCarbonDioxidePressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
+  drMgr.CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("AlveolarArterialGradient", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SedationLevel");
+  //Patient data
+  drMgr.CreatePatientDataRequest("FunctionalResidualCapacity", VolumeUnit::L);
+  drMgr.CreatePatientDataRequest("VitalCapacity", VolumeUnit::L);
+  //Compartment data
+  //Arteriole bicarbonate
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Bicarbonate", "Concentration", MassPerVolumeUnit::ug_Per_mL);
+  //Lactate - this should have a relationship to lactic acid
+  drMgr.CreateSubstanceDataRequest("Lactate", "BloodConcentration", MassPerVolumeUnit::ug_Per_mL);
+
+  drMgr.SetResultsFilename("HowToMechanicalVentilation.csv");
+
   
   //Initialize the patient with any conditions
   //Change the following true/false flags to give the patient different conditions
   //If no conditions, just load the serialized healthy state
   if (true) //Healthy - i.e., no chronic conditions
   {
-    if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))// Select patient
+    if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))// Select patient
     {
       pe->GetLogger()->Error("Could not load state, check the error");
       return;
@@ -126,7 +168,7 @@ void HowToMechanicalVentilation()
 
     //Select the patient and initialize with conditions
     //You can optionally define the patient here - see HowTo-CreateAPatient.cpp
-    if (!pe->InitializeEngine(pc))
+    if (!pe->InitializeEngine(pc, &drMgr))
     {
       pe->GetLogger()->Error("Could not load initialize engine, check the error");
       return;
@@ -136,49 +178,6 @@ void HowToMechanicalVentilation()
   // Let's add our event listener callback
   MechVentHandler myEventHandler(pe->GetLogger());
   pe->GetEventManager().ForwardEvents(&myEventHandler);
-
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  //System data
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RelativeTotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacIndex", VolumePerTimeAreaUnit::L_Per_min_m2);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryVascularResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryVascularResistanceIndex", PressureTimePerVolumeAreaUnit::dyn_s_Per_cm5_m2);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodPH");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialOxygenPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialCarbonDioxidePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("VenousOxygenPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("VenousCarbonDioxidePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("AlveolarArterialGradient", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SedationLevel");
-  //Patient data
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePatientDataRequest("FunctionalResidualCapacity", VolumeUnit::L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePatientDataRequest("VitalCapacity", VolumeUnit::L);
-  //Compartment data
-  //Arteriole bicarbonate
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Bicarbonate", "Concentration", MassPerVolumeUnit::ug_Per_mL);
-  //Lactate - this should have a relationship to lactic acid
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Lactate", "BloodConcentration", MassPerVolumeUnit::ug_Per_mL);
-  
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToMechanicalVentilation.csv");
 
   //Output some random stuff to the log
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -190,7 +189,7 @@ void HowToMechanicalVentilation()
 
   //Go 1 min before doing anything
   //The patient is just doing spontaneous breathing
-  AdvanceAndTrackTime_s(60.0, *pe);
+  pe->AdvanceModelTime(60.0, TimeUnit::s);
 
   //Let's do a bunch of different actions at the same time!
 
@@ -221,14 +220,14 @@ void HowToMechanicalVentilation()
   // You can add other actions while this action is being processed.
   // Just be aware that this action is still being processed.
   // It is recommended that you advance time for at least the sum of the command periods.
-  AdvanceAndTrackTime_s(60.0, *pe);
+  pe->AdvanceModelTime(60.0, TimeUnit::s);
 
   //Airway obstruction
   SEAirwayObstruction obstruction;
   obstruction.GetSeverity().SetValue(0.2);
   pe->ProcessAction(obstruction);
   
-  AdvanceAndTrackTime_s(60.0, *pe);
+  pe->AdvanceModelTime(60.0, TimeUnit::s);
 
   //Pneumothorax
   // Create a Tension Pnuemothorax 
@@ -241,7 +240,7 @@ void HowToMechanicalVentilation()
   pneumo.SetSide(eSide::Right);
   pe->ProcessAction(pneumo);
 
-  AdvanceAndTrackTime_s(60.0, *pe);
+  pe->AdvanceModelTime(60.0, TimeUnit::s);
 
   //Asthma attack
   SEAsthmaAttack asthmaAttack;
@@ -269,7 +268,7 @@ void HowToMechanicalVentilation()
   envConditions.GetMeanRadiantTemperature().SetValue(15.0, TemperatureUnit::C);
   pe->ProcessAction(env);
 
-  AdvanceAndTrackTime_s(60.0, *pe);
+  pe->AdvanceModelTime(60.0, TimeUnit::s);
 
   //Make the patient stop breathing
   //Dyspnea
@@ -278,7 +277,7 @@ void HowToMechanicalVentilation()
   Dyspnea.GetTidalVolumeSeverity().SetValue(1.0);
   pe->ProcessAction(Dyspnea);
 
-  AdvanceAndTrackTime_s(10.0, *pe);
+  pe->AdvanceModelTime(10.0, TimeUnit::s);
 
   //Mechanical Ventilation
   // Create an SEMechanicalVentilation object
@@ -319,7 +318,7 @@ void HowToMechanicalVentilation()
     pe->ProcessAction(mechVent);
 
     //Simulate
-    AdvanceAndTrackTime_s(1, *pe);
+    pe->AdvanceModelTime(1, TimeUnit::s);
 
     //Output some random stuff to the log
     pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

@@ -27,7 +27,7 @@ namespace pulse { namespace human_adult_hemodynamics
   }
  
   // Serialization is not supported
-  bool Controller::SerializeFromFile(const std::string& /*filename*/)
+  bool Controller::SerializeFromFile(const std::string& /*filename*/, const SEDataRequestManager* /*drMgr*/)
   {
     Error("Serialization is not supported in this engine");
     return false;
@@ -38,7 +38,7 @@ namespace pulse { namespace human_adult_hemodynamics
     return false;
   }
 
-  bool Controller::SerializeFromString(const std::string& /*src*/, eSerializationFormat /*m*/)
+  bool Controller::SerializeFromString(const std::string& /*src*/, eSerializationFormat /*m*/, const SEDataRequestManager* /*drMgr*/)
   {
     Error("Serialization is not supported in this engine");
     return false;

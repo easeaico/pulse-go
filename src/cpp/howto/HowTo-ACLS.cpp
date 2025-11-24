@@ -67,16 +67,7 @@ void HowToACLS()
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.log");
   pe->GetLogger()->Info("HowTo_ALCS");
 
-  std::string stateFile = "./states/StandardMale@0s.json";
-  if (!pe->SerializeFromFile(stateFile))
-  {
-    pe->GetLogger()->Error("Could not load state, check the error");
-    return;
-  }
-  sce.SetEngineStateFile(stateFile);
-
-  SEDataRequestManager& dMgr = pe->GetEngineTracker()->GetDataRequestManager();
-
+  SEDataRequestManager& dMgr = sce.GetDataRequestManager();
   dMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   dMgr.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
   dMgr.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
@@ -148,11 +139,18 @@ void HowToACLS()
       dMgr.CreateLiquidCompartmentDataRequest(itr.second, "OutFlow", VolumePerTimeUnit::mL_Per_s);
     }
   }
-  sce.GetDataRequestManager().Copy(dMgr);
   dMgr.SetResultsFilename("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.csv");
 
+  std::string stateFile = "./states/StandardMale@0s.json";
+  if (!pe->SerializeFromFile(stateFile, &dMgr))
+  {
+    pe->GetLogger()->Error("Could not load state, check the error");
+    return;
+  }
+  sce.SetEngineStateFile(stateFile);
+
   adv.GetTime().SetValue(30, TimeUnit::s);
-  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  pe->ProcessAction(adv);
   sce.AddAction(adv);
 
   arrhythmia.SetRhythm(eHeartRhythm::CoarseVentricularFibrillation);
@@ -160,7 +158,7 @@ void HowToACLS()
   sce.AddAction(arrhythmia);
 
   adv.GetTime().SetValue(unassisted_min*60, TimeUnit::s);
-  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  pe->ProcessAction(adv);
   sce.AddAction(adv);
 
   if (intubatedAssistance)
@@ -187,7 +185,7 @@ void HowToACLS()
   {
     while(assisted_s > 0)
     {
-      AdvanceAndTrackTime(*pe);
+     pe->AdvanceModelTime();
 
       block_s -= timeStep_s;
       if (block_s <= 0)
@@ -250,7 +248,7 @@ void HowToACLS()
         cpr_block_s = assisted_s;
       assisted_s -= cpr_block_s;
       adv.GetTime().SetValue(cpr_block_s, TimeUnit::s);
-      AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+      pe->ProcessAction(adv);
       sce.AddAction(adv);
 
       // Stop automated CPR
@@ -269,7 +267,7 @@ void HowToACLS()
 
         assisted_s -= bvm_interval_s;
         adv.GetTime().SetValue(bvm_interval_s, TimeUnit::s);
-        AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+        pe->ProcessAction(adv);
         sce.AddAction(adv);
       }
     }
@@ -280,7 +278,7 @@ void HowToACLS()
   sce.AddAction(arrhythmia);
 
   adv.GetTime().SetValue(recovery_min*60, TimeUnit::s);
-  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  pe->ProcessAction(adv);
   sce.AddAction(adv);
 
   sce.SerializeToFile("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.json");

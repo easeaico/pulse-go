@@ -28,13 +28,14 @@ public:
   virtual SELiquidBlackBox* GetLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name = "");
   virtual SEThermalBlackBox* GetThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name = "");
 
+  static std::string GetBlackBoxName(const std::string& srcCmptName, const std::string& tgtCmptName);
+
 protected:
   virtual SEElectricalBlackBox* CreateElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
   virtual SEGasBlackBox* CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
   virtual SELiquidBlackBox* CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
   virtual SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
 
-  virtual std::string GetBlackBoxName(const std::string& srcCmptName, const std::string& tgtCmptName) const;
   template<typename tBlackBox> tBlackBox* CreateBlackBox(const std::string& name, std::map<std::string, tBlackBox*>& ledger);
   
   // Map circuit compartments in a separate function, to support unit tests

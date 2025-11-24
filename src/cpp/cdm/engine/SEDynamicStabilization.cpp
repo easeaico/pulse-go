@@ -152,15 +152,8 @@ bool SEDynamicStabilization::Stabilize(Controller& engine, const SEDynamicStabil
     profiler.Start("Status");
   }
   // Execute System initialization time
+  bool hasOptionalProperties = false;
   SEEngineTracker* tracker = engine.GetEngineTracker();
-  eSwitch track = m_TrackingStabilization;
-  if (tracker == nullptr)
-  {
-    track = eSwitch::Off;
-    Warning("PhysiologyEngineTrack not provided by engine, not tracking data to file");
-  }
-
-  bool   hasOptionalProperties = false;
 
   // Grab all the convergence properties
   for (SEDynamicStabilizationPropertyConvergence* pc : properties)
@@ -191,8 +184,6 @@ bool SEDynamicStabilization::Stabilize(Controller& engine, const SEDynamicStabil
 
     engine.AdvanceTime();
     stablizationTime_s += dT_s;
-    if (track==eSwitch::On)
-      tracker->TrackData(engine.GetSimulationTime(TimeUnit::s));
     if (m_LogProgress)
     {
       statusTime_s += dT_s;

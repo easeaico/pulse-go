@@ -31,11 +31,11 @@ void HowToRunToStable()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->LogToConsole(true);
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowToRunToStable.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowToRunToStable.cpp/HowToRunToStable.log");
   pe->GetLogger()->Info("HowToRunToStable");
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  SEDataRequestManager& drMgr = pe->GetEngineTracker()->GetDataRequestManager();
+  SEDataRequestManager& drMgr = drMgr;
   drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
@@ -44,7 +44,7 @@ void HowToRunToStable()
   drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
   drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
   drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
-  drMgr.SetResultsFilename("./test_results/howto/HowToRunToStable.csv");
+  drMgr.SetResultsFilename("./test_results/howto/HowToRunToStable.cpp/HowToRunToStable.csv");
 
   // Setup any custom convergence criteria BEFORE you call SerializeFromFile or InitializeEngine
   PulseConfiguration cfg;
@@ -62,7 +62,7 @@ void HowToRunToStable()
   //pe->SetConfigurationOverride(&cfg);
   // TODO Custom criteria is overwriting the default criteria, need to update confing merge method
 
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -83,7 +83,7 @@ void HowToRunToStable()
   // If you do not provide a criteria, the default AdvanceUntilStable criteria will be used
   pe->ProcessAction(aus);
 
-  if (!AdvanceAndTrackTime_s(30, *pe))// Note this tracker class takes in seconds
+  if (!pe->AdvanceModelTime(30, TimeUnit::s))// Note this tracker class takes in seconds
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;

@@ -35,28 +35,29 @@ void HowToAsthmaAttack()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_Asthma.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Asthma.cpp/HowTo_Asthma.log");
   pe->GetLogger()->Info("HowTo_Asthma");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
+  drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_Asthma.cpp/HowTo_Asthma.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent",MassUnit::g);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAsthma.csv");
-
   // Advance some time to get some healthy data
-  AdvanceAndTrackTime_s(50, *pe);
+  pe->AdvanceModelTime(50, TimeUnit::s);
   // Cache off compartments of interest!
   const SEGasCompartment* carina = pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
   
@@ -79,7 +80,7 @@ void HowToAsthmaAttack()
   asthmaAttack.GetSeverity().SetValue(0.3);
   pe->ProcessAction(asthmaAttack);
 
-  AdvanceAndTrackTime_s(550, *pe);
+  pe->AdvanceModelTime(550, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient has been having an asthma attack for 550s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -96,7 +97,7 @@ void HowToAsthmaAttack()
   pe->ProcessAction(asthmaAttack);
   
   // Advance some time while the patient catches their breath
-  AdvanceAndTrackTime_s(200, *pe);
+  pe->AdvanceModelTime(200, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient has NOT had an asthma attack for 200s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);

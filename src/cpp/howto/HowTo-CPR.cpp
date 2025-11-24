@@ -78,8 +78,21 @@ void HowToCPR()
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.log");
   pe->GetLogger()->Info("HowTo_CPR");
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager& dMgr = sce.GetDataRequestManager();
+  dMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  dMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+  dMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
+  dMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
+  dMgr.SetResultsFilename("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.csv");
+
   std::string stateFile = "./states/StandardMale@0s.json";
-  if (!pe->SerializeFromFile(stateFile))
+  if (!pe->SerializeFromFile(stateFile, &dMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -91,18 +104,7 @@ void HowToCPR()
   std::string mode = "instantaneous";
   //std::string mode = "automated";
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  SEDataRequestManager& dMgr = pe->GetEngineTracker()->GetDataRequestManager();
-  dMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  dMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  dMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  dMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  dMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-  dMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
-  dMgr.CreatePhysiologyDataRequest("CardiacOutput",VolumePerTimeUnit::mL_Per_min);
-  dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
-  sce.GetDataRequestManager().Copy(dMgr);
-  dMgr.SetResultsFilename("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.csv");
+  
 
   // This is the total amount of time that CPR will be administered in seconds
   double durationOfCPR_s = 240;
@@ -130,7 +132,7 @@ void HowToCPR()
   pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());
 
   adv.GetTime().SetValue(30, TimeUnit::s);
-  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  pe->AdvanceModelTime(adv.GetTime(TimeUnit::s), TimeUnit::s);
   sce.AddAction(adv);
 
   // Put the patient into cardiac arrest
@@ -145,7 +147,7 @@ void HowToCPR()
   pe->GetEventManager().ForwardEvents(&l);
 
   adv.GetTime().SetValue(30, TimeUnit::s);
-  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  pe->AdvanceModelTime(adv.GetTime(TimeUnit::s), TimeUnit::s);
   sce.AddAction(adv);
 
   pe->GetLogger()->Info("It has been 30s since cardiac arrest onset, not doing well...");
@@ -197,7 +199,7 @@ void HowToCPR()
 
       // Increment timers and advance time
       adv.GetTime().SetValue(pulsePeriod_s, TimeUnit::s);
-      AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+      pe->AdvanceModelTime(adv.GetTime(TimeUnit::s), TimeUnit::s);
       sce.AddAction(adv);
 
       timer1 += pulsePeriod_s;
@@ -252,7 +254,7 @@ void HowToCPR()
       timer1 += timeStep_s;
       compressionTimer += timeStep_s;
       adv.GetTime().SetValue(timeStep_s, TimeUnit::s);
-      AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+      pe->AdvanceModelTime(adv.GetTime(TimeUnit::s), TimeUnit::s);
       sce.AddAction(adv);
 
       if (compressionTimer >= pulsePeriod_s) // New compression
@@ -297,7 +299,7 @@ void HowToCPR()
 
     // Advance time for desired duration of CPR
     adv.GetTime().SetValue(durationOfCPR_s/2.0, TimeUnit::s);
-    AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+    pe->AdvanceModelTime(adv.GetTime(TimeUnit::s), TimeUnit::s);
     sce.AddAction(adv);
 
     // Can also do automated CPR using a scaled force value
@@ -308,7 +310,7 @@ void HowToCPR()
 
     // Advance time for desired duration of CPR
     adv.GetTime().SetValue(durationOfCPR_s/2.0, TimeUnit::s);
-    AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+    pe->AdvanceModelTime(adv.GetTime(TimeUnit::s), TimeUnit::s);
     sce.AddAction(adv);
 
     // Stop automated CPR
@@ -323,7 +325,7 @@ void HowToCPR()
   sce.AddAction(arrhythmia);
 
   adv.GetTime().SetValue(60, TimeUnit::s);
-  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  pe->AdvanceModelTime(adv.GetTime(TimeUnit::s), TimeUnit::s);
   sce.AddAction(adv);
 
   // Do one last output to show status after CPR.

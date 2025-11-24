@@ -49,18 +49,18 @@ namespace pulse { namespace human_adult_whole_body
   }
 
   // I am pretty sure we will want different states per engine
-  bool Controller::SerializeFromFile(const std::string& filename)
+  bool Controller::SerializeFromFile(const std::string& filename, const SEDataRequestManager* drMgr)
   {
-    return pulse::Controller::SerializeFromFile(filename);
+    return pulse::Controller::SerializeFromFile(filename, drMgr);
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
     return pulse::Controller::SerializeToFile(filename);
   }
 
-  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
+  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m, const SEDataRequestManager* drMgr)
   {
-    return pulse::Controller::SerializeFromString(src, m);
+    return pulse::Controller::SerializeFromString(src, m, drMgr);
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {

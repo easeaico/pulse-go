@@ -161,19 +161,20 @@ namespace pulse::study::hydrocephalus
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
 
     // Setup data requests
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Oxygen", "PartialPressure");
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".csv");
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+    drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Oxygen", "PartialPressure");
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
+    drMgr.SetResultsFilename(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // Setup Circuit Overrides
     PulseConfiguration cfg(pulse->GetLogger());
@@ -186,7 +187,7 @@ namespace pulse::study::hydrocephalus
     // Stabilize the engine
     SEPatientConfiguration pc;
     pc.SetPatientFile("./patients/StandardMale.json");
-    if (!pulse->InitializeEngine(pc))
+    if (!pulse->InitializeEngine(pc, &drMgr))
     {
       sim.set_achievedstabilization(false);
       sim.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
@@ -232,8 +233,6 @@ namespace pulse::study::hydrocephalus
         for (auto& element : runningAverages)
           element.second.Sample();
       }
-
-      pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
     }
 
     const SELiquidCompartment* b = pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);

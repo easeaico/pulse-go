@@ -158,34 +158,34 @@ namespace pulse::study::sensitivity_analysis
     profiler.Start("Status");
 
     auto pulse = CreatePulseEngine();
+    pulse->GetLogger()->LogToConsole(false); // No logging to console (when threaded)
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
+
+    // Setup data requests
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    //drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
+    //drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    //drMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //drMgr.SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
     PulseConfiguration cfg(pulse->GetLogger());
     cfg.SetBaroreceptorFeedback(eSwitch::Off);
     cfg.SetChemoreceptorFeedback(eSwitch::Off);
     pulse->SetConfigurationOverride(&cfg);
-    if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
+    if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
       return false;
-
-    // No logging to console (when threaded)
-    pulse->GetLogger()->LogToConsole(false);
-    // Setup data requests
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // Apply Overrides (Note using Force, as these values are locked (for good reason)
     // But we know what we are doing, right?
@@ -448,7 +448,26 @@ namespace pulse::study::sensitivity_analysis
     profiler.Start("Status");
 
     auto pulse = CreatePulseEngine();
+    pulse->GetLogger()->LogToConsole(false); // No logging to console (when threaded)
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
+
+    // Setup data requests
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    //drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
+    //drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    //drMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //drMgr.SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
     PulseConfiguration cfg(pulse->GetLogger());
@@ -461,26 +480,7 @@ namespace pulse::study::sensitivity_analysis
 
     SEPatientConfiguration pc;
     pc.SetPatientFile("./patients/StandardMale.json");
-    if (!pulse->InitializeEngine(pc)) return false;
-
-    // No logging to console (when threaded)
-    pulse->GetLogger()->LogToConsole(false);
-    // Setup data requests
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
+    if (!pulse->InitializeEngine(pc, &drMgr)) return false;
 
     // check if overriding respiratory path
     pulse::Controller& pctrl =

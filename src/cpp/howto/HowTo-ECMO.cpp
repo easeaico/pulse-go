@@ -35,7 +35,6 @@
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/properties/SEScalarVolumePerTimeArea.h"
 #include "cdm/properties/SEScalarLengthPerTime.h"
-#include "cdm/properties/SEScalar0To1.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -51,85 +50,84 @@ void HowToECMO()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo/HowTo_ECMO.cpp.log");
+  pe->GetLogger()->SetLogFile("./test_results/HowTo/HowTo_ECMO.cpp/HowTo_ECMO.log");
   
-  pe->GetLogger()->Info("HowTo_ECMO");
+  // Patient Data
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("BloodPH");
+  drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("CarbonDioxideSaturation", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("Hematocrit");
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
+  drMgr.CreateSubstanceDataRequest("CarbonDioxide", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
+  drMgr.CreateSubstanceDataRequest("Oxygen", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
+ 
+  drMgr.CreateSubstanceDataRequest("Albumin", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Bicarbonate", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Calcium", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("CarbonDioxide", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Chloride", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Creatinine", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Glucose", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Lactate", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Oxygen", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Potassium", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Sodium", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateSubstanceDataRequest("Urea", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+   // ECMO Data
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "InFlow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "OutFlow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Volume", VolumeUnit::mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "PH");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Albumin", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Bicarbonate", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Calcium", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "CarbonDioxide", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Chloride", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Creatinine", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Glucose", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Lactate", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Oxygen", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Potassium", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Sodium", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Urea", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+   // Various Hb concentrations
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Hemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Carbaminohemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Carboxyhemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "OxyCarbaminohemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Oxyhemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
+ 
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "InFlow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "OutFlow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Volume", VolumeUnit::mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Sodium", "Concentration", MassPerVolumeUnit::g_Per_mL);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Oxygen", "Concentration", MassPerVolumeUnit::g_Per_L);
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "CarbonDioxide", "Concentration", MassPerVolumeUnit::g_Per_L);
+ 
+  drMgr.SetResultsFilename("./test_results/HowTo/HowTo_ECMO.cpp/HowTo_ECMO.csv");
 
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Unable to load initial state file");
     return;
   }
 
-  // Patient Data
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodPH");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CarbonDioxideSaturation", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("Hematocrit");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("CarbonDioxide", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Oxygen", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
-
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albumin", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Bicarbonate", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Calcium", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("CarbonDioxide", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Chloride", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Creatinine", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Glucose", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Lactate", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Oxygen", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Potassium", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Sodium", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Urea", "BloodConcentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-  // ECMO Data
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "InFlow");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "OutFlow");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Volume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "PH");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Albumin", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Bicarbonate", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Calcium", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "CarbonDioxide", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Chloride", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Creatinine", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Glucose", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Lactate", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Oxygen", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Potassium", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Sodium", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Urea", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-  // Various Hb concentrations
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Hemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Carbaminohemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Carboxyhemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "OxyCarbaminohemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Oxyhemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
-
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "InFlow");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "OutFlow");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Volume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Sodium", "Concentration", MassPerVolumeUnit::g_Per_mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Oxygen", "Concentration", MassPerVolumeUnit::g_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "CarbonDioxide", "Concentration", MassPerVolumeUnit::g_Per_L);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo/HowTo_ECMO.cpp.csv");
-
   // Let's run for 30s to get a normal baseline
-  AdvanceAndTrackTime_s(3.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues();
+  pe->AdvanceModelTime(3.0, TimeUnit::s);
+  pe->GetTrackedData().LogRequestedValues();
 
   // Start the ECMO with blood
   // We are NOT changing any values
@@ -144,8 +142,8 @@ void HowToECMO()
   pe->ProcessAction(cfg);
 
   // Let's run for 30s to get another baseline
-  AdvanceAndTrackTime_s(3.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues();
+  pe->AdvanceModelTime(3.0, TimeUnit::s);
+  pe->GetTrackedData().LogRequestedValues();
 
   // Ok, now lets setup a new substance therapy
 
@@ -186,8 +184,8 @@ void HowToECMO()
   settings.GetSubstanceConcentration(*HCO3).GetConcentration().SetValue(new_Cl_g_Per_mL, MassPerVolumeUnit::g_Per_mL);
   pe->ProcessAction(cfg);
 
-  AdvanceAndTrackTime_s(30.0, *pe);
-  pe->GetEngineTracker()->LogRequestedValues();
+  pe->AdvanceModelTime(30.0, TimeUnit::s);
+  pe->GetTrackedData().LogRequestedValues();
 
   pe->GetLogger()->Info("Finished");
 }

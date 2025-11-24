@@ -187,14 +187,14 @@ namespace pulse::study::circuit_optimization
       return false;
     }
 
-    if (!engine.InitializeEngine(pCfg))
+    SEDataRequestManager drMgr(engine.GetLogger());
+    drMgr.SerializeDataRequestsFromFile(dataRequestFile);
+
+    if (!engine.InitializeEngine(pCfg, &drMgr))
     {
       Error("Unable to initialize engine");
       return false;
     }
-
-    SEDataRequestManager& drMgr = engine.GetEngineTracker()->GetDataRequestManager();
-    drMgr.SerializeDataRequestsFromFile(dataRequestFile);
 
     // Listen for Cardiac Cycles
     engine.GetEventManager().ForwardEvents(this);
@@ -202,7 +202,7 @@ namespace pulse::study::circuit_optimization
     // Setup Data Requests
     SEDataRequest* dr;
     std::map<SETimeSeriesValidationTarget*, SEDataRequest*> vTgt2dr;
-    engine.GetEngineTracker()->SetTrackMode(TrackMode::Dynamic); // No file needed
+    //engine.GetEngineTracker().SetTrackMode(TrackMode::Dynamic); // No file needed
     for (SETimeSeriesValidationTarget* vt : targets)
     {
       // Reset the computed data in our targets
@@ -227,12 +227,11 @@ namespace pulse::study::circuit_optimization
         Error("Unable to advance time");
         return false;
       }
-      engine.GetEngineTracker()->TrackData(engine.GetSimulationTime(TimeUnit::s));
       for (SETimeSeriesValidationTarget* vt : targets)
       {
         if (m_StartOfCardiacCycle)
           vt->GetData().clear();
-        vt->GetData().push_back(engine.GetEngineTracker()->GetValue(*vTgt2dr[vt]));
+        vt->GetData().push_back(engine.GetTrackedData().GetValue(*vTgt2dr[vt]));
       }
       m_StartOfCardiacCycle = false;
     }

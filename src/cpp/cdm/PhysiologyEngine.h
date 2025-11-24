@@ -38,7 +38,9 @@ class SEActionManager;
 class SEConditionManager;
 class SEEventManager;
 
-class SEEngineTracker;
+class SEDataRequestManager;
+class SETrackedData;
+
 class SEEngineConfiguration;
 
 enum class eEngineInitializationState
@@ -83,8 +85,11 @@ public:
   /// Anything but an extension of .json will be interpreted as binary.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
+  /// If drMgr is nullptr, the DataRequestManager (if any) will be used
+  /// If drMgr is not null, it will override the DataRequestManager in the state file
+  /// You can provide an empty drMgr instance if you want to ensure the engine will not track anything
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromFile(const std::string& file) = 0;
+  virtual bool SerializeFromFile(const std::string& file, const SEDataRequestManager* drMgr=nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -101,8 +106,11 @@ public:
   /// Note that a string of bytes are binary, not text; we only use the string class as a convenient container.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
+  /// If drMgr is nullptr, the DataRequestManager (if any) will be used
+  /// If drMgr is not null, it will override the DataRequestManager in the state file
+  /// You can provide an empty drMgr instance if you want to ensure the engine will not track anything
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) = 0;
+  virtual bool SerializeFromString(const std::string& state, eSerializationFormat m, const SEDataRequestManager* drMgr=nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -114,24 +122,13 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Initialize an engine based on the engines initialization structure
-  ///
-  /// An initialization structure is up to every engine.
-  /// It should have a SEPatientConfiguration (or derivative)
-  /// But it may also have more stuctures associated with it, it's up to the engine.
-  ///
-  //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) = 0;
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
   ///
   /// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
   /// The return value will indicate success failure of the creation of the engine.
   /// Some combinations of patients and conditions may prevent the engine from stabilizing
-  ///
+  /// drMgr is optional, depending on if you want the engine to create a csv file with data or not.
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) = 0;
+  virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEDataRequestManager* drMgr=nullptr) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -175,11 +172,11 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Retrieve the SEEngineTracker associated with tracking data from this engine to a file
-  /// The SEEngineTracker is a class set up to pull data requested from the engine (via SEDataRequest's)
-  /// and provide access to the data easily (ex. to easily write data to csv files)
+  /// Retrieve the SETrackedData associated with tracking data from this engine
+  /// The SETrackedData translates the data requested from the engine (via SEDataRequest's)
+  /// to a vector of doubles. (ex. Used to easily write data to csv files)
   //--------------------------------------------------------------------------------------------------
-  virtual SEEngineTracker* GetEngineTracker() const = 0;
+  virtual const SETrackedData& GetTrackedData() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

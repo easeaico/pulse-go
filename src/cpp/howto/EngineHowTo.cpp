@@ -20,7 +20,7 @@ int main()
   //HowToPulseEnginePool();
 
   //HowToACLS();
-  //HowToAirwayObstruction();
+  HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToArrythmia();
   //HowToAsthmaAttack();
@@ -56,7 +56,7 @@ int main()
   //HowToVentilatorFeedbackLoop();
 
   // These ones do not really run, pure examples
-  HowToRunScenarios();
+  //HowToRunScenarios();
   //HowToScenarioFromLog();
 
   // More complicated examples that do run
@@ -66,29 +66,4 @@ int main()
   //HowToTestSystemCapability();
 
   //HowToVentilationMechanics();
-}
-
-bool AdvanceAndTrackTime(PhysiologyEngine& engine)
-{
-  if (!engine.AdvanceModelTime())  // Compute 1 time step
-    return false;
-
-  // Pull Track will pull data from the engine and append it to the file
-  engine.GetEngineTracker()->TrackData(engine.GetSimulationTime(TimeUnit::s));
-
-  return true;
-}
-bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine)
-{
-  double dT_s = engine.GetTimeStep(TimeUnit::s);
-  int count = static_cast<int>(time_s / dT_s);
-  for (int i = 0; i < count; i++)
-  {
-    if (!engine.AdvanceModelTime())  // Compute 1 time step
-      return false;
-
-    // Pull Track will pull data from the engine and append it to the file
-    engine.GetEngineTracker()->TrackData(engine.GetSimulationTime(TimeUnit::s));
-  }
-  return true;
 }

@@ -33,31 +33,29 @@ void HowToArrythmia()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowToArrythmia.log");
-  
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowToArrythmia.cpp/HowToArrythmia.log");
   pe->GetLogger()->Info("HowToArrythmia");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
+  drMgr.SetResultsFilename("./test_results/howto/HowToArrythmia.cpp/HowToArrythmia.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowToArrythmia.csv");
-
-  AdvanceAndTrackTime_s(.5, *pe);
   pe->GetLogger()->Info("The patient is nice and healthy");
-  pe->GetEngineTracker()->LogRequestedValues();
+  pe->GetTrackedData().LogRequestedValues();
   
   // Create an SEArrythmia object
   SEArrhythmia arrhythmia;
@@ -66,17 +64,17 @@ void HowToArrythmia()
   //pe->ProcessAction(arrhythmia);
   //pe->GetLogger()->Info("Giving the patient stable ventricular tachycardia.");
   //// Advance time to see how the injury affects the patient
-  //AdvanceAndTrackTime_s(10, *pe);
+  //pe->AdvanceModelTime(10, TimeUnit::s);
   //pe->GetLogger()->Info(std::stringstream() << "The patient has had stable ventricular tachycardia for 10s, not doing well...");
-  //pe->GetEngineTracker()->LogRequestedValues();
+  //pe->GetEngineTracker().LogRequestedValues();
   //
   //// You can go back to normal sinus.
   //arrhythmia.SetRhythm(eHeartRhythm::NormalSinus);
   //pe->ProcessAction(arrhythmia);
   //pe->GetLogger()->Info("Removing the arrythmia.");
-  //AdvanceAndTrackTime_s(30, *pe);
+  //pe->AdvanceModelTime(30, TimeUnit::s);
   //pe->GetLogger()->Info(std::stringstream() << "The patient's arrythmia has been removed for 30s; patient is much better");
-  //pe->GetEngineTracker()->LogRequestedValues();
+  //pe->GetEngineTracker().LogRequestedValues();
 
   arrhythmia.SetRhythm(eHeartRhythm::FineVentricularFibrillation);
   pe->ProcessAction(arrhythmia);
@@ -86,20 +84,21 @@ void HowToArrythmia()
   
   pe->GetLogger()->Info("Heart is in " + eHeartRhythm_Name(ArrhythmiaAction2->GetRhythm()));
 
-  AdvanceAndTrackTime_s(17, *pe);
+  pe->AdvanceModelTime(17, TimeUnit::s);
   pe->GetLogger()->Info(std::stringstream() << "The patient has had coarse ventricular fibrillation for 90 s");
-  pe->GetEngineTracker()->LogRequestedValues();
+  pe->GetTrackedData().LogRequestedValues();
 
   pe->GetLogger()->Info("Heart is in " + eHeartRhythm_Name(pe->GetCardiovascularSystem()->GetHeartRhythm()));
 
   // Save the state
-  pe->SerializeToFile("./test_results/howto/HowToArrythmia.json");
-  // Load the state back 
-  if (!pe->SerializeFromFile("./test_results/howto/HowToArrythmia.json"))
+  pe->SerializeToFile("./test_results/howto/HowToArrythmia.cpp/HowToArrythmia.json");
+  // Load the state back
+  if (!pe->SerializeFromFile("./test_results/howto/HowToArrythmia.cpp/HowToArrythmia.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  pe->AdvanceModelTime(1, TimeUnit::s);
 
   // The Cardiac Arrest Event should be on, and you can get the start time
   if (pe->GetEventManager().IsEventActive(eEvent::CardiacArrest))

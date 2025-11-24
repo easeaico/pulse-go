@@ -37,33 +37,34 @@ void HowToCardiovascularMechanicsModification()
 {
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp/HowTo_CardiovascularMechanicsModification.log");
   pe->GetLogger()->Info("HowTo_CardiovascularMechanicsModification");
 
-  // With this engine, you do not initialize it, its already ready to go at construction time
+  // Setup data requests to write to a csv file so we can plot data
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  drMgr.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp/HowTo_CardiovascularMechanicsModification.csv");
 
   // You can load a previously saved state, but this is optional!
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))// Select patient
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))// Select patient
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
-  // Setup data requests to write to a csv file so we can plot data
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp.csv");
+ 
 
   for (size_t i = 0; i < 3; i++)
   {
-    AdvanceAndTrackTime_s(10, *pe);
-    pe->GetEngineTracker()->LogRequestedValues();
+    pe->AdvanceModelTime(10, TimeUnit::s);
+    pe->GetTrackedData().LogRequestedValues();
   }
 
   SECardiovascularMechanicsModification config;
@@ -75,8 +76,8 @@ void HowToCardiovascularMechanicsModification()
   // set the incremental flag to true, and the engine apply this action and not run a stabilization stage
   pe->ProcessAction(config);
 
-  AdvanceAndTrackTime_s(10, *pe);
-  pe->GetEngineTracker()->LogRequestedValues();
+  pe->AdvanceModelTime(10, TimeUnit::s);
+  pe->GetTrackedData().LogRequestedValues();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -90,10 +91,10 @@ void HowToCardiovascularMechanicsModificationAnalysis()
 {
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp/HowTo_CardiovascularMechanicsModificationAnalysis.log");
   pe->GetLogger()->Info("HowToCardiovascularMechanicsModificationAnalysis");
 
-  std::ofstream outFile("./test_results/howto/CardiovascularMechanicsModificationTable.txt"); // Create an ofstream object for output file
+  std::ofstream outFile("./test_results/howto/HowTo_CardiovascularMechanicsModification.cpp/CardiovascularMechanicsModificationAnalysisTable.txt"); // Create an ofstream object for output file
 
   // With this engine, you do not initialize it, its already ready to go at construction time
 
@@ -145,7 +146,7 @@ void HowToCardiovascularMechanicsModificationAnalysis()
               }
 
               pe->ProcessAction(config);
-              AdvanceAndTrackTime_s(10, *pe);
+             pe->AdvanceModelTime(10, TimeUnit::s);
 
               // Log the combination
               results << std::left
@@ -171,7 +172,7 @@ void HowToCardiovascularMechanicsModificationAnalysis()
               // Output the results
               outFile << results.str(); // Output to file
               outFile.flush(); // Flush after each write
-              results.str("");          // Clear the stringstream for the next iteration
+              results.str(""); // Clear the stringstream for the next iteration
             }
           }
         }

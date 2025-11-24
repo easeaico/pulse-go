@@ -29,7 +29,7 @@ SEBlackBoxManager::~SEBlackBoxManager()
   DELETE_MAP_SECOND(m_ThermalBoxes);
 }
 
-std::string SEBlackBoxManager::GetBlackBoxName(const std::string& srcCmptName, const std::string& tgtCmptName) const
+std::string SEBlackBoxManager::GetBlackBoxName(const std::string& srcCmptName, const std::string& tgtCmptName)
 {
   std::string name = srcCmptName + "_to_" + tgtCmptName;
   return name;

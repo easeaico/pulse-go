@@ -47,10 +47,24 @@ public:
 void HowToSandbox()
 {
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Sandbox.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Sandbox.cpp/HowTo_Sandbox.log");
   pe->GetLogger()->Info("HowTo_Sandbox");
   ActionLogger handler;
   pe->GetLogger()->AddForward(&handler);
+
+  // Create a CSV file so we can plot data as we run
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreateSubstanceDataRequest("Norepinephrine", "BloodConcentration", MassPerVolumeUnit::ug_Per_L);
+  drMgr.CreateSubstanceDataRequest("Norepinephrine", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_L);
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_Sandbox.cpp/HowTo_Sandbox.csv");
 
   // Create a specific patient near hypotention
   // This also writes out the file, and subsequent runs will load that state
@@ -64,28 +78,15 @@ void HowToSandbox()
     patient.SetSex(ePatient_Sex::Male);
     patient.GetSystolicArterialPressureBaseline().SetValue(90, PressureUnit::mmHg);
     patient.GetDiastolicArterialPressureBaseline().SetValue(60, PressureUnit::mmHg);
-    if (!pe->InitializeEngine(pc))
+    if (!pe->InitializeEngine(pc, &drMgr))
     {
       pe->GetLogger()->Error("Could not create your patient, check the error");
       return;
     }
-    pe->SerializeToFile("./test_results/HowTo_SandboxPatient.json");
+    pe->SerializeToFile("./test_results/howto/HowTo_SandboxPatient.cpp/HowTo_SandboxPatient.json");
   }
   else
-    pe->SerializeFromFile(stateFile);
-
-  // Create a CSV file so we can plot data as we run
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Norepinephrine", "BloodConcentration", MassPerVolumeUnit::ug_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Norepinephrine", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo_Sandbox.csv");
+    pe->SerializeFromFile(stateFile, &drMgr);
 
   SEHemorrhage h;
   h.SetCompartment(eHemorrhage_Compartment::LargeIntestine);
@@ -110,11 +111,9 @@ void HowToSandbox()
       break;
     }
 
-    // Pull Track will pull data from the engine and append it to the csv file
-    pe->GetEngineTracker()->TrackData(pe->GetSimulationTime(TimeUnit::s));
     // Print values every 10s
     if (i%500 == 0)
-      pe->GetEngineTracker()->LogRequestedValues();
+      pe->GetTrackedData().LogRequestedValues();
 
     // Check the Systolic Pressure
     double dBP = pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);

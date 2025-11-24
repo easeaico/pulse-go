@@ -61,12 +61,13 @@
 #include "cdm/properties/SEScalarElectricPotential.h"
 #include "cdm/utils/DataTrack.h"
 
-SEEngineTracker::SEEngineTracker(SEPatient& p, SEActionManager& a, SESubstanceManager& s, SECompartmentManager& c, Logger* logger) : Loggable(logger),
+SEEngineTracker::SEEngineTracker(SEPatient& p, SEActionManager& a, SESubstanceManager& s, SECompartmentManager& c, Logger* logger) : SETrackedData(logger),
   m_Patient(p), m_ActionMgr(a), m_SubMgr(s), m_CmptMgr(c)
 {
   m_DataTrack = new DataTrack(logger);
   m_DataRequestMgr = new SEDataRequestManager(logger);
   m_ForceConnection = false;
+  m_CurrentSampleTime_s = 0;
   m_LastPullTime_s = SEScalar::dNaN();
 }
 
@@ -83,6 +84,16 @@ void SEEngineTracker::Clear()
   m_ForceConnection = false;
   DELETE_MAP_SECOND(m_Request2Scalar);
   m_DataRequestMgr->Clear();
+  m_DataTrack->Clear();
+  m_CurrentSampleTime_s = 0;
+  m_LastPullTime_s = SEScalar::dNaN();
+}
+
+void SEEngineTracker::ResetFile()
+{
+  if (m_ResultsStream.is_open())
+    m_ResultsStream.close();
+  m_ResultsStream.clear();
 }
 
 void SEEngineTracker::AddSystem(SESystem& sys)
@@ -116,54 +127,11 @@ void SEEngineTracker::AddSystem(SESystem& sys)
   m_PhysiologySystems.push_back(&sys);
 }
 
-void SEEngineTracker::ResetFile()
+bool SEEngineTracker::SetupDataRequests(const SEDataRequestManager& drMgr)
 {
-  if (m_ResultsStream.is_open())
-    m_ResultsStream.close();
-  m_ResultsStream.clear();
-}
+  Clear();
+  m_DataRequestMgr->Copy(drMgr);
 
-DataTrack& SEEngineTracker::GetDataTrack()
-{
-  return *m_DataTrack;
-}
-
-double SEEngineTracker::GetValue(const SEDataRequest& dr) const
-{
-  auto drs = GetScalar(dr);
-  if (drs == nullptr)
-    return SEScalar::dNaN();
-  if (!drs->IsValid())
-    return SEScalar::dNaN();
-  if (dr.HasUnit())
-    return drs->GetValue(*dr.GetUnit());
-  return drs->GetValue();
-}
-
-std::string SEEngineTracker::GetUnit(const SEDataRequest& dr) const
-{
-  auto drs = GetScalar(dr);
-  if (drs == nullptr)
-    return "";
-  if (!drs->IsValid())
-    return "";
-  if (dr.HasUnit())
-    return dr.GetUnit()->GetString();
-  if (drs->HasUnit())
-    return drs->GetUnit()->GetString();
-  return "";
-}
-
-const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
-{
-  auto found = m_Request2Scalar.find(&dr);
-  if (found == m_Request2Scalar.end())
-    return nullptr;
-  return found->second;
-}
-
-bool SEEngineTracker::SetupRequests()
-{
   bool success = true;
   if (m_Mode == TrackMode::CSV)
   {
@@ -203,15 +171,73 @@ bool SEEngineTracker::SetupRequests()
       }
     }
   }
+
+  // Check to see if there are any repeats in the data request manager
+  if (m_DataTrack->NumTracks() != m_DataRequestMgr->GetDataRequests().size())
+  {
+    Error("Number of data requests does not match the number of tracked properties!");
+    Error("--Check to see if you have duplicates in your data request list");
+    Error("--Here is the order of the data items I am traking:");
+    for (size_t i = 0; i < m_DataTrack->NumTracks(); i++)
+      Error("--  " + m_DataTrack->GetProbeName(i));
+    Error("--Here is what you requested:");
+    for (SEDataRequest const* dr : m_DataRequestMgr->GetDataRequests())
+      Error("--  " + dr->GetHeaderName());
+    Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
+    return false;
+  }
+
   return success;
 }
 
-void SEEngineTracker::LogRequestedValues()
+size_t SEEngineTracker::NumProbes() const
+{
+  return m_DataTrack->NumTracks();
+}
+double SEEngineTracker::GetValue(size_t idx) const
+{
+  return m_DataTrack->GetProbe(idx);
+}
+
+double SEEngineTracker::GetValue(const SEDataRequest& dr) const
+{
+  auto drs = GetScalar(dr);
+  if (drs == nullptr)
+    return SEScalar::dNaN();
+  if (!drs->IsValid())
+    return SEScalar::dNaN();
+  if (dr.HasUnit())
+    return drs->GetValue(*dr.GetUnit());
+  return drs->GetValue();
+}
+
+std::string SEEngineTracker::GetUnit(const SEDataRequest& dr) const
+{
+  auto drs = GetScalar(dr);
+  if (drs == nullptr)
+    return "";
+  if (!drs->IsValid())
+    return "";
+  if (dr.HasUnit())
+    return dr.GetUnit()->GetString();
+  if (drs->HasUnit())
+    return drs->GetUnit()->GetString();
+  return "";
+}
+
+void SEEngineTracker::LogRequestedValues() const
 {
   SEDataRequestScalar* ds;
   for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
   {
-    ds = m_Request2Scalar[dr];
+    auto itr = m_Request2Scalar.find(dr);
+    if (itr == m_Request2Scalar.end())
+    {
+      Error("Data request has no scalar...");
+      continue;
+    }
+
+    ds = itr->second;
     if(!ds->IsValid())
       Info(ds->Heading + " NaN");
     else
@@ -224,82 +250,6 @@ void SEEngineTracker::LogRequestedValues()
   }
 }
 
-void SEEngineTracker::TrackData(double time_s)
-{
-  if (!m_DataRequestMgr->HasDataRequests())
-    return;// Nothing to do here...
-
-  SetupRequests();
-  PullData(time_s);
-
-  if(m_Mode == TrackMode::CSV)
-    m_DataTrack->StreamProbesToFile(time_s, m_ResultsStream);
-}
-void SEEngineTracker::PullData(double time_s)
-{
-  if (time_s == m_LastPullTime_s)
-    return;
-
-  SEDataRequestScalar* ds;
-  for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
-  {
-    ds = m_Request2Scalar[dr];
-    if (ds == nullptr)
-    {
-      Error("You cannot modify CSV Results file data requests in the middle of a run.");
-      Error("Ignorning data request " + dr->GetPropertyName());
-      continue;
-    }
-    if (!ds->HasScalar())
-    {
-      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
-      continue;
-    }
-    ds->UpdateScalar();// Update compartment if needed
-    if (ds->IsValid())
-    {
-      if (ds->HasUnit())
-      {
-        if (dr->GetUnit() == nullptr)
-          dr->SetUnit(*ds->GetUnit());
-        m_DataTrack->Probe(ds->idx, ds->GetValue(*dr->GetUnit()));
-      }
-      else
-        m_DataTrack->Probe(ds->idx, ds->GetValue());
-    }
-    else if (ds->IsInfinity())
-      m_DataTrack->Probe(ds->idx, std::numeric_limits<double>::infinity());
-    else
-      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
-  }
-  m_LastPullTime_s = time_s;
-}
-
-bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
-{
-  if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
-  {
-    return true; // We have this connected already
-  }
-
-  SEDataRequestScalar* ds=new SEDataRequestScalar(GetLogger());
-  m_Request2Scalar[&dr]=ds;
-
-  bool success = ConnectRequest(dr, *ds);
-
-  std::string header = dr.GetHeaderName();
-  if(header.empty())
-  {
-    m_ss << "Unhandled data request : " << dr.GetPropertyName() << std::endl;
-    Error(m_ss);
-    return false;
-  }
-
-  ds->Heading = header;
-  ds->idx = m_DataTrack->Probe(ds->Heading, 0);
-  m_DataTrack->SetFormatting(ds->Heading, dr);
-  return success;
-}
 
 bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
 {
@@ -534,6 +484,100 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
   m_ss << "Unhandled data request : " << propertyName << std::endl;
   Error(m_ss);
   return false;
+}
+
+void SEEngineTracker::PullData(double time_s)
+{
+  if (time_s == m_LastPullTime_s)
+    return;
+
+  SEDataRequestScalar* ds;
+  for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
+  {
+    ds = m_Request2Scalar[dr];
+    if (ds == nullptr)
+    {
+      Error("You cannot modify CSV Results file data requests in the middle of a run.");
+      Error("Ignorning data request " + dr->GetPropertyName());
+      continue;
+    }
+    if (!ds->HasScalar())
+    {
+      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
+      continue;
+    }
+    ds->UpdateScalar();// Update compartment if needed
+    if (ds->IsValid())
+    {
+      if (ds->HasUnit())
+      {
+        if (dr->GetUnit() == nullptr)
+          dr->SetUnit(*ds->GetUnit());
+        m_DataTrack->Probe(ds->idx, ds->GetValue(*dr->GetUnit()));
+      }
+      else
+        m_DataTrack->Probe(ds->idx, ds->GetValue());
+    }
+    else if (ds->IsInfinity())
+      m_DataTrack->Probe(ds->idx, std::numeric_limits<double>::infinity());
+    else
+      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
+  }
+  m_LastPullTime_s = time_s;
+}
+
+void SEEngineTracker::TrackData(double time_s, double dt_s)
+{
+  if (!m_DataRequestMgr->HasDataRequests())
+    return;// Nothing to do here...
+
+  double sampleTime_s = m_DataRequestMgr->GetSamplesPerSecond();
+  if (sampleTime_s != 0)
+    sampleTime_s = 1 / sampleTime_s;
+
+  m_CurrentSampleTime_s += dt_s;
+  if (m_CurrentSampleTime_s >= sampleTime_s)
+  {
+    m_CurrentSampleTime_s = 0;
+    PullData(time_s);
+
+    if (m_Mode == TrackMode::CSV)
+      m_DataTrack->StreamProbesToFile(time_s, m_ResultsStream);
+  }
+}
+
+bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
+{
+  if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
+  {
+    return true; // We have this connected already
+  }
+
+  SEDataRequestScalar* ds = new SEDataRequestScalar(GetLogger());
+  m_Request2Scalar[&dr] = ds;
+
+  bool success = ConnectRequest(dr, *ds);
+
+  std::string header = dr.GetHeaderName();
+  if (header.empty())
+  {
+    m_ss << "Unhandled data request : " << dr.GetPropertyName() << std::endl;
+    Error(m_ss);
+    return false;
+  }
+
+  ds->Heading = header;
+  ds->idx = m_DataTrack->Probe(ds->Heading, 0);
+  m_DataTrack->SetFormatting(ds->Heading, dr);
+  return success;
+}
+
+const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
+{
+  auto found = m_Request2Scalar.find(&dr);
+  if (found == m_Request2Scalar.end())
+    return nullptr;
+  return found->second;
 }
 
 void SEDataRequestScalar::SetScalarRequest(const SEScalar& s, SEDataRequest& dr)

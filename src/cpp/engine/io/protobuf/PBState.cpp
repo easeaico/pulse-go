@@ -98,14 +98,15 @@ namespace pulse
     else
       PBConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
 
+    dst.m_EngineTracker->Clear();
     // We could preserve the tracker, but I think I want to force the user to set it up
     // again, they should have the data tracks (or easily get them), and they should
     // Set it back up, and set or reset the results file they are using
     if (src.has_datarequestmanager())
     {
-      dst.m_EngineTrack->GetDataRequestManager().Clear();
-      PBEngine::Load(src.datarequestmanager(), dst.m_EngineTrack->GetDataRequestManager());
-      dst.m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data
+      SEDataRequestManager drMgr(dst.GetLogger());
+      PBEngine::Load(src.datarequestmanager(), drMgr);
+      dst.m_EngineTracker->SetupDataRequests(drMgr);
     }
 
     if (src.has_simulationtime())
@@ -318,7 +319,7 @@ namespace pulse
     // Ask the engine tracker to reconnect to all its scalars
     // Compartments and Circuits configurations can change from state to state
     // So they are all new objects when a state is loaded, so we need to hook up any cmpt based requests to those new objects
-    dst.m_EngineTrack->ForceConnection();
+    dst.m_EngineTracker->ForceConnection();
     return true;
   }
 
@@ -334,8 +335,8 @@ namespace pulse
     dst.set_airwaymode((PULSE_BIND::eAirwayMode)src.m_AirwayMode);
     dst.set_intubation((CDM_BIND::eSwitch)src.m_Intubation);
     dst.set_allocated_simulationtime(PBProperty::Unload(src.m_SimulationTime));
-    if (src.m_EngineTrack->GetDataRequestManager().HasDataRequests())
-      dst.set_allocated_datarequestmanager(PBEngine::Unload(src.m_EngineTrack->GetDataRequestManager()));
+    if (src.m_EngineTracker->GetDataRequestManager().HasDataRequests())
+      dst.set_allocated_datarequestmanager(PBEngine::Unload(src.m_EngineTracker->GetDataRequestManager()));
     // Patient
     dst.set_allocated_currentpatient(PBPatient::Unload(*src.m_CurrentPatient));
     dst.set_allocated_initialpatient(PBPatient::Unload(*src.m_InitialPatient));

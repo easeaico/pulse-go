@@ -22,11 +22,10 @@
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/engine/SEOverrides.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEPatientActionCollection.h"
-#include "cdm/substance/SESubstanceManager.h"
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceTransport.h"
 #include "cdm/circuit/fluid/SEFluidCircuitCalculator.h"
@@ -34,12 +33,10 @@
 #include "cdm/circuit/fluid/SEFluidCircuitNode.h"
 #include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 #include "cdm/compartment/fluid/SEGasCompartmentGraph.h"
-#include "cdm/compartment/fluid/SEGasCompartmentGraph.h"
 #include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarMass.h"
-#include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
@@ -89,7 +86,7 @@ namespace pulse::study::multiplex_ventilation
 
     void DestroyEngines();
 
-    static void TrackData(SEEngineTracker& trkr, const std::string& csv_filename);
+    static void TrackData(SEDataRequestManager& drMgr);
     static bool RunSoloState(const std::string& stateFile, const std::string& outDir, double duration_s, Logger& logger);
 
     static bool SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst /*eSerializationFormat fmt*/);

@@ -147,8 +147,10 @@ namespace pulse::study::multiplex_ventilation
     MakeDirectory(Dir::Solo + "/csv/");
     auto engine = CreatePulseEngine();
     engine->GetLogger()->SetLogFile(Dir::Solo + "/log/" + baseName + ".log");
-    engine->SerializeFromFile("./states/StandardMale@0s.pbb");
-    MVEngine::TrackData(*engine->GetEngineTracker(), Dir::Solo + "/csv/" + baseName + ".csv");
+    SEDataRequestManager drMgr(engine->GetLogger());
+    drMgr.SetResultsFilename(Dir::Solo + "/csv/" + baseName + ".csv");
+    MVEngine::TrackData(drMgr);
+    engine->SerializeFromFile("./states/StandardMale@0s.json", &drMgr);
     engine->GetLogger()->LogToConsole(logToConsole);
     engine->GetLogger()->Info("Creating engine " + baseName);
 
@@ -298,7 +300,6 @@ namespace pulse::study::multiplex_ventilation
     {
       totalIterations++;
       eng.AdvanceModelTime(2, TimeUnit::s);
-      eng.GetEngineTracker()->TrackData(eng.GetSimulationTime(TimeUnit::s));
       currentSpO2 = eng.GetBloodChemistrySystem()->GetOxygenSaturation();
       if (currentSpO2 < 0.8 && currentSpO2 <= previousSpO2)
       {

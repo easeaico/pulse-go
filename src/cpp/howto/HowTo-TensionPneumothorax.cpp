@@ -37,25 +37,26 @@ void HowToTensionPneumothorax()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_TensionPneumothorax.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_TensionPneumothorax.cpp/HowTo_TensionPneumothorax.log");
   pe->GetLogger()->Info("HowTo_TensionPneumothorax");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_TensionPneumothorax.cpp/HowTo_TensionPneumothorax.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToTensionPneumothorax.csv");
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -66,7 +67,7 @@ void HowToTensionPneumothorax()
   pe->GetLogger()->Info(std::stringstream() <<"Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);;
 
-  AdvanceAndTrackTime_s(50, *pe);
+  pe->AdvanceModelTime(50, TimeUnit::s);
 
   // Create a Tension Pnuemothorax 
   // Set the severity (a fraction between 0 and 1)
@@ -86,7 +87,7 @@ void HowToTensionPneumothorax()
   pe->GetLogger()->Info("Giving the patient a tension pneumothorax");
   pe->GetLogger()->Info("ICD-9: 860.0");
 
-  AdvanceAndTrackTime_s(120, *pe);//This will advance the engine
+  pe->AdvanceModelTime(120, TimeUnit::s);//This will advance the engine
 
   pe->GetLogger()->Info("The patient has had a tension pneumothorax for 120");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -111,7 +112,7 @@ void HowToTensionPneumothorax()
   pe->ProcessAction(needleDecomp);
   pe->GetLogger()->Info("Giving the patient a needle decompression");
 
-  AdvanceAndTrackTime_s(400, *pe);
+  pe->AdvanceModelTime(400, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient has had a needle decompressed tension pneumothorax for 400s");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

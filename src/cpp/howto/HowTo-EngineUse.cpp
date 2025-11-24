@@ -130,10 +130,27 @@ void HowToEngineUse()
 
   // NOTE, setting the LogLevel, Forwarder, EventHandler can be done after initialize and as many times as you want
 
-  // The first order of business is to initialize the engine by loading a patient state.
+  // OPTIONAL: Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.SetResultsFilename("./test_results/howto/HowToEngineUse.cpp/HowToEngineUse.csv");
+
+  // Initialize the engine by loading a patient state.
   // Patient states provided in the SDK are the state of the engine at the time they stabilize
   // More details on creating a patient and stabilizing the engine can be found in HowTo-CreateAPatient.cpp
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -163,26 +180,9 @@ void HowToEngineUse()
   const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
   const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  SEDataRequest& hrDR = 
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");  
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowToEngineUse.csv");
-
   // We are ready to execute the engine
   // simply tell the engine how long you would like it to execute
-  if (!AdvanceAndTrackTime_s(5, *pe))// Note this tracker class takes in seconds
+  if (!pe->AdvanceModelTime(5, TimeUnit::s))// Note this tracker class takes in seconds
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -274,7 +274,7 @@ void HowToEngineUse()
   pe->GetLogger()->Info(std::stringstream() << "Core Body Temperature : " << pe->GetEnergySystem()->GetCoreTemperature(TemperatureUnit::C) << TemperatureUnit::C);
 
   // Here is how we can pull data from the engine using a data request
-  double hr = pe->GetEngineTracker()->GetValue(hrDR);
+  double hr = pe->GetTrackedData().GetValue(0); // Index order is the order of creation
 
   // Save the state of the engine
   pe->SerializeToFile("./test_results/howto/HowToEngineUse-FinalState.json");

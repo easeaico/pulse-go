@@ -33,56 +33,48 @@ namespace pulse { namespace human_adult_whole_body
     SELiquidBlackBox* aortaToRightLeg = nullptr;
     SELiquidBlackBox* rightLegToVenaCava = nullptr;
   };
-  bool SetupBBDataRequests(BlackBoxes& bbz, PhysiologyEngine& pulse, const std::string& csvFilename)
+  bool SetupBBDataRequests(BlackBoxes& bbz, PhysiologyEngine& pe, SEDataRequestManager& drMgr, const std::string& csvFilename)
   {
-    pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+    drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
 
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Pressure", PressureUnit::mmHg);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "InFlow", VolumePerTimeUnit::mL_Per_s);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "OutFlow", VolumePerTimeUnit::mL_Per_s);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Volume", VolumeUnit::mL);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Pressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "InFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Volume", VolumeUnit::mL);
 
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Pressure", PressureUnit::mmHg);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "InFlow", VolumePerTimeUnit::mL_Per_s);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "OutFlow", VolumePerTimeUnit::mL_Per_s);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Volume", VolumeUnit::mL);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Pressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "InFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Volume", VolumeUnit::mL);
 
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Pressure", PressureUnit::mmHg);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "InFlow", VolumePerTimeUnit::mL_Per_s);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "OutFlow", VolumePerTimeUnit::mL_Per_s);
-    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Volume", VolumeUnit::mL);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Pressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "InFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Volume", VolumeUnit::mL);
 
     if (bbz.at == BlackBoxes::locations::AORTA || bbz.at == BlackBoxes::locations::BOTH)
     {
-      bbz.aortaToRightLeg = pulse.GetBlackBoxes().GetLiquidBlackBox(pulse::VascularCompartment::Aorta, pulse::VascularCompartment::RightLeg);
-      if (bbz.aortaToRightLeg == nullptr)
-        return false;
-  
-      bbz.aortaToRightLeg->GetCompartment().GetVolume().SetValue(10, VolumeUnit::mL);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "Pressure", PressureUnit::mmHg);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "InFlow", VolumePerTimeUnit::mL_Per_s);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "OutFlow", VolumePerTimeUnit::mL_Per_s);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "Volume", VolumeUnit::mL);
+      std::string bbCmpt = SEBlackBoxManager::GetBlackBoxName(pulse::VascularCompartment::Aorta, pulse::VascularCompartment::RightLeg);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Pressure", PressureUnit::mmHg);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "InFlow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Volume", VolumeUnit::mL);
     }
     if (bbz.at == BlackBoxes::locations::VENACAVA || bbz.at == BlackBoxes::locations::BOTH)
     {
-      bbz.rightLegToVenaCava = pulse.GetBlackBoxes().GetLiquidBlackBox(pulse::VascularCompartment::RightLeg, pulse::VascularCompartment::VenaCava);
-      if (bbz.rightLegToVenaCava == nullptr)
-        return false;
-
-      bbz.rightLegToVenaCava->GetCompartment().GetVolume().SetValue(10, VolumeUnit::mL);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "Pressure", PressureUnit::mmHg);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "InFlow", VolumePerTimeUnit::mL_Per_s);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "OutFlow", VolumePerTimeUnit::mL_Per_s);
-      pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "Volume", VolumeUnit::mL);
+      std::string bbCmpt = SEBlackBoxManager::GetBlackBoxName(pulse::VascularCompartment::RightLeg, pulse::VascularCompartment::VenaCava);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Pressure", PressureUnit::mmHg);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "InFlow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Volume", VolumeUnit::mL);
     }
 
-    pulse.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(csvFilename);
+    drMgr.SetResultsFilename(csvFilename);
 
     return true;
   }
@@ -100,7 +92,8 @@ namespace pulse { namespace human_adult_whole_body
     }
 
     BlackBoxes bbz;
-    if(!SetupBBDataRequests(bbz, *pulse, outputDir+"/EmptyBlackBoxTest.csv"))
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    if(!SetupBBDataRequests(bbz, *pulse, drMgr, outputDir+"/EmptyBlackBoxTest.csv"))
     {
       pulse->GetLogger()->Error("Could not create black boxes");
       Error("Could not create black boxes");
@@ -117,7 +110,6 @@ namespace pulse { namespace human_adult_whole_body
         Error("Unable to advance time");
         return;
       }
-      pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
       if (i == 3000)
         Info("It took " + std::to_string(profile.GetElapsedTime_s("eBB")) + "(s) to simulate 60s");
     }
@@ -134,6 +126,15 @@ namespace pulse { namespace human_adult_whole_body
     config.AllowDynamicTimeStep(eSwitch::On);
     pulse->SetConfigurationOverride(&config);
 
+    BlackBoxes bbz(BlackBoxes::locations::VENACAVA);
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    if(!SetupBBDataRequests(bbz, *pulse, drMgr, outputDir+"/ImposeFlowBlackBoxTest.csv"))
+    {
+      pulse->GetLogger()->Error("Could not create black boxes");
+      Error("Could not create black boxes");
+      return;
+    }
+
     if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
     {
       pulse->GetLogger()->Error("Could not load state, check the error");
@@ -141,14 +142,14 @@ namespace pulse { namespace human_adult_whole_body
       return;
     }
 
-
-    BlackBoxes bbz(BlackBoxes::locations::VENACAVA);
-    if(!SetupBBDataRequests(bbz, *pulse, outputDir+"/ImposeFlowBlackBoxTest.csv"))
+    bbz.rightLegToVenaCava = pulse->GetBlackBoxes().GetLiquidBlackBox(pulse::VascularCompartment::RightLeg, pulse::VascularCompartment::VenaCava);
+    if (bbz.rightLegToVenaCava == nullptr)
     {
-      pulse->GetLogger()->Error("Could not create black boxes");
-      Error("Could not create black boxes");
+      pulse->GetLogger()->Error("Unable to create VENACAVA blackbox");
+      Error("Unable to create VENACAVA blackbox");
       return;
     }
+    bbz.rightLegToVenaCava->GetCompartment().GetVolume().SetValue(10, VolumeUnit::mL);
 
     double aortaToRightLegInflow = 2.0;
     double aortaToRightLegOutflow = 1.5;
@@ -216,7 +217,6 @@ namespace pulse { namespace human_adult_whole_body
       Info("--------------- Advance Time ---------------\n");
 #endif
 
-      pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
       if (i == 3000)
         Info("It took " + std::to_string(profile.GetElapsedTime_s("BB")) + "(s) to simulate 60s");
     }
@@ -229,6 +229,15 @@ namespace pulse { namespace human_adult_whole_body
     std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(eModelType::HumanAdultWholeBody, m_Logger);
     Info("--------ImposePressureAndFlowBlackBoxTest--------");
 
+    BlackBoxes bbz(BlackBoxes::locations::AORTA);
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    if (!SetupBBDataRequests(bbz, *pulse, drMgr, outputDir + "/ImposePressureAndFlowBlackBoxTest.csv"))
+    {
+      pulse->GetLogger()->Error("Could not create black boxes");
+      Error("Could not create black boxes");
+      return;
+    }
+
     if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
     {
       pulse->GetLogger()->Error("Could not load state, check the error");
@@ -236,16 +245,16 @@ namespace pulse { namespace human_adult_whole_body
       return;
     }
 
-    BlackBoxes bbz;
-    if (!SetupBBDataRequests(bbz, *pulse, outputDir + "/ImposePressureAndFlowBlackBoxTest.csv"))
+    bbz.aortaToRightLeg = pulse->GetBlackBoxes().GetLiquidBlackBox(pulse::VascularCompartment::Aorta, pulse::VascularCompartment::RightLeg);
+    if (bbz.aortaToRightLeg == nullptr)
     {
-      pulse->GetLogger()->Error("Could not create black boxes");
-      Error("Could not create black boxes");
+      pulse->GetLogger()->Error("Unable to create AORTA blackbox");
+      Error("Unable to create AORTA blackbox");
       return;
     }
+    bbz.aortaToRightLeg->GetCompartment().GetVolume().SetValue(10, VolumeUnit::mL);
 
     double resistance_mmHg_s_Per_mL = 0.1;
-  
     double dampenFraction = 0.01;
 
     // Run for two mins
@@ -276,7 +285,6 @@ namespace pulse { namespace human_adult_whole_body
         Error("Unable to advance time");
         return;
       }
-      pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
       if (i == 3000)
         Info("It took " + std::to_string(profile.GetElapsedTime_s("BB")) + "(s) to simulate 60s");
     }

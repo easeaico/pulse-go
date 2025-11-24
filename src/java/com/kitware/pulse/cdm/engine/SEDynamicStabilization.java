@@ -14,7 +14,6 @@ import com.kitware.pulse.utilities.FileUtils;
 
 public class SEDynamicStabilization
 {
-  protected eSwitch                                             trackingStabilization;
   protected Map<String,SEDynamicStabilizationEngineConvergence> convergenceCriteria;
   
   public SEDynamicStabilization()
@@ -24,7 +23,6 @@ public class SEDynamicStabilization
   
   public void clear()
   {
-    this.trackingStabilization=eSwitch.Off;
     this.convergenceCriteria.clear();
   }
   
@@ -41,8 +39,6 @@ public class SEDynamicStabilization
   
   public static void load(DynamicStabilizationData src, SEDynamicStabilization dst) 
   {
-    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED && src.getTrackingStabilization()!=eSwitch.NullSwitch)
-      dst.trackingStabilization=src.getTrackingStabilization();
     for(String name : src.getConvergenceCriteriaMap().keySet())
     {
       SEDynamicStabilizationEngineConvergence.load(src.getConvergenceCriteriaMap().get(name), dst.createConvergenceCriteria(name));
@@ -56,21 +52,10 @@ public class SEDynamicStabilization
   }
   protected static void unload(SEDynamicStabilization src, DynamicStabilizationData.Builder dst)
   {
-  	if(src.trackingStabilization!=null)
-      dst.setTrackingStabilization(src.trackingStabilization);
     for(String name : src.convergenceCriteria.keySet())
     {
     	dst.putConvergenceCriteria(name, SEDynamicStabilizationEngineConvergence.unload(src.convergenceCriteria.get(name)));
     }
-  }
-  
-  public eSwitch isTrackingStabilization()
-  {
-    return this.trackingStabilization;
-  }
-  public void TrackStabilization(eSwitch b)
-  {
-    this.trackingStabilization = (b==eSwitch.NullSwitch) ? eSwitch.Off : b;
   }
   
   public SEDynamicStabilizationEngineConvergence createConvergenceCriteria(String type)

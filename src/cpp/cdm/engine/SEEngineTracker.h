@@ -4,7 +4,7 @@
 #pragma once
 
 class DataTrack;
-class SESystem; 
+class SESystem;
 class SEPatient;
 class SEEnvironment;
 class PhysiologyEngine;
@@ -62,40 +62,62 @@ protected:
   // Tissue cmpts don't have children and they don't have computed data that changes on call (like flow)
 };
 
-class CDM_DECL SEEngineTracker : public Loggable
+// This class connects the data requests to the CDM objects to the data tracker to an optional file
+
+class CDM_DECL SETrackedData : public Loggable
+{
+public:
+  SETrackedData(Logger* logger) : Loggable(logger) {}
+  virtual ~SETrackedData() {}
+
+  virtual size_t NumProbes() const = 0;
+  virtual double GetValue(size_t idx) const = 0;
+  virtual double GetValue(const SEDataRequest& dr) const = 0;
+  virtual std::string GetUnit(const SEDataRequest& dr) const = 0;
+
+  virtual void LogRequestedValues() const = 0;
+
+  virtual const SEDataRequestManager& GetDataRequestManager() const = 0;
+};
+
+class CDM_DECL SEEngineTracker : public SETrackedData
 {
 public:
   SEEngineTracker(SEPatient&, SEActionManager&, SESubstanceManager&, SECompartmentManager&, Logger* logger=nullptr);
   virtual ~SEEngineTracker();
 
   void Clear();// Remove all requests and close the results file
-
-  DataTrack& GetDataTrack();
-  SEActionManager& GetActionManager() { return m_ActionMgr; }
-  SESubstanceManager& GetSubstanceManager() { return m_SubMgr; }
-  SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
+  void ResetFile();// Close file, so next Track Data will re hook up everything and make a new file
+  void ForceConnection() { m_ForceConnection = true; }
 
   // Add a system to look for data in
-  void AddSystem(SESystem& system);
+  void AddSystem(SESystem& system); // This should also be in the ctor...
 
-  void ResetFile();// Close file, so next Track Data will re hook up everything and make a new file
-
-  bool ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds);
-
-  virtual bool SetupRequests();
-  // Set to false if you have already pulled the latest values
-  virtual void LogRequestedValues();
-  virtual void TrackData(double currentTime_s);
-  virtual void PullData(double currentTime_s);
-  virtual bool TrackRequest(SEDataRequest& dr);
-  virtual void ForceConnection() { m_ForceConnection = true; }
+  bool SetupDataRequests(const SEDataRequestManager& drMgr);
 
   void SetTrackMode(TrackMode m) { m_Mode = m; }
   TrackMode GetTrackMode() { return m_Mode; }
 
+  size_t NumProbes() const override;
+  double GetValue(size_t idx) const override;
+  double GetValue(const SEDataRequest& dr) const override;
+  std::string GetUnit(const SEDataRequest& dr) const override;
 
-  double GetValue(const SEDataRequest& dr) const;
-  std::string GetUnit(const SEDataRequest& dr) const;
+  DataTrack& GetDataTrack() { return *m_DataTrack; }
+  //const DataTrack& GetDataTrack() const { return *m_DataTrack;}
+  //SEActionManager& GetActionManager() { return m_ActionMgr; }
+  //SESubstanceManager& GetSubstanceManager() { return m_SubMgr; }
+  //SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
+  const SEDataRequestManager& GetDataRequestManager() const override { return *m_DataRequestMgr; }
+
+  void LogRequestedValues() const override;
+
+  // These methods are if used for more manual control of tracking
+  // (I think I would like these to be protected)
+  bool ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds);
+  void PullData(double currentTime_s);
+  void TrackData(double currentTime_s, double dt_s);
+  bool TrackRequest(SEDataRequest& dr);
 
 protected:
   const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;
@@ -103,12 +125,14 @@ protected:
   TrackMode                    m_Mode= TrackMode::CSV;
   bool                         m_ForceConnection;
   double                       m_LastPullTime_s;
-  DataTrack*                   m_DataTrack;
+  double                       m_CurrentSampleTime_s;
 
   std::stringstream            m_ss;
   std::ofstream                m_ResultsStream;
+
   SEDataRequestManager*        m_DataRequestMgr;
-  
+  DataTrack*                   m_DataTrack;
+
   SEPatient&                   m_Patient;
   SEActionManager&             m_ActionMgr;
   SESubstanceManager&          m_SubMgr;

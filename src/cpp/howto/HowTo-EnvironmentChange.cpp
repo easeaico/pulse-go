@@ -47,8 +47,22 @@ void HowToEnvironmentChange()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_EnvironmentChange.log");
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_EnvironmentChange.cpp/HowTo_EnvironmentChange.log");
   pe->GetLogger()->Info("HowTo_EnvironmentChange");
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
+  drMgr.CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
+  drMgr.CreatePhysiologyDataRequest("TotalMetabolicRate", PowerUnit::W);
+  drMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  drMgr.SetResultsFilename("./test_results/HowTo_EnvironmentChange.cpp/HowTo_EnvironmentChange.csv");
+
   /*
   // You have the option to change the enviornmental conditions of the patient 
   // with a condition or an action. By default the standard environment file is used
@@ -62,14 +76,17 @@ void HowToEnvironmentChange()
   std::vector<const SECondition*> conditions;
   conditions.push_back(&ienv);
 
-  if (!pe->InitializeEngine("StandardMale.json", &conditions))
+  SEPatientConfiguration pc;
+  pc.SetPatientFile("StandardMale.json");
+
+  if (!pe->InitializeEngine(pc, &drMgr))
   {
     pe->GetLogger()->Error("Could not load initialize engine, check the error");
     return;
   }
   */
 
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -80,21 +97,8 @@ void HowToEnvironmentChange()
   const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
   const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalMetabolicRate", PowerUnit::W);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEnvironmentChange.csv");
-
   // Advance some time to get some resting data
-  AdvanceAndTrackTime_s(50, *pe);
+  pe->AdvanceModelTime(50, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -127,7 +131,7 @@ void HowToEnvironmentChange()
   conditions.GetAmbientGas(*O2).GetFractionAmount().SetValue(0.2095);
   conditions.GetAmbientGas(*CO2).GetFractionAmount().SetValue(4.0E-4);
   pe->ProcessAction(env);
-  AdvanceAndTrackTime_s(30, *pe);
+  pe->AdvanceModelTime(30, TimeUnit::s);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -154,7 +158,7 @@ void HowToEnvironmentChange()
   conditions.GetAmbientGas(*O2).GetFractionAmount().SetValue(0.21);
   conditions.GetAmbientGas(*CO2).GetFractionAmount().SetValue(4.0E-4);
   pe->ProcessAction(env);
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -172,7 +176,7 @@ void HowToEnvironmentChange()
   SEThermalApplication heat;
   heat.GetActiveHeating().GetPower().SetValue(340, PowerUnit::BTU_Per_hr);
   pe->ProcessAction(heat);
-  AdvanceAndTrackTime_s(120, *pe);
+  pe->AdvanceModelTime(120, TimeUnit::s);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);

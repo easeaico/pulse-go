@@ -42,21 +42,10 @@ void HowToIsoShuntAnalysis()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo/HowTo_MechanicalVentilator.cpp.log");
-  
-  pe->GetLogger()->Info("HowTo_MechanicalVentilator");
-  
- 
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
-  {
-    pe->GetLogger()->Error("Could not load state, check the error");
-    return;
-  }
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo/HowTo_MechanicalVentilator.cpp.csv");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowToIsoShuntAnalysis.cpp/HowToIsoShuntAnalysis.log");
+  pe->GetLogger()->Info("HowToIsoShuntAnalysis");
 
   std::stringstream results;
-
   std::vector<double> ARDSSeverityList = { 0.0, 0.3, 0.6, 0.9 };
   std::vector<double> FiO2List = { 0.21, 0.5, 1.0 };
   std::vector<double> PEEPList_cmH2O = { 5, 15, 25 };
@@ -109,7 +98,7 @@ void HowToIsoShuntAnalysis()
         ARDS.GetSeverity(eLungCompartment::RightLung).SetValue(ARDSSeverity);
         pe->ProcessAction(ARDS);
 
-        AdvanceAndTrackTime_s(300, *pe);
+        pe->AdvanceModelTime(300, TimeUnit::s);
 
         // Log the combination
         results << std::left

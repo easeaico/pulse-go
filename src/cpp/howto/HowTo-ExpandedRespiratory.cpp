@@ -52,32 +52,33 @@ void HowToExpandedRespiratory()
 {
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->LogToConsole(true);
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ExpandedRespiratory.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ExpandedRespiratory.cpp/HowTo_ExpandedRespiratory.log");
 
   PulseConfiguration config;
   config.UseExpandedLungs(eSwitch::On);
   pe->SetConfigurationOverride(&config);
 
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialOxygenPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialCarbonDioxidePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("LeftLungPulmonary", "Volume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("RightLungPulmonary", "Volume", VolumeUnit::L);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_ExpandedRespiratory.csv");
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("ArterialOxygenPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("ArterialCarbonDioxidePressure", PressureUnit::mmHg);
+  drMgr.CreateGasCompartmentDataRequest("LeftLungPulmonary", "Volume", VolumeUnit::mL);
+  drMgr.CreateGasCompartmentDataRequest("RightLungPulmonary", "Volume", VolumeUnit::L);
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_ExpandedRespiratory.cpp/HowTo_ExpandedRespiratory.csv");
 
   SEPatientConfiguration pc;
   pc.SetPatientFile("./patients/StandardMale.json");
 
-  pe->InitializeEngine(pc);
+  pe->InitializeEngine(pc, &drMgr);
 
   // Get default data at time 0s from the engine
   pe->AdvanceModelTime(0, TimeUnit::s);
