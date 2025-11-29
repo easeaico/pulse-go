@@ -50,6 +50,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Added mechanical ventilator alarm settings and associated events
     - Added an oscillating upper airway resistance pattern to the airway obstruction action for simulating secretions
     - Tweaked closed tension pneumothorax model to allow for full lung collapse during positive pressure ventilation
+    - Added an optional mechanical dead space volume setting to the mechanical ventilation action
 
 
 ## Pulse v4.3.1 (January 2025)
