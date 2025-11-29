@@ -4,7 +4,7 @@
 from enum import Enum
 from pulse.cdm.enums import eSerializationFormat
 from pulse.cdm.patient_actions import SEMechanicalVentilation, eSwitch
-from pulse.cdm.scalars import VolumePerTimeUnit, PressureUnit
+from pulse.cdm.scalars import VolumePerTimeUnit, PressureUnit, VolumeUnit
 from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_MechanicalVentilation():
@@ -25,6 +25,7 @@ def HowTo_MechanicalVentilation():
     ventilation.set_comment("Patient is placed on a mechanical ventilator")
     ventilation.get_flow().set_value(50, VolumePerTimeUnit.mL_Per_s)
     ventilation.get_pressure().set_value(.2, PressureUnit.psi)
+    ventilation.get_mechanical_dead_space().set_value(100, VolumeUnit.mL)
     ventilation.set_state(eSwitch.On)
     pulse.process_action(ventilation)
 

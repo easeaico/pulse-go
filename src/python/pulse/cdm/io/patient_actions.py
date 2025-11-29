@@ -353,6 +353,8 @@ def serialize_mechanical_ventilation_to_bind(src: SEMechanicalVentilation, dst: 
         serialize_scalar_pressure_to_bind(src.get_pressure(), dst.Pressure)
     if src.has_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_flow(), dst.Flow)
+    if src.has_mechanicaldeadspacevolume():
+        serialize_scalar_volume_to_bind(src.get_mechanicaldeadspacevolume(), dst.MechanicalDeadSpaceVolume)
     dst.State = src.get_state().value
 
 def serialize_needle_decompression_from_bind(src:MechanicalVentilationData, dst: SEMechanicalVentilation):

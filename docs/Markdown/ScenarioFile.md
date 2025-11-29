@@ -1052,6 +1052,7 @@ Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal, Oropharyngeal, N
 ##### Mechanical Ventilation 
 @copybrief MechanicalVentilationData <br>
 You may provide Pressure and/or Flow. <br>
+You may optionally provide a MechanicalDeadSpaceVolume. <br>
 If you do not provide GasFractions, the environment gas fractions will be used. <br>
 If you do provide Gas Fractions, they must add up to 1.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1060,6 +1061,7 @@ If you do provide Gas Fractions, they must add up to 1.
     "MechanicalVentilation": { "State":"On",
       "Flow": { "ScalarVolumePerTime": { "Value":1.0, "Unit":"mL/s" } },
       "Pressure": { "ScalarPressure": { "Value":10.0, "Unit":"cmH2O" } },
+      "MechanicalDeadSpaceVolume": { "ScalarVolume": { "Value":10.0, "Unit":"mL" } },
       "GasFraction": { "Name":"Oxygen",
         "Amount": { "Scalar0To1": { "Value":0.3 } } },
       "GasFraction": { "Name":"CarbonDioxide",

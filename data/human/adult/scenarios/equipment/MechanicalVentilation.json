@@ -90,6 +90,12 @@
             "Unit": "cmH2O"
           }
         },
+        "MechanicalDeadSpaceVolume": {
+          "ScalarVolume": {
+            "Value": 100.0,
+            "Unit": "mL"
+          }
+        },
         "GasFraction": [{
           "Name": "Oxygen",
           "Amount": {
@@ -160,6 +166,12 @@
           "ScalarPressure": {
             "Value": 10.0,
             "Unit": "cmH2O"
+          }
+        },
+        "MechanicalDeadSpaceVolume": {
+          "ScalarVolume": {
+            "Value": 80.0,
+            "Unit": "mL"
           }
         },
         "GasFraction": [{

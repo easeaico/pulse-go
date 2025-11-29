@@ -157,9 +157,6 @@ namespace pulse
     m_CarinaO2 = nullptr;
     m_LeftAlveoliO2 = nullptr;
     m_RightAlveoliO2 = nullptr;
-    // Mechanical Ventilation
-    m_MechanicalVentilationConnection = nullptr;
-    m_MechanicalVentilationAerosolConnection = nullptr;
     // Aerosol
     m_AerosolAirway = nullptr;
     m_AerosolCarina = nullptr;
@@ -208,8 +205,14 @@ namespace pulse
     m_RightNeedleToRightPleural = nullptr;
     m_LeftAlveoliToLeftPleuralConnection = nullptr;
     m_RightAlveoliToRightPleuralConnection = nullptr;
-    m_ConnectionToAirway = nullptr;
+
+    // Mechanical Ventilation
+    m_MechanicalVentilationConnection = nullptr;
+    m_MechanicalVentilationDeadSpace = nullptr;
+    m_MechanicalVentilationAerosolConnection = nullptr;
+    m_ConnectionToDeadSpace = nullptr;
     m_GroundToConnection = nullptr;
+
     // Substance
     m_Oversedation = nullptr;
 
@@ -469,9 +472,6 @@ namespace pulse
     m_RightAlveoli = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli);
     m_RightAlveoliO2 = m_RightAlveoli->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
 
-    //Mechanical Ventilation Compartments
-    m_MechanicalVentilationConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
-    m_MechanicalVentilationAerosolConnection = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
     // Paths
     m_RightPleuralToRespiratoryMuscle = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::RightPleuralToRespiratoryMuscle);
     m_LeftPleuralToRespiratoryMuscle = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::LeftPleuralToRespiratoryMuscle);
@@ -480,7 +480,12 @@ namespace pulse
     m_PharynxToCarina = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::PharynxToCarina);
     m_PharynxToEnvironment = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::PharynxToEnvironment);
     m_AirwayToStomach = m_RespiratoryCircuit->GetPath(pulse::RespiratoryPath::AirwayToStomach);
-    m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToAirway);
+
+    //Mechanical Ventilation elements
+    m_MechanicalVentilationConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
+    m_MechanicalVentilationDeadSpace = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetNode(pulse::MechanicalVentilationNode::DeadSpace);
+    m_MechanicalVentilationAerosolConnection = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
+    m_ConnectionToDeadSpace = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::ConnectionToDeadSpace);
     m_GroundToConnection = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().GetPath(pulse::MechanicalVentilationPath::GroundToConnection);
 
     if (m_data.HasCardiovascular())
@@ -1308,6 +1313,17 @@ namespace pulse
       // You only get here if action is On
       m_data.SetAirwayMode(eAirwayMode::MechanicalVentilation);
 
+      //Set the deadspace volume ********************************************
+      if (mv.HasMechanicalDeadSpaceVolume())
+      {
+        m_MechanicalVentilationDeadSpace->GetNextVolume().Set(mv.GetMechanicalDeadSpaceVolume());
+      }
+      else
+      {
+        //Make sure this stays syncronized with the circuit setup default
+        m_MechanicalVentilationDeadSpace->GetNextVolume().SetValue(0.001, VolumeUnit::L);
+      }
+
       //Set the substance volume fractions ********************************************
       std::vector<SESubstanceFraction*> gasFractions = mv.GetGasFractions();
 
@@ -1368,19 +1384,19 @@ namespace pulse
       //Apply the instantaneous flow ********************************************
       if (mv.HasFlow())
       {
-        if (!m_ConnectionToAirway->HasNextFlowSource())
+        if (!m_ConnectionToDeadSpace->HasNextFlowSource())
         {
-          m_ConnectionToAirway->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+          m_ConnectionToDeadSpace->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
           stateChange = true;
         }
-        m_ConnectionToAirway->GetNextFlowSource().Set(mv.GetFlow());
+        m_ConnectionToDeadSpace->GetNextFlowSource().Set(mv.GetFlow());
       }
       else
       {
         //If there's no flow specified, we need to remove the flow source
-        if (m_ConnectionToAirway->HasNextFlowSource())
+        if (m_ConnectionToDeadSpace->HasNextFlowSource())
         {
-          m_ConnectionToAirway->RemoveFlowSource();
+          m_ConnectionToDeadSpace->RemoveFlowSource();
           stateChange = true;
         }
       }
@@ -1406,9 +1422,9 @@ namespace pulse
     {
       // Was just turned off
       m_data.SetAirwayMode(eAirwayMode::Free);
-      if (m_ConnectionToAirway->HasNextFlowSource())
+      if (m_ConnectionToDeadSpace->HasNextFlowSource())
       {
-        m_ConnectionToAirway->GetNextFlowSource().Invalidate();
+        m_ConnectionToDeadSpace->GetNextFlowSource().Invalidate();
         m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
       }
     }

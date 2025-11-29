@@ -503,12 +503,14 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilationConnection);
+    DEFINE_STATIC_STRING_EX(DeadSpace, MechanicalVentilationDeadSpace);
   };
 
   class MechanicalVentilationPath
   {
   public:
-    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilationConnectionToAirway);
+    DEFINE_STATIC_STRING_EX(DeadSpaceToAirway, MechanicalVentilationDeadSpaceToAirway);
+    DEFINE_STATIC_STRING_EX(ConnectionToDeadSpace, MechanicalVentilationConnectionToMechanicalVentilationDeadSpace);
     DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilationGroundToConnection);
   };
 

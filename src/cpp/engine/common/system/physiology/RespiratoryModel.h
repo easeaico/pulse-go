@@ -221,8 +221,6 @@ namespace pulse
     SEFluidCircuitPath* m_PharynxToEnvironment;
     SEFluidCircuitPath* m_PharynxToCarina;
     SEFluidCircuitPath* m_AirwayToStomach;
-    SEFluidCircuitPath* m_ConnectionToAirway;
-    SEFluidCircuitPath* m_GroundToConnection;
     // Compartments
     SEGasCompartment* m_Environment;
     SEGasCompartment* m_Carina;
@@ -244,7 +242,10 @@ namespace pulse
     SEGasSubstanceQuantity* m_RightAlveoliO2;
     // Mechanical Ventilation
     SEGasCompartment* m_MechanicalVentilationConnection;
+    SEFluidCircuitNode* m_MechanicalVentilationDeadSpace;
     SELiquidCompartment* m_MechanicalVentilationAerosolConnection;
+    SEFluidCircuitPath* m_ConnectionToDeadSpace;
+    SEFluidCircuitPath* m_GroundToConnection;
     // Cardiovascular
     SELiquidSubstanceQuantity* m_AortaO2;
     SELiquidSubstanceQuantity* m_AortaCO2;

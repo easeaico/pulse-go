@@ -283,6 +283,8 @@ void HowToMechanicalVentilation()
   // Create an SEMechanicalVentilation object
   SEMechanicalVentilation mechVent;
   mechVent.SetState(eSwitch::On);// Turn it on
+  double deadSpace_mL = 100.0;
+  mechVent.GetMechanicalDeadSpaceVolume().SetValue(deadSpace_mL, VolumeUnit::mL); // Set the mechanical dead space volume
                       // Grab the substance fractions so we can quickly modify them
   SESubstanceFraction& O2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("Oxygen"));
   SESubstanceFraction& CO2frac = mechVent.GetGasFraction(*pe->GetSubstanceManager().GetSubstance("CarbonDioxide"));
@@ -306,6 +308,7 @@ void HowToMechanicalVentilation()
     inputPressure_cmH2O = yOffset + amplitude_cmH2O * sin(alpha * time_s);   //compute new pressure
 
     mechVent.GetPressure().SetValue(inputPressure_cmH2O, PressureUnit::cmH2O);
+    mechVent.GetMechanicalDeadSpaceVolume().SetValue(deadSpace_mL, VolumeUnit::mL);
     //You can set flow, but we aren't
     double O2fraction = 0.55; //Can be read from sensor
     double CO2fraction = 4.0E-4; //Can be read from sensor
@@ -327,6 +330,8 @@ void HowToMechanicalVentilation()
     pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
+    pe->GetLogger()->Info(std::stringstream() << "Arterial Oxygen Partial Pressure : " << pe->GetBloodChemistrySystem()->GetArterialOxygenPressure(PressureUnit::mmHg));
+    pe->GetLogger()->Info(std::stringstream() << "Arterial Carbon Dioxide Partial Pressure : " << pe->GetBloodChemistrySystem()->GetArterialCarbonDioxidePressure(PressureUnit::mmHg));
 
     //If you are doing a control system and need the volume, use this variable that is referenced to the FRC
     pe->GetLogger()->Info(std::stringstream() << "Relative Total Lung Volume : " << pe->GetRespiratorySystem()->GetRelativeTotalLungVolume(VolumeUnit::mL) << VolumeUnit::mL);

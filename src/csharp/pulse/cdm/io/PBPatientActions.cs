@@ -1256,6 +1256,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.Flow, dst.GetFlow());
       if (src.Pressure != null)
         PBProperty.Load(src.Pressure, dst.GetPressure());
+      if (src.MechanicalDeadSpaceVolume != null)
+        PBProperty.Load(src.MechanicalDeadSpaceVolume, dst.GetMechanicalDeadSpaceVolume());
       foreach (pulse.cdm.bind.SubstanceFractionData sf in src.GasFraction)
       {
         PBProperty.Load(sf.Amount, dst.GetGasFraction(sf.Name).GetFractionAmount());
@@ -1280,6 +1282,8 @@ namespace Pulse.CDM
         dst.Flow = PBProperty.Unload(src.GetFlow());
       if (src.HasPressure())
         dst.Pressure = PBProperty.Unload(src.GetPressure());
+      if (src.HasMechanicalDeadSpaceVolume())
+        dst.MechanicalDeadSpaceVolume = PBProperty.Unload(src.GetMechanicalDeadSpaceVolume());
       foreach (SESubstanceFraction aGas in src.GetGasFractions())
       {
         pulse.cdm.bind.SubstanceFractionData sf = new pulse.cdm.bind.SubstanceFractionData();
