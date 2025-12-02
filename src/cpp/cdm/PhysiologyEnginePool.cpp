@@ -7,7 +7,6 @@ See accompanying NOTICE file for details.*/
 #include "cdm/engine/SEAdvanceTime.h"
 #include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 
 namespace

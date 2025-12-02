@@ -39,7 +39,7 @@ class SEConditionManager;
 class SEEventManager;
 
 class SEDataRequestManager;
-class SETrackedData;
+class SEDataRequestTracker;
 
 class SEEngineConfiguration;
 
@@ -172,11 +172,11 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Retrieve the SETrackedData associated with tracking data from this engine
-  /// The SETrackedData translates the data requested from the engine (via SEDataRequest's)
-  /// to a vector of doubles. (ex. Used to easily write data to csv files)
+  /// Retrieve the SEDataRequestTracker object associated with the provided data request manager
+  /// The SEDataRequestTracker provides easy access to double values of the data requested from the engine
+  /// You can reset the data request manager via this object as well
   //--------------------------------------------------------------------------------------------------
-  virtual const SETrackedData& GetTrackedData() const = 0;
+  virtual SEDataRequestTracker& GetDataRequestTracker() = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

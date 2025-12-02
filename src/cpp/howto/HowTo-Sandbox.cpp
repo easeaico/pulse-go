@@ -4,7 +4,7 @@
 #include "PulseEngine.h"
 
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
 #include "cdm/patient/actions/SESubstanceInfusion.h"
@@ -113,7 +113,7 @@ void HowToSandbox()
 
     // Print values every 10s
     if (i%500 == 0)
-      pe->GetTrackedData().LogRequestedValues();
+      pe->GetDataRequestTracker().LogRequestedValues();
 
     // Check the Systolic Pressure
     double dBP = pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg);

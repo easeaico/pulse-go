@@ -14,7 +14,6 @@
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/PhysiologyEngine.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEEngineConfiguration.h"
 #include "cdm/patient/SEPatient.h"
 #include "cdm/properties/SEScalarTime.h"

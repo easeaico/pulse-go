@@ -16,7 +16,7 @@
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/substance/SESubstance.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
@@ -274,7 +274,7 @@ void HowToEngineUse()
   pe->GetLogger()->Info(std::stringstream() << "Core Body Temperature : " << pe->GetEnergySystem()->GetCoreTemperature(TemperatureUnit::C) << TemperatureUnit::C);
 
   // Here is how we can pull data from the engine using a data request
-  double hr = pe->GetTrackedData().GetValue(0); // Index order is the order of creation
+  double hr = pe->GetDataRequestTracker().GetValue(0); // Index order is the order of creation
 
   // Save the state of the engine
   pe->SerializeToFile("./test_results/howto/HowToEngineUse-FinalState.json");

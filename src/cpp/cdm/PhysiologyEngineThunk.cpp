@@ -14,7 +14,7 @@
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEConditionManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEngineConfiguration.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/substance/SESubstance.h"
@@ -328,14 +328,14 @@ double* PhysiologyEngineThunk::PullDataPtr()
   if (m_requestedData == nullptr)
   {
     // +1 for the sim time
-    m_length = m_engine->GetTrackedData().NumProbes() + 1;
+    m_length = m_engine->GetDataRequestTracker().NumTracks() + 1;
     m_requestedData = new double[m_length];
   }
   // Always put the sim time in index 0 as seconds
   m_requestedData[0] = currentTime_s;
   // Pull all data we requested and pack into our array for return to the caller
   for (size_t i = 1; i<m_length; i++)
-    m_requestedData[i] = m_engine->GetTrackedData().GetValue(i-1);
+    m_requestedData[i] = m_engine->GetDataRequestTracker().GetValue(i-1);
 
   return m_requestedData;
 }

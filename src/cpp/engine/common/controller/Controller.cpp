@@ -29,9 +29,9 @@
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEActionManager.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEAdvanceTime.h"
 #include "cdm/engine/SEAdvanceUntilStable.h"
 #include "cdm/engine/SESerializeRequested.h"
@@ -108,14 +108,53 @@ namespace pulse
 
   void Data::SetupTracker()
   {
-    m_EngineTracker = new SEEngineTracker(*m_CurrentPatient, *m_Actions, *m_Substances, *m_Compartments, m_Logger);
-    for (auto model : m_Models)
-    {
-      SESystem* s = dynamic_cast<SESystem*>(model);
-      if (s == nullptr)
-        throw CommonDataModelException("Setting up an engine with a model that is not an SESystem");
-      m_EngineTracker->AddSystem(*s);
-    }
+    if (m_EnvironmentModel)
+      m_EngineTracker->SetEnvironment(*m_EnvironmentModel);
+    if (m_CurrentPatient)
+      m_EngineTracker->SetPatient(*m_CurrentPatient);
+    // Physiology
+    if (m_BloodChemistryModel)
+      m_EngineTracker->AddPhysiologySystem(*m_BloodChemistryModel);
+    if (m_CardiovascularModel)
+      m_EngineTracker->AddPhysiologySystem(*m_CardiovascularModel);
+    if (m_EndocrineModel)
+      m_EngineTracker->AddPhysiologySystem(*m_EndocrineModel);
+    if (m_EnergyModel)
+      m_EngineTracker->AddPhysiologySystem(*m_EnergyModel);
+    if (m_GastrointestinalModel)
+      m_EngineTracker->AddPhysiologySystem(*m_GastrointestinalModel);
+    if (m_HepaticModel)
+      m_EngineTracker->AddPhysiologySystem(*m_HepaticModel);
+    if (m_NervousModel)
+      m_EngineTracker->AddPhysiologySystem(*m_NervousModel);
+    if (m_RenalModel)
+      m_EngineTracker->AddPhysiologySystem(*m_RenalModel);
+    if (m_RespiratoryModel)
+      m_EngineTracker->AddPhysiologySystem(*m_RespiratoryModel);
+    if (m_DrugModel)
+      m_EngineTracker->AddPhysiologySystem(*m_DrugModel);
+    if (m_TissueModel)
+      m_EngineTracker->AddPhysiologySystem(*m_TissueModel);
+    // Equipment
+    if (m_AnesthesiaMachineModel)
+      m_EngineTracker->SetAnesthesiaMachine(*m_AnesthesiaMachineModel);
+    if (m_BagValveMaskModel)
+      m_EngineTracker->SetBagValveMask(*m_BagValveMaskModel);
+    if (m_ElectroCardioGramModel)
+      m_EngineTracker->SetElectroCardioGram(*m_ElectroCardioGramModel);
+    if (m_ECMOModel)
+      m_EngineTracker->SetECMO(*m_ECMOModel);
+    if (m_InhalerModel)
+      m_EngineTracker->SetInhaler(*m_InhalerModel);
+    if (m_MechanicalVentilatorModel)
+      m_EngineTracker->SetMechanicalVentilator(*m_MechanicalVentilatorModel);
+    // Managers
+    if (m_Actions)
+      m_EngineTracker->SetActionManager(*m_Actions);
+    if (m_Substances)
+      m_EngineTracker->SetSubstanceManager(*m_Substances);
+    if (m_Compartments)
+      m_EngineTracker->SetCompartmentManager(*m_Compartments);
   }
 
   DataTrack& Data::GetDataTrack() const { return m_EngineTracker->GetDataTrack(); }
@@ -182,6 +221,12 @@ namespace pulse
 
   const SEScalarTime& Data::GetEngineTime() const { return m_CurrentTime; }
   const SEScalarTime& Data::GetSimulationTime() const { return m_SimulationTime; }
+  double Data::GetSimulationTime_s() const
+  {
+    double currentSimTime_s = m_SimulationTime.GetValue(TimeUnit::s);
+    // Round sim time to nearest hundredth, TODO to nearest time step?
+    return std::ceil(currentSimTime_s * 100.0) / 100.0;
+  }
   const SEScalarTime& Data::GetStabilizationTime() const { return m_StabilizationTime; }
   const SEScalarTime& Data::GetTimeStep() const { return m_Config->GetTimeStep(); }
   double Data::GetTimeStep_s() const { return GetTimeStep().GetValue(TimeUnit::s); }
@@ -673,8 +718,7 @@ namespace pulse
     m_EngineInitializationState = eEngineInitializationState::Uninitialized;
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
-    if (m_EngineTracker)
-      m_EngineTracker->Clear();
+    m_EngineTracker->Reset();
 
     m_CurrentTime.SetValue(0, TimeUnit::s);
     m_SimulationTime.SetValue(0, TimeUnit::s);
@@ -805,10 +849,7 @@ namespace pulse
     if (serializeRequested != nullptr)
     {
       std::string output;
-      double currentSimTime_s = GetSimulationTime().GetValue(TimeUnit::s);
-      // Round sim time to nearest hundredth, TODO to nearest time step?
-      currentSimTime_s = std::ceil(currentSimTime_s * 100.0) / 100.0;
-      GetEngineTracker().PullData(currentSimTime_s);
+      double currentSimTime_s = GetSimulationTime_s();
       if(serializeRequested->GetClearCache())
         m_DataRequested->ClearDataRequested();
       m_DataRequested->PullDataRequested(serializeRequested->GetID(), currentSimTime_s, GetDataTrack());

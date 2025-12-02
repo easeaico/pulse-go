@@ -7,7 +7,7 @@
 // Include the various types you will be using in your code
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/patient/actions/SECardiovascularMechanicsModification.h"
 #include "cdm/system/physiology/SECardiovascularMechanicsModifiers.h"
@@ -64,7 +64,7 @@ void HowToCardiovascularMechanicsModification()
   for (size_t i = 0; i < 3; i++)
   {
     pe->AdvanceModelTime(10, TimeUnit::s);
-    pe->GetTrackedData().LogRequestedValues();
+    pe->GetDataRequestTracker().LogRequestedValues();
   }
 
   SECardiovascularMechanicsModification config;
@@ -77,7 +77,7 @@ void HowToCardiovascularMechanicsModification()
   pe->ProcessAction(config);
 
   pe->AdvanceModelTime(10, TimeUnit::s);
-  pe->GetTrackedData().LogRequestedValues();
+  pe->GetDataRequestTracker().LogRequestedValues();
 }
 
 //--------------------------------------------------------------------------------------------------

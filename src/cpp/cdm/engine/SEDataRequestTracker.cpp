@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "cdm/CommonDefs.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequest.h"
 #include "cdm/engine/SEDataRequestManager.h"
@@ -45,6 +45,8 @@
 #include "cdm/system/physiology/SETissueSystem.h"
 #include "cdm/system/environment/SEEnvironment.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "cdm/system/equipment/ecmo/SEECMO.h"
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "cdm/system/equipment/inhaler/SEInhaler.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
@@ -61,14 +63,16 @@
 #include "cdm/properties/SEScalarElectricPotential.h"
 #include "cdm/utils/DataTrack.h"
 
-SEEngineTracker::SEEngineTracker(SEPatient& p, SEActionManager& a, SESubstanceManager& s, SECompartmentManager& c, Logger* logger) : SETrackedData(logger),
-  m_Patient(p), m_ActionMgr(a), m_SubMgr(s), m_CmptMgr(c)
+SEEngineTracker::SEEngineTracker(Logger* logger) : SEDataRequestTracker(logger)
 {
+  m_LastPullTime_s = SEScalar::dNaN();
+  m_CurrentSampleTime_s = 0;
+
   m_DataTrack = new DataTrack(logger);
   m_DataRequestMgr = new SEDataRequestManager(logger);
-  m_ForceConnection = false;
-  m_CurrentSampleTime_s = 0;
-  m_LastPullTime_s = SEScalar::dNaN();
+  Clear();
+
+  m_Patient = nullptr;
 }
 
 SEEngineTracker::~SEEngineTracker()
@@ -76,124 +80,116 @@ SEEngineTracker::~SEEngineTracker()
   Clear();
   delete m_DataTrack;
   delete m_DataRequestMgr;
+
+  for (auto& pair : m_OutputFiles)
+  {
+    if (pair.second.is_open())
+      pair.second.close();
+    pair.second.clear();
+  }
 }
 
 void SEEngineTracker::Clear()
 {
-  ResetFile();
-  m_ForceConnection = false;
-  DELETE_MAP_SECOND(m_Request2Scalar);
+  Reset();
+  m_Patient = nullptr;
+  m_ActionMgr = nullptr;
+  m_SubMgr = nullptr;
+  m_CmptMgr = nullptr;
+
+  m_Environment = nullptr;
+  m_PhysiologySystems.clear();
+  m_AnesthesiaMachine = nullptr;
+  m_BVM = nullptr;
+  m_ECG = nullptr;
+  m_ECMO = nullptr;
+  m_Inhaler = nullptr;
+  m_MechanicalVentilator = nullptr;
+}
+
+void SEEngineTracker::Reset()
+{
+  m_Mode = TrackMode::Dynamic;
+  m_ResultsStream = nullptr;
+
   m_DataRequestMgr->Clear();
   m_DataTrack->Clear();
-  m_CurrentSampleTime_s = 0;
-  m_LastPullTime_s = SEScalar::dNaN();
+
+  DELETE_MAP_SECOND(m_Request2Scalar);
 }
 
-void SEEngineTracker::ResetFile()
+void SEEngineTracker::CloseResultsFile()
 {
-  if (m_ResultsStream.is_open())
-    m_ResultsStream.close();
-  m_ResultsStream.clear();
+  m_Mode = TrackMode::Dynamic;
+  if (m_ResultsStream)
+    m_ResultsStream->close();
 }
 
-void SEEngineTracker::AddSystem(SESystem& sys)
+void SEEngineTracker::SetPatient(SEPatient& p)
 {
-  if (dynamic_cast<SEEnvironment*>(&sys) != nullptr)
-  {
-    m_Environment = dynamic_cast<SEEnvironment*>(&sys);
-    return;
-  }
-  if (dynamic_cast<SEAnesthesiaMachine*>(&sys) != nullptr)
-  {
-    m_AnesthesiaMachine = dynamic_cast<SEAnesthesiaMachine*>(&sys);
-    return;
-  }
-  if (dynamic_cast<SEElectroCardioGram*>(&sys) != nullptr)
-  {
-    m_ECG = dynamic_cast<SEElectroCardioGram*>(&sys);
-    return;
-  }
-  if (dynamic_cast<SEInhaler*>(&sys) != nullptr)
-  {
-    m_Inhaler = dynamic_cast<SEInhaler*>(&sys);
-    return;
-  }
-  if (dynamic_cast<SEMechanicalVentilator*>(&sys) != nullptr)
-  {
-    m_MechanicalVentilator = dynamic_cast<SEMechanicalVentilator*>(&sys);
-    return;
-  }
-  // Not equipment or environment, so it must be a physiology system
+  m_Patient = &p;
+}
+
+void SEEngineTracker::SetEnvironment(SEEnvironment& e)
+{
+  m_Environment = &e;
+}
+
+void SEEngineTracker::AddPhysiologySystem(SESystem& sys)
+{
   m_PhysiologySystems.push_back(&sys);
 }
 
-bool SEEngineTracker::SetupDataRequests(const SEDataRequestManager& drMgr)
+void SEEngineTracker::SetAnesthesiaMachine(SEAnesthesiaMachine& am)
 {
-  Clear();
-  m_DataRequestMgr->Copy(drMgr);
-
-  bool success = true;
-  if (m_Mode == TrackMode::CSV)
-  {
-    bool isOpen = m_ResultsStream.is_open();
-
-    if (!isOpen || m_ForceConnection)
-    {// Process/Hook up all requests with their associated scalers
-      DELETE_MAP_SECOND(m_Request2Scalar);// Get our scalars again
-      for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
-      {
-        if (!TrackRequest(*dr))
-        {// Could not hook this up, get rid of it
-          m_ss << "Unable to find data for " << m_Request2Scalar[dr]->Heading;
-          Error(m_ss);
-          success = false;
-        }
-      }
-      m_ForceConnection = false;
-    }
-    // Create the file now that all probes and requests have been added to the track
-    // So we get columns for all of our data
-    if (!isOpen && !m_DataRequestMgr->GetResultFilename().empty())
-    {
-      Info("Creating csv request file: " + m_DataRequestMgr->GetResultFilename());
-      m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), m_ResultsStream);
-    }
-  }
-  else
-  {
-    for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
-    {
-      if (!TrackRequest(*dr))
-      {// Could not hook this up, get rid of it
-        m_ss << "Unable to find data for " << m_Request2Scalar[dr]->Heading;
-        Error(m_ss);
-        success = false;
-      }
-    }
-  }
-
-  // Check to see if there are any repeats in the data request manager
-  if (m_DataTrack->NumTracks() != m_DataRequestMgr->GetDataRequests().size())
-  {
-    Error("Number of data requests does not match the number of tracked properties!");
-    Error("--Check to see if you have duplicates in your data request list");
-    Error("--Here is the order of the data items I am traking:");
-    for (size_t i = 0; i < m_DataTrack->NumTracks(); i++)
-      Error("--  " + m_DataTrack->GetProbeName(i));
-    Error("--Here is what you requested:");
-    for (SEDataRequest const* dr : m_DataRequestMgr->GetDataRequests())
-      Error("--  " + dr->GetHeaderName());
-    Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
-    return false;
-  }
-
-  return success;
+  m_AnesthesiaMachine = &am;
 }
 
-size_t SEEngineTracker::NumProbes() const
+void SEEngineTracker::SetBagValveMask(SEBagValveMask& bvm)
+{
+  m_BVM = &bvm;
+}
+
+void SEEngineTracker::SetElectroCardioGram(SEElectroCardioGram& ecg)
+{
+  m_ECG = &ecg;
+}
+
+void SEEngineTracker::SetECMO(SEECMO& ecmo)
+{
+  m_ECMO = &ecmo;
+}
+
+void SEEngineTracker::SetInhaler(SEInhaler& i)
+{
+  m_Inhaler = &i;
+}
+
+void SEEngineTracker::SetMechanicalVentilator(SEMechanicalVentilator& mv)
+{
+  m_MechanicalVentilator = &mv;
+}
+
+void SEEngineTracker::SetActionManager(SEActionManager& am)
+{
+  m_ActionMgr = &am;
+}
+
+void SEEngineTracker::SetCompartmentManager(SECompartmentManager& cMgr)
+{
+  m_CmptMgr = &cMgr;
+}
+
+void SEEngineTracker::SetSubstanceManager(SESubstanceManager& sMgr)
+{
+  m_SubMgr = &sMgr;
+}
+
+size_t SEEngineTracker::NumTracks() const
 {
   return m_DataTrack->NumTracks();
 }
+
 double SEEngineTracker::GetValue(size_t idx) const
 {
   return m_DataTrack->GetProbe(idx);
@@ -250,6 +246,91 @@ void SEEngineTracker::LogRequestedValues() const
   }
 }
 
+bool SEEngineTracker::SetupDataRequests(const SEDataRequestManager& drMgr)
+{
+  Reset();
+  m_DataRequestMgr->Copy(drMgr);
+  if (m_DataRequestMgr->HasResultsFilename())
+    m_Mode = TrackMode::CSV;
+
+  bool success = true;
+
+  // Process/Hook up all requests with their associated scalers
+  DELETE_MAP_SECOND(m_Request2Scalar);// Get our scalars again
+  for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
+  {
+    if (!ConnectRequest(*dr))
+    {// Could not hook this up, get rid of it
+      m_ss << "Unable to find data for " << m_Request2Scalar[dr]->Heading;
+      Error(m_ss);
+      success = false;
+    }
+  }
+
+  // Check to see if there are any repeats in the data request manager
+  if (m_DataTrack->NumTracks() != m_DataRequestMgr->GetDataRequests().size())
+  {
+    Error("Number of data requests does not match the number of tracked properties!");
+    Error("--Check to see if you have duplicates in your data request list");
+    Error("--Here is the order of the data items I am traking:");
+    for (size_t i = 0; i < m_DataTrack->NumTracks(); i++)
+      Error("--  " + m_DataTrack->GetProbeName(i));
+    Error("--Here is what you requested:");
+    for (SEDataRequest const* dr : m_DataRequestMgr->GetDataRequests())
+      Error("--  " + dr->GetHeaderName());
+    Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
+    return false;
+  }
+
+  if (m_Mode == TrackMode::CSV)
+  {
+    m_ResultsStream = &m_OutputFiles[m_DataRequestMgr->GetResultFilename()];
+    if (!m_ResultsStream->is_open())
+    {
+      m_CurrentSampleTime_s = 0;
+      m_LastPullTime_s = SEScalar::dNaN();
+      Info("Creating csv request file: " + m_DataRequestMgr->GetResultFilename());
+      m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), *m_ResultsStream);
+    }
+    for (auto& pair : m_OutputFiles)
+    {
+      // CLose out other streams we may have
+      if (pair.first == m_DataRequestMgr->GetResultFilename())
+        continue;
+      if (pair.second.is_open())
+        pair.second.close();
+      pair.second.clear();
+    }
+  }
+
+  return success;
+}
+
+bool SEEngineTracker::ConnectRequest(SEDataRequest& dr)
+{
+  if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
+  {
+    return true; // We have this connected already
+  }
+
+  SEDataRequestScalar* ds = new SEDataRequestScalar(GetLogger());
+  m_Request2Scalar[&dr] = ds;
+
+  bool success = ConnectRequest(dr, *ds);
+
+  std::string header = dr.GetHeaderName();
+  if (header.empty())
+  {
+    m_ss << "Unhandled data request : " << dr.GetPropertyName() << std::endl;
+    Error(m_ss);
+    return false;
+  }
+
+  ds->Heading = header;
+  ds->idx = m_DataTrack->Probe(ds->Heading, 0);
+  m_DataTrack->SetFormatting(ds->Heading, dr);
+  return success;
+}
 
 bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
 {
@@ -259,7 +340,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
   {
     case eDataRequest_Category::Patient:
     {
-      s = m_Patient.GetScalar(propertyName);
+      s = m_Patient->GetScalar(propertyName);
       break;
     }
     case eDataRequest_Category::Physiology:
@@ -277,7 +358,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
     }
     case eDataRequest_Category::Action:
     {
-      s = m_ActionMgr.GetScalar(dr.GetActionName(), dr.GetCompartmentName(), dr.GetSubstanceName(), propertyName);
+      s = m_ActionMgr->GetScalar(dr.GetActionName(), dr.GetCompartmentName(), dr.GetSubstanceName(), propertyName);
       break;
     }
     case eDataRequest_Category::AnesthesiaMachine:
@@ -285,7 +366,15 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       if (m_AnesthesiaMachine != nullptr)
         s = m_AnesthesiaMachine->GetScalar(propertyName);
       else
-        Error("Cannot track anesthesia machine data as no anesthesia machine was provide");
+        Error("Cannot track anesthesia machine data as no anesthesia machine was provided");
+      break;
+    }
+    case eDataRequest_Category::BagValveMask:
+    {
+      if (m_BVM != nullptr)
+        s = m_BVM->GetScalar(propertyName);
+      else
+        Error("Cannot track bag valve mask data as no bag valve mask was provided");
       break;
     }
     case eDataRequest_Category::ECG:
@@ -293,7 +382,15 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       if (m_ECG != nullptr)
         s = m_ECG->GetScalar(propertyName);
       else
-        Error("Cannot track ECG data as no ECG was provide");
+        Error("Cannot track ECG data as no ECG was provided");
+      break;
+    }
+    case eDataRequest_Category::ECMO:
+    {
+      if (m_ECMO != nullptr)
+        s = m_ECMO->GetScalar(propertyName);
+      else
+        Error("Cannot track ECMO data as no ECMO was provided");
       break;
     }
     case eDataRequest_Category::Inhaler:
@@ -301,7 +398,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       if (m_Inhaler != nullptr)
         s = m_Inhaler->GetScalar(propertyName);
       else
-        Error("Cannot track inhaler data as no inhaler was provide");
+        Error("Cannot track inhaler data as no inhaler was provided");
       break;
     }
     case eDataRequest_Category::MechanicalVentilator:
@@ -309,23 +406,23 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       if (m_MechanicalVentilator != nullptr)
         s = m_MechanicalVentilator->GetScalar(propertyName);
       else
-        Error("Cannot track mechanical ventilator data as no mechanical ventilator was provide");
+        Error("Cannot track mechanical ventilator data as no mechanical ventilator was provided");
       break;
     }
     case eDataRequest_Category::GasCompartment:
     {
-      if (!m_CmptMgr.HasGasCompartment(dr.GetCompartmentName()))
+      if (!m_CmptMgr->HasGasCompartment(dr.GetCompartmentName()))
       {
         Error("Unknown gas compartment : " + dr.GetCompartmentName());
         return false;
       }
       // Removing const because I need to create objects in order to track those objects
-      SEGasCompartment* gasCmpt = (SEGasCompartment*)m_CmptMgr.GetGasCompartment(dr.GetCompartmentName());
+      SEGasCompartment* gasCmpt = (SEGasCompartment*)m_CmptMgr->GetGasCompartment(dr.GetCompartmentName());
       if (dr.HasSubstanceName())
       {
-        SESubstance* sub = m_SubMgr.GetSubstance(dr.GetSubstanceName());
+        SESubstance* sub = m_SubMgr->GetSubstance(dr.GetSubstanceName());
         // Activate this substance so compartments have it
-        m_SubMgr.AddActiveSubstance(*sub);
+        m_SubMgr->AddActiveSubstance(*sub);
         if (gasCmpt->HasChildren())
         {
           if (propertyName == "Volume")
@@ -361,19 +458,19 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
     }
     case eDataRequest_Category::LiquidCompartment:
     {
-      if (!m_CmptMgr.HasLiquidCompartment(dr.GetCompartmentName()))
+      if (!m_CmptMgr->HasLiquidCompartment(dr.GetCompartmentName()))
       {
         Error("Unknown liquid compartment : " + dr.GetCompartmentName());
         return false;
       }
       // Removing const because I need to create objects in order to track those objects
-      SELiquidCompartment* liquidCmpt = (SELiquidCompartment*)m_CmptMgr.GetLiquidCompartment(dr.GetCompartmentName());
+      SELiquidCompartment* liquidCmpt = (SELiquidCompartment*)m_CmptMgr->GetLiquidCompartment(dr.GetCompartmentName());
 
       if (dr.HasSubstanceName())
       {
-        SESubstance* sub = m_SubMgr.GetSubstance(dr.GetSubstanceName());
+        SESubstance* sub = m_SubMgr->GetSubstance(dr.GetSubstanceName());
         // Activate this substance so compartments have it
-        m_SubMgr.AddActiveSubstance(*sub);
+        m_SubMgr->AddActiveSubstance(*sub);
         if (liquidCmpt->HasChildren())
         {
           if (propertyName == "Mass")
@@ -413,13 +510,13 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
     }
     case eDataRequest_Category::ThermalCompartment:
     {
-      if (!m_CmptMgr.HasThermalCompartment(dr.GetCompartmentName()))
+      if (!m_CmptMgr->HasThermalCompartment(dr.GetCompartmentName()))
       {
         Error("Unknown thermal compartment : " + dr.GetCompartmentName());
         return false;
       }
       // Removing const because I need to create objects in order to track those objects
-      SEThermalCompartment* thermalCmpt = (SEThermalCompartment*)m_CmptMgr.GetThermalCompartment(dr.GetCompartmentName());
+      SEThermalCompartment* thermalCmpt = (SEThermalCompartment*)m_CmptMgr->GetThermalCompartment(dr.GetCompartmentName());
 
       if (thermalCmpt->HasChildren() || thermalCmpt->HasNodeMapping())
       {
@@ -441,21 +538,21 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
     }
     case eDataRequest_Category::TissueCompartment:
     {
-      if (!m_CmptMgr.HasTissueCompartment(dr.GetCompartmentName()))
+      if (!m_CmptMgr->HasTissueCompartment(dr.GetCompartmentName()))
       {
         Error("Unknown tissue compartment : " + dr.GetCompartmentName());
         return false;
       }
       // Removing const because I need to create objects in order to track those objects
-      SETissueCompartment* tissueCmpt = (SETissueCompartment*)m_CmptMgr.GetTissueCompartment(dr.GetCompartmentName());
+      SETissueCompartment* tissueCmpt = (SETissueCompartment*)m_CmptMgr->GetTissueCompartment(dr.GetCompartmentName());
       s = tissueCmpt->GetScalar(propertyName);
       break;
     }
     case eDataRequest_Category::Substance:
     {
       // Removing const because I want to allocate and grab scalars to track for later
-      SESubstance* sub = m_SubMgr.GetSubstance(dr.GetSubstanceName());
-      m_SubMgr.AddActiveSubstance(*sub);
+      SESubstance* sub = m_SubMgr->GetSubstance(dr.GetSubstanceName());
+      m_SubMgr->AddActiveSubstance(*sub);
       if (dr.HasCompartmentName())
       {// I don't really have a generic/reflexive way of doing this...yet
         if (dr.GetPropertyName() == "PartitionCoefficient")
@@ -472,8 +569,10 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
       }
     }
     default:
+    {
       m_ss << "Unhandled data request category: " << eDataRequest_Category_Name(dr.GetCategory()) << std::endl;
       Error(m_ss);
+    }
   }
 
   if (s != nullptr)
@@ -486,50 +585,12 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
   return false;
 }
 
-void SEEngineTracker::PullData(double time_s)
-{
-  if (time_s == m_LastPullTime_s)
-    return;
-
-  SEDataRequestScalar* ds;
-  for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
-  {
-    ds = m_Request2Scalar[dr];
-    if (ds == nullptr)
-    {
-      Error("You cannot modify CSV Results file data requests in the middle of a run.");
-      Error("Ignorning data request " + dr->GetPropertyName());
-      continue;
-    }
-    if (!ds->HasScalar())
-    {
-      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
-      continue;
-    }
-    ds->UpdateScalar();// Update compartment if needed
-    if (ds->IsValid())
-    {
-      if (ds->HasUnit())
-      {
-        if (dr->GetUnit() == nullptr)
-          dr->SetUnit(*ds->GetUnit());
-        m_DataTrack->Probe(ds->idx, ds->GetValue(*dr->GetUnit()));
-      }
-      else
-        m_DataTrack->Probe(ds->idx, ds->GetValue());
-    }
-    else if (ds->IsInfinity())
-      m_DataTrack->Probe(ds->idx, std::numeric_limits<double>::infinity());
-    else
-      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
-  }
-  m_LastPullTime_s = time_s;
-}
-
 void SEEngineTracker::TrackData(double time_s, double dt_s)
 {
   if (!m_DataRequestMgr->HasDataRequests())
     return;// Nothing to do here...
+  if (time_s == m_LastPullTime_s)
+    return;
 
   double sampleTime_s = m_DataRequestMgr->GetSamplesPerSecond();
   if (sampleTime_s != 0)
@@ -539,37 +600,43 @@ void SEEngineTracker::TrackData(double time_s, double dt_s)
   if (m_CurrentSampleTime_s >= sampleTime_s)
   {
     m_CurrentSampleTime_s = 0;
-    PullData(time_s);
+
+    for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
+    {
+      SEDataRequestScalar* ds = m_Request2Scalar[dr];
+      if (ds == nullptr)
+      {
+        Error("No SEDataRequestScalar for data request " + dr->GetPropertyName());
+        continue;
+      }
+      if (!ds->HasScalar())
+      {
+        m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
+        continue;
+      }
+      ds->UpdateScalar();// Update compartment if needed
+      if (ds->IsValid())
+      {
+        if (ds->HasUnit())
+        {
+          if (dr->GetUnit() == nullptr)
+            dr->SetUnit(*ds->GetUnit());
+          m_DataTrack->Probe(ds->idx, ds->GetValue(*dr->GetUnit()));
+        }
+        else
+          m_DataTrack->Probe(ds->idx, ds->GetValue());
+      }
+      else if (ds->IsInfinity())
+        m_DataTrack->Probe(ds->idx, std::numeric_limits<double>::infinity());
+      else
+        m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
+    }
 
     if (m_Mode == TrackMode::CSV)
-      m_DataTrack->StreamProbesToFile(time_s, m_ResultsStream);
-  }
-}
-
-bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
-{
-  if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
-  {
-    return true; // We have this connected already
+      m_DataTrack->StreamProbesToFile(time_s, *m_ResultsStream);
   }
 
-  SEDataRequestScalar* ds = new SEDataRequestScalar(GetLogger());
-  m_Request2Scalar[&dr] = ds;
-
-  bool success = ConnectRequest(dr, *ds);
-
-  std::string header = dr.GetHeaderName();
-  if (header.empty())
-  {
-    m_ss << "Unhandled data request : " << dr.GetPropertyName() << std::endl;
-    Error(m_ss);
-    return false;
-  }
-
-  ds->Heading = header;
-  ds->idx = m_DataTrack->Probe(ds->Heading, 0);
-  m_DataTrack->SetFormatting(ds->Heading, dr);
-  return success;
+  m_LastPullTime_s = time_s;
 }
 
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
@@ -606,7 +673,8 @@ void SEDataRequestScalar::SetScalarRequest(const SEScalar& s, SEDataRequest& dr)
         ss << dr.GetRequestedUnit() << " is not compatible with " << dr.GetPropertyName();
         Fatal(ss);
       }
-      dr.SetUnit(*unit);
+      else
+        dr.SetUnit(*unit);
     }
   }
 }

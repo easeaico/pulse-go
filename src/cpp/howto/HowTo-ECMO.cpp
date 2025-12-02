@@ -10,7 +10,7 @@
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
@@ -127,7 +127,7 @@ void HowToECMO()
 
   // Let's run for 30s to get a normal baseline
   pe->AdvanceModelTime(3.0, TimeUnit::s);
-  pe->GetTrackedData().LogRequestedValues();
+  pe->GetDataRequestTracker().LogRequestedValues();
 
   // Start the ECMO with blood
   // We are NOT changing any values
@@ -143,7 +143,7 @@ void HowToECMO()
 
   // Let's run for 30s to get another baseline
   pe->AdvanceModelTime(3.0, TimeUnit::s);
-  pe->GetTrackedData().LogRequestedValues();
+  pe->GetDataRequestTracker().LogRequestedValues();
 
   // Ok, now lets setup a new substance therapy
 
@@ -185,7 +185,7 @@ void HowToECMO()
   pe->ProcessAction(cfg);
 
   pe->AdvanceModelTime(30.0, TimeUnit::s);
-  pe->GetTrackedData().LogRequestedValues();
+  pe->GetDataRequestTracker().LogRequestedValues();
 
   pe->GetLogger()->Info("Finished");
 }

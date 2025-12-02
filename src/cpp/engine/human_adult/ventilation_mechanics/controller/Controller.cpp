@@ -9,14 +9,6 @@
 #include "engine/human_adult/whole_body/system/equipment/MechanicalVentilatorModel.h"
 #include "engine/human_adult/whole_body/system/physiology/RespiratoryModel.h"
 
-#include "cdm/engine/SEActionManager.h"
-#include "cdm/engine/SEConditionManager.h"
-#include "cdm/engine/SEDataRequested.h"
-#include "cdm/engine/SEEventManager.h"
-#include "cdm/engine/SEPatientConfiguration.h"
-#include "cdm/engine/SEEngineTracker.h"
-#include "cdm/patient/SEPatient.h"
-
 namespace pulse { namespace human_adult_ventilation_mechanics
 {
   Controller::Controller(Logger* logger) : pulse::human_adult_whole_body::Controller(logger)

@@ -8,7 +8,7 @@
 #include "cdm/blackbox/SEBlackBoxManager.h"
 #include "cdm/blackbox/fluid/SELiquidBlackBox.h"
 #include "cdm/compartment/SECompartmentManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceManager.h"
@@ -33,7 +33,7 @@ namespace pulse { namespace human_adult_whole_body
     SELiquidBlackBox* aortaToRightLeg = nullptr;
     SELiquidBlackBox* rightLegToVenaCava = nullptr;
   };
-  bool SetupBBDataRequests(BlackBoxes& bbz, PhysiologyEngine& pe, SEDataRequestManager& drMgr, const std::string& csvFilename)
+  bool SetupBBDataRequests(BlackBoxes& bbz, SEDataRequestManager& drMgr, const std::string& csvFilename)
   {
     drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
     drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
@@ -84,19 +84,19 @@ namespace pulse { namespace human_adult_whole_body
     std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(eModelType::HumanAdultWholeBody, m_Logger);
     Info("--------EmptyBlackBoxTest--------");
 
-    if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
-    {
-      pulse->GetLogger()->Error("Could not load state, check the error");
-      Error("Could not load state, check the error");
-      return;
-    }
-
     BlackBoxes bbz;
     SEDataRequestManager drMgr(pulse->GetLogger());
-    if(!SetupBBDataRequests(bbz, *pulse, drMgr, outputDir+"/EmptyBlackBoxTest.csv"))
+    if (!SetupBBDataRequests(bbz, drMgr, outputDir + "/EmptyBlackBoxTest.csv"))
     {
       pulse->GetLogger()->Error("Could not create black boxes");
       Error("Could not create black boxes");
+      return;
+    }
+
+    if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
+    {
+      pulse->GetLogger()->Error("Could not load state, check the error");
+      Error("Could not load state, check the error");
       return;
     }
 
@@ -125,20 +125,20 @@ namespace pulse { namespace human_adult_whole_body
     PulseConfiguration config;
     config.AllowDynamicTimeStep(eSwitch::On);
     pulse->SetConfigurationOverride(&config);
-
-    BlackBoxes bbz(BlackBoxes::locations::VENACAVA);
-    SEDataRequestManager drMgr(pulse->GetLogger());
-    if(!SetupBBDataRequests(bbz, *pulse, drMgr, outputDir+"/ImposeFlowBlackBoxTest.csv"))
-    {
-      pulse->GetLogger()->Error("Could not create black boxes");
-      Error("Could not create black boxes");
-      return;
-    }
-
+    // Not provided a drMgr since we are dynamically making new cmpts and requesting data from them
     if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
     {
       pulse->GetLogger()->Error("Could not load state, check the error");
       Error("Could not load state, check the error");
+      return;
+    }
+
+    BlackBoxes bbz(BlackBoxes::locations::VENACAVA);
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    if(!SetupBBDataRequests(bbz, drMgr, outputDir+"/ImposeFlowBlackBoxTest.csv"))
+    {
+      pulse->GetLogger()->Error("Could not create black boxes");
+      Error("Could not create black boxes");
       return;
     }
 
@@ -150,6 +150,15 @@ namespace pulse { namespace human_adult_whole_body
       return;
     }
     bbz.rightLegToVenaCava->GetCompartment().GetVolume().SetValue(10, VolumeUnit::mL);
+
+    // Close csv file so it gets remade with all the new headers
+    pulse->GetDataRequestTracker().CloseResultsFile();
+    if (!pulse->GetDataRequestTracker().SetupDataRequests(drMgr))
+    {
+      pulse->GetLogger()->Error("Could not setup data requests");
+      Error("Could not setup data requests");
+      return;
+    }
 
     double aortaToRightLegInflow = 2.0;
     double aortaToRightLegOutflow = 1.5;
@@ -229,19 +238,20 @@ namespace pulse { namespace human_adult_whole_body
     std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(eModelType::HumanAdultWholeBody, m_Logger);
     Info("--------ImposePressureAndFlowBlackBoxTest--------");
 
-    BlackBoxes bbz(BlackBoxes::locations::AORTA);
-    SEDataRequestManager drMgr(pulse->GetLogger());
-    if (!SetupBBDataRequests(bbz, *pulse, drMgr, outputDir + "/ImposePressureAndFlowBlackBoxTest.csv"))
-    {
-      pulse->GetLogger()->Error("Could not create black boxes");
-      Error("Could not create black boxes");
-      return;
-    }
-
+    // Not provided a drMgr since we are dynamically making new cmpts and requesting data from them
     if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
     {
       pulse->GetLogger()->Error("Could not load state, check the error");
       Error("Could not load state, check the error");
+      return;
+    }
+
+    BlackBoxes bbz(BlackBoxes::locations::AORTA);
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    if (!SetupBBDataRequests(bbz, drMgr, outputDir + "/ImposePressureAndFlowBlackBoxTest.csv"))
+    {
+      pulse->GetLogger()->Error("Could not create black boxes");
+      Error("Could not create black boxes");
       return;
     }
 
@@ -253,6 +263,15 @@ namespace pulse { namespace human_adult_whole_body
       return;
     }
     bbz.aortaToRightLeg->GetCompartment().GetVolume().SetValue(10, VolumeUnit::mL);
+
+    // Close csv file so it gets remade with all the new headers
+    pulse->GetDataRequestTracker().CloseResultsFile();
+    if (!pulse->GetDataRequestTracker().SetupDataRequests(drMgr))
+    {
+      pulse->GetLogger()->Error("Could not setup data requests");
+      Error("Could not setup data requests");
+      return;
+    }
 
     double resistance_mmHg_s_Per_mL = 0.1;
     double dampenFraction = 0.01;

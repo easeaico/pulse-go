@@ -11,13 +11,14 @@
 #include "engine/common/controller/SubstanceManager.h"
 
 // CDM
-class DataTrack;
-class SEActionManager;
-class SEConditionManager;
-class SEDataRequested;
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEDataRequested.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEngineStabilization.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEEventManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/patient/SEPatient.h"
 #include "cdm/properties/SEScalarTime.h"
 
 namespace pulse
@@ -156,6 +157,7 @@ namespace pulse
     virtual const SEScalarTime&           GetTimeStep() const;
     virtual const SEScalarTime&           GetEngineTime() const;
     virtual const SEScalarTime&           GetSimulationTime() const;
+    virtual double                        GetSimulationTime_s() const;
     virtual const SEScalarTime&           GetStabilizationTime() const;
 
     virtual bool                          IsAirwayModeSupported(eAirwayMode /*mode*/) { return true; }

@@ -7,7 +7,7 @@
 // Include the various types you will be using in your code
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/compartment/SECompartmentManager.h"
@@ -55,7 +55,7 @@ void HowToArrythmia()
   }
 
   pe->GetLogger()->Info("The patient is nice and healthy");
-  pe->GetTrackedData().LogRequestedValues();
+  pe->GetDataRequestTracker().LogRequestedValues();
   
   // Create an SEArrythmia object
   SEArrhythmia arrhythmia;
@@ -86,7 +86,7 @@ void HowToArrythmia()
 
   pe->AdvanceModelTime(17, TimeUnit::s);
   pe->GetLogger()->Info(std::stringstream() << "The patient has had coarse ventricular fibrillation for 90 s");
-  pe->GetTrackedData().LogRequestedValues();
+  pe->GetDataRequestTracker().LogRequestedValues();
 
   pe->GetLogger()->Info("Heart is in " + eHeartRhythm_Name(pe->GetCardiovascularSystem()->GetHeartRhythm()));
 

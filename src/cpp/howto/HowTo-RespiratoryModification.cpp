@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsModification.h"
 #include "cdm/system/physiology/SERespiratoryMechanicsModifiers.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
@@ -59,7 +59,7 @@ void HowToRespiratoryMechanicsModification()
   for (size_t i = 0; i < 6; i++)
   {
     pe->AdvanceModelTime(10, TimeUnit::s);
-    pe->GetTrackedData().LogRequestedValues();
+    pe->GetDataRequestTracker().LogRequestedValues();
   }
 
   SERespiratoryMechanicsModification config;
@@ -75,6 +75,6 @@ void HowToRespiratoryMechanicsModification()
   for (size_t i = 0; i < 12; i++)
   {
     pe->AdvanceModelTime(10, TimeUnit::s);
-    pe->GetTrackedData().LogRequestedValues();
+    pe->GetDataRequestTracker().LogRequestedValues();
   }
 }

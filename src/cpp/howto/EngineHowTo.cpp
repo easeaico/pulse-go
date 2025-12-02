@@ -4,7 +4,7 @@
 // The following how-to functions demonstrate various ways of interacting with the Pulse engine
 #include "howto/EngineHowTo.h"
 
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEDataRequest.h"
 #include "cdm/properties/SEScalarTime.h"
 
@@ -16,11 +16,11 @@ int main()
 
   //HowToEngineUse();
   //HowToCreateAPatient();
-  //HowToSerialize();
+  HowToSerialize();
   //HowToPulseEnginePool();
 
   //HowToACLS();
-  HowToAirwayObstruction();
+  //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToArrythmia();
   //HowToAsthmaAttack();

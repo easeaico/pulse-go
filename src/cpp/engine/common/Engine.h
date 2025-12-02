@@ -40,7 +40,7 @@ namespace pulse
 
     const SEConditionManager& GetConditionManager() const override;
 
-    const SETrackedData& GetTrackedData() const override;
+    SEDataRequestTracker& GetDataRequestTracker() override;
 
     const SEEngineConfiguration* GetConfiguration() const override;
 

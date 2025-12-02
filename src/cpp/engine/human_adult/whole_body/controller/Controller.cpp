@@ -27,10 +27,6 @@
 #include "engine/human_adult/whole_body/system/physiology/Saturation.h"
 #include "engine/human_adult/whole_body/system/physiology/TissueModel.h"
 
-#include "cdm/engine/SEActionManager.h"
-#include "cdm/engine/SEConditionManager.h"
-#include "cdm/engine/SEDataRequested.h"
-#include "cdm/patient/SEPatient.h"
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
@@ -121,7 +117,7 @@ namespace pulse { namespace human_adult_whole_body
     m_Models.push_back(m_ElectroCardioGramModel);
     m_Models.push_back(m_ECMOModel);
 
-    // Call this after models are setup
+    m_EngineTracker = new SEEngineTracker(m_Logger);
     SetupTracker();
   }
 

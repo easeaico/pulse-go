@@ -11,7 +11,7 @@
 #include "cdm/engine/SEEngineConfiguration.h"
 #include "cdm/engine/SEAdvanceUntilStable.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
@@ -35,7 +35,7 @@ void HowToRunToStable()
   pe->GetLogger()->Info("HowToRunToStable");
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  SEDataRequestManager& drMgr = drMgr;
+  SEDataRequestManager drMgr(pe->GetLogger());
   drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
   drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);

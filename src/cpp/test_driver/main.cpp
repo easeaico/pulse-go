@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
 //      hawbTest.ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithInhalerCircuitAndTransportTest(hawbDir);
-      hawbTest.ExpandedLungsRespiratoryWithInhalerCircuitAndTransportTest(hawbDir);
+//      hawbTest.ExpandedLungsRespiratoryWithInhalerCircuitAndTransportTest(hawbDir);
       //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
 //      hawbTest.ExpandedLungsRespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
 
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 
       //Black Box Tests
       //hawbTest.EmptyBlackBoxTest(hawbDir);
-      //hawbTest.ImposeFlowBlackBoxTest(hawbDir);
+      hawbTest.ImposeFlowBlackBoxTest(hawbDir);
       //hawbTest.ImposePressureAndFlowBlackBoxTest(hawbDir);
 
       //hawbTest.FourCompartmentTestSimple(hawbDir);
@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
       //cdmTest.ConvertScenarioLogs(cdmDir);
 
       // Property Tests
-      cdmTest.ScalarTest(cdmDir);
+      //cdmTest.ScalarTest(cdmDir);
       //cdmTest.UnitsTest(cdmDir);
       //cdmTest.WaveformInterpolatorTest(cdmDir);
 

@@ -4,9 +4,6 @@
 #include "engine/common/Engine.h"
 #include "engine/PulseConfiguration.h"
 #include "engine/common/controller/Controller.h"
-#include "engine/common/controller/BlackBoxManager.h"
-#include "engine/common/controller/CompartmentManager.h"
-#include "engine/common/controller/SubstanceManager.h"
 
 namespace pulse
 {
@@ -77,11 +74,10 @@ namespace pulse
     return GetController().SetConfigurationOverride(config);
   }
 
-  const SETrackedData& Engine::GetTrackedData() const
+  SEDataRequestTracker& Engine::GetDataRequestTracker()
   {
     return GetController().GetData().GetEngineTracker();
   }
-
 
   const SEConditionManager& Engine::GetConditionManager() const
   {

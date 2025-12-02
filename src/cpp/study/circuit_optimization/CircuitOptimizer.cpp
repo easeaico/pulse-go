@@ -9,7 +9,7 @@
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/engine/SEEventManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/utils/DataTrack.h"
@@ -231,7 +231,7 @@ namespace pulse::study::circuit_optimization
       {
         if (m_StartOfCardiacCycle)
           vt->GetData().clear();
-        vt->GetData().push_back(engine.GetTrackedData().GetValue(*vTgt2dr[vt]));
+        vt->GetData().push_back(engine.GetDataRequestTracker().GetValue(*vTgt2dr[vt]));
       }
       m_StartOfCardiacCycle = false;
     }

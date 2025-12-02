@@ -4,7 +4,7 @@
 #include "PulseEngine.h"
 
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
@@ -171,6 +171,6 @@ void HowToVentilationMechanics()
   for (int i = 0; i < 12; i++)
   {
     pe->AdvanceModelTime(10.0, TimeUnit::s);
-    pe->GetTrackedData().LogRequestedValues();
+    pe->GetDataRequestTracker().LogRequestedValues();
   }
 }
