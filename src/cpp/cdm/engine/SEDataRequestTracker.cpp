@@ -270,16 +270,18 @@ bool SEEngineTracker::SetupDataRequests(const SEDataRequestManager& drMgr)
   // Check to see if there are any repeats in the data request manager
   if (m_DataTrack->NumTracks() != m_DataRequestMgr->GetDataRequests().size())
   {
-    Error("Number of data requests does not match the number of tracked properties!");
-    Error("--Check to see if you have duplicates in your data request list");
-    Error("--Here is the order of the data items I am traking:");
+    Warning("Number of data requests does not match the number of tracked properties!");
+    Warning("--Check to see if you have duplicates in your data request list");
+    Warning("--Here is the order of the data items I am traking:");
     for (size_t i = 0; i < m_DataTrack->NumTracks(); i++)
-      Error("--  " + m_DataTrack->GetProbeName(i));
-    Error("--Here is what you requested:");
+      Warning("--  " + m_DataTrack->GetProbeName(i));
+    Warning("--Here is what you requested:");
     for (SEDataRequest const* dr : m_DataRequestMgr->GetDataRequests())
-      Error("--  " + dr->GetHeaderName());
-    Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
-    return false;
+      Warning("--  " + dr->GetHeaderName());
+    Warning("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
+    Warning("If you are using C#/Java/Python and see this, your data array order is probably not what you are expecting it to be.");
+    Warning("CSV files will not have duplicate columns.");
+    success = false;
   }
 
   if (m_Mode == TrackMode::CSV)
