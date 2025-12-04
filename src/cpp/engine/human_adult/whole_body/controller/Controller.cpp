@@ -117,7 +117,6 @@ namespace pulse { namespace human_adult_whole_body
     m_Models.push_back(m_ElectroCardioGramModel);
     m_Models.push_back(m_ECMOModel);
 
-    m_EngineTracker = new SEEngineTracker(m_Logger);
     SetupTracker();
   }
 

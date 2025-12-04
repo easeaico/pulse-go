@@ -318,6 +318,8 @@ namespace pulse
 
     m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
     m_Logger->AddForward(m_LogForward);
+
+    m_EngineTracker = new SEEngineTracker(m_Logger);
   }
 
   bool Controller::SetConfigurationOverride(const SEEngineConfiguration* config)
