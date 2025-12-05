@@ -1412,7 +1412,7 @@
         "Series":
         [
           { "OutputFilename": "EsophagealIntubation_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
-          { "OutputFilename": "EsophagealIntubation_StomachInflow", "YHeader": [ "Stomach-InFlow(L/min)" ] },
+          { "OutputFilename": "EsophagealIntubation_StomachInflow", "YHeader": [ "Stomach-Inflow(L/min)" ] },
           { "OutputFilename": "EsophagealIntubation_MAP", "YHeader": [ "MeanArterialPressure(mmHg)" ] },
           { "OutputFilename": "EsophagealIntubation_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "EsophagealIntubationLegend",
@@ -1613,7 +1613,7 @@
         ],
         "Series":
         [
-          { "OutputFilename": "MaskLeakVaried_Inflow", "YHeader": [ "AnesthesiaMachineConnection-InFlow(L/min)" ] },
+          { "OutputFilename": "MaskLeakVaried_Inflow", "YHeader": [ "AnesthesiaMachineConnection-Inflow(L/min)" ] },
           { "OutputFilename": "MaskLeakVaried_TotalLungVolume", "YHeader": [ "TotalLungVolume(mL)" ] },
           { "OutputFilename": "MaskLeakVaried_O2Sat", "YHeader": [ "OxygenSaturation" ] },
           { "OutputFilename": "MaskLeakVaried_CO2PP", "YHeader": [ "Aorta-CarbonDioxide-PartialPressure(mmHg)" ] },
@@ -1638,7 +1638,7 @@
         "Series":
         [
           { "OutputFilename": "ExpiratoryValveLeakVaried_Inflow",
-              "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
+              "YHeader": [ "AnesthesiaMachineInspiratoryLimb-Inflow(L/min)" ] },
           { "OutputFilename": "ExpiratoryValveLeakVaried_EndTidalCO2", "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
           { "OutputFilename": "ExpiratoryValveLeakVaried_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
           { "OutputFilename": "ExpiratoryValveLeakVaried_CO2PP",
@@ -1664,7 +1664,7 @@
         "Series":
         [
           { "OutputFilename": "InspiratoryValveLeakVaried_Inflow",
-              "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
+              "YHeader": [ "AnesthesiaMachineExpiratoryLimb-Inflow(L/min)" ] },
           { "OutputFilename": "InspiratoryValveLeakVaried_EndTidalCO2",
               "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
           { "OutputFilename": "InspiratoryValveLeakVaried_O2PP", "YHeader": [ "Aorta-Oxygen-PartialPressure(mmHg)" ] },
@@ -1693,7 +1693,7 @@
         "Series":
         [
           { "OutputFilename": "ExpiratoryValveObstructionVaried_Inflow",
-              "YHeader": [ "AnesthesiaMachineExpiratoryLimb-InFlow(L/min)" ] },
+              "YHeader": [ "AnesthesiaMachineExpiratoryLimb-Inflow(L/min)" ] },
           { "OutputFilename": "ExpiratoryValveObstructionVaried_EndTidalCO2",
               "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
           { "OutputFilename": "ExpiratoryValveObstructionVaried_O2PP",
@@ -1723,7 +1723,7 @@
         "Series":
         [
           { "OutputFilename": "InspiratoryValveObstructionVaried_Inflow",
-              "YHeader": [ "AnesthesiaMachineInspiratoryLimb-InFlow(L/min)" ] },
+              "YHeader": [ "AnesthesiaMachineInspiratoryLimb-Inflow(L/min)" ] },
           { "OutputFilename": "InspiratoryValveObstructionVaried_EndTidalCO2",
               "YHeader": [ "EndTidalCarbonDioxideFraction" ] },
           { "OutputFilename": "InspiratoryValveObstructionVaried_O2PP",
