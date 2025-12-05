@@ -35,8 +35,8 @@
       { "DecimalFormat": { }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "Clearance-RenalReabsorptionRate", "Unit": "mg/min" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "MassInBody", "Unit": "g" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Bladder", "SubstanceName": "Sodium", "PropertyName": "Concentration", "Unit": "g/L" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightUreter", "PropertyName": "InFlow", "Unit": "mL/min" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftUreter", "PropertyName": "InFlow", "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "RightUreter", "PropertyName": "Inflow", "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "LeftUreter", "PropertyName": "Inflow", "Unit": "mL/min" },
       { "DecimalFormat": { }, "Category": "GasCompartment", "CompartmentName": "Ambient", "PropertyName": "Pressure", "Unit": "mmHg" }
     ]
   },

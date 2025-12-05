@@ -65,14 +65,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BoneTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BoneTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -574,14 +574,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BrainTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BrainTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1083,14 +1083,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "FatTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "FatTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1592,14 +1592,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "GutTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "GutTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -2101,14 +2101,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftKidneyTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftKidneyTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -2610,14 +2610,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftLungTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftLungTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -3119,14 +3119,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LiverTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LiverTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -3628,14 +3628,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MuscleTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MuscleTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -4137,14 +4137,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MyocardiumTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MyocardiumTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -4646,14 +4646,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightKidneyTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightKidneyTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -5155,14 +5155,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightLungTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightLungTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -5664,14 +5664,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SkinTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SkinTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -6173,14 +6173,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SpleenTissueExtracellular",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SpleenTissueExtracellular",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {

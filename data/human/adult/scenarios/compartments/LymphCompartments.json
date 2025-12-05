@@ -8,14 +8,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Lymph",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Lymph",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {

@@ -10,7 +10,7 @@
     [
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodPH", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "LactateProductionRate", "Unit": "mol/day" },
-      { "DecimalFormat": { }, "Category": "Physiology", "PropertyName": "MeanSkinFlow", "Unit": "mL/min" },
+      { "DecimalFormat": { }, "Category": "Physiology", "PropertyName": "MeanSkInflow", "Unit": "mL/min" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SweatRate", "Unit": "mg/min" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalMetabolicRate", "Unit": "kcal/day" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalMetabolicRate", "Unit": "W" },
@@ -20,8 +20,8 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "AchievedExerciseLevel", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Insulin", "PropertyName": "BloodConcentration", "Unit": "ug/mL" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "BloodConcentration", "Unit": "ug/mL" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "GutVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MuscleVasculature", "PropertyName": "InFlow", "Unit": "mL/s" }
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "GutVasculature", "PropertyName": "Inflow", "Unit": "mL/s" },
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MuscleVasculature", "PropertyName": "Inflow", "Unit": "mL/s" }
     ]
   },
   "AnyAction": [{
