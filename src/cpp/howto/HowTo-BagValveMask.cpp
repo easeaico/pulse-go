@@ -51,7 +51,7 @@ void HowToBagValveMask()
   drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
   drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
   drMgr.SetResultsFilename("./test_results/howto/HowTo_BagValveMask.cpp/HowTo_BagValveMask.csv");
 
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
@@ -108,7 +108,7 @@ void HowToBagValveMask()
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+  pe->GetLogger()->Info(std::stringstream() <<"Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
 
   // 2b.)This is the manual squeeze BVM action, you specify the profile of ONE sqeeze of the bag
   SEBagValveMaskSqueeze squeeze;
@@ -132,7 +132,7 @@ void HowToBagValveMask()
   pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() << "Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+  pe->GetLogger()->Info(std::stringstream() << "Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
 
   // 2c.)This is the instantaneous value of the current time step, generally this is for connecting to a hardware sensor
   SEBagValveMaskInstantaneous instantaneous;
@@ -159,7 +159,7 @@ void HowToBagValveMask()
   pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() << "Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+  pe->GetLogger()->Info(std::stringstream() << "Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
 
   pe->GetLogger()->Info("Finished");
 }

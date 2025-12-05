@@ -57,8 +57,8 @@ public:
   virtual void AddChild(SEElectricalCompartment& child);
 
 protected:
-  virtual double CalculateInFlow_A() const;
-  virtual double CalculateOutFlow_A() const;
+  virtual double CalculateInflow_A() const;
+  virtual double CalculateOutflow_A() const;
 
   mutable SEScalarElectricCurrent* m_CurrentIn;
   mutable SEScalarElectricCurrent* m_CurrentOut;

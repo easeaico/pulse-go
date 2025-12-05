@@ -47,7 +47,7 @@ void HowToAsthmaAttack()
   drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
   drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
   drMgr.SetResultsFilename("./test_results/howto/HowTo_Asthma.cpp/HowTo_Asthma.csv");
 
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
@@ -69,7 +69,7 @@ void HowToAsthmaAttack()
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
+  pe->GetLogger()->Info(std::stringstream() <<"Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
 
   // Asthma Attack Starts - instantiate an asthma attack action and have the engine process it
   // Asthma is a common inflammatory disease of the airways where air flow into the lungs is partially obstructed. 
@@ -90,7 +90,7 @@ void HowToAsthmaAttack()
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
+  pe->GetLogger()->Info(std::stringstream() <<"Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
 
   // Asthma Attack Stops
   asthmaAttack.GetSeverity().SetValue(0.0);
@@ -107,6 +107,6 @@ void HowToAsthmaAttack()
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
+  pe->GetLogger()->Info(std::stringstream() <<"Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
   pe->GetLogger()->Info("Finished");
 }

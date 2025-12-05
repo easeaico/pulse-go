@@ -170,7 +170,7 @@ namespace pulse::study::hydrocephalus
     drMgr.CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
-    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Inflow", VolumePerTimeUnit::mL_Per_min);
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Oxygen", "PartialPressure");
     drMgr.CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
     drMgr.CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
@@ -198,8 +198,8 @@ namespace pulse::study::hydrocephalus
     std::unordered_map<std::string, RunningAverages> runningAverages =
     {
       {"MeanBrainPressure_mmHg", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), PressureUnit::mmHg)},
-      {"MeanBrainVasculatureInFlow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanBrainVasculatureOutFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBrainVasculatureInflow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBrainVasculatureOutflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
       {"MeanBrainCarbonDioxidePartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("CarbonDioxide")), PressureUnit::mmHg)},
       {"MeanBrainOxygenPartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("Oxygen")), PressureUnit::mmHg)},
       {"MeanIntracranialSpacePressure_mmHg", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::CerebrospinalFluidCompartment::IntracranialSpace), PressureUnit::mmHg)},
@@ -246,8 +246,8 @@ namespace pulse::study::hydrocephalus
     sim.set_intracranialspacevolume_ml(is->GetVolume(VolumeUnit::mL));
 
     sim.set_meanbrainpressure_mmhg(runningAverages.at("MeanBrainPressure_mmHg").instantaneousAverage);
-    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanbrainvasculatureoutflow_ml_per_s(runningAverages.at("MeanBrainVasculatureOutFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbrainvasculatureoutflow_ml_per_s(runningAverages.at("MeanBrainVasculatureOutflow_mL_Per_s").instantaneousAverage);
     sim.set_meanbraincarbondioxidepartialpressure_mmhg(runningAverages.at("MeanBrainCarbonDioxidePartialPressure_mmHg").instantaneousAverage);
     sim.set_meanbrainoxygenpartialpressure_mmhg(runningAverages.at("MeanBrainOxygenPartialPressure_mmHg").instantaneousAverage);
     sim.set_meanintracranialspacepressure_mmhg(runningAverages.at("MeanIntracranialSpacePressure_mmHg").instantaneousAverage);

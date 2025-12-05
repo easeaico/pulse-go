@@ -143,7 +143,7 @@ void HowToEngineUse()
   drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
   drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
   drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
-  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
   drMgr.SetResultsFilename("./test_results/howto/HowToEngineUse.cpp/HowToEngineUse.csv");
 
   // Initialize the engine by loading a patient state.
@@ -258,7 +258,7 @@ void HowToEngineUse()
   // We can get the amount of CO2 exhaled and O2 inhaled by looking at the volume fraction of the carina of a particular substance
     
   const SEGasCompartment* carina = pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
-  if (carina->GetInFlow(VolumePerTimeUnit::L_Per_s)>0)
+  if (carina->GetInflow(VolumePerTimeUnit::L_Per_s)>0)
   {// We are inhaling, so let's grab the amount of O2 coming into the body
     pe->GetLogger()->Info(std::stringstream() << "O2 Inhaled " << carina->GetSubstanceQuantity(*O2)->GetVolume(VolumeUnit::mL) << VolumeUnit::mL);
   }

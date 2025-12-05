@@ -88,7 +88,7 @@ void HowToCPR()
   dMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
   dMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
   dMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
+  dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Inflow", VolumePerTimeUnit::mL_Per_min);
   dMgr.SetResultsFilename("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.csv");
 
   std::string stateFile = "./states/StandardMale@0s.json";

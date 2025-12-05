@@ -645,7 +645,7 @@ void SECompartmentManager::StateChange()
   UpdateLinks();
 }
 
-// These methods UpdateLink methods are used to set what links you want a comparmtent to use to calculate its InFlow and OutFlow
+// These methods UpdateLink methods are used to set what links you want a comparmtent to use to calculate its Inflow and Outflow
 // By default, it will add all links to all compartments that are either a source or target to the link.
 // If you set up multiple graphs for various configurations, you really only want the inflow/outflow for compartments associated with the active graph
 // -- Such as a respiratory graph where the mouth is connected to the environment, and a respiratory equipment graph, were the mouth connects to the equipment)

@@ -135,8 +135,8 @@ void HowToACLS()
       dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "Mass", MassUnit::g);
       dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Oxygen", "PartialPressure", PressureUnit::mmHg);
       dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "InFlow", VolumePerTimeUnit::mL_Per_s);
-      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Inflow", VolumePerTimeUnit::mL_Per_s);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Outflow", VolumePerTimeUnit::mL_Per_s);
     }
   }
   dMgr.SetResultsFilename("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.csv");

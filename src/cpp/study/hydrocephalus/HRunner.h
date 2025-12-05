@@ -103,7 +103,7 @@ namespace pulse::study::hydrocephalus
         if (cmpt != nullptr)
         {
           if (fUnit != nullptr)
-            return runningAverage.Sample(cmpt->GetInFlow(*fUnit));
+            return runningAverage.Sample(cmpt->GetInflow(*fUnit));
           else if (pUnit != nullptr)
             return runningAverage.Sample(cmpt->GetPressure(*pUnit));
         }

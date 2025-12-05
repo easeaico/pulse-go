@@ -78,28 +78,28 @@ void CommonDataModelTest::TestLiquidFlows(SETestSuite& testSuite, SESubstanceMan
 
   inflow_mL_Per_s = largeInflow_mL_Per_s + smallInflow_mL_Per_s;
   outflow_mL_Per_s = largeOutflow_mL_Per_s + smallOutflow_mL_Per_s;
-  m_ss << "Middle Inflow : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Inflow : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
 
@@ -108,28 +108,28 @@ void CommonDataModelTest::TestLiquidFlows(SETestSuite& testSuite, SESubstanceMan
   right2middle->GetFlow().SetValue(-smallInflow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   inflow_mL_Per_s = largeInflow_mL_Per_s + smallOutflow_mL_Per_s;
   outflow_mL_Per_s = largeOutflow_mL_Per_s + smallInflow_mL_Per_s;
-  m_ss << "Middle Inflow : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Inflow : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
 
@@ -138,28 +138,28 @@ void CommonDataModelTest::TestLiquidFlows(SETestSuite& testSuite, SESubstanceMan
   middle2left->GetFlow().SetValue(-largeOutflow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   inflow_mL_Per_s = largeOutflow_mL_Per_s + smallOutflow_mL_Per_s;
   outflow_mL_Per_s = largeInflow_mL_Per_s + smallInflow_mL_Per_s;
-  m_ss << "Middle Inflow : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Inflow : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Test"), TimeUnit::s);
@@ -272,32 +272,32 @@ void CommonDataModelTest::TestLiquidHierarchyFlows(SETestSuite& testSuite, SESub
 
 void CommonDataModelTest::TestFlow(SETestCase& testCase, SELiquidCompartment& cmpt, double inflow_mL_Per_s, double outflow_mL_Per_s)
 {
-  if (!cmpt.HasInFlow())
+  if (!cmpt.HasInflow())
     testCase.AddFailure(cmpt.GetName() + " does not have Inflow");
-  if (!cmpt.HasOutFlow())
+  if (!cmpt.HasOutflow())
     testCase.AddFailure(cmpt.GetName() + " does not have Outflow");
-  m_ss << cmpt.GetName() + " Inflow : " << cmpt.GetInFlow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(cmpt.GetInFlow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << cmpt.GetName() + " Inflow : " << cmpt.GetInflow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(cmpt.GetInflow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << cmpt.GetName() << " const InFlow is not correct : " << cmpt.GetInFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << cmpt.GetName() << " const Inflow is not correct : " << cmpt.GetInflow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << cmpt.GetName() + " Inflow : " << cmpt.GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(cmpt.GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << cmpt.GetName() + " Inflow : " << cmpt.GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(cmpt.GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << cmpt.GetName() << " const InFlow is not correct : " << cmpt.GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << cmpt.GetName() << " const Inflow is not correct : " << cmpt.GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << cmpt.GetName() + " Outflow : " << cmpt.GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(cmpt.GetOutFlow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << cmpt.GetName() + " Outflow : " << cmpt.GetOutflow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(cmpt.GetOutflow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << cmpt.GetName() << " const OutFlow is not correct : " << cmpt.GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << cmpt.GetName() << " const Outflow is not correct : " << cmpt.GetOutflow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << cmpt.GetName() + " Outflow : " << cmpt.GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(cmpt.GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << cmpt.GetName() + " Outflow : " << cmpt.GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(cmpt.GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << cmpt.GetName() << " const OutFlow is not correct : " << cmpt.GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << cmpt.GetName() << " const Outflow is not correct : " << cmpt.GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
 }
@@ -731,28 +731,28 @@ void CommonDataModelTest::TestLiquidCircuitVolumesPressuresAndFlows(SETestSuite&
 
   inflow_mL_Per_s = largeInflow_mL_Per_s + smallInflow_mL_Per_s;
   outflow_mL_Per_s = largeOutflow_mL_Per_s + smallOutflow_mL_Per_s;
-  m_ss << "Middle Inflow : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Inflow : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
 
@@ -761,28 +761,28 @@ void CommonDataModelTest::TestLiquidCircuitVolumesPressuresAndFlows(SETestSuite&
   p4.GetNextFlow().SetValue(-smallInflow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   inflow_mL_Per_s = largeInflow_mL_Per_s + smallOutflow_mL_Per_s;
   outflow_mL_Per_s = largeOutflow_mL_Per_s + smallInflow_mL_Per_s;
-  m_ss << "Middle Inflow : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Inflow : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
 
@@ -791,28 +791,28 @@ void CommonDataModelTest::TestLiquidCircuitVolumesPressuresAndFlows(SETestSuite&
   p3.GetNextFlow().SetValue(-largeOutflow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
   inflow_mL_Per_s = largeOutflow_mL_Per_s + smallOutflow_mL_Per_s;
   outflow_mL_Per_s = largeInflow_mL_Per_s + smallInflow_mL_Per_s;
-  m_ss << "Middle Inflow : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Inflow : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Inflow : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. inflow_mL_Per_s " << inflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s), inflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const InFlow is not correct : " << middle->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Inflow is not correct : " << middle->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << inflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
-  m_ss << "Middle Outflow : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
-  if (GeneralMath::PercentTolerance(middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
+  m_ss << "Middle Outflow : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " vs. outflow_mL_Per_s " << outflow_mL_Per_s; Info(m_ss);
+  if (GeneralMath::PercentTolerance(middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s), outflow_mL_Per_s)>m_PercentTolerance)
   {
-    m_ss << middle->GetName() << " const OutFlow is not correct : " << middle->GetOutFlow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
+    m_ss << middle->GetName() << " const Outflow is not correct : " << middle->GetOutflow().GetValue(VolumePerTimeUnit::mL_Per_s) << " expected " << outflow_mL_Per_s;
     testCase.AddFailure(m_ss);
   }
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Test"), TimeUnit::s);
@@ -1290,14 +1290,14 @@ void CommonDataModelTest::TestUpdateLiquidLinks(SETestSuite& testSuite, SESubsta
   veins2venaCava.GetFlow().SetValue(200, VolumePerTimeUnit::mL_Per_s);
   cmptMgr.StateChange();
 
-  double inflow = venaCava.GetInFlow(VolumePerTimeUnit::mL_Per_s);
-  double inflowScalar = venaCava.GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+  double inflow = venaCava.GetInflow(VolumePerTimeUnit::mL_Per_s);
+  double inflowScalar = venaCava.GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s);
 
   if (GeneralMath::PercentTolerance(inflow, (IV2venaCava.GetFlow(VolumePerTimeUnit::mL_Per_s) + veins2venaCava.GetFlow(VolumePerTimeUnit::mL_Per_s)))> m_PercentTolerance)
     testCase.AddFailure("Initial Vena Cava inflow is not the correct sum");
 
   if (GeneralMath::PercentTolerance(inflow, inflowScalar) > m_PercentTolerance)
-    testCase.AddFailure("Inflow retrieved using GetInFlow() and GetValue() are not equal in the initial test");
+    testCase.AddFailure("Inflow retrieved using GetInflow() and GetValue() are not equal in the initial test");
 
   // Now make a graph that doesn't have the IV connected to the Vena Cava
   SELiquidCompartmentGraph& normalGraph = cmptMgr.CreateLiquidGraph("NormalGraph");
@@ -1309,14 +1309,14 @@ void CommonDataModelTest::TestUpdateLiquidLinks(SETestSuite& testSuite, SESubsta
   normalGraph.AddLink(veins2venaCava);
   cmptMgr.UpdateLinks(normalGraph);
 
-  inflow = venaCava.GetInFlow(VolumePerTimeUnit::mL_Per_s);
-  inflowScalar = venaCava.GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+  inflow = venaCava.GetInflow(VolumePerTimeUnit::mL_Per_s);
+  inflowScalar = venaCava.GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s);
 
   if (GeneralMath::PercentTolerance(inflow, veins2venaCava.GetFlow(VolumePerTimeUnit::mL_Per_s))> m_PercentTolerance)
     testCase.AddFailure("Vena Cava inflow is not the veinous flow after first graph update");
 
   if (GeneralMath::PercentTolerance(inflow, inflowScalar) > m_PercentTolerance)
-    testCase.AddFailure("Inflow retrieved using GetInFlow() and GetValue() are not equal after the first graph update");
+    testCase.AddFailure("Inflow retrieved using GetInflow() and GetValue() are not equal after the first graph update");
 
   // Now make a graph that connects the IV bag to the vena cava
   SELiquidCompartmentGraph& ivGraph = cmptMgr.CreateLiquidGraph("IVGraph");
@@ -1329,14 +1329,14 @@ void CommonDataModelTest::TestUpdateLiquidLinks(SETestSuite& testSuite, SESubsta
   ivGraph.AddLink(veins2venaCava);
   cmptMgr.UpdateLinks(ivGraph);
 
-  inflow = venaCava.GetInFlow(VolumePerTimeUnit::mL_Per_s);
-  inflowScalar = venaCava.GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+  inflow = venaCava.GetInflow(VolumePerTimeUnit::mL_Per_s);
+  inflowScalar = venaCava.GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s);
 
   if (GeneralMath::PercentTolerance(inflow, (IV2venaCava.GetFlow(VolumePerTimeUnit::mL_Per_s) + veins2venaCava.GetFlow(VolumePerTimeUnit::mL_Per_s)))> m_PercentTolerance)
     testCase.AddFailure("Vena Cava inflow is not the sum of IV and veinous flow after second graph update");
 
   if (GeneralMath::PercentTolerance(inflow, inflowScalar) > m_PercentTolerance)
-    testCase.AddFailure("Inflow retrieved using GetInFlow() and GetValue() are not equal after the second graph update");
+    testCase.AddFailure("Inflow retrieved using GetInflow() and GetValue() are not equal after the second graph update");
 
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Test"), TimeUnit::s);
 }

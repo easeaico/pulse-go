@@ -163,7 +163,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
   pe->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << brain->GetPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << pe->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << brain->GetInFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << brain->GetInflow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));// You can get the following pupillary effects
   // Reactivity Change in pupil recation time to light. -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time.
   // Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated. 

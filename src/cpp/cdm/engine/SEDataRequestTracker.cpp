@@ -448,10 +448,10 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
         }
 
         {// Always Update these
-          if (propertyName == "InFlow")
-            ds.UpdateProperty = CompartmentUpdate::InFlow;
-          else if (propertyName == "OutFlow")
-            ds.UpdateProperty = CompartmentUpdate::OutFlow;
+          if (propertyName == "Inflow")
+            ds.UpdateProperty = CompartmentUpdate::Inflow;
+          else if (propertyName == "Outflow")
+            ds.UpdateProperty = CompartmentUpdate::Outflow;
         }
         ds.GasCmpt = gasCmpt;
         s = gasCmpt->GetScalar(propertyName);
@@ -500,10 +500,10 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
         }
 
         {// Always Update these
-          if (propertyName == "InFlow")
-            ds.UpdateProperty = CompartmentUpdate::InFlow;
-          else if (propertyName == "OutFlow")
-            ds.UpdateProperty = CompartmentUpdate::OutFlow;
+          if (propertyName == "Inflow")
+            ds.UpdateProperty = CompartmentUpdate::Inflow;
+          else if (propertyName == "Outflow")
+            ds.UpdateProperty = CompartmentUpdate::Outflow;
         }
         ds.LiquidCmpt = liquidCmpt;
         s = liquidCmpt->GetScalar(propertyName);
@@ -690,11 +690,11 @@ void SEDataRequestScalar::UpdateScalar()
   {
     switch (UpdateProperty)
     {
-    case CompartmentUpdate::InFlow:
-      GasCmpt->GetInFlow();
+    case CompartmentUpdate::Inflow:
+      GasCmpt->GetInflow();
       return;
-    case CompartmentUpdate::OutFlow:
-      GasCmpt->GetOutFlow();
+    case CompartmentUpdate::Outflow:
+      GasCmpt->GetOutflow();
       return;
     case CompartmentUpdate::Volume:
       GasCmpt->GetVolume();
@@ -727,11 +727,11 @@ void SEDataRequestScalar::UpdateScalar()
   {
     switch (UpdateProperty)
     {
-    case CompartmentUpdate::InFlow:
-      LiquidCmpt->GetInFlow();
+    case CompartmentUpdate::Inflow:
+      LiquidCmpt->GetInflow();
       return;
-    case CompartmentUpdate::OutFlow:
-      LiquidCmpt->GetOutFlow();
+    case CompartmentUpdate::Outflow:
+      LiquidCmpt->GetOutflow();
       return;
     case CompartmentUpdate::Volume:
       LiquidCmpt->GetVolume();

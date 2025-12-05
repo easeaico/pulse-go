@@ -49,7 +49,7 @@ void HowToCOPD()
   drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
   drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
   drMgr.SetResultsFilename("./test_results/HowTo_COPD.cpp/HowTo_COPD.csv");
 
   // Since this is a condition, we do not provide a starting state
@@ -80,6 +80,6 @@ void HowToCOPD()
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
+  pe->GetLogger()->Info(std::stringstream() <<"Carina Inflow : " << pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina)->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
   pe->GetLogger()->Info("Finished");
 }

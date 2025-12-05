@@ -38,12 +38,12 @@ message CompartmentGraphData
 message FluidCompartmentData
 {
   CompartmentData                        Compartment                              = 1;
-  ScalarVolumePerTimeData                InFlow                                   = 2;
-  ScalarVolumePerTimeData                AverageInFlow                            = 3;
-  RunningAverageData                     InFlowRunningAverage                     = 4;
-  ScalarVolumePerTimeData                OutFlow                                  = 5;
-  ScalarVolumePerTimeData                AverageOutFlow                           = 6;
-  RunningAverageData                     OutFlowRunningAverage                    = 7;
+  ScalarVolumePerTimeData                Inflow                                   = 2;
+  ScalarVolumePerTimeData                AverageInflow                            = 3;
+  RunningAverageData                     InflowRunningAverage                     = 4;
+  ScalarVolumePerTimeData                Outflow                                  = 5;
+  ScalarVolumePerTimeData                AverageOutflow                           = 6;
+  RunningAverageData                     OutflowRunningAverage                    = 7;
   ScalarPressureData                     Pressure                                 = 8;
   ScalarVolumeData                       Volume                                   = 9;
 }

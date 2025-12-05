@@ -666,7 +666,7 @@ namespace pulse
       IntrinsicClearance_mLPersPerkg = clearance.GetIntrinsicClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg);
       FractionUnboundInPlasma = clearance.GetFractionUnboundInPlasma().GetValue();
       //Hepatic Clearance
-      double LiverVascularFlow_mL_Per_s = m_liverVascular->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+      double LiverVascularFlow_mL_Per_s = m_liverVascular->GetInflow().GetValue(VolumePerTimeUnit::mL_Per_s);
       HepaticClearance_mLPers = (LiverVascularFlow_mL_Per_s * FractionUnboundInPlasma * IntrinsicClearance_mLPersPerkg * PatientWeight_kg) / (LiverVascularFlow_mL_Per_s + (FractionUnboundInPlasma * IntrinsicClearance_mLPersPerkg * PatientWeight_kg));
       HepaticVolumeCleared_mL = HepaticClearance_mLPers * m_data.GetTimeStep_s();
 

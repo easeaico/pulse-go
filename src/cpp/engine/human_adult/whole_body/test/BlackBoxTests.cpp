@@ -43,34 +43,34 @@ namespace pulse { namespace human_adult_whole_body
     drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
 
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Pressure", PressureUnit::mmHg);
-    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "InFlow", VolumePerTimeUnit::mL_Per_s);
-    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Inflow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Outflow", VolumePerTimeUnit::mL_Per_s);
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Volume", VolumeUnit::mL);
 
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Pressure", PressureUnit::mmHg);
-    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "InFlow", VolumePerTimeUnit::mL_Per_s);
-    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Inflow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Outflow", VolumePerTimeUnit::mL_Per_s);
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::RightLeg, "Volume", VolumeUnit::mL);
 
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Pressure", PressureUnit::mmHg);
-    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "InFlow", VolumePerTimeUnit::mL_Per_s);
-    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Inflow", VolumePerTimeUnit::mL_Per_s);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Outflow", VolumePerTimeUnit::mL_Per_s);
     drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Volume", VolumeUnit::mL);
 
     if (bbz.at == BlackBoxes::locations::AORTA || bbz.at == BlackBoxes::locations::BOTH)
     {
       std::string bbCmpt = SEBlackBoxManager::GetBlackBoxName(pulse::VascularCompartment::Aorta, pulse::VascularCompartment::RightLeg);
       drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Pressure", PressureUnit::mmHg);
-      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "InFlow", VolumePerTimeUnit::mL_Per_s);
-      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Inflow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Outflow", VolumePerTimeUnit::mL_Per_s);
       drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Volume", VolumeUnit::mL);
     }
     if (bbz.at == BlackBoxes::locations::VENACAVA || bbz.at == BlackBoxes::locations::BOTH)
     {
       std::string bbCmpt = SEBlackBoxManager::GetBlackBoxName(pulse::VascularCompartment::RightLeg, pulse::VascularCompartment::VenaCava);
       drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Pressure", PressureUnit::mmHg);
-      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "InFlow", VolumePerTimeUnit::mL_Per_s);
-      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Inflow", VolumePerTimeUnit::mL_Per_s);
+      drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Outflow", VolumePerTimeUnit::mL_Per_s);
       drMgr.CreateLiquidCompartmentDataRequest(bbCmpt, "Volume", VolumeUnit::mL);
     }
 

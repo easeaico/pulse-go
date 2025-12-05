@@ -1167,7 +1167,7 @@ namespace pulse
       inflammationCoefficient *= 0.01;
       //Airway
       SIDECoeff = &m_data.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(subQ->GetSubstance());// Once for each subQ
-      airwayDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolAirway->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAirway();
+      airwayDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolAirway->GetInflow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAirway();
       if (airwayDepositied_ug > subQ->GetMass(MassUnit::ug))
       {
         airwayDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -1179,7 +1179,7 @@ namespace pulse
       subQ->GetMassDeposited().Increment(airwayDepositied_ug, MassUnit::ug);
       //Carina
       subQ = m_AerosolCarina->GetSubstanceQuantities()[i];
-      carinaDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolCarina->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetCarina();
+      carinaDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolCarina->GetInflow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetCarina();
       if (carinaDepositied_ug > subQ->GetMass(MassUnit::ug))
       {
         carinaDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -1192,7 +1192,7 @@ namespace pulse
       carinaResistanceModifier += carinaTotalDepositied_ug*inflammationCoefficient;
       //Left DeadSpace
       subQ = m_AerosolLeftAnatomicDeadSpace->GetSubstanceQuantities()[i];
-      leftDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetDeadSpace();
+      leftDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAnatomicDeadSpace->GetInflow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetDeadSpace();
       if (leftDeadSpaceDepositied_ug > subQ->GetMass(MassUnit::ug))
       {
         leftDeadSpaceDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -1205,7 +1205,7 @@ namespace pulse
       leftDeadSpaceResistanceModifier += leftDeadSpaceTotalDepositied_ug*inflammationCoefficient;
       //Left Alveoli
       subQ = m_AerosolLeftAlveoli->GetSubstanceQuantities()[i];
-      leftAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAlveoli->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAlveoli();
+      leftAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAlveoli->GetInflow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAlveoli();
       if (leftAlveoliDepositied_ug > subQ->GetMass(MassUnit::ug))
       {
         leftAlveoliDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -1218,7 +1218,7 @@ namespace pulse
       leftAlveoliResistanceModifier += leftAlveoliTotalDepositied_ug*inflammationCoefficient;
       //Right DeadSpace
       subQ = m_AerosolRightAnatomicDeadSpace->GetSubstanceQuantities()[i];
-      rightDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetDeadSpace();
+      rightDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAnatomicDeadSpace->GetInflow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetDeadSpace();
       if (rightDeadSpaceDepositied_ug > subQ->GetMass(MassUnit::ug))
       {
         rightDeadSpaceDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -1231,7 +1231,7 @@ namespace pulse
       rightDeadSpaceResistanceModifier += rightDeadSpaceTotalDepositied_ug*inflammationCoefficient;
       //Right Alveoli
       subQ = m_AerosolRightAlveoli->GetSubstanceQuantities()[i];
-      rightAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAlveoli->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAlveoli();
+      rightAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAlveoli->GetInflow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAlveoli();
       if (rightAlveoliDepositied_ug > subQ->GetMass(MassUnit::ug))
       {
         rightAlveoliDepositied_ug = subQ->GetMass(MassUnit::ug);

@@ -51,7 +51,7 @@ void HowToSerialize()
   drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
   drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
   drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
-  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
   drMgr.SetResultsFilename("./test_results/howto/HowTo_Serialize.cpp/HowTo_Serialize.csv");
 
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))

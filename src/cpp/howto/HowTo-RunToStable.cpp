@@ -43,7 +43,7 @@ void HowToRunToStable()
   drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
   drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
   drMgr.SetResultsFilename("./test_results/howto/HowToRunToStable.cpp/HowToRunToStable.csv");
 
   // Setup any custom convergence criteria BEFORE you call SerializeFromFile or InitializeEngine

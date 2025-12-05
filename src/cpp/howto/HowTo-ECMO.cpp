@@ -85,8 +85,8 @@ void HowToECMO()
   drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
   drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure", PressureUnit::mmHg);
    // ECMO Data
-  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "InFlow");
-  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "OutFlow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Inflow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Outflow");
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Volume", VolumeUnit::mL);
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "PH");
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Albumin", "Concentration", MassPerVolumeUnit::g_Per_mL);
@@ -110,8 +110,8 @@ void HowToECMO()
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "OxyCarbaminohemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::BloodSamplingPort, "Oxyhemoglobin", "Concentration", MassPerVolumeUnit::g_Per_L);
  
-  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "InFlow");
-  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "OutFlow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Inflow");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Outflow");
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Volume", VolumeUnit::mL);
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Sodium", "Concentration", MassPerVolumeUnit::g_Per_mL);
   drMgr.CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Oxygen", "Concentration", MassPerVolumeUnit::g_Per_L);

@@ -26,7 +26,7 @@ class SEThermalCompartment;
 #include "cdm/properties/SEScalar.h"
 
 enum class CompartmentUpdate {None,
-                              InFlow, OutFlow,
+                              Inflow, Outflow,
                               HeatTransferRateIn, HeatTransferRateOut,
                               Volume,Pressure,
                               Heat, Temperature,
