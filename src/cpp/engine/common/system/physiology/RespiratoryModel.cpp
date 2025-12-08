@@ -4545,7 +4545,8 @@ namespace pulse
 
     // Time in seconds
     double t = m_ElapsedBreathingCycleTime_min * 60.0;
-    double omega = 2.0 * M_PI * frequency_Hz;
+    double pi = 3.14159265358979323846;
+    double omega = 2.0 * pi * frequency_Hz;
 
     // Sinusoidal oscillation: -1 to 1
     double sinusoid = sin(omega * t);
