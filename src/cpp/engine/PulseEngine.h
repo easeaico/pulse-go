@@ -2378,6 +2378,7 @@ namespace pulse
       if (_values.empty())
       {
         _values.push_back(Connection);
+        _values.push_back(DeadSpace);
       }
       return _values;
     }

@@ -510,7 +510,7 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING_EX(DeadSpaceToAirway, MechanicalVentilationDeadSpaceToAirway);
-    DEFINE_STATIC_STRING_EX(ConnectionToDeadSpace, MechanicalVentilationConnectionToMechanicalVentilationDeadSpace);
+    DEFINE_STATIC_STRING_EX(ConnectionToDeadSpace, MechanicalVentilationConnectionToDeadSpace);
     DEFINE_STATIC_STRING_EX(GroundToConnection, MechanicalVentilationGroundToConnection);
   };
 
