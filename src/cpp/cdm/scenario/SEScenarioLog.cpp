@@ -51,7 +51,7 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
   dst.SetDescription("Converted from log file : " + logFilename);
   if (!m_Patient.empty())
   {
-    dst.GetPatientConfiguration().GetPatient().SerializeFromString(m_Patient, eSerializationFormat::TEXT);
+    dst.GetPatientConfiguration().GetPatient().SerializeFromString(m_Patient, eSerializationFormat::JSON);
     for (std::string condition : m_Conditions)
     {
       SECondition* c = SECondition::SerializeFromString(condition, eSerializationFormat::JSON, dst.GetSubstanceManager());

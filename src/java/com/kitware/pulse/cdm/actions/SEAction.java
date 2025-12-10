@@ -23,7 +23,7 @@ public abstract class SEAction implements Serializable
   
   public SEAction() 
   {
-    clear();
+    
   }
   
   public void copy(SEAction other) 

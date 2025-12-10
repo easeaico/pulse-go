@@ -252,6 +252,8 @@ public class SEScenario
     {
       if(file.contains("@"))
         continue;// Ignore the assessments
+      if(file.contains("DataRequests"))
+        continue;// Ignore the data request files
       
       System.out.println("Reading scenario: "+file);
       SEScenario sce = new SEScenario();
