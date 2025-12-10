@@ -11,6 +11,7 @@ import com.kitware.pulse.cdm.bind.Substance.SubstanceFractionData;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarMassPerVolume;
 import com.kitware.pulse.cdm.properties.SEScalarPressure;
+import com.kitware.pulse.cdm.properties.SEScalarVolume;
 import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 import com.kitware.pulse.cdm.substance.SESubstance;
 import com.kitware.pulse.cdm.substance.SESubstanceConcentration;
@@ -24,6 +25,7 @@ public class SEMechanicalVentilation extends SEPatientAction
   private static final long serialVersionUID = -1840027159469073231L;
   protected SEScalarVolumePerTime flow;
   protected SEScalarPressure      pressure;
+  protected SEScalarVolume        mechanicalDeadSpaceVolume;
   protected eSwitch               state;
 
   protected List<SESubstanceFraction>        gasFractions=new ArrayList<SESubstanceFraction>();
@@ -54,7 +56,9 @@ public class SEMechanicalVentilation extends SEPatientAction
     if(from.hasFlow())
       getFlow().set(from.getFlow());
     if(from.hasPressure())
-      getPressure().set(from.getPressure());    
+      getPressure().set(from.getPressure());
+    if(from.hasMechanicalDeadSpaceVolume())
+      getMechanicalDeadSpaceVolume().set(from.getMechanicalDeadSpaceVolume());
     
     if(from.gasFractions!=null)
     {
@@ -114,11 +118,13 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
-    	dst.setState(src.getState());
+      dst.setState(src.getState());
     if (src.hasFlow())
       SEScalarVolumePerTime.load(src.getFlow(),dst.getFlow());
     if (src.hasPressure())
       SEScalarPressure.load(src.getPressure(),dst.getPressure());
+    if (src.hasMechanicalDeadSpaceVolume())
+      SEScalarVolume.load(src.getMechanicalDeadSpaceVolume(),dst.getMechanicalDeadSpaceVolume());
     
     for(SubstanceFractionData subData : src.getGasFractionList())
     {
@@ -144,6 +150,8 @@ public class SEMechanicalVentilation extends SEPatientAction
       dst.setFlow(SEScalarVolumePerTime.unload(src.flow));
     if (src.hasPressure())
       dst.setPressure(SEScalarPressure.unload(src.pressure));
+    if (src.hasMechanicalDeadSpaceVolume())
+      dst.setMechanicalDeadSpaceVolume(SEScalarVolume.unload(src.mechanicalDeadSpaceVolume));
     
     for(SESubstanceFraction gf : src.gasFractions)
       dst.addGasFraction(SESubstanceFraction.unload(gf));
@@ -180,6 +188,17 @@ public class SEMechanicalVentilation extends SEPatientAction
     if (pressure == null)
       pressure = new SEScalarPressure();
     return pressure;
+  }
+  
+  public boolean hasMechanicalDeadSpaceVolume()
+  {
+    return mechanicalDeadSpaceVolume == null ? false : mechanicalDeadSpaceVolume.isValid();
+  }
+  public SEScalarVolume getMechanicalDeadSpaceVolume()
+  {
+    if (mechanicalDeadSpaceVolume == null)
+      mechanicalDeadSpaceVolume = new SEScalarVolume();
+    return mechanicalDeadSpaceVolume;
   }
   
   public SESubstanceFraction createGasFraction(String substance)
@@ -285,6 +304,7 @@ public class SEMechanicalVentilation extends SEPatientAction
         + "\n\tState: " + getState()
         + "\n\tFlow: " + (hasFlow() ? getFlow() : "Not Provided")
         + "\n\tPressure: " + (hasPressure() ? getPressure() : "Not Provided");
+        + "\n\tMechanicalDeadSpaceVolume: " + (hasMechanicalDeadSpaceVolume() ? getMechanicalDeadSpaceVolume() : "Not Provided");
     for(SESubstanceFraction sf : this.gasFractions)
       cnts += "\n\tSubstanceFraction: " + sf.getSubstance() + " : " + sf.getAmount();
     for(SESubstanceConcentration sc : this.aerosols)
