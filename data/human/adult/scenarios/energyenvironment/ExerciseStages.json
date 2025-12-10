@@ -10,7 +10,7 @@
     [
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodPH", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "LactateProductionRate", "Unit": "mol/day" },
-      { "DecimalFormat": { }, "Category": "Physiology", "PropertyName": "MeanSkInflow", "Unit": "mL/min" },
+      { "DecimalFormat": { }, "Category": "Physiology", "PropertyName": "MeanSkinFlow", "Unit": "mL/min" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SweatRate", "Unit": "mg/min" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalMetabolicRate", "Unit": "kcal/day" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "TotalMetabolicRate", "Unit": "W" },
