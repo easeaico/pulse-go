@@ -82,6 +82,7 @@ namespace pulse { namespace human_adult_whole_body
   void EngineTest::EmptyBlackBoxTest(const std::string& outputDir)
   {
     std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(eModelType::HumanAdultWholeBody, m_Logger);
+    pulse->GetLogger()->SetLogFile(outputDir + "/EmptyBlackBoxTest.log");
     Info("--------EmptyBlackBoxTest--------");
 
     BlackBoxes bbz;
@@ -120,6 +121,7 @@ namespace pulse { namespace human_adult_whole_body
   void EngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
   {
     std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(eModelType::HumanAdultWholeBody, m_Logger);
+    pulse->GetLogger()->SetLogFile(outputDir + "/ImposeFlowBlackBoxTest.log");
     Info("--------ImposeFlowBlackBoxTest--------");
 
     PulseConfiguration config;
@@ -236,6 +238,7 @@ namespace pulse { namespace human_adult_whole_body
   void EngineTest::ImposePressureAndFlowBlackBoxTest(const std::string& outputDir)
   {
     std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(eModelType::HumanAdultWholeBody, m_Logger);
+    pulse->GetLogger()->SetLogFile(outputDir + "/ImposePressureAndFlowBlackBoxTest.log");
     Info("--------ImposePressureAndFlowBlackBoxTest--------");
 
     // Not provided a drMgr since we are dynamically making new cmpts and requesting data from them
