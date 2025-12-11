@@ -3,6 +3,7 @@
 
 #include "cdm/CommonDefs.h"
 #include "cdm/utils/DataTrack.h"
+#include "cdm/utils/FileUtils.h"
 #include "cdm/engine/SEDecimalFormat.h"
 #include "cdm/circuit/electrical/SEElectricalCircuit.h"
 #include "cdm/circuit/fluid/SEFluidCircuit.h"
@@ -760,6 +761,7 @@ double DataTrack::StreamDataFromFile(std::vector<std::string>* headings)
 
 void DataTrack::CreateFile(const char* fileName, std::ofstream& file)
 {
+  CreateFilePath(fileName);
   size_t idx = 0;
   file.open(fileName, std::ofstream::out | std::ofstream::trunc);
   // Write our headers
