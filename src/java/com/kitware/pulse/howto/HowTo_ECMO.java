@@ -53,12 +53,12 @@ public class HowTo_ECMO
     dataRequests.createPhysiologyDataRequest("BloodVolume", VolumeUnit.mL);
     dataRequests.createECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV);
     // Equipment Data
-    dataRequests.createLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "InFlow");
-    dataRequests.createLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "OutFlow");
-    dataRequests.createLiquidCompartmentDataRequest("ECMOOxygenator", "InFlow");
-    dataRequests.createLiquidCompartmentDataRequest("ECMOOxygenator", "OutFlow");
-    dataRequests.createLiquidCompartmentDataRequest("RightArmVasculature", "InFlow");
-    dataRequests.createLiquidCompartmentDataRequest("RightArmVasculature", "OutFlow");
+    dataRequests.createLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "Inflow");
+    dataRequests.createLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "Outflow");
+    dataRequests.createLiquidCompartmentDataRequest("ECMOOxygenator", "Inflow");
+    dataRequests.createLiquidCompartmentDataRequest("ECMOOxygenator", "Outflow");
+    dataRequests.createLiquidCompartmentDataRequest("RightArmVasculature", "Inflow");
+    dataRequests.createLiquidCompartmentDataRequest("RightArmVasculature", "Outflow");
     
     dataRequests.setResultsFilename("./test_results/howto/HowTo_ECMO.java.csv");
     

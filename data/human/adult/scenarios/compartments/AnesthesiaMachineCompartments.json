@@ -8,14 +8,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineConnection",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineConnection",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -134,14 +134,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineExpiratoryLimb",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineExpiratoryLimb",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -261,14 +261,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineGasInlet",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineGasInlet",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -386,14 +386,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineGasSource",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineGasSource",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -510,14 +510,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineInspiratoryLimb",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineInspiratoryLimb",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -635,14 +635,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineReliefValve",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineReliefValve",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -656,14 +656,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineScrubber",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineScrubber",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -781,14 +781,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineSelector",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineSelector",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -907,14 +907,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineVentilator",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineVentilator",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1031,14 +1031,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineYPiece",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "AnesthesiaMachineYPiece",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {

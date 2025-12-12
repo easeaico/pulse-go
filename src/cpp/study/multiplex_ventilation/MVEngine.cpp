@@ -140,6 +140,10 @@ namespace pulse::study::multiplex_ventilation
         m_Controllers.push_back(pc);
         m_Engines.push_back(pe);
 
+        SEDataRequestManager drMgr(pe->GetLogger());
+        drMgr.SetResultsFilename(outDir + "multiplex_patient_" + std::to_string(p) + "_results.csv");
+        MVEngine::TrackData(drMgr);
+
         auto& comparison = (*sim.mutable_patientcomparisons())[p];
 
         if (comparison.has_soloventilation())
@@ -148,7 +152,7 @@ namespace pulse::study::multiplex_ventilation
           std::string state = soloVentilation->statefile();
 
           pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + std::to_string(p) + ".log");
-          if (!pc->SerializeFromFile(state))
+          if (!pc->SerializeFromFile(state, &drMgr))
           {
             Error("Unable to load file : " + state);
             return false;
@@ -169,7 +173,7 @@ namespace pulse::study::multiplex_ventilation
           auto* multiVentilation = comparison.mutable_multiplexventilation();
 
           pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + std::to_string(p) + ".log");
-          if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.json"))
+          if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.json", &drMgr))
           {
             Error("Unable to load file : StandardMale@0s.json");
             return false;
@@ -274,7 +278,6 @@ namespace pulse::study::multiplex_ventilation
           inspiratoryConnectionLink.MapPath(inspiratoryConnectionPath);
           m_MultiplexVentilationGraph->AddLink(inspiratoryConnectionLink);
         }
-        TrackData(pc->GetEngineTracker(), outDir + "multiplex_patient_" + std::to_string(p) + "_results.csv");
         auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
         auto AortaCO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetCO2());
         m_AortaO2s.push_back(AortaO2);
@@ -496,7 +499,6 @@ namespace pulse::study::multiplex_ventilation
         pc->GetEvents().UpdateEvents(pc->GetTimeStep());
         const_cast<SEScalarTime&>(pc->GetEngineTime()).Increment(pc->GetTimeStep());
         const_cast<SEScalarTime&>(pc->GetSimulationTime()).Increment(pc->GetTimeStep());
-        pc->GetEngineTracker().TrackData(m_CurrentTime_s);
       }
       m_CurrentTime_s += m_TimeStep_s;
     }
@@ -654,44 +656,39 @@ namespace pulse::study::multiplex_ventilation
     return minPAO2_mmHg;
   }
 
-  void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
+  void MVEngine::TrackData(SEDataRequestManager& drMgr)
   {
-    trkr.GetDataRequestManager().SetResultsFilename(csv_filename);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    trkr.GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
-    trkr.GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalPositiveEndExpiratoryPressure", PressureUnit::cmH2O);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TotalRespiratoryModelCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("PhysiolgicShuntFraction");
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("AlveolarArterialGradient", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_min);
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit::cmH2O);
+    drMgr.CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+    drMgr.CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    drMgr.CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    drMgr.CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
+    drMgr.CreateMechanicalVentilatorDataRequest("TotalPositiveEndExpiratoryPressure", PressureUnit::cmH2O);
+    drMgr.CreatePhysiologyDataRequest("TotalRespiratoryModelCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+    drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+    drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+    drMgr.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+    drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+    drMgr.CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
+    drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
+    drMgr.CreatePhysiologyDataRequest("PhysiolgicShuntFraction");
+    drMgr.CreatePhysiologyDataRequest("AlveolarArterialGradient", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_min);
+    drMgr.CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit::cmH2O);
 
-
-    trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Pressure", PressureUnit::cmH2O);
-
-    trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-    trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-
-    trkr.SetupRequests();
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Pressure", PressureUnit::cmH2O);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+    drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+    drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+    drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+    drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+    drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+    drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
   }
 
   bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst)
@@ -718,7 +715,7 @@ namespace pulse::study::multiplex_ventilation
   bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& resultBasePath, double duration_s, Logger& logger)
   {
     std::string logFile = resultBasePath + ".log";
-    std::string dataFile = resultBasePath + "Results.csv";
+    std::string csvFile = resultBasePath + "Results.csv";
 
     TimingProfile profiler;
     profiler.Start("Total");
@@ -731,15 +728,16 @@ namespace pulse::study::multiplex_ventilation
 
     auto pe = CreatePulseEngine();
     pe->GetLogger()->SetLogFile(logFile);
-    pe->SerializeFromFile(stateFile);
-    MVEngine::TrackData(*pe->GetEngineTracker(), dataFile);
+    SEDataRequestManager drMgr(pe->GetLogger());
+    drMgr.SetResultsFilename(csvFile);
+    MVEngine::TrackData(drMgr);
+    pe->SerializeFromFile(stateFile, &drMgr);
     int count = (int)(duration_s / timeStep_s);
     for (int i = 0; i < count; i++)
     {
       if (pe->GetEventManager().IsEventActive(eEvent::IrreversibleState))
         return false;
       pe->AdvanceModelTime();
-      pe->GetEngineTracker()->TrackData(currentTime_s);
       currentTime_s += timeStep_s;
       statusTime_s += timeStep_s;
       // How are we running?

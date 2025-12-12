@@ -161,19 +161,20 @@ namespace pulse::study::hydrocephalus
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
 
     // Setup data requests
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Oxygen", "PartialPressure");
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
-    pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
-    pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".csv");
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+    drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
+    drMgr.CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Inflow", VolumePerTimeUnit::mL_Per_min);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Oxygen", "PartialPressure");
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
+    drMgr.CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
+    drMgr.SetResultsFilename(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // Setup Circuit Overrides
     PulseConfiguration cfg(pulse->GetLogger());
@@ -186,7 +187,7 @@ namespace pulse::study::hydrocephalus
     // Stabilize the engine
     SEPatientConfiguration pc;
     pc.SetPatientFile("./patients/StandardMale.json");
-    if (!pulse->InitializeEngine(pc))
+    if (!pulse->InitializeEngine(pc, &drMgr))
     {
       sim.set_achievedstabilization(false);
       sim.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
@@ -197,8 +198,8 @@ namespace pulse::study::hydrocephalus
     std::unordered_map<std::string, RunningAverages> runningAverages =
     {
       {"MeanBrainPressure_mmHg", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), PressureUnit::mmHg)},
-      {"MeanBrainVasculatureInFlow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanBrainVasculatureOutFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBrainVasculatureInflow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBrainVasculatureOutflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
       {"MeanBrainCarbonDioxidePartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("CarbonDioxide")), PressureUnit::mmHg)},
       {"MeanBrainOxygenPartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("Oxygen")), PressureUnit::mmHg)},
       {"MeanIntracranialSpacePressure_mmHg", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::CerebrospinalFluidCompartment::IntracranialSpace), PressureUnit::mmHg)},
@@ -232,8 +233,6 @@ namespace pulse::study::hydrocephalus
         for (auto& element : runningAverages)
           element.second.Sample();
       }
-
-      pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
     }
 
     const SELiquidCompartment* b = pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
@@ -247,8 +246,8 @@ namespace pulse::study::hydrocephalus
     sim.set_intracranialspacevolume_ml(is->GetVolume(VolumeUnit::mL));
 
     sim.set_meanbrainpressure_mmhg(runningAverages.at("MeanBrainPressure_mmHg").instantaneousAverage);
-    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanbrainvasculatureoutflow_ml_per_s(runningAverages.at("MeanBrainVasculatureOutFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbrainvasculatureoutflow_ml_per_s(runningAverages.at("MeanBrainVasculatureOutflow_mL_Per_s").instantaneousAverage);
     sim.set_meanbraincarbondioxidepartialpressure_mmhg(runningAverages.at("MeanBrainCarbonDioxidePartialPressure_mmHg").instantaneousAverage);
     sim.set_meanbrainoxygenpartialpressure_mmhg(runningAverages.at("MeanBrainOxygenPartialPressure_mmHg").instantaneousAverage);
     sim.set_meanintracranialspacepressure_mmhg(runningAverages.at("MeanIntracranialSpacePressure_mmHg").instantaneousAverage);

@@ -6,7 +6,7 @@
 
    // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/patient/actions/SESubstanceBolus.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceFraction.h"
@@ -44,26 +44,27 @@ void HowToAnesthesiaMachine()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_AnesthesiaMachine.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_AnesthesiaMachine.cpp/HowTo_AnesthesiaMachine.log");
   pe->GetLogger()->Info("HowTo_AnesthesiaMachine");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("SedationLevel");
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_AnesthesiaMachine.cpp/HowTo_AnesthesiaMachine.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SedationLevel");
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAnesthesiaMachine.csv");
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -73,7 +74,7 @@ void HowToAnesthesiaMachine()
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());;
 
-  AdvanceAndTrackTime_s(50, *pe);
+  pe->AdvanceModelTime(50, TimeUnit::s);
 
   // Turn the anesthesia machine on and get it configured for spontaneous breathing
   // Create an Anesthesia Machine and configure it as needed
@@ -106,7 +107,7 @@ void HowToAnesthesiaMachine()
   pe->ProcessAction(AMConfig);
   pe->GetLogger()->Info(std::stringstream() << "Turning on the Anesthesia Machine and placing mask on patient for spontaneous breathing with machine connection.");;
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient is attempting to breath normally with Anesthesia Machine connected");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -128,7 +129,7 @@ void HowToAnesthesiaMachine()
 
   pe->GetLogger()->Info("Giving the patient Succinylcholine to test machine-driven ventilation.");
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("It has been 60s since the Succinylcholine administration.");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -144,7 +145,7 @@ void HowToAnesthesiaMachine()
   pe->ProcessAction(AMConfig);
   pe->GetLogger()->Info("Setting the ventilator pressure to drive the machine. Also increasing the inlet flow and positive end expired pressure to test machine controls.");
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("Patient breathing is being controlled by the machine.");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -161,7 +162,7 @@ void HowToAnesthesiaMachine()
   pe->ProcessAction(AMConfig);
   pe->GetLogger()->Info("More Anesthesia Machine control manipulation. Increasing respiratory rate, reducing driving pressure and increasing the inspiratory-expiratory ratio.");
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("Patient breathing is being controlled by the machine.");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -176,7 +177,7 @@ void HowToAnesthesiaMachine()
   pe->ProcessAction(AMleak);
   pe->GetLogger()->Info("Testing an anesthesia machine failure mode. The mask is leaking with a severity of 0.5.");
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("Patient breathing is being controlled by the machine. The mask has been leaking for 60 seconds.");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -190,14 +191,14 @@ void HowToAnesthesiaMachine()
   pe->ProcessAction(AMleak);
   pe->GetLogger()->Info("Removing the mask leak.");
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   SEAnesthesiaMachineOxygenWallPortPressureLoss AMpressureloss;
   AMpressureloss.SetState(eSwitch::On);
   pe->ProcessAction(AMpressureloss);
   pe->GetLogger()->Info("Testing the oxygen pressure loss failure mode. The oxygen pressure from the wall source is dropping.");
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("Patient breathing is being controlled by the machine. The wall oxygen pressure loss occurred 60 seconds ago.");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -211,7 +212,7 @@ void HowToAnesthesiaMachine()
   pe->ProcessAction(AMpressureloss);
   pe->GetLogger()->Info("Removing the wall oxygen pressure loss action.");
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("The anesthesia machine is operating normally");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

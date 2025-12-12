@@ -42,9 +42,6 @@ public:
 
   virtual void CancelStabilization();
 
-  virtual void TrackStabilization(eSwitch state);
-  virtual bool IsTrackingStabilization();
-
   virtual bool HasStabilizationDuration();
   virtual SEScalarTime& GetStabilizationDuration();
 
@@ -52,7 +49,6 @@ protected:
 
   bool m_Cancelled;
   bool m_LogProgress;
-  eSwitch m_TrackingStabilization;
   std::stringstream m_ss;
 
   SEScalarTime* m_StabilizationDuration;

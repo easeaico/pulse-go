@@ -8,14 +8,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "Ambient",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "Ambient",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -77,14 +77,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "Airway",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "Airway",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -177,14 +177,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "Carina",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "Carina",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -278,14 +278,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "PulmonaryLungs",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "PulmonaryLungs",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -378,14 +378,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftLungPulmonary",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftLungPulmonary",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -478,14 +478,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftAnatomicDeadSpace",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftAnatomicDeadSpace",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -579,14 +579,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftAlveoli",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftAlveoli",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -681,14 +681,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightLungPulmonary",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightLungPulmonary",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -781,14 +781,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightAnatomicDeadSpace",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightAnatomicDeadSpace",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -882,14 +882,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightAlveoli",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightAlveoli",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -983,14 +983,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "Stomach",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "Stomach",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1083,14 +1083,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "PleuralCavity",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "PleuralCavity",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1111,14 +1111,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftPleuralCavity",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "LeftPleuralCavity",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1139,14 +1139,14 @@
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightPleuralCavity",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "GasCompartment",
       "CompartmentName": "RightPleuralCavity",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {

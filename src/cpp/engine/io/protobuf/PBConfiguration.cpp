@@ -54,6 +54,8 @@ namespace pulse
           dst.RemoveStabilization();
         }
     }
+    if (src.trackstabilization() != CDM_BIND::eSwitch::NullSwitch)
+      dst.TrackStabilization((eSwitch)src.trackstabilization());
 
     for (auto& [name, m] : src.modifiers())
       dst.GetModifiers()[name] = SEScalarPair(m.value(), m.unit());
@@ -370,6 +372,8 @@ namespace pulse
       dst.set_allocated_timedstabilization(PBEngine::Unload(*src.m_TimedStabilization));
     else if (src.HasDynamicStabilization())
       dst.set_allocated_dynamicstabilization(PBEngine::Unload(*src.m_DynamicStabilization));
+    dst.set_trackstabilization((CDM_BIND::eSwitch)src.m_TrackStabilization);
+
     if (src.HasTimeStep())
       dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
     dst.set_allowdynamictimestep((CDM_BIND::eSwitch)src.m_AllowDynamicTimeStep);

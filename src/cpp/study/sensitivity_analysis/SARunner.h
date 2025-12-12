@@ -15,7 +15,7 @@
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEOverrides.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/substance/SESubstanceManager.h"
@@ -118,7 +118,7 @@ namespace pulse::study::sensitivity_analysis
         if (cmpt != nullptr)
         {
           if (fUnit != nullptr)
-            return runningAverage.Sample(cmpt->GetInFlow(*fUnit));
+            return runningAverage.Sample(cmpt->GetInflow(*fUnit));
           else if (pUnit != nullptr)
             return runningAverage.Sample(cmpt->GetPressure(*pUnit));
         }

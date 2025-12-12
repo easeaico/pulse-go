@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEOverrides.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
@@ -43,26 +43,25 @@ void HowToCOVID19Ventilated()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("HowTo_COVID19Ventilated.log");
-  
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_COVID19Ventilated.cpp/HowTo_COVID19Ventilated.log");
   pe->GetLogger()->Info("HowTo_COVID19Ventilated");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.SetResultsFilename("./test_results/HowTo_COVID19Ventilated.cpp/HowTo_COVID19Ventilated.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToCOVID19Ventilated.csv");
 
   // Set moderate ARDS because COVID-19 pneumonia patients that received invasive mechanical ventilation have shown the PaO2/FiO2 ratios 
   // were consistent with the Berlin criteria of moderate-to-severe ARDS. @cite bhatraju2020covid @cite yang2020clinical
@@ -80,7 +79,7 @@ void HowToCOVID19Ventilated()
   pe->ProcessAction(overrides);
 
   // Advance time enough to achieve a new pathophysiogical homeostatic state
-  AdvanceAndTrackTime_s(10.0 * 60.0, *pe); // 10 min
+  pe->AdvanceModelTime(10.0 * 60.0, TimeUnit::s); // 10 min
 
   pe->GetLogger()->Info(std::stringstream() << "The patient has moderate COVID-19");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -135,7 +134,7 @@ void HowToCOVID19Ventilated()
   pe->ProcessAction(overrides);
 
   // Advance time enough to achieve a new homeostatic state
-  AdvanceAndTrackTime_s(10.0 * 60.0, *pe); // 10 min
+  pe->AdvanceModelTime(10.0 * 60.0, TimeUnit::s); // 10 min
 
   pe->GetLogger()->Info("The patient has been successfully ventilated and stabilized");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

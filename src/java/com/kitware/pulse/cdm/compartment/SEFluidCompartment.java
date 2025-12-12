@@ -10,8 +10,8 @@ import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 
 public abstract class SEFluidCompartment extends SECompartment
 {
-  protected SEScalarVolumePerTime inFlow;
-  protected SEScalarVolumePerTime outFlow;
+  protected SEScalarVolumePerTime inflow;
+  protected SEScalarVolumePerTime outflow;
   protected SEScalarPressure      pressure;  
   protected SEScalarVolume        volume;
   
@@ -27,10 +27,10 @@ public abstract class SEFluidCompartment extends SECompartment
     super.clear();
     if (pressure != null)
       pressure.invalidate();
-    if (inFlow != null)
-      inFlow.invalidate();
-    if (outFlow != null)
-      outFlow.invalidate();
+    if (inflow != null)
+      inflow.invalidate();
+    if (outflow != null)
+      outflow.invalidate();
     if (volume != null)
       volume.invalidate();
   }
@@ -40,10 +40,10 @@ public abstract class SEFluidCompartment extends SECompartment
     SECompartment.load(src.getCompartment(),dst);
     if (src.hasPressure()) 
        SEScalarPressure.load(src.getPressure(),dst.getPressure()); 
-    if (src.hasInFlow()) 
-      SEScalarVolumePerTime.load(src.getInFlow(),dst.getInFlow()); 
-    if (src.hasOutFlow()) 
-      SEScalarVolumePerTime.load(src.getOutFlow(),dst.getOutFlow()); 
+    if (src.hasInflow()) 
+      SEScalarVolumePerTime.load(src.getInflow(),dst.getInflow()); 
+    if (src.hasOutflow()) 
+      SEScalarVolumePerTime.load(src.getOutflow(),dst.getOutflow()); 
     if (src.hasVolume()) 
       SEScalarVolume.load(src.getVolume(),dst.getVolume()); 
   }
@@ -52,34 +52,34 @@ public abstract class SEFluidCompartment extends SECompartment
     SECompartment.unload(src,dst.getCompartment());
     if (src.hasPressure())
       dst.setPressure(SEScalarPressure.unload(src.pressure));
-    if (src.hasInFlow())
-      dst.setInFlow(SEScalarVolumePerTime.unload(src.inFlow));
-    if (src.hasOutFlow())
-      dst.setOutFlow(SEScalarVolumePerTime.unload(src.outFlow));
+    if (src.hasInflow())
+      dst.setInflow(SEScalarVolumePerTime.unload(src.inflow));
+    if (src.hasOutflow())
+      dst.setOutflow(SEScalarVolumePerTime.unload(src.outflow));
     if (src.hasVolume())
       dst.setVolume(SEScalarVolume.unload(src.volume));
   }
   
-  public SEScalarVolumePerTime getInFlow() 
+  public SEScalarVolumePerTime getInflow() 
   {
-    if (inFlow == null)
-      inFlow = new SEScalarVolumePerTime();
-    return inFlow;
+    if (inflow == null)
+      inflow = new SEScalarVolumePerTime();
+    return inflow;
   }
-  public boolean hasInFlow()
+  public boolean hasInflow()
   {
-    return inFlow == null ? false : inFlow.isValid();
+    return inflow == null ? false : inflow.isValid();
   }
   
-  public SEScalarVolumePerTime getOutFlow() 
+  public SEScalarVolumePerTime getOutflow() 
   {
-    if (outFlow == null)
-      outFlow = new SEScalarVolumePerTime();
-    return outFlow;
+    if (outflow == null)
+      outflow = new SEScalarVolumePerTime();
+    return outflow;
   }
-  public boolean hasOutFlow()
+  public boolean hasOutflow()
   {
-    return outFlow == null ? false : outFlow.isValid();
+    return outflow == null ? false : outflow.isValid();
   }
   
   public SEScalarPressure getPressure() 

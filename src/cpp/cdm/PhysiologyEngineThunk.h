@@ -68,8 +68,7 @@ public:
 
 protected:
   virtual void AllocateEngine() = 0;
-  virtual void SetupDefaultDataRequests();
-  virtual bool SetupRequests();
+  virtual void SetupDefaultDataRequests(SEDataRequestManager& drMgr);
 
   std::unique_ptr<PhysiologyEngine> m_engine;
   SESubstanceManager* m_subMgr = nullptr;

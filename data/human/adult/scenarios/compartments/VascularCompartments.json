@@ -8,14 +8,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Aorta",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Aorta",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -241,14 +241,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Heart",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Heart",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -474,14 +474,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MyocardiumVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MyocardiumVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -707,14 +707,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftHeart",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftHeart",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -940,14 +940,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightHeart",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightHeart",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1173,14 +1173,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Pericardium",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Pericardium",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1406,14 +1406,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "VenaCava",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "VenaCava",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1639,14 +1639,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "PulmonaryArteries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "PulmonaryArteries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -1872,14 +1872,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "PulmonaryCapillaries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "PulmonaryCapillaries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -2105,14 +2105,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "PulmonaryVeins",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "PulmonaryVeins",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -2338,14 +2338,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LungsVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LungsVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -2571,14 +2571,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftLungVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftLungVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -2804,14 +2804,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPulmonaryArteries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPulmonaryArteries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -3037,14 +3037,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPulmonaryCapillaries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPulmonaryCapillaries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -3270,14 +3270,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPulmonaryVeins",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPulmonaryVeins",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -3503,14 +3503,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightLungVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightLungVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -3736,14 +3736,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPulmonaryArteries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPulmonaryArteries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -3969,14 +3969,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPulmonaryCapillaries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPulmonaryCapillaries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -4202,14 +4202,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPulmonaryVeins",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPulmonaryVeins",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -4435,14 +4435,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BrainVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BrainVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -4668,14 +4668,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BoneVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "BoneVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -4901,14 +4901,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "GutVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "GutVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -5134,14 +5134,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SplanchnicVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SplanchnicVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -5367,14 +5367,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SmallIntestineVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SmallIntestineVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -5600,14 +5600,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LargeIntestineVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LargeIntestineVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -5833,14 +5833,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "FatVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "FatVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -6066,14 +6066,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MuscleVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "MuscleVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -6299,14 +6299,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LiverVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LiverVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -6532,14 +6532,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SpleenVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SpleenVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -6765,14 +6765,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftArmVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftArmVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -6998,14 +6998,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftLegVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftLegVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -7231,14 +7231,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightArmVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightArmVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -7464,14 +7464,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightLegVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightLegVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -7697,14 +7697,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SkinVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "SkinVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -7930,14 +7930,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "KidneyVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "KidneyVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -8163,14 +8163,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftKidneyVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftKidneyVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -8396,14 +8396,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftRenalArtery",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftRenalArtery",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -8629,14 +8629,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftRenalVein",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftRenalVein",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -8862,14 +8862,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftNephron",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftNephron",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -9095,14 +9095,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftAfferentArteriole",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftAfferentArteriole",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -9116,14 +9116,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftGlomerularCapillaries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftGlomerularCapillaries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -9349,14 +9349,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftEfferentArteriole",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftEfferentArteriole",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -9370,14 +9370,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPeritubularCapillaries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftPeritubularCapillaries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -9603,14 +9603,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightKidneyVasculature",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightKidneyVasculature",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -9836,14 +9836,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightRenalArtery",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightRenalArtery",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -10069,14 +10069,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightRenalVein",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightRenalVein",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -10302,14 +10302,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightNephron",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightNephron",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -10535,14 +10535,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightAfferentArteriole",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightAfferentArteriole",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -10556,14 +10556,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightGlomerularCapillaries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightGlomerularCapillaries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -10789,14 +10789,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightEfferentArteriole",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightEfferentArteriole",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -10810,14 +10810,14 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPeritubularCapillaries",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightPeritubularCapillaries",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {

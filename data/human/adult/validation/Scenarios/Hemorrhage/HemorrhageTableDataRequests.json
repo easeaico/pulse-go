@@ -47,10 +47,10 @@
 
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "PropertyName": "InFlow",  "Unit": "mL/min" },
-    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart",   "PropertyName": "InFlow",  "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "Inflow",  "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "Inflow",  "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "PropertyName": "Inflow",  "Unit": "mL/min" },
+    { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart",   "PropertyName": "Inflow",  "Unit": "mL/min" },
 
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"},

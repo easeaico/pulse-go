@@ -17,9 +17,9 @@ extern CDM_DECL const std::string& eDataRequest_Category_Name(eDataRequest_Categ
 class CDM_DECL SEDataRequest : public SEDecimalFormat
 {
   friend class PBEngine;//friend the serialization class
-  friend class SEEngineTracker;
-  friend class SEDataRequestScalar;
   friend class SEDataRequestManager;
+  friend class SEDataRequestScalar;
+  friend class SEEngineTracker;
 protected:
   SEDataRequest(const SEDataRequest& dr);
   SEDataRequest(eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);

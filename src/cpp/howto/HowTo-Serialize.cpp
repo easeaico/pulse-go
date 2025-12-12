@@ -5,7 +5,7 @@
 
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SESerializeRequested.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
@@ -36,41 +36,36 @@ void HowToSerialize()
   // Create a Pulse Engine and load the standard patient
   // This is a healty patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Serialize.log");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Serialize.cpp/HowTo_Serialize.log");
+
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
+  drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_Serialize.cpp/HowTo_Serialize.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
   SESerializeRequested serializeRequested;
-  serializeRequested.SetFilename("./test_results/howto/HowTo_Serialize.requested.json");
+  serializeRequested.SetFilename("./test_results/howto/HowTo_Serialize.cpp/HowTo_Serialize.requested.json");
   pe->ProcessAction(serializeRequested);
 
   pe->GetLogger()->Info("Healthy patient vitals");
-  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Fraction : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxideFraction());
-  pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Skin Temperature : " << pe->GetEnergySystem()->GetSkinTemperature(TemperatureUnit::C) << "C");
-  pe->GetLogger()->Info(std::stringstream() << "Blood Volume : " << pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  pe->GetDataRequestTracker().LogRequestedValues();
 
   // Next we will want to make the patient unhealthy in some way.
   // This will allow you to start your application with unhealty state
@@ -96,22 +91,36 @@ void HowToSerialize()
   pe->ProcessAction(obstruction);
 
   // Now let's advance 5 minutes with these actions to get the patient into a injured state
-  pe->AdvanceModelTime(5, TimeUnit::s);
+  pe->AdvanceModelTime(5, TimeUnit::min);
 
   pe->GetLogger()->Info("Wounded patient vitals");
-  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Fraction : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxideFraction());
-  pe->GetLogger()->Info(std::stringstream() << "End Tidal Carbon Dioxide Pressure : " << pe->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Skin Temperature : " << pe->GetEnergySystem()->GetSkinTemperature(TemperatureUnit::C) << "C");
-  pe->GetLogger()->Info(std::stringstream() << "Blood Volume : " << pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
+  pe->GetDataRequestTracker().LogRequestedValues();
 
   // Save this state out.
+  std::string state = "./test_results/howto/HowTo_Serialize.cpp/WoundedSoldier.json";
   // You an then load this state in your application
-  pe->SerializeToFile("./WoundedSoldier.json");
+  if (!pe->SerializeToFile(state))
+  {
+    pe->GetLogger()->Error("Could not save state, check the error");
+    return;
+  }
+
+  // Now let's load that state back in and continue running, and writing to our same csv file
+
+  if (!pe->SerializeFromFile(state))
+  {
+    pe->GetLogger()->Error("Could not load state, check the error");
+    return;
+  }
+
+  // Let's apply some interventions
+  hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);//the location of the hemorrhage
+  hemorrhageLeg.GetSeverity().SetValue(0.0);// stop the bleeding
+  pe->ProcessAction(hemorrhageLeg);
+
+  // Now let's advance 5 minutes with these actions to get the patient's intervened state
+  pe->AdvanceModelTime(5, TimeUnit::min);
+
+  pe->GetLogger()->Info("Treated patient vitals");
+  pe->GetDataRequestTracker().LogRequestedValues();
 }

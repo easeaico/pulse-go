@@ -3,7 +3,7 @@
 
 #include "cdm/CommonDefs.h"
 #include "cdm/engine/SETimedStabilization.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SECondition.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/utils/TimingProfile.h"
@@ -54,14 +54,6 @@ bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& tim
     profiler.Start("Total");
     profiler.Start("Status");
   }
-  // Execute System initialization time
-  SEEngineTracker* tracker = engine.GetEngineTracker();
-  eSwitch track = m_TrackingStabilization;
-  if (track==eSwitch::On && tracker == nullptr)
-  {
-    track = eSwitch::Off;
-    Warning("PhysiologyEngineTrack not provided by engine, not tracking data to file");
-  }
 
   ss.precision(3);
   double statusTime_s = 0;// Current time of this status cycle
@@ -71,8 +63,6 @@ bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& tim
   int count = (int)(sTime_s / dT_s);
   int ProgressStep = (int)(count*.1);
   int Progress = ProgressStep;
-  if (track == eSwitch::On)
-    tracker->SetupRequests();
   for (int i = 0; i <= count; i++)
   {
     if (m_Cancelled)
@@ -84,8 +74,6 @@ bool SETimedStabilization::Stabilize(Controller& engine, const SEScalarTime& tim
     engine.AdvanceTime();
     currentTime_s = engine.GetSimulationTime(TimeUnit::s);
 
-    if (track == eSwitch::On)
-      tracker->TrackData(currentTime_s);
     if (m_LogProgress)
     {
       statusTime_s += dT_s;

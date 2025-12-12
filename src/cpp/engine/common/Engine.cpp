@@ -4,9 +4,6 @@
 #include "engine/common/Engine.h"
 #include "engine/PulseConfiguration.h"
 #include "engine/common/controller/Controller.h"
-#include "engine/common/controller/BlackBoxManager.h"
-#include "engine/common/controller/CompartmentManager.h"
-#include "engine/common/controller/SubstanceManager.h"
 
 namespace pulse
 {
@@ -39,32 +36,28 @@ namespace pulse
     return GetController().GetTypeName();
   }
 
-  bool Engine::SerializeFromFile(const std::string& filename)
+  bool Engine::SerializeFromFile(const std::string& filename, const SEDataRequestManager* drMgr)
   {
     if (m_Controller == nullptr) AllocateController();
-    return GetController().SerializeFromFile(filename);
+    return GetController().SerializeFromFile(filename, drMgr);
   }
   bool Engine::SerializeToFile(const std::string& filename) const
   {
     return GetController().SerializeToFile(filename);
   }
 
-  bool Engine::SerializeFromString(const std::string& src, eSerializationFormat m)
+  bool Engine::SerializeFromString(const std::string& src, eSerializationFormat m, const SEDataRequestManager* drMgr)
   {
-    return GetController().SerializeFromString(src, m);
+    return GetController().SerializeFromString(src, m, drMgr);
   }
   bool Engine::SerializeToString(std::string& output, eSerializationFormat m) const
   {
     return GetController().SerializeToString(output, m);
   }
 
-  bool Engine::InitializeEngine(const std::string& patient_configuration, eSerializationFormat m)
+  bool Engine::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEDataRequestManager* drMgr)
   {
-    return GetController().InitializeEngine(patient_configuration, m);
-  }
-  bool Engine::InitializeEngine(const SEPatientConfiguration& patient_configuration)
-  {
-    return GetController().InitializeEngine(patient_configuration);
+    return GetController().InitializeEngine(patient_configuration, drMgr);
   }
   eEngineInitializationState Engine::GetInitializationState() const
   {
@@ -81,11 +74,10 @@ namespace pulse
     return GetController().SetConfigurationOverride(config);
   }
 
-  SEEngineTracker* Engine::GetEngineTracker() const
+  SEDataRequestTracker& Engine::GetDataRequestTracker()
   {
-    return &GetController().GetData().GetEngineTracker();
+    return GetController().GetData().GetEngineTracker();
   }
-
 
   const SEConditionManager& Engine::GetConditionManager() const
   {

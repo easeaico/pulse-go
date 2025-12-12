@@ -8,7 +8,7 @@
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/patient/actions/SEHemothorax.h"
 #include "cdm/patient/actions/SETubeThoracostomy.h"
@@ -39,29 +39,30 @@ void HowToHemothorax()
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->LogToConsole(true);
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemothorax.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Hemothorax.cpp/HowTo_Hemothorax.log");
   pe->GetLogger()->Info("HowTo_Hemothorax");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  drMgr.CreateActionDataRequest("LeftHemothorax", "FlowRate", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreateActionDataRequest("LeftHemothorax", "TotalBloodVolume", VolumeUnit::mL);
+  drMgr.SetResultsFilename("./test_results/howto/HowToHemothorax.cpp/HowTo_Hemothorax.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateActionDataRequest("LeftHemothorax", "FlowRate", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateActionDataRequest("LeftHemothorax", "TotalBloodVolume", VolumeUnit::mL);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowToHemothorax.csv");
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -74,7 +75,7 @@ void HowToHemothorax()
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Blood Volume : " << pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
 
-  if (!AdvanceAndTrackTime_s(50, *pe))
+  if (!pe->AdvanceModelTime(50, TimeUnit::s))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -98,7 +99,7 @@ void HowToHemothorax()
 
   pe->GetLogger()->Info("Giving the patient a hemothorax");
 
-  if (!AdvanceAndTrackTime_s(120, *pe))
+  if (!pe->AdvanceModelTime(120, TimeUnit::s))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -138,7 +139,7 @@ void HowToHemothorax()
   pe->ProcessAction(tubeThoracostomy);
   pe->GetLogger()->Info("Giving the patient a tube thoracostomy");
 
-  if (!AdvanceAndTrackTime_s(400, *pe))
+  if (!pe->AdvanceModelTime(400, TimeUnit::s))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;

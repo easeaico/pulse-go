@@ -4,7 +4,7 @@
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AirwayPressure",     "Unit": "cmH2O" },
     { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "MeanAirwayPressure", "Unit": "cmH2O" },
 
-    { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "Stomach", "PropertyName": "InFlow", "Unit": "L/min" },
+    { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "Stomach", "PropertyName": "Inflow", "Unit": "L/min" },
     { "DecimalFormat": {                }, "Category": "GasCompartment", "CompartmentName": "Stomach", "PropertyName": "Volume", "Unit": "mL"    }
   ]
 }

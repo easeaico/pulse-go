@@ -26,12 +26,12 @@ namespace HowTo_ECMO
         SEDataRequest.CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
         SEDataRequest.CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit.L_Per_cmH2O),
         SEDataRequest.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_min),
-        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "InFlow"),
-        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "OutFlow"),
-        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOOxygenator", "InFlow"),
-        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOOxygenator", "OutFlow"),
-        SEDataRequest.CreateLiquidCompartmentDataRequest("RightArmVasculature", "InFlow"),
-        SEDataRequest.CreateLiquidCompartmentDataRequest("RightArmVasculature", "OutFlow"),
+        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "Inflow"),
+        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOBloodSamplingPort", "Outflow"),
+        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOOxygenator", "Inflow"),
+        SEDataRequest.CreateLiquidCompartmentDataRequest("ECMOOxygenator", "Outflow"),
+        SEDataRequest.CreateLiquidCompartmentDataRequest("RightArmVasculature", "Inflow"),
+        SEDataRequest.CreateLiquidCompartmentDataRequest("RightArmVasculature", "Outflow"),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       data_mgr.SetResultsFilename("./test_results/howto/HowTo_ECMO.cs.csv");

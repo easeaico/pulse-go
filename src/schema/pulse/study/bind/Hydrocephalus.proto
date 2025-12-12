@@ -21,7 +21,7 @@ message SimulationData
   double                       IntracranialSpaceVolume_mL                    = 8;
   double                       MeanBrainPressure_mmHg                        = 9;
   double                       MeanBrainVasculatureInFlow_mL_Per_s           = 10;
-  double                       MeanBrainVasculatureOutFlow_mL_Per_s          = 11;
+  double                       MeanBrainVasculatureOutflow_mL_Per_s          = 11;
   double                       MeanBrainCarbonDioxidePartialPressure_mmHg    = 12;
   double                       MeanBrainOxygenPartialPressure_mmHg           = 13;
   double                       MeanIntracranialSpacePressure_mmHg            = 14;

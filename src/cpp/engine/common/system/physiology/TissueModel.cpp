@@ -334,8 +334,8 @@ namespace pulse
     for (SETissueCompartment* tissue : m_ConsumptionProdutionTissues)
     {
       SELiquidCompartment* vascular = m_TissueToVascular[tissue];
-      if (vascular->HasInFlow())
-        m_CardiacArrestVascularFlows_ml_per_min[vascular] = vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min);
+      if (vascular->HasInflow())
+        m_CardiacArrestVascularFlows_ml_per_min[vascular] = vascular->GetInflow(VolumePerTimeUnit::mL_Per_min);
     }
   }
 
@@ -837,8 +837,8 @@ namespace pulse
       vascular = m_TissueToVascular[tissue];
       if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
         totalFlowRate_mL_Per_min += m_CardiacArrestVascularFlows_ml_per_min[vascular];
-      else if (vascular->HasInFlow())
-        totalFlowRate_mL_Per_min += vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min);
+      else if (vascular->HasInflow())
+        totalFlowRate_mL_Per_min += vascular->GetInflow(VolumePerTimeUnit::mL_Per_min);
     }
 
     double oxygenConsumptionRate_g_Per_s = 0.0;
@@ -863,8 +863,8 @@ namespace pulse
       BloodFlowFraction = 0;
       if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
         BloodFlowFraction = m_CardiacArrestVascularFlows_ml_per_min[vascular] / totalFlowRate_mL_Per_min;
-      else if (vascular->HasInFlow() && totalFlowRate_mL_Per_min > 0)
-        BloodFlowFraction = vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min) / totalFlowRate_mL_Per_min;
+      else if (vascular->HasInflow() && totalFlowRate_mL_Per_min > 0)
+        BloodFlowFraction = vascular->GetInflow(VolumePerTimeUnit::mL_Per_min) / totalFlowRate_mL_Per_min;
 
       //Reduced blood volumes cause reduced tissue perfusion
       double vasularBaselineVolume_mL = 0.0;
@@ -1429,7 +1429,7 @@ namespace pulse
     SELiquidSubstanceQuantity* vSubQ = vascular.GetSubstanceQuantity(sub);
     if (vSubQ == nullptr)
       throw CommonDataModelException("No Vascular Substance Quantity found for substance " + sub.GetName());
-    double VascularFlow_m_LPer_s = vascular.GetInFlow(VolumePerTimeUnit::mL_Per_s);
+    double VascularFlow_m_LPer_s = vascular.GetInflow(VolumePerTimeUnit::mL_Per_s);
     double VascularConcentration_ug_Per_mL = vSubQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
 
     SELiquidSubstanceQuantity* tSubQ = intracellular.GetSubstanceQuantity(sub);

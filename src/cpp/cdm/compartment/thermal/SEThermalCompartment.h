@@ -57,8 +57,8 @@ public:
   virtual void AddChild(SEThermalCompartment& child);
 
 protected:
-  virtual double CalculateInFlow_W() const;
-  virtual double CalculateOutFlow_W() const;
+  virtual double CalculateInflow_W() const;
+  virtual double CalculateOutflow_W() const;
 
   mutable SEScalarPower*       m_HeatTransferRateIn;
   mutable SEScalarPower*       m_HeatTransferRateOut;

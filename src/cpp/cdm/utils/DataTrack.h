@@ -37,7 +37,7 @@ public:
   void UseCommaDelimiter() { m_Delimiter = ','; }
 
   std::vector<double> const& GetTimes() const;
-  size_t NumTracks() { return m_Elements.size(); }
+  size_t NumTracks() const { return m_Elements.size(); }
 
   void SetFormatting(const std::string& name, const SEDecimalFormat& f);
   void SetFormatting(const std::string& name, std::streamsize precision);
@@ -53,9 +53,9 @@ public:
   void Probe(const SEThermalCircuit& c);
   void Probe(const SELiquidCompartmentGraph& graph);
 
-  double GetProbe(size_t idx);
-  double GetProbe(const std::string& name);
-  std::string GetProbeName(size_t idx);
+  double GetProbe(size_t idx) const;
+  double GetProbe(const std::string& name) const;
+  std::string GetProbeName(size_t idx) const;
 
   void Track(size_t idx, double time, double value);
   // Returning the index of this element, use it to avoid a string lookup

@@ -72,6 +72,7 @@ set(CDM_H_FILES
   cdm/engine/SEDataRequest.h
   cdm/engine/SEDataRequested.h
   cdm/engine/SEDataRequestManager.h
+  cdm/engine/SEDataRequestTracker.h
   cdm/engine/SEDecimalFormat.h
   cdm/engine/SEDynamicStabilization.h
   cdm/engine/SEDynamicStabilizationEngineConvergence.h
@@ -80,7 +81,6 @@ set(CDM_H_FILES
   cdm/engine/SEEngineConfiguration.h
   cdm/engine/SEEngineInitialization.h
   cdm/engine/SEEngineStabilization.h
-  cdm/engine/SEEngineTracker.h
   cdm/engine/SEEnvironmentActionCollection.h
   cdm/engine/SEEquipmentActionCollection.h
   cdm/engine/SEEventManager.h
@@ -436,6 +436,7 @@ set(CDM_CPP_FILES
   cdm/engine/SEDataRequest.cpp
   cdm/engine/SEDataRequested.cpp
   cdm/engine/SEDataRequestManager.cpp
+  cdm/engine/SEDataRequestTracker.cpp
   cdm/engine/SEDecimalFormat.cpp
   cdm/engine/SEDynamicStabilization.cpp
   cdm/engine/SEDynamicStabilizationEngineConvergence.cpp
@@ -443,7 +444,6 @@ set(CDM_CPP_FILES
   cdm/engine/SEDynamicStabilizationPropertyConvergence.cpp
   cdm/engine/SEEngineInitialization.cpp
   cdm/engine/SEEngineStabilization.cpp
-  cdm/engine/SEEngineTracker.cpp
   cdm/engine/SEEnvironmentActionCollection.cpp
   cdm/engine/SEEquipmentActionCollection.cpp
   cdm/engine/SEEventManager.cpp

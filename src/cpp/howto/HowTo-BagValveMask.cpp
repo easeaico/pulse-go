@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/patient/actions/SEDyspnea.h"
 #include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
@@ -39,25 +39,27 @@ void HowToBagValveMask()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_BagValveMask.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_BagValveMask.cpp/HowTo_BagValveMask.log");
   pe->GetLogger()->Info("HowTo_BagValveMask");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
+  drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_BagValveMask.cpp/HowTo_BagValveMask.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent",MassUnit::g);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowToBagValveMask.csv");
   // Cache off compartments of interest!
   const SEGasCompartment* carina = pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
 
@@ -96,7 +98,7 @@ void HowToBagValveMask()
   pe->ProcessAction(automatic);
 
   // Advance some time
-  AdvanceAndTrackTime_s(5, *pe);
+  pe->AdvanceModelTime(5, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -106,7 +108,7 @@ void HowToBagValveMask()
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+  pe->GetLogger()->Info(std::stringstream() <<"Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
 
   // 2b.)This is the manual squeeze BVM action, you specify the profile of ONE sqeeze of the bag
   SEBagValveMaskSqueeze squeeze;
@@ -120,7 +122,7 @@ void HowToBagValveMask()
   pe->ProcessAction(squeeze);
 
   // Advance some time (Not too much, its only one squeeze!)
-  AdvanceAndTrackTime_s(10, *pe);
+  pe->AdvanceModelTime(10, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -130,7 +132,7 @@ void HowToBagValveMask()
   pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() << "Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+  pe->GetLogger()->Info(std::stringstream() << "Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
 
   // 2c.)This is the instantaneous value of the current time step, generally this is for connecting to a hardware sensor
   SEBagValveMaskInstantaneous instantaneous;
@@ -140,14 +142,14 @@ void HowToBagValveMask()
   pe->ProcessAction(instantaneous);
 
   // Advance some time (Not too much, its only inhale!)
-  AdvanceAndTrackTime_s(2, *pe);
+  pe->AdvanceModelTime(2, TimeUnit::s);
 
   // Set it to release the bag to zero or the PEEP to exhale
   instantaneous.GetPressure().SetValue(5, PressureUnit::cmH2O);
   pe->ProcessAction(instantaneous);
 
   // Advance some time (Not too much, its only exhale!)
-  AdvanceAndTrackTime_s(3, *pe);
+  pe->AdvanceModelTime(3, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -157,8 +159,7 @@ void HowToBagValveMask()
   pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() << "Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
-
+  pe->GetLogger()->Info(std::stringstream() << "Carina Inflow : " << carina->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
 
   pe->GetLogger()->Info("Finished");
 }

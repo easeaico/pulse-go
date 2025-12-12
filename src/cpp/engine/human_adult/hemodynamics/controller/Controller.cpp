@@ -11,14 +11,6 @@
 #include "engine/human_adult/whole_body/system/physiology/NervousModel.h"
 #include "engine/human_adult/whole_body/system/physiology/Saturation.h"
 
-#include "cdm/engine/SEActionManager.h"
-#include "cdm/engine/SEConditionManager.h"
-#include "cdm/engine/SEDataRequested.h"
-#include "cdm/engine/SEEventManager.h"
-#include "cdm/engine/SEPatientConfiguration.h"
-#include "cdm/engine/SEEngineTracker.h"
-#include "cdm/patient/SEPatient.h"
-
 namespace pulse { namespace human_adult_hemodynamics
 {
   Controller::Controller(Logger* logger) : pulse::human_adult_whole_body::Controller(logger)
@@ -27,7 +19,7 @@ namespace pulse { namespace human_adult_hemodynamics
   }
  
   // Serialization is not supported
-  bool Controller::SerializeFromFile(const std::string& /*filename*/)
+  bool Controller::SerializeFromFile(const std::string& /*filename*/, const SEDataRequestManager* /*drMgr*/)
   {
     Error("Serialization is not supported in this engine");
     return false;
@@ -38,7 +30,7 @@ namespace pulse { namespace human_adult_hemodynamics
     return false;
   }
 
-  bool Controller::SerializeFromString(const std::string& /*src*/, eSerializationFormat /*m*/)
+  bool Controller::SerializeFromString(const std::string& /*src*/, eSerializationFormat /*m*/, const SEDataRequestManager* /*drMgr*/)
   {
     Error("Serialization is not supported in this engine");
     return false;

@@ -205,7 +205,7 @@ const SEScalarPower& SEThermalCompartment::GetHeatTransferRateIn() const
   if (m_Links.empty())
     m_HeatTransferRateIn->Invalidate();
   else
-    m_HeatTransferRateIn->SetValue(CalculateInFlow_W(), PowerUnit::W);
+    m_HeatTransferRateIn->SetValue(CalculateInflow_W(), PowerUnit::W);
   m_HeatTransferRateIn->SetReadOnly(true);
   return *m_HeatTransferRateIn;
 }
@@ -213,7 +213,7 @@ double SEThermalCompartment::GetHeatTransferRateIn(const PowerUnit& unit) const
 {
   if (m_Links.empty())
     return SEScalar::dNaN();
-  return Convert(CalculateInFlow_W(), PowerUnit::W, unit);
+  return Convert(CalculateInflow_W(), PowerUnit::W, unit);
 }
 
 bool SEThermalCompartment::HasHeatTransferRateOut() const
@@ -233,7 +233,7 @@ const SEScalarPower& SEThermalCompartment::GetHeatTransferRateOut() const
   if (m_Links.empty())
     m_HeatTransferRateOut->Invalidate();
   else
-    m_HeatTransferRateOut->SetValue(CalculateOutFlow_W(), PowerUnit::W);
+    m_HeatTransferRateOut->SetValue(CalculateOutflow_W(), PowerUnit::W);
   m_HeatTransferRateOut->SetReadOnly(true);
   return *m_HeatTransferRateOut;
 }
@@ -241,10 +241,10 @@ double SEThermalCompartment::GetHeatTransferRateOut(const PowerUnit& unit) const
 {
   if (m_Links.empty())
     return SEScalar::dNaN();
-  return Convert(CalculateOutFlow_W(), PowerUnit::W, unit);
+  return Convert(CalculateOutflow_W(), PowerUnit::W, unit);
 }
 
-double SEThermalCompartment::CalculateInFlow_W() const
+double SEThermalCompartment::CalculateInflow_W() const
 {
   double flow_W = 0;
 
@@ -268,7 +268,7 @@ double SEThermalCompartment::CalculateInFlow_W() const
   return flow_W;
 }
 
-double SEThermalCompartment::CalculateOutFlow_W() const
+double SEThermalCompartment::CalculateOutflow_W() const
 {
   double flow_W = 0;
 
