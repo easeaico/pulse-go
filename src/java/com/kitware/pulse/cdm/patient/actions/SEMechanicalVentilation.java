@@ -303,7 +303,7 @@ public class SEMechanicalVentilation extends SEPatientAction
     String cnts = "Mechanical Ventilation"
         + "\n\tState: " + getState()
         + "\n\tFlow: " + (hasFlow() ? getFlow() : "Not Provided")
-        + "\n\tPressure: " + (hasPressure() ? getPressure() : "Not Provided");
+        + "\n\tPressure: " + (hasPressure() ? getPressure() : "Not Provided")
         + "\n\tMechanicalDeadSpaceVolume: " + (hasMechanicalDeadSpaceVolume() ? getMechanicalDeadSpaceVolume() : "Not Provided");
     for(SESubstanceFraction sf : this.gasFractions)
       cnts += "\n\tSubstanceFraction: " + sf.getSubstance() + " : " + sf.getAmount();

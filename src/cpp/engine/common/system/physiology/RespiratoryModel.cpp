@@ -1881,7 +1881,6 @@ namespace pulse
       }
     }
 
-    double pi = 3.14159265359;
     if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
     {
       m_DriverPressure_cmH2O = 0.0;
@@ -1889,7 +1888,7 @@ namespace pulse
     else if (m_BreathingCycleTime_s >= ExpiratoryReleaseTimeStart_s)
     {
       double segmentTime_s = ResidueFractionTimeStart_s - ExpiratoryReleaseTimeStart_s;
-      m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - ExpiratoryReleaseTimeStart_s) / segmentTime_s);
+      m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * sin(M_PI / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - ExpiratoryReleaseTimeStart_s) / segmentTime_s);
     }
     else if (m_BreathingCycleTime_s >= ExpiratoryHoldTimeStart_s)
     {
@@ -1898,7 +1897,7 @@ namespace pulse
     else if (m_BreathingCycleTime_s >= ExpiratoryRiseTimeStart_s)
     {
       double segmentTime_s = ExpiratoryHoldTimeStart_s - ExpiratoryRiseTimeStart_s;
-      m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s) / segmentTime_s);
+      m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * sin(M_PI / 2.0 * (m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s) / segmentTime_s);
     }
     else if (m_BreathingCycleTime_s >= InspiratoryToExpiratoryPauseTimeStart_s)
     {
@@ -1907,7 +1906,7 @@ namespace pulse
     else if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s)
     {
       double segmentTime_s = InspiratoryToExpiratoryPauseTimeStart_s - InspiratoryReleaseTimeStart_s;
-      m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - InspiratoryReleaseTimeStart_s) / segmentTime_s);
+      m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(M_PI / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - InspiratoryReleaseTimeStart_s) / segmentTime_s);
     }
     else if (m_BreathingCycleTime_s >= InspiratoryHoldTimeStart_s)
     {
@@ -1915,7 +1914,7 @@ namespace pulse
     }
     else //(m_BreathingCycleTime_s >= InspiratoryRiseTimeStart_s)
     {
-      m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * m_BreathingCycleTime_s / InspiratoryHoldTimeStart_s);
+      m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(M_PI / 2.0 * m_BreathingCycleTime_s / InspiratoryHoldTimeStart_s);
     }
 
     if (!m_PatientActions->HasConsciousRespiration() && !HasActiveMechanics())
@@ -4545,8 +4544,7 @@ namespace pulse
 
     // Time in seconds
     double t = m_ElapsedBreathingCycleTime_min * 60.0;
-    double pi = 3.14159265358979323846;
-    double omega = 2.0 * pi * frequency_Hz;
+    double omega = 2.0 * M_PI * frequency_Hz;
 
     // Sinusoidal oscillation: -1 to 1
     double sinusoid = sin(omega * t);
