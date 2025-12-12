@@ -189,20 +189,22 @@ message ConfigurationData
     pulse.cdm.bind.TimedStabilizationData              TimedStabilization                                   = 4;/**<< @brief */
     pulse.cdm.bind.DynamicStabilizationData            DynamicStabilization                                 = 5;/**<< @brief */
   }
-  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 6;
-  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 7;
-  CircuitConfigurationData                             CircuitConfiguration                                 = 8;
-  ConstantsConfigurationData                           ConstantsConfiguration                               = 9;
-  DrugsConfigurationData                               DrugsConfiguration                                   = 10;
-  ECGConfigurationData                                 ECGConfiguration                                     = 11;
-  EnergyConfigurationData                              EnergyConfiguration                                  = 12;
-  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 13;
-  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 14;
-  NervousConfigurationData                             NervousConfiguration                                 = 15;
-  RenalConfigurationData                               RenalConfiguration                                   = 16;
-  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 17;
-  TissueConfigurationData                              TissueConfiguration                                  = 18;
-  map<string,pulse.cdm.bind.ScalarData>                Modifiers                                            = 19;
-  map<string,pulse.cdm.bind.ScalarData>                Overrides                                            = 20;
+  pulse.cdm.bind.eSwitch                               TrackStabilization                                   = 6;
+  
+  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 7;
+  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 8;
+  CircuitConfigurationData                             CircuitConfiguration                                 = 9;
+  ConstantsConfigurationData                           ConstantsConfiguration                               = 10;
+  DrugsConfigurationData                               DrugsConfiguration                                   = 11;
+  ECGConfigurationData                                 ECGConfiguration                                     = 12;
+  EnergyConfigurationData                              EnergyConfiguration                                  = 13;
+  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 14;
+  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 15;
+  NervousConfigurationData                             NervousConfiguration                                 = 16;
+  RenalConfigurationData                               RenalConfiguration                                   = 17;
+  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 18;
+  TissueConfigurationData                              TissueConfiguration                                  = 19;
+  map<string,pulse.cdm.bind.ScalarData>                Modifiers                                            = 20;
+  map<string,pulse.cdm.bind.ScalarData>                Overrides                                            = 21;
 }
  

@@ -14,7 +14,6 @@
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/PhysiologyEngine.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEEngineConfiguration.h"
 #include "cdm/patient/SEPatient.h"
 #include "cdm/properties/SEScalarTime.h"
@@ -219,6 +218,14 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioEx
     status->SetLogFilename(m_LogFilename);
     status->SetCSVFilename(m_DataRequestCSVFilename);
   }
+  if (!sce.GetDataRequestManager().HasResultsFilename())
+    sce.GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
+  else
+  {
+    std::string resultsFilename = sce.GetDataRequestManager().GetResultFilename();
+    if (resultsFilename != m_DataRequestCSVFilename)
+      Error("Derived csv filename " + m_DataRequestCSVFilename + " not the same as requested csv file: " + resultsFilename);
+  }
 
   if(!sce.IsValid())
   {
@@ -246,41 +253,28 @@ bool SEScenarioExec::Process(PhysiologyEngine& pe, SEScenario& sce, SEScenarioEx
           state = m_OutputRootDirectory + state;
         }
       }
-      if (!pe.SerializeFromFile(state))
+      if (sce.GetDataRequestManager().HasDataRequests())
+        remove(m_DataRequestCSVFilename.c_str());
+      // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
+      if (!pe.SerializeFromFile(state, &sce.GetDataRequestManager()))
       {
         if (status)
           status->SetEngineInitializationState(eEngineInitializationState::FailedState);
         pe.GetLogger()->Error("Unable to load state file: "+ state);
         return false;
       }
-      // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
-      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager());
-      if (sce.GetDataRequestManager().HasDataRequests())
-      {
-        remove(m_DataRequestCSVFilename.c_str());
-        sce.Info("Creating CSV File : " + m_DataRequestCSVFilename);
-        pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
-        pe.GetEngineTracker()->TrackData(pe.GetSimulationTime(TimeUnit::s));
-      }
     }
     else if (sce.HasPatientConfiguration())
     {
+      if (sce.GetDataRequestManager().HasDataRequests())
+        remove(m_DataRequestCSVFilename.c_str());
       sce.GetPatientConfiguration().SetDataRoot(m_DataRootDirectory);
-      if (!pe.InitializeEngine(sce.GetPatientConfiguration()))
+      if (!pe.InitializeEngine(sce.GetPatientConfiguration(), &sce.GetDataRequestManager()))
       {
         if (status)
           status->SetEngineInitializationState(pe.GetInitializationState());
         pe.GetLogger()->Error("Unable to initialize engine");
         return false;
-      }
-      // Make a copy of the data requests, note this clears out data requests from the engine
-      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager());
-      if (sce.GetDataRequestManager().HasDataRequests())
-      {
-        remove(m_DataRequestCSVFilename.c_str());
-        sce.Info("Creating CSV File : " + m_DataRequestCSVFilename);
-        pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
-        pe.GetEngineTracker()->TrackData(pe.GetSimulationTime(TimeUnit::s));
       }
       if (status)
         status->SetStabilizationTime_s(pe.GetStabilizationTime(TimeUnit::s));
@@ -332,11 +326,6 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SESce
   double statusTime_s = 0;// Current time of this status cycle
   double statusStep_s = 60;//How long did it take to simulate this much time
 
-  double sampleTime_s = sce.GetDataRequestManager().GetSamplesPerSecond();
-  if (sampleTime_s != 0)
-    sampleTime_s = 1 / sampleTime_s;
-  double currentSampleTime_s = 0;
-
   TimingProfile profiler;
   profiler.Start("Total");
   profiler.Start("Status");
@@ -361,21 +350,14 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce, SESce
       spareAdvanceTime_s = time_s - (count * dT_s);
       for (int i=0;i<count;i++)
       {
-        if (!AdvanceEngine(pe) || pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
+        if (!AdvanceEngine(pe, sce) || pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
         {
           pe.GetLogger()->Fatal("Halting scenario execution");
           return false;
         }
 
-        // Pull data from the engine
-        scenarioTime_s = pe.GetSimulationTime(TimeUnit::s);
-        currentSampleTime_s += dT_s;
-        if (currentSampleTime_s >= sampleTime_s)
-        {
-          currentSampleTime_s = 0;
-          pe.GetEngineTracker()->TrackData(scenarioTime_s);
-        }
         statusTime_s += dT_s;
+        scenarioTime_s = pe.GetSimulationTime(TimeUnit::s);
         // How are we running?
         if (statusTime_s>statusStep_s)
         {
@@ -458,7 +440,7 @@ bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
   return pe.ProcessAction(action);
 }
 
-bool SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
+bool SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe, SEScenario& sce)
 {
   if (m_AutoSerializePeriod_s > 0)
   {
@@ -478,7 +460,7 @@ bool SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
       }
       if (m_ReloadSerializedState == eSwitch::On)
       {
-        if (!pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt))
+        if (!pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt, &sce.GetDataRequestManager()))
         {
           Error("Unable to ReloadSerializedStateFromFile.");
           return false;
@@ -526,7 +508,7 @@ bool SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     if (m_ReloadSerializedState == eSwitch::On)
     {
       pe.GetLogger()->Info("Reloading and saving reloaded state");
-      if (!pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt))
+      if (!pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt, &sce.GetDataRequestManager()))
       {
         Error("Unable to ReloadSerializedStateAfterActionBackToFile.");
         return false;

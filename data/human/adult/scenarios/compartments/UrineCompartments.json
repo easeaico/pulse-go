@@ -9,7 +9,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftUreter",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -17,7 +17,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "LeftUreter",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -93,7 +93,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightUreter",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -101,7 +101,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "RightUreter",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -177,7 +177,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Ureters",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -185,7 +185,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Ureters",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -261,7 +261,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Bladder",
-      "PropertyName": "InFlow",
+      "PropertyName": "Inflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {
@@ -269,7 +269,7 @@
       },
       "Category": "LiquidCompartment",
       "CompartmentName": "Bladder",
-      "PropertyName": "OutFlow",
+      "PropertyName": "Outflow",
       "Unit": "mL/s"
     }, {
       "DecimalFormat": {

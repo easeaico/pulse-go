@@ -39,21 +39,21 @@ public:
   virtual void Sample(bool CycleStart);
   virtual void SampleFlow(); // We can add other sampling support as needed, just follow the pattern
 
-  virtual bool HasInFlow() const;
-  virtual const SEScalarVolumePerTime& GetInFlow() const;
-  virtual double GetInFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasInflow() const;
+  virtual const SEScalarVolumePerTime& GetInflow() const;
+  virtual double GetInflow(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasAverageInFlow() const;
-  virtual const SEScalarVolumePerTime& GetAverageInFlow() const;
-  virtual double GetAverageInFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasAverageInflow() const;
+  virtual const SEScalarVolumePerTime& GetAverageInflow() const;
+  virtual double GetAverageInflow(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasOutFlow() const;
-  virtual const SEScalarVolumePerTime& GetOutFlow() const;
-  virtual double GetOutFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasOutflow() const;
+  virtual const SEScalarVolumePerTime& GetOutflow() const;
+  virtual double GetOutflow(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasAverageOutFlow() const;
-  virtual const SEScalarVolumePerTime& GetAverageOutFlow() const;
-  virtual double GetAverageOutFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasAverageOutflow() const;
+  virtual const SEScalarVolumePerTime& GetAverageOutflow() const;
+  virtual double GetAverageOutflow(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasPressure() const;
   virtual SEScalarPressure& GetPressure();
@@ -82,18 +82,18 @@ protected:
   bool HasQuantity() const override { return HasVolume(); }
   SEScalarVolume& GetQuantity() override { return GetVolume(); }
 
-  virtual double CalculateInFlow_mL_Per_s() const;
-  virtual double CalculateOutFlow_mL_Per_s() const;
+  virtual double CalculateInflow_mL_Per_s() const;
+  virtual double CalculateOutflow_mL_Per_s() const;
 
   std::vector<TransportSubstanceType*>& GetTransportSubstances() override { return m_TransportSubstances; }
 
-  mutable SEScalarVolumePerTime* m_InFlow;
-  mutable SEScalarVolumePerTime* m_OutFlow;
+  mutable SEScalarVolumePerTime* m_Inflow;
+  mutable SEScalarVolumePerTime* m_Outflow;
   bool                           m_SampleFlow;
-  mutable SEScalarVolumePerTime* m_AverageInFlow;
-  mutable SEScalarVolumePerTime* m_AverageOutFlow;
-  mutable SERunningAverage*      m_AverageInFlow_mL_Per_s;
-  mutable SERunningAverage*      m_AverageOutFlow_mL_Per_s;
+  mutable SEScalarVolumePerTime* m_AverageInflow;
+  mutable SEScalarVolumePerTime* m_AverageOutflow;
+  mutable SERunningAverage*      m_AverageInflow_mL_Per_s;
+  mutable SERunningAverage*      m_AverageOutflow_mL_Per_s;
 
   SEScalarPressure*              m_Pressure;
   SEScalarVolume*                m_Volume;

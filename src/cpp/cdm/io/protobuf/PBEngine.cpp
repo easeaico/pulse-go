@@ -848,9 +848,6 @@ void PBEngine::Load(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStab
 }
 void PBEngine::Serialize(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)
 {
-  if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
-    dst.TrackStabilization((eSwitch)src.trackingstabilization());
-
   for (auto itr : src.convergencecriteria())
   {
     SEDynamicStabilizationEngineConvergence* c = new SEDynamicStabilizationEngineConvergence(dst.GetLogger());
@@ -866,7 +863,7 @@ CDM_BIND::DynamicStabilizationData* PBEngine::Unload(const SEDynamicStabilizatio
 }
 void PBEngine::Serialize(const SEDynamicStabilization& src, CDM_BIND::DynamicStabilizationData& dst)
 {
-  dst.set_trackingstabilization((CDM_BIND::eSwitch)src.m_TrackingStabilization);
+  
   for (auto &c : src.m_ConvergenceCriteria)
   {
     CDM_BIND::DynamicStabilizationEngineConvergenceData* cData = PBEngine::Unload(*c.second);
@@ -931,8 +928,6 @@ void PBEngine::Load(const CDM_BIND::TimedStabilizationData& src, SETimedStabiliz
 }
 void PBEngine::Serialize(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst)
 {
-  if (src.trackingstabilization() != CDM_BIND::eSwitch::NullSwitch)
-    dst.TrackStabilization((eSwitch)src.trackingstabilization());
   for (auto itr : src.convergencecriteria())
   {
     SEScalarTime* time = new SEScalarTime();
@@ -948,7 +943,6 @@ CDM_BIND::TimedStabilizationData* PBEngine::Unload(const SETimedStabilization& s
 }
 void PBEngine::Serialize(const SETimedStabilization& src, CDM_BIND::TimedStabilizationData& dst)
 {
-  dst.set_trackingstabilization((CDM_BIND::eSwitch)src.m_TrackingStabilization);
   for (auto cc : src.m_ConvergenceCriteria)
   {
     if (cc.second == nullptr)

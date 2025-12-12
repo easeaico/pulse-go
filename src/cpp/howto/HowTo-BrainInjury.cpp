@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
@@ -43,8 +43,9 @@ void HowToBrainInjury()
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_BrainInjury.log");
-  
   pe->GetLogger()->Info("HowTo_BrainInjury");
+
+
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
@@ -52,16 +53,15 @@ void HowToBrainInjury()
   }
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToBrainInjury.csv");
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.SetResultsFilename("HowToBrainInjury.csv");
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -83,7 +83,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
   pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
 
-  AdvanceAndTrackTime_s(30, *pe);
+  pe->AdvanceModelTime(30, TimeUnit::s);
   
   // Create an SEBrainInjury object
   // Set the severity (a fraction between 0 and 1; for maximal injury, use 1.)  
@@ -94,7 +94,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info("Giving the patient a brain injury.");
 
   // Advance time to see how the injury affects the patient
-  AdvanceAndTrackTime_s(90, *pe);
+  pe->AdvanceModelTime(90, TimeUnit::s);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient has had a brain injury for 90s, not doing well...");
   pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -122,7 +122,7 @@ void HowToBrainInjury()
 
   pe->GetLogger()->Info("Removing the brain injury.");
 
-  AdvanceAndTrackTime_s(90, *pe);
+  pe->AdvanceModelTime(90, TimeUnit::s);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient's brain injury has been removed for 90s; patient is much better");
   pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -148,7 +148,7 @@ void HowToBrainInjury()
   pe->ProcessAction(tbi);
   pe->GetLogger()->Info("Giving the patient a severe brain injury.");
 
-  AdvanceAndTrackTime_s(300, *pe);
+  pe->AdvanceModelTime(300, TimeUnit::s);
 
   // You can also get information from the compartment rather than the system, in case you want other metrics
   const SELiquidCompartment* brain = pe->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
@@ -163,7 +163,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
   pe->GetLogger()->Info(std::stringstream() << "Intracranial Pressure : " << brain->GetPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() << "Cerebral Perfusion Pressure : " << pe->GetCardiovascularSystem()->GetCerebralPerfusionPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << brain->GetInFlow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Cerebral Blood Flow : " << brain->GetInflow(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() << "Instantaneous GCS value : " << GlasgowEstimator(pe->GetCardiovascularSystem()->GetCerebralBloodFlow(VolumePerTimeUnit::mL_Per_min)));// You can get the following pupillary effects
   // Reactivity Change in pupil recation time to light. -1 complete reduction/no response, 0 is normal, and 1 is the fastest reaction time.
   // Pupil size change from normal. -1 is fully constricted, 0 is no change, +1 is fully dilated. 

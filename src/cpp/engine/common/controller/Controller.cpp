@@ -29,9 +29,9 @@
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEActionManager.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEAdvanceTime.h"
 #include "cdm/engine/SEAdvanceUntilStable.h"
 #include "cdm/engine/SESerializeRequested.h"
@@ -60,7 +60,7 @@ namespace pulse
     m_State = EngineState::NotReady;
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
-    m_EngineTrack = nullptr;
+    m_EngineTracker = nullptr;
     m_DataRequested = nullptr;
     m_AdvanceHandler = nullptr;
 
@@ -73,7 +73,7 @@ namespace pulse
   }
   Data::~Data()
   {
-    SAFE_DELETE(m_EngineTrack);
+    SAFE_DELETE(m_EngineTracker);
     SAFE_DELETE(m_DataRequested);
   }
 
@@ -108,18 +108,58 @@ namespace pulse
 
   void Data::SetupTracker()
   {
-    m_EngineTrack = new SEEngineTracker(*m_CurrentPatient, *m_Actions, *m_Substances, *m_Compartments, m_Logger);
-    for (auto model : m_Models)
-    {
-      SESystem* s = dynamic_cast<SESystem*>(model);
-      if (s == nullptr)
-        throw CommonDataModelException("Setting up an engine with a model that is not an SESystem");
-      m_EngineTrack->AddSystem(*s);
-    }
+    if (m_EnvironmentModel)
+      m_EngineTracker->SetEnvironment(*m_EnvironmentModel);
+    if (m_CurrentPatient)
+      m_EngineTracker->SetPatient(*m_CurrentPatient);
+    // Physiology
+    if (m_BloodChemistryModel)
+      m_EngineTracker->AddPhysiologySystem(*m_BloodChemistryModel);
+    if (m_CardiovascularModel)
+      m_EngineTracker->AddPhysiologySystem(*m_CardiovascularModel);
+    if (m_EndocrineModel)
+      m_EngineTracker->AddPhysiologySystem(*m_EndocrineModel);
+    if (m_EnergyModel)
+      m_EngineTracker->AddPhysiologySystem(*m_EnergyModel);
+    if (m_GastrointestinalModel)
+      m_EngineTracker->AddPhysiologySystem(*m_GastrointestinalModel);
+    if (m_HepaticModel)
+      m_EngineTracker->AddPhysiologySystem(*m_HepaticModel);
+    if (m_NervousModel)
+      m_EngineTracker->AddPhysiologySystem(*m_NervousModel);
+    if (m_RenalModel)
+      m_EngineTracker->AddPhysiologySystem(*m_RenalModel);
+    if (m_RespiratoryModel)
+      m_EngineTracker->AddPhysiologySystem(*m_RespiratoryModel);
+    if (m_DrugModel)
+      m_EngineTracker->AddPhysiologySystem(*m_DrugModel);
+    if (m_TissueModel)
+      m_EngineTracker->AddPhysiologySystem(*m_TissueModel);
+    // Equipment
+    if (m_AnesthesiaMachineModel)
+      m_EngineTracker->SetAnesthesiaMachine(*m_AnesthesiaMachineModel);
+    if (m_BagValveMaskModel)
+      m_EngineTracker->SetBagValveMask(*m_BagValveMaskModel);
+    if (m_ElectroCardioGramModel)
+      m_EngineTracker->SetElectroCardioGram(*m_ElectroCardioGramModel);
+    if (m_ECMOModel)
+      m_EngineTracker->SetECMO(*m_ECMOModel);
+    if (m_InhalerModel)
+      m_EngineTracker->SetInhaler(*m_InhalerModel);
+    if (m_MechanicalVentilatorModel)
+      m_EngineTracker->SetMechanicalVentilator(*m_MechanicalVentilatorModel);
+    // Managers
+    if (m_Actions)
+      m_EngineTracker->SetActionManager(*m_Actions);
+    if (m_Substances)
+      m_EngineTracker->SetSubstanceManager(*m_Substances);
+    if (m_Compartments)
+      m_EngineTracker->SetCompartmentManager(*m_Compartments);
   }
 
-  SEEngineTracker& Data::GetEngineTracker() const { return *m_EngineTrack; }
-  DataTrack& Data::GetDataTrack() const { return m_EngineTrack->GetDataTrack(); }
+  DataTrack& Data::GetDataTrack() const { return m_EngineTracker->GetDataTrack(); }
+  SEEngineTracker& Data::GetEngineTracker() const { return *m_EngineTracker; }
+
   SaturationCalculator& Data::GetSaturationCalculator() const { return *m_SaturationCalculator; }
 
   SubstanceManager& Data::GetSubstances() const { return *m_Substances; }
@@ -181,6 +221,12 @@ namespace pulse
 
   const SEScalarTime& Data::GetEngineTime() const { return m_CurrentTime; }
   const SEScalarTime& Data::GetSimulationTime() const { return m_SimulationTime; }
+  double Data::GetSimulationTime_s() const
+  {
+    double currentSimTime_s = m_SimulationTime.GetValue(TimeUnit::s);
+    // Round sim time to nearest hundredth, TODO to nearest time step?
+    return std::ceil(currentSimTime_s * 100.0) / 100.0;
+  }
   const SEScalarTime& Data::GetStabilizationTime() const { return m_StabilizationTime; }
   const SEScalarTime& Data::GetTimeStep() const { return m_Config->GetTimeStep(); }
   double Data::GetTimeStep_s() const { return GetTimeStep().GetValue(TimeUnit::s); }
@@ -272,6 +318,8 @@ namespace pulse
 
     m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
     m_Logger->AddForward(m_LogForward);
+
+    m_EngineTracker = new SEEngineTracker(m_Logger);
   }
 
   bool Controller::SetConfigurationOverride(const SEEngineConfiguration* config)
@@ -290,7 +338,7 @@ namespace pulse
     return true;
   }
 
-  bool Controller::SerializeFromFile(const std::string& filename)
+  bool Controller::SerializeFromFile(const std::string& filename, const SEDataRequestManager* drMgr)
   {
     Info("[SerializingFromFile] " + filename);
     LogBuildInfo();
@@ -299,7 +347,10 @@ namespace pulse
       m_EngineInitializationState = eEngineInitializationState::FailedState;
       return false;
     }
+    if (drMgr)
+      m_EngineTracker->SetupDataRequests(*drMgr);
     Info("[Initial SimTime(s)] " + m_SimulationTime.ToString());
+    m_EngineTracker->TrackData(m_SimulationTime.GetValue(TimeUnit::s), GetTimeStep_s());
     return true;
   }
   bool Controller::SerializeToFile(const std::string& filename) const
@@ -308,7 +359,7 @@ namespace pulse
     return PBState::SerializeToFile(*this, filename);
   }
 
-  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
+  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m, const SEDataRequestManager* drMgr)
   {
     Info("[SerializingFromString]");
     LogBuildInfo();
@@ -317,7 +368,10 @@ namespace pulse
       m_EngineInitializationState = eEngineInitializationState::FailedState;
       return false;
     }
+    if (drMgr)
+      m_EngineTracker->SetupDataRequests(*drMgr);
     Info("[Initial SimTime(s)] " + m_SimulationTime.ToString());
+    m_EngineTracker->TrackData(m_SimulationTime.GetValue(TimeUnit::s), GetTimeStep_s());
     return true;
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
@@ -326,19 +380,13 @@ namespace pulse
     return PBState::SerializeToString(*this, output, m);
   }
 
-  bool Controller::InitializeEngine(const std::string& patient_configuration, eSerializationFormat m)
-  {
-    SEPatientConfiguration pc(GetLogger());
-    pc.SerializeFromString(patient_configuration, m, *m_Substances);
-    return InitializeEngine(pc);
-  }
-
-  bool Controller::InitializeEngine(const SEPatientConfiguration& patient_configuration)
+  bool Controller::InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEDataRequestManager* drMgr)
   {
     Clear();
     Info("Initializing engine");
     LogBuildInfo();
 
+    m_Tracking = eSwitch::Off;
     m_State = EngineState::NotReady;
 
     m_SpareAdvanceTime_s = 0;
@@ -398,9 +446,19 @@ namespace pulse
     InitializeModels();
     AdvanceCallback(-1);
 
+    if (drMgr != nullptr)
+      m_EngineTracker->SetupDataRequests(*drMgr);
+
     // We don't capture events during initialization
     SEEventHandler* event_handler = m_EventManager->GetEventHandler();
     m_EventManager->ForwardEvents(nullptr);
+
+    if (m_Config->IsTrackingStabilization())
+    {
+      m_Tracking = eSwitch::On;
+      m_SimulationTime.SetValue(0, TimeUnit::s);
+      m_EngineTracker->TrackData(0, GetTimeStep_s());
+    }
 
     if (!Stabilize(patient_configuration))
     {
@@ -414,12 +472,14 @@ namespace pulse
     m_Circuits->SetReadOnly(true);
 
     m_StabilizationTime.Set(m_SimulationTime);
-    if (!m_Config->GetStabilization()->IsTrackingStabilization())
+
+    if (!m_Config->IsTrackingStabilization())
     {
+      m_Tracking = eSwitch::On;
       m_SimulationTime.SetValue(0, TimeUnit::s);
-      // Track Time 0
-      GetEngineTracker().TrackData(0);
+      m_EngineTracker->TrackData(0, GetTimeStep_s());
     }
+
     // Hook up the handlers (Note events will still be in the log)
     m_EventManager->ForwardEvents(event_handler);
     // Ready to go!
@@ -528,8 +588,6 @@ namespace pulse
 
     // Cache the healthy requested values before we apply any conditions
     // Note, this should not cost much, but we could make this happen if a config v&v flag is enabled
-    GetEngineTracker().SetupRequests();
-    GetEngineTracker().PullData(-1);
     m_DataRequested->PullDataRequested(-1, -1, GetDataTrack());
 
     // Apply conditions and anything else to the physiology
@@ -662,8 +720,7 @@ namespace pulse
     m_EngineInitializationState = eEngineInitializationState::Uninitialized;
     m_AirwayMode = eAirwayMode::Free;
     m_Intubation = eSwitch::Off;
-    if (m_EngineTrack)
-      m_EngineTrack->Clear();
+    m_EngineTracker->Reset();
 
     m_CurrentTime.SetValue(0, TimeUnit::s);
     m_SimulationTime.SetValue(0, TimeUnit::s);
@@ -711,8 +768,11 @@ namespace pulse
     m_CurrentTime.Increment(m_Config->GetTimeStep());
     m_SimulationTime.Increment(m_Config->GetTimeStep());
 
+    if (m_Tracking == eSwitch::On)
+      m_EngineTracker->TrackData(m_SimulationTime.GetValue(TimeUnit::s), m_Config->GetTimeStep(TimeUnit::s));
+
     if (m_AdvanceHandler)
-      m_AdvanceHandler->OnAdvance(m_CurrentTime.GetValue(TimeUnit::s));
+      m_AdvanceHandler->OnAdvance(m_SimulationTime.GetValue(TimeUnit::s));
 
     // TODO Figure out a way to track what overrides were used and which were not
     m_ScalarOverrides.clear();
@@ -763,7 +823,6 @@ namespace pulse
     if (adv2Stable != nullptr)
     {
       m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
-      m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
       std::string criteria;
       if (adv2Stable->HasCriteria())
         criteria = adv2Stable->GetCriteria();
@@ -792,10 +851,7 @@ namespace pulse
     if (serializeRequested != nullptr)
     {
       std::string output;
-      double currentSimTime_s = GetSimulationTime().GetValue(TimeUnit::s);
-      // Round sim time to nearest hundredth, TODO to nearest time step?
-      currentSimTime_s = std::ceil(currentSimTime_s * 100.0) / 100.0;
-      GetEngineTracker().PullData(currentSimTime_s);
+      double currentSimTime_s = GetSimulationTime_s();
       if(serializeRequested->GetClearCache())
         m_DataRequested->ClearDataRequested();
       m_DataRequested->PullDataRequested(serializeRequested->GetID(), currentSimTime_s, GetDataTrack());
@@ -838,7 +894,7 @@ namespace pulse
         }
       }
       else
-        return SerializeFromFile(serializeState->GetFilename());
+        return SerializeFromFile(serializeState->GetFilename(), &m_EngineTracker->GetDataRequestManager());
       return true;
     }
 
@@ -852,7 +908,7 @@ namespace pulse
         SEArterialBloodGasTest abg(m_Logger);
         if (GetPatientAssessment(abg))
         {
-          std::string abgFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+          std::string abgFile = m_EngineTracker->GetDataRequestManager().GetResultFilename();
           if (abgFile.empty())
             abgFile = "ArterialBloodGasTest";
           m_ss << "ABG@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
@@ -869,7 +925,7 @@ namespace pulse
         SECompleteBloodCount cbc(m_Logger);
         if (GetPatientAssessment(cbc))
         {
-          std::string cbcFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+          std::string cbcFile = m_EngineTracker->GetDataRequestManager().GetResultFilename();
           if (cbcFile.empty())
             cbcFile = "CompleteBloodCount";
           m_ss << "CBC@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
@@ -886,7 +942,7 @@ namespace pulse
         SEComprehensiveMetabolicPanel mp(m_Logger);
         if (GetPatientAssessment(mp))
         {
-          std::string mpFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+          std::string mpFile = m_EngineTracker->GetDataRequestManager().GetResultFilename();
           if (mpFile.empty())
             mpFile = "ComprehensiveMetabolicPanel";
           m_ss << "CMP@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
@@ -903,7 +959,7 @@ namespace pulse
         SEUrinalysis upan(m_Logger);
         if (GetPatientAssessment(upan))
         {
-          std::string upanFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+          std::string upanFile = m_EngineTracker->GetDataRequestManager().GetResultFilename();
           if (upanFile.empty())
             upanFile = "Urinalysis";
           m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
@@ -934,7 +990,6 @@ namespace pulse
       m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
       m_NervousModel->SetBaroreceptorFeedback(eSwitch::Off);
       m_NervousModel->SetChemoreceptorFeedback(eSwitch::Off);
-      m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
       if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, SEEngineStabilization::AdvanceUntilStable))
         Error("Unable to restabilize to provided cardiovascular modifiers");
       m_Actions->GetPatientActions().GetCardiovascularMechanicsModification().SetIncremental(true);
@@ -952,7 +1007,6 @@ namespace pulse
     if (rMod != nullptr && !rMod->GetIncremental())
     {
       m_EventManager->SetEvent(eEvent::Stabilizing, true, m_SimulationTime);
-      m_Config->GetStabilization()->TrackStabilization(eSwitch::On);
       if (!m_Config->GetStabilization()->Stabilize(*m_Stabilizer, SEEngineStabilization::AdvanceUntilStable))
         Error("Unable to restabilize to provided respiratory modifiers");
       m_Actions->GetPatientActions().GetRespiratoryMechanicsModification().SetIncremental(true);

@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/compartment/SECompartmentManager.h"
@@ -37,9 +37,21 @@ void HowToPneumonia()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_Pneumonia.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Pneumonia.cpp/HowTo_Pneumonia.log");
   pe->GetLogger()->Info("HowTo_Pneumonia");
-  
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
+  drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
+  drMgr.CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "Inflow");
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_Pneumonia.cpp/HowTo_Pneumonia.csv");
+
   //  pneumonia is a form of pneumonia that affects one or more lobes of the lungs.  
   // As fluid fills portions of the lung it becomes more difficult to breath and the gas diffusion surface area in the alveoli is reduced. 
   // Since this is a condition, we need to initialize it on the patient along with engine initialization
@@ -50,26 +62,14 @@ void HowToPneumonia()
   pneumonia.GetSeverity(eLungCompartment::LeftLung).SetValue(0.2);
   pneumonia.GetSeverity(eLungCompartment::RightLung).SetValue(1.0);
 
-  if (!pe->InitializeEngine(pc))
+  if (!pe->InitializeEngine(pc, &drMgr))
   {
     pe->GetLogger()->Error("Could not load initialize engine, check the error");
     return;
   }
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToPneumonia.csv");
-
   // Advance some time to get some data
-  AdvanceAndTrackTime_s(500, *pe);
+  pe->AdvanceModelTime(500, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient is not very healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -79,6 +79,6 @@ void HowToPneumonia()
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
-  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
+  pe->GetLogger()->Info(std::stringstream() <<"Carina Inflow : " << pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina)->GetInflow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);;
   pe->GetLogger()->Info("Finished");
 }

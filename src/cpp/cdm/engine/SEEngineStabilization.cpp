@@ -7,8 +7,9 @@
 
 SEEngineStabilization::SEEngineStabilization(Logger *logger) : Loggable(logger)
 {
+  m_Cancelled = true;
+  m_LogProgress = true;
   m_StabilizationDuration = nullptr;
-  m_TrackingStabilization = eSwitch::Off;
 }
 
 SEEngineStabilization::~SEEngineStabilization()
@@ -19,22 +20,12 @@ SEEngineStabilization::~SEEngineStabilization()
 void SEEngineStabilization::Clear()
 {
   m_LogProgress = true;
-  m_TrackingStabilization = eSwitch::Off;
   SAFE_DELETE(m_StabilizationDuration);
 }
 
 void SEEngineStabilization::LogProgress(bool b)
 {
   m_LogProgress = b;
-}
-
-void SEEngineStabilization::TrackStabilization(eSwitch state)
-{
-  m_TrackingStabilization = (state == eSwitch::NullSwitch) ? eSwitch::Off : state;
-}
-bool SEEngineStabilization::IsTrackingStabilization()
-{
-  return m_TrackingStabilization== eSwitch::On;
 }
 
 void SEEngineStabilization::CancelStabilization()

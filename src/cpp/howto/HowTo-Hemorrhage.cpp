@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/compartment/SECompartmentManager.h"
@@ -37,34 +37,35 @@
 /// Refer to the SESubstanceManager class
 /// Refer to the SESubstanceIVFluids class for applying an IV to the patient
 //--------------------------------------------------------------------------------------------------
-void HowToHemorrhage() 
+void HowToHemorrhage()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->LogToConsole(true);
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.cpp/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
+  drMgr.CreatePhysiologyDataRequest("TotalHemorrhageRate", VolumePerTimeUnit::mL_Per_s);
+  drMgr.CreatePhysiologyDataRequest("TotalHemorrhagedVolume", VolumeUnit::mL);
+  drMgr.CreateActionCompartmentDataRequest("Hemorrhage", pulse::VascularCompartment::RightLeg, "FlowRate", VolumePerTimeUnit::mL_Per_s);
+  drMgr.CreateActionCompartmentDataRequest("Hemorrhage", pulse::VascularCompartment::RightLeg, "TotalBloodLost", VolumeUnit::mL);
+  drMgr.SetResultsFilename("./test_results/HowTo_Hemorrhage.cpp/HowToHemorrhage.csv");
+
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent",MassUnit::g);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalHemorrhageRate", VolumePerTimeUnit::mL_Per_s);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalHemorrhagedVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateActionCompartmentDataRequest("Hemorrhage", pulse::VascularCompartment::RightLeg, "FlowRate", VolumePerTimeUnit::mL_Per_s);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateActionCompartmentDataRequest("Hemorrhage", pulse::VascularCompartment::RightLeg, "TotalBloodLost", VolumeUnit::mL);
-  
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowToHemorrhage.csv");
-  
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Hemoglobin Content : " << pe->GetBloodChemistrySystem()->GetHemoglobinContent(MassUnit::g) << MassUnit::g);
@@ -92,7 +93,7 @@ void HowToHemorrhage()
   // Using External will let the blood flow out of the body
 
   // Advance some time to let the body bleed out a bit
-  if(!AdvanceAndTrackTime_s(300, *pe)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
+  if(!pe->AdvanceModelTime(300, TimeUnit::s)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -128,7 +129,7 @@ void HowToHemorrhage()
   
   
   // Advance some time while the medic gets the drugs ready
-  if(!AdvanceAndTrackTime_s(100, *pe))
+  if(!pe->AdvanceModelTime(100, TimeUnit::s))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -154,7 +155,7 @@ void HowToHemorrhage()
   iVSaline.GetRate().SetValue(100,VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   pe->ProcessAction(iVSaline);
 
-  if (!AdvanceAndTrackTime_s(400, *pe))
+  if (!pe->AdvanceModelTime(400, TimeUnit::s))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;

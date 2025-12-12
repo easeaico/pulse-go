@@ -1347,7 +1347,7 @@ namespace pulse
     GetArterialPressure().SetValue(AortaNodePressure_mmHg, PressureUnit::mmHg);
     GetPulmonaryArterialPressure().SetValue(PulmonaryArteryNodePressure_mmHg, PressureUnit::mmHg);
     GetCentralVenousPressure().SetValue(VenaCavaPressure_mmHg, PressureUnit::mmHg);
-    GetCerebralBloodFlow().Set(m_Brain->GetInFlow());
+    GetCerebralBloodFlow().Set(m_Brain->GetInflow());
     GetIntracranialPressure().Set(m_Brain->GetPressure());
     GetCerebralPerfusionPressure().SetValue(GetMeanArterialPressure(PressureUnit::mmHg) - GetIntracranialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
 
@@ -1818,8 +1818,8 @@ namespace pulse
       double totalFlow_mL_Per_s = 0;
       for (auto& itr : trk->CmptHemorrhageLinks)
       {
-        if (itr.first->HasAverageInFlow())
-          totalFlow_mL_Per_s += itr.first->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s);
+        if (itr.first->HasAverageInflow())
+          totalFlow_mL_Per_s += itr.first->GetAverageInflow(VolumePerTimeUnit::mL_Per_s);
       }
       if (totalFlow_mL_Per_s == 0)
         continue;// Wait until we have average flow
@@ -1848,7 +1848,7 @@ namespace pulse
             if (!path->HasResistanceBaseline())
             {
               // Compute the baseline resistance
-              double flowRate_L_per_min = cmpt->GetAverageInFlow(VolumePerTimeUnit::L_Per_min);
+              double flowRate_L_per_min = cmpt->GetAverageInflow(VolumePerTimeUnit::L_Per_min);
               //The minimum resistance is associated with the maximum flow rate across the hemorrhage path
               //Check to see if there is a resistance baseline
               double deltaPressure_mmHg = (path->GetSourceNode().GetNextPressure(PressureUnit::mmHg) - path->GetTargetNode().GetNextPressure(PressureUnit::mmHg));
@@ -1880,7 +1880,7 @@ namespace pulse
               Warning("Switching hemorrhage from severity to flow, severity resistance baseline will be removed");
               Warning("If you go back to severity, a new resistance will be calculated based on the state of the vasculature");
             }
-            double mL_Per_s = h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) * (cmpt->GetAverageInFlow(VolumePerTimeUnit::mL_Per_s) / totalFlow_mL_Per_s);
+            double mL_Per_s = h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) * (cmpt->GetAverageInflow(VolumePerTimeUnit::mL_Per_s) / totalFlow_mL_Per_s);
             path->GetNextFlowSource().SetValue(mL_Per_s, VolumePerTimeUnit::mL_Per_s);
           }
         }

@@ -205,7 +205,7 @@ const SEScalarElectricCurrent& SEElectricalCompartment::GetCurrentIn() const
   if (m_Links.empty())
     m_CurrentIn->Invalidate();
   else
-    m_CurrentIn->SetValue(CalculateInFlow_A(), ElectricCurrentUnit::A);
+    m_CurrentIn->SetValue(CalculateInflow_A(), ElectricCurrentUnit::A);
   m_CurrentIn->SetReadOnly(true);
   return *m_CurrentIn;
 }
@@ -213,7 +213,7 @@ double SEElectricalCompartment::GetCurrentIn(const ElectricCurrentUnit& unit) co
 {
   if (m_Links.empty())
     return SEScalar::dNaN();
-  return Convert(CalculateInFlow_A(), ElectricCurrentUnit::A, unit);
+  return Convert(CalculateInflow_A(), ElectricCurrentUnit::A, unit);
 }
 
 bool SEElectricalCompartment::HasCurrentOut() const
@@ -233,7 +233,7 @@ const SEScalarElectricCurrent& SEElectricalCompartment::GetCurrentOut() const
   if (m_Links.empty())
     m_CurrentOut->Invalidate();
   else
-    m_CurrentOut->SetValue(CalculateOutFlow_A(), ElectricCurrentUnit::A);
+    m_CurrentOut->SetValue(CalculateOutflow_A(), ElectricCurrentUnit::A);
   m_CurrentOut->SetReadOnly(true);
   return *m_CurrentOut;
 }
@@ -241,10 +241,10 @@ double SEElectricalCompartment::GetCurrentOut(const ElectricCurrentUnit& unit) c
 {
   if (m_Links.empty())
     return SEScalar::dNaN();
-  return Convert(CalculateOutFlow_A(), ElectricCurrentUnit::A, unit);
+  return Convert(CalculateOutflow_A(), ElectricCurrentUnit::A, unit);
 }
 
-double SEElectricalCompartment::CalculateInFlow_A() const
+double SEElectricalCompartment::CalculateInflow_A() const
 {
   double flow_W = 0;
 
@@ -268,7 +268,7 @@ double SEElectricalCompartment::CalculateInFlow_A() const
   return flow_W;
 }
 
-double SEElectricalCompartment::CalculateOutFlow_A() const
+double SEElectricalCompartment::CalculateOutflow_A() const
 {
   double flow_W = 0;
 

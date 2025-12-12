@@ -94,7 +94,7 @@ namespace Pulse.CDM
     public void Copy(SEAnesthesiaMachine from)
     {
       Clear();
-      if(from.connection!=null && from.connection != eSwitch.NullSwitch)
+      if(from.connection != eSwitch.NullSwitch)
         this.connection=from.connection;
       if(from.HasInletFlow())
         this.GetInletFlow().Set(from.GetInletFlow());
@@ -102,11 +102,11 @@ namespace Pulse.CDM
         this.GetInspiratoryExpiratoryRatio().Set(from.GetInspiratoryExpiratoryRatio());
       if(from.HasOxygenFraction())
         this.GetOxygenFraction().Set(from.GetOxygenFraction());
-      if(from.oxygenSource!=null && from.oxygenSource != eAnesthesiaMachine_OxygenSource.NullSource)
+      if(from.oxygenSource != eAnesthesiaMachine_OxygenSource.NullSource)
         this.SetOxygenSource(from.GetOxygenSource());
       if(from.HasPositiveEndExpiratoryPressure())
         this.GetPositiveEndExpiratoryPressure().Set(from.GetPositiveEndExpiratoryPressure());
-      if(from.primaryGas!=null && from.primaryGas != eAnesthesiaMachine_PrimaryGas.NullGas)
+      if(from.primaryGas != eAnesthesiaMachine_PrimaryGas.NullGas)
         this.SetPrimaryGas(from.GetPrimaryGas());
       if(from.HasReliefValvePressure())
         this.GetReliefValvePressure().Set(from.GetReliefValvePressure());

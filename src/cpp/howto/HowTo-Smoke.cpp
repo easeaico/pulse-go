@@ -5,8 +5,10 @@
 #include "PulseEngine.h"
 
 // Include the various types you will be using in your code
+#include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
+#include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/compartment/fluid/SEGasCompartment.h"
@@ -16,7 +18,6 @@
 #include "cdm/system/environment/SEEnvironmentalConditions.h"
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceConcentration.h"
-#include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SEEnergySystem.h"
@@ -49,32 +50,44 @@ void HowToSmoke()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_Smoke.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_Smoke.cpp/HowTo_Smoke.log");
   pe->GetLogger()->Info("HowTo_Smoke");
-  /*
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
+  drMgr.CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
+  drMgr.CreatePhysiologyDataRequest("TotalMetabolicRate", PowerUnit::W);
+  drMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_Smoke.cpp/HowTo_Smoke.csv");
+
   // Smoke is made up of many things.
   // You will need to add 2 things to the environement to effectively model a smokey environment
   // A solid particle substance, and CarbonMonoxide
   // You can create your own environment file with these, the following would work
 
-  SEInitialEnvironment ienv(pe->GetSubstanceManager());
-  ienv.SetConditionsFile("./environments/CheyenneMountainFireFighter.json");
-  // You can set a file or the conditions object just like is shown below
-  std::vector<const SECondition*> conditions;
-  conditions.push_back(&ienv);
-
-  if (!pe->InitializeEngine("StandardMale.json", &conditions))
+  SEPatientConfiguration pc;
+  pc.SetPatientFile("StandardMale.json");
+  SEInitialEnvironmentalConditions& ienv = pc.GetConditions().GetInitialEnvironmentalConditions();
+  ienv.SetEnvironmentalConditionsFile("./environments/CheyenneMountainFireFighter.json");
+  if (!pe->InitializeEngine(pc, &drMgr))
   {
     pe->GetLogger()->Error("Could not load initialize engine, check the error");
     return;
   }
-  */
-  
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+
+  /*
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  */
 
   // Get some substances out we will use
   const SESubstance* N2 = pe->GetSubstanceManager().GetSubstance("Nitrogen");
@@ -83,21 +96,8 @@ void HowToSmoke()
   const SESubstance* CO = pe->GetSubstanceManager().GetSubstance("CarbonMonoxide");
   const SESubstance* Particulate = pe->GetSubstanceManager().GetSubstance("ForestFireParticulate");
 
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalMetabolicRate", PowerUnit::W);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEnvironmentChange.csv");
-
   // Advance some time to get some resting data
-  AdvanceAndTrackTime_s(5, *pe);
+  pe->AdvanceModelTime(5, TimeUnit::s);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
@@ -128,7 +128,7 @@ void HowToSmoke()
   // Concentrations are independent and do not need to add up to 1.0
   envChange.GetEnvironmentalConditions().GetAmbientAerosol(*Particulate).GetConcentration().SetValue(2.9, MassPerVolumeUnit::mg_Per_m3);
   pe->ProcessAction(envChange);
-  AdvanceAndTrackTime_s(30, *pe);
+  pe->AdvanceModelTime(30, TimeUnit::s);
 
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
   pe->GetLogger()->Info(std::stringstream() << "CarbonDioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());

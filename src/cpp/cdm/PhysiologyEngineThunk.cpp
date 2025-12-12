@@ -14,7 +14,7 @@
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEConditionManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEngineConfiguration.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/substance/SESubstance.h"
@@ -44,14 +44,10 @@ void PhysiologyEngineThunk::Clear()
 
 bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format)
 {
-  if (!m_engine->SerializeFromFile(filename))
-    return false;
-  m_engine->GetEventManager().ForwardEvents(this);
-
-  // Load up the data requests
+  SEDataRequestManager drMgr(m_engine->GetLogger());
   if (!data_requests.empty())
   {
-    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, data_requests_format))
+    if (!drMgr.SerializeFromString(data_requests, data_requests_format))
     {
       m_engine->GetLogger()->Error("Unable to load data requests string");
       return false;
@@ -59,10 +55,14 @@ bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::
   }
   else
   {
-    SetupDefaultDataRequests();
-    m_engine->GetLogger()->Info("No data requested, will return default vitals");
+    SetupDefaultDataRequests(drMgr);
+    m_engine->GetLogger()->Info("No data requested, will track/provide default vitals");
   }
-  return SetupRequests();
+  if (!m_engine->SerializeFromFile(filename, &drMgr))
+    return false;
+  m_engine->GetEventManager().ForwardEvents(this);
+
+  return true; // TODO CHeck if the data requests were OK
 }
 
 bool PhysiologyEngineThunk::SerializeToFile(std::string const& filename)
@@ -73,22 +73,25 @@ bool PhysiologyEngineThunk::SerializeToFile(std::string const& filename)
 
 bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::string const& data_requests, eSerializationFormat format)
 {
-  if (!m_engine->SerializeFromString(state, format))
-    return false;
-  m_engine->GetEventManager().ForwardEvents(this);
-
-  // Load up the data requests
+  SEDataRequestManager drMgr(m_engine->GetLogger());
   if (!data_requests.empty())
   {
-    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format))
+    if (!drMgr.SerializeFromString(data_requests, format))
     {
       m_engine->GetLogger()->Error("Unable to load data requests string");
       return false;
     }
   }
   else
-    SetupDefaultDataRequests();
-  return SetupRequests();
+  {
+    SetupDefaultDataRequests(drMgr);
+    m_engine->GetLogger()->Info("No data requested, will track/provide default vitals");
+  }
+  if (!m_engine->SerializeFromString(state, format, &drMgr))
+    return false;
+  m_engine->GetEventManager().ForwardEvents(this);
+
+  return true; // TODO CHeck if the data requests were OK
 }
 
 
@@ -102,6 +105,21 @@ std::string PhysiologyEngineThunk::SerializeToString(eSerializationFormat format
 
 bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, eSerializationFormat format)
 {
+  SEDataRequestManager drMgr(m_engine->GetLogger());
+  if (!data_requests.empty())
+  {
+    if (!drMgr.SerializeFromString(data_requests, format))
+    {
+      m_engine->GetLogger()->Error("Unable to load data requests string");
+      return false;
+    }
+  }
+  else
+  {
+    SetupDefaultDataRequests(drMgr);
+    m_engine->GetLogger()->Info("No data requested, will track/provide default vitals");
+  }
+
   const SESubstanceManager* subMgr;
   if (m_engine->GetSubstanceManager().GetSubstances().empty())
   {
@@ -124,45 +142,11 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
   }
 
   // Ok, crank 'er up!
-  if (!m_engine->InitializeEngine(pc))
-    return false;
-
-  // Load up the data requests
-  if (!data_requests.empty())
-  {
-    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format))
-    {
-      m_engine->GetLogger()->Error("Unable to load data request string");
-      return false;
-    }
-  }
-  else
-    SetupDefaultDataRequests();
-  if (!SetupRequests())
+  if (!m_engine->InitializeEngine(pc, &drMgr))
     return false;
 
   m_engine->GetEventManager().ForwardEvents(this);
-  return true;
-}
-
-bool PhysiologyEngineThunk::SetupRequests()
-{
-  m_engine->GetEngineTracker()->SetupRequests();
-  if (m_engine->GetEngineTracker()->GetDataTrack().NumTracks() !=
-    m_engine->GetEngineTracker()->GetDataRequestManager().GetDataRequests().size())
-  {
-    m_engine->Error("Number of data requests does not match the number of tracked properties!");
-    m_engine->Error("--Check to see if you have duplicates in your data request list");
-    m_engine->Error("--Here is the order of the data items I am traking:");
-    for (size_t i = 0; i < m_engine->GetEngineTracker()->GetDataTrack().NumTracks(); i++)
-      m_engine->Error("--  " + m_engine->GetEngineTracker()->GetDataTrack().GetProbeName(i));
-    m_engine->Error("--Here is what you requested:");
-    for (SEDataRequest const* dr : m_engine->GetEngineTracker()->GetDataRequestManager().GetDataRequests())
-      m_engine->Error("--  " + dr->GetHeaderName());
-    m_engine->Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
-    return false;
-  }
-  return true;
+  return true; // TODO CHeck if the data requests were OK
 }
 
 std::string PhysiologyEngineThunk::GetInitialPatient(eSerializationFormat format)
@@ -319,8 +303,6 @@ bool PhysiologyEngineThunk::AdvanceTimeStep()
   try
   {
     success = m_engine->AdvanceModelTime();
-    if (m_engine->GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
-      m_engine->GetEngineTracker()->TrackData(m_engine->GetSimulationTime(TimeUnit::s));
   }
   catch (CommonDataModelException& ex)
   {
@@ -343,18 +325,17 @@ bool PhysiologyEngineThunk::AdvanceTimeStep()
 double* PhysiologyEngineThunk::PullDataPtr()
 {
   double currentTime_s = m_engine->GetSimulationTime(TimeUnit::s);
-  m_engine->GetEngineTracker()->PullData(currentTime_s);
   if (m_requestedData == nullptr)
   {
     // +1 for the sim time
-    m_length = m_engine->GetEngineTracker()->GetDataTrack().NumTracks() + 1;
+    m_length = m_engine->GetDataRequestTracker().NumTracks() + 1;
     m_requestedData = new double[m_length];
   }
   // Always put the sim time in index 0 as seconds
   m_requestedData[0] = currentTime_s;
   // Pull all data we requested and pack into our array for return to the caller
   for (size_t i = 1; i<m_length; i++)
-    m_requestedData[i] = m_engine->GetEngineTracker()->GetDataTrack().GetProbe(i-1);
+    m_requestedData[i] = m_engine->GetDataRequestTracker().GetValue(i-1);
 
   return m_requestedData;
 }
@@ -386,21 +367,21 @@ void PhysiologyEngineThunk::PullData(std::vector<double>& d)
   std::cout << "Added data to the array? " << m_length << " data" << std::endl;
 }
 
-void PhysiologyEngineThunk::SetupDefaultDataRequests()
+void PhysiologyEngineThunk::SetupDefaultDataRequests(SEDataRequestManager& drMgr)
 {// Default to vitals data
-  //eng->GetLogger()->Info("No data requests provided, setting up default data requests");
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  // drMgr.GetLogger()->Info("No data requests provided, setting up default data requests");
+  drMgr.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
+  drMgr.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }
 
 void PhysiologyEngineThunk::ForwardDebug(const std::string& msg)

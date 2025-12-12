@@ -10,12 +10,12 @@ template<FLUID_COMPARTMENT_TEMPLATE>
 SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::SEFluidCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger), m_Nodes(logger)
 {
   m_SampleFlow = false;
-  m_InFlow = nullptr;
-  m_OutFlow = nullptr;
-  m_AverageInFlow = nullptr;
-  m_AverageOutFlow = nullptr;
-  m_AverageInFlow_mL_Per_s = nullptr;
-  m_AverageOutFlow_mL_Per_s = nullptr;
+  m_Inflow = nullptr;
+  m_Outflow = nullptr;
+  m_AverageInflow = nullptr;
+  m_AverageOutflow = nullptr;
+  m_AverageInflow_mL_Per_s = nullptr;
+  m_AverageOutflow_mL_Per_s = nullptr;
   m_Pressure = nullptr;
   m_Volume = nullptr;
 }
@@ -30,12 +30,12 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Clear()
 {
   SECompartment::Clear();
   m_SampleFlow = false;
-  SAFE_DELETE(m_InFlow);
-  SAFE_DELETE(m_OutFlow);
-  SAFE_DELETE(m_AverageInFlow);
-  SAFE_DELETE(m_AverageOutFlow);
-  SAFE_DELETE(m_AverageInFlow_mL_Per_s);
-  SAFE_DELETE(m_AverageOutFlow_mL_Per_s);
+  SAFE_DELETE(m_Inflow);
+  SAFE_DELETE(m_Outflow);
+  SAFE_DELETE(m_AverageInflow);
+  SAFE_DELETE(m_AverageOutflow);
+  SAFE_DELETE(m_AverageInflow_mL_Per_s);
+  SAFE_DELETE(m_AverageOutflow_mL_Per_s);
   SAFE_DELETE(m_Pressure);
   SAFE_DELETE(m_Volume);
   m_Links.clear();
@@ -47,14 +47,14 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Clear()
 template<FLUID_COMPARTMENT_TEMPLATE>
 const SEScalar* SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetScalar(const std::string& name)
 {
-  if (name.compare("InFlow") == 0)
-    return &GetInFlow();
-  if (name.compare("OutFlow") == 0)
-    return &GetOutFlow();
-  if (name.compare("AverageInFlow") == 0)
-    return &GetAverageInFlow();
-  if (name.compare("AverageOutFlow") == 0)
-    return &GetAverageOutFlow();
+  if (name.compare("Inflow") == 0)
+    return &GetInflow();
+  if (name.compare("Outflow") == 0)
+    return &GetOutflow();
+  if (name.compare("AverageInflow") == 0)
+    return &GetAverageInflow();
+  if (name.compare("AverageOutflow") == 0)
+    return &GetAverageOutflow();
   if (name.compare("Pressure") == 0)
     return &GetPressure();
   if (name.compare("Volume") == 0)
@@ -76,14 +76,14 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::Sample(bool StartCycle)
 {
   if (m_SampleFlow)
   {
-    m_AverageInFlow_mL_Per_s->Sample(GetInFlow(VolumePerTimeUnit::mL_Per_s));
-    m_AverageOutFlow_mL_Per_s->Sample(GetOutFlow(VolumePerTimeUnit::mL_Per_s));
+    m_AverageInflow_mL_Per_s->Sample(GetInflow(VolumePerTimeUnit::mL_Per_s));
+    m_AverageOutflow_mL_Per_s->Sample(GetOutflow(VolumePerTimeUnit::mL_Per_s));
     if (StartCycle)
     {
-      m_AverageInFlow->SetValue(m_AverageInFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
-      m_AverageOutFlow->SetValue(m_AverageOutFlow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
-      m_AverageInFlow_mL_Per_s->Invalidate();
-      m_AverageOutFlow_mL_Per_s->Invalidate();
+      m_AverageInflow->SetValue(m_AverageInflow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
+      m_AverageOutflow->SetValue(m_AverageOutflow_mL_Per_s->Value(), VolumePerTimeUnit::mL_Per_s);
+      m_AverageInflow_mL_Per_s->Invalidate();
+      m_AverageOutflow_mL_Per_s->Invalidate();
     }
   }
 }
@@ -92,12 +92,12 @@ template<FLUID_COMPARTMENT_TEMPLATE>
 void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::SampleFlow()
 {
   m_SampleFlow = true;
-  GetAverageInFlow();
-  GetAverageOutFlow();
+  GetAverageInflow();
+  GetAverageOutflow();
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasInFlow() const
+bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasInflow() const
 {
   if (m_Links.empty())
     return false;
@@ -107,51 +107,51 @@ bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasInFlow() const
   return false;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetInFlow() const
+const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetInflow() const
 {
-  if (m_InFlow == nullptr)
-    m_InFlow = new SEScalarVolumePerTime();
-  m_InFlow->SetReadOnly(false);
+  if (m_Inflow == nullptr)
+    m_Inflow = new SEScalarVolumePerTime();
+  m_Inflow->SetReadOnly(false);
   if (m_Links.empty())
-    m_InFlow->Invalidate();
+    m_Inflow->Invalidate();
   else
-    m_InFlow->SetValue(CalculateInFlow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s);
-  m_InFlow->SetReadOnly(true);
-  return *m_InFlow;
+    m_Inflow->SetValue(CalculateInflow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s);
+  m_Inflow->SetReadOnly(true);
+  return *m_Inflow;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetInFlow(const VolumePerTimeUnit& unit) const
+double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetInflow(const VolumePerTimeUnit& unit) const
 {
   if (m_Links.empty())
     return SEScalar::dNaN();
-  return Convert(CalculateInFlow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s, unit);
+  return Convert(CalculateInflow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s, unit);
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasAverageInFlow() const
+bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasAverageInflow() const
 {
-  return m_AverageInFlow == nullptr ? false : m_AverageInFlow->IsValid();
+  return m_AverageInflow == nullptr ? false : m_AverageInflow->IsValid();
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageInFlow() const
+const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageInflow() const
 {
-  if (m_AverageInFlow == nullptr)
+  if (m_AverageInflow == nullptr)
   {
-    m_AverageInFlow = new SEScalarVolumePerTime();
-    m_AverageInFlow_mL_Per_s = new SERunningAverage();
+    m_AverageInflow = new SEScalarVolumePerTime();
+    m_AverageInflow_mL_Per_s = new SERunningAverage();
   }
-  return *m_AverageInFlow;
+  return *m_AverageInflow;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageInFlow(const VolumePerTimeUnit& unit) const
+double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageInflow(const VolumePerTimeUnit& unit) const
 {
-  if (m_AverageInFlow == nullptr)
+  if (m_AverageInflow == nullptr)
     return SEScalar::dNaN();
-  return m_AverageInFlow->GetValue(unit);
+  return m_AverageInflow->GetValue(unit);
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasOutFlow() const
+bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasOutflow() const
 {
   if (m_Links.empty())
     return false;
@@ -161,51 +161,51 @@ bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasOutFlow() const
   return false;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetOutFlow() const
+const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetOutflow() const
 {
-  if (m_OutFlow == nullptr)
-    m_OutFlow = new SEScalarVolumePerTime();
-  m_OutFlow->SetReadOnly(false);
+  if (m_Outflow == nullptr)
+    m_Outflow = new SEScalarVolumePerTime();
+  m_Outflow->SetReadOnly(false);
   if (m_Links.empty())
-    m_OutFlow->Invalidate();
+    m_Outflow->Invalidate();
   else
-    m_OutFlow->SetValue(CalculateOutFlow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s);
-  m_OutFlow->SetReadOnly(true);
-  return *m_OutFlow;
+    m_Outflow->SetValue(CalculateOutflow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s);
+  m_Outflow->SetReadOnly(true);
+  return *m_Outflow;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetOutFlow(const VolumePerTimeUnit& unit) const
+double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetOutflow(const VolumePerTimeUnit& unit) const
 {
   if (m_Links.empty())
     return SEScalar::dNaN();
-  return Convert(CalculateOutFlow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s, unit);
+  return Convert(CalculateOutflow_mL_Per_s(), VolumePerTimeUnit::mL_Per_s, unit);
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasAverageOutFlow() const
+bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasAverageOutflow() const
 {
-  return m_AverageOutFlow == nullptr ? false : m_AverageOutFlow->IsValid();
+  return m_AverageOutflow == nullptr ? false : m_AverageOutflow->IsValid();
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageOutFlow() const
+const SEScalarVolumePerTime& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageOutflow() const
 {
-  if (m_AverageOutFlow == nullptr)
+  if (m_AverageOutflow == nullptr)
   {
-    m_AverageOutFlow = new SEScalarVolumePerTime();
-    m_AverageOutFlow_mL_Per_s = new SERunningAverage();
+    m_AverageOutflow = new SEScalarVolumePerTime();
+    m_AverageOutflow_mL_Per_s = new SERunningAverage();
   }
-  return *m_AverageOutFlow;
+  return *m_AverageOutflow;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageOutFlow(const VolumePerTimeUnit& unit) const
+double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetAverageOutflow(const VolumePerTimeUnit& unit) const
 {
-  if (m_AverageOutFlow == nullptr)
+  if (m_AverageOutflow == nullptr)
     return SEScalar::dNaN();
-  return m_AverageOutFlow->GetValue(unit);
+  return m_AverageOutflow->GetValue(unit);
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::CalculateInFlow_mL_Per_s() const
+double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::CalculateInflow_mL_Per_s() const
 {
   double flow_mL_Per_s = 0;
 
@@ -230,7 +230,7 @@ double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::CalculateInFlow_mL_Per_s() c
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::CalculateOutFlow_mL_Per_s() const
+double SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::CalculateOutflow_mL_Per_s() const
 {
   double flow_mL_Per_s = 0;
 

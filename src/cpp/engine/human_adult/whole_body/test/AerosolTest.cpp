@@ -403,12 +403,12 @@ namespace pulse { namespace human_adult_whole_body
         if (true)
         {
           // Calculate the deposited mass by concentration and flow
-          depositedAirwayParticulate_ug = airwayParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::Airway)->GetInFlow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetAirway();
-          depositedCarinaParticulate_ug = carinaParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetCarina();
-          depositedLeftAnatomicDeadSpaceParticulate_ug = leftAnatomicDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace)->GetInFlow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetDeadSpace();
-          depositedLeftAlveoliParticulate_ug = leftAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftAlveoli)->GetInFlow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetAlveoli();
-          depositedRightAnatomicDeadSpaceParticulate_ug = rightAnatomicDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace)->GetInFlow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetDeadSpace();
-          depositedRightAlveoliParticulate_ug = rightAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::RightAlveoli)->GetInFlow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetAlveoli();
+          depositedAirwayParticulate_ug = airwayParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::Airway)->GetInflow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetAirway();
+          depositedCarinaParticulate_ug = carinaParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::Carina)->GetInflow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetCarina();
+          depositedLeftAnatomicDeadSpaceParticulate_ug = leftAnatomicDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftAnatomicDeadSpace)->GetInflow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetDeadSpace();
+          depositedLeftAlveoliParticulate_ug = leftAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::LeftAlveoli)->GetInflow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetAlveoli();
+          depositedRightAnatomicDeadSpaceParticulate_ug = rightAnatomicDeadSpaceParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::RightAnatomicDeadSpace)->GetInflow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetDeadSpace();
+          depositedRightAlveoliParticulate_ug = rightAlveoliParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL) * aGraph->GetCompartment(pulse::PulmonaryCompartment::RightAlveoli)->GetInflow(VolumePerTimeUnit::mL_Per_s) * deltaT_s * SIDECoeff.GetAlveoli();
 
           // Total deposited
           totalParticulateDeposited_ug += depositedAirwayParticulate_ug + depositedCarinaParticulate_ug +
@@ -435,8 +435,8 @@ namespace pulse { namespace human_adult_whole_body
       trk.Track("AirwayConcentration_ug_Per_mL", time, airwayParticulate == nullptr ? 0 : airwayParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL));
       trk.Track("CarinaConcentration_ug_Per_mL", time, carinaParticulate == nullptr ? 0 : carinaParticulate->GetConcentration(MassPerVolumeUnit::ug_Per_mL));
 
-      trk.Track("AirwayInFlow_mL_Per_s", time, aGraph->GetCompartment(pulse::PulmonaryCompartment::Airway)->GetInFlow(VolumePerTimeUnit::mL_Per_s));
-      trk.Track("CarinaInFlow_mL_Per_s", time, aGraph->GetCompartment(pulse::PulmonaryCompartment::Carina)->GetInFlow(VolumePerTimeUnit::mL_Per_s));
+      trk.Track("AirwayInflow_mL_Per_s", time, aGraph->GetCompartment(pulse::PulmonaryCompartment::Airway)->GetInflow(VolumePerTimeUnit::mL_Per_s));
+      trk.Track("CarinaInflow_mL_Per_s", time, aGraph->GetCompartment(pulse::PulmonaryCompartment::Carina)->GetInflow(VolumePerTimeUnit::mL_Per_s));
 
       trk.Track("TotalInspiredAir_mL", time, totalInspiredAir_mL);
       trk.Track("TotalExspiredAir_mL", time, totalExspiredAir_mL);

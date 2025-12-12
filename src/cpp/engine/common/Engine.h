@@ -25,14 +25,13 @@ namespace pulse
 
     std::string GetTypeName() const override;
 
-    bool SerializeFromFile(const std::string& file) override;
+    bool SerializeFromFile(const std::string& file, const SEDataRequestManager* drMgr=nullptr) override;
     bool SerializeToFile(const std::string& file) const override;
 
-    bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
+    bool SerializeFromString(const std::string& state, eSerializationFormat m, const SEDataRequestManager* drMgr=nullptr) override;
     bool SerializeToString(std::string& state, eSerializationFormat m) const override;
 
-    bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) override;
-    bool InitializeEngine(const SEPatientConfiguration& patient_configuration) override;
+    bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEDataRequestManager* drMgr=nullptr) override;
     eEngineInitializationState GetInitializationState() const override;
 
     void Clear() override;
@@ -41,7 +40,7 @@ namespace pulse
 
     const SEConditionManager& GetConditionManager() const override;
 
-    SEEngineTracker* GetEngineTracker() const override;
+    SEDataRequestTracker& GetDataRequestTracker() override;
 
     const SEEngineConfiguration* GetConfiguration() const override;
 

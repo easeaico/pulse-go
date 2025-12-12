@@ -24,8 +24,8 @@
     [
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightPulmonaryCapillaries", "PropertyName": "Volume", "Unit": "mL" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftPulmonaryCapillaries", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "RightPulmonaryCapillaries", "PropertyName": "InFlow", "Unit": "mL/s" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "LeftPulmonaryCapillaries", "PropertyName": "InFlow", "Unit": "mL/s" }
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "RightPulmonaryCapillaries", "PropertyName": "Inflow", "Unit": "mL/s" },
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "LeftPulmonaryCapillaries", "PropertyName": "Inflow", "Unit": "mL/s" }
     ]
   },
   "AnyAction": [{

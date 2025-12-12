@@ -183,8 +183,7 @@ message EngineInitializationListData
 /** @brief Static timed stabilization lengths */
 message TimedStabilizationData
 {
-  eSwitch                                               TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
-  map<string,ScalarTimeData>                            ConvergenceCriteria             = 2;/**<< @brief */
+  map<string,ScalarTimeData>                            ConvergenceCriteria             = 1;/**<< @brief */
 }
 
 /** @brief A properties target percent difference allowed */
@@ -204,8 +203,7 @@ message DynamicStabilizationEngineConvergenceData
 /** @brief Dynamic stabilization parameters */
 message DynamicStabilizationData
 {
-  eSwitch                                               TrackingStabilization           = 1;/**<< @brief Track data requests to the output file (if provided) during stabilization. */
-  map<string,DynamicStabilizationEngineConvergenceData> ConvergenceCriteria             = 2;/**<< @brief */
+  map<string,DynamicStabilizationEngineConvergenceData> ConvergenceCriteria             = 1;/**<< @brief */
 }
 
 message LogMessagesData

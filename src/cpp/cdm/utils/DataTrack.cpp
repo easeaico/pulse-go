@@ -3,6 +3,7 @@
 
 #include "cdm/CommonDefs.h"
 #include "cdm/utils/DataTrack.h"
+#include "cdm/utils/FileUtils.h"
 #include "cdm/engine/SEDecimalFormat.h"
 #include "cdm/circuit/electrical/SEElectricalCircuit.h"
 #include "cdm/circuit/fluid/SEFluidCircuit.h"
@@ -337,20 +338,26 @@ void DataTrack::Probe(const SELiquidCompartmentGraph& graph)
   }
 }
 
-double DataTrack::GetProbe(size_t idx)
+double DataTrack::GetProbe(size_t idx) const
 {
-  Element& e = GetElement(idx);
-  return e.probe;
+  if (idx >= m_Elements.size())
+    return std::numeric_limits<double>::quiet_NaN();
+  return m_Elements[idx].probe;
 }
-double DataTrack::GetProbe(const std::string& name)
+double DataTrack::GetProbe(const std::string& name) const
 {
-  Element& e = GetElement(name);
-  return e.probe;
+  for (const Element& e : m_Elements)
+  {
+    if (e.name == name)
+      return e.probe;
+  }
+  return std::numeric_limits<double>::quiet_NaN();
 }
-std::string DataTrack::GetProbeName(size_t idx)
+std::string DataTrack::GetProbeName(size_t idx) const
 {
-  Element& e = GetElement(idx);
-  return e.name;
+  if (idx >= m_Elements.size())
+    return "IndexOutOfBounds";
+  return m_Elements[idx].name;
 }
 
 size_t DataTrack::Track(const std::string& name, double time, double value)
@@ -754,6 +761,7 @@ double DataTrack::StreamDataFromFile(std::vector<std::string>* headings)
 
 void DataTrack::CreateFile(const char* fileName, std::ofstream& file)
 {
+  CreateFilePath(fileName);
   size_t idx = 0;
   file.open(fileName, std::ofstream::out | std::ofstream::trunc);
   // Write our headers

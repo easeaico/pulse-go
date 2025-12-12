@@ -7,7 +7,7 @@
 #include "PulseEngine.h"
 
 #include "cdm/engine/SEOverrides.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 
@@ -103,7 +103,7 @@ namespace pulse::study::hydrocephalus
         if (cmpt != nullptr)
         {
           if (fUnit != nullptr)
-            return runningAverage.Sample(cmpt->GetInFlow(*fUnit));
+            return runningAverage.Sample(cmpt->GetInflow(*fUnit));
           else if (pUnit != nullptr)
             return runningAverage.Sample(cmpt->GetPressure(*pUnit));
         }

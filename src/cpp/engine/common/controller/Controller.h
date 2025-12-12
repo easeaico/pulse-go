@@ -11,13 +11,14 @@
 #include "engine/common/controller/SubstanceManager.h"
 
 // CDM
-class DataTrack;
-class SEActionManager;
-class SEConditionManager;
-class SEDataRequested;
-class SEEngineTracker;
-#include "cdm/engine/SEEventManager.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEDataRequested.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEngineStabilization.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/patient/SEPatient.h"
 #include "cdm/properties/SEScalarTime.h"
 
 namespace pulse
@@ -90,8 +91,9 @@ namespace pulse
 
     virtual EngineState                   GetState() const { return m_State; }
 
-    virtual SEEngineTracker&              GetEngineTracker() const;
     virtual DataTrack&                    GetDataTrack() const;
+    virtual SEEngineTracker&              GetEngineTracker() const;
+
     virtual SaturationCalculator&         GetSaturationCalculator() const;
 
     virtual SubstanceManager&             GetSubstances() const;
@@ -155,6 +157,7 @@ namespace pulse
     virtual const SEScalarTime&           GetTimeStep() const;
     virtual const SEScalarTime&           GetEngineTime() const;
     virtual const SEScalarTime&           GetSimulationTime() const;
+    virtual double                        GetSimulationTime_s() const;
     virtual const SEScalarTime&           GetStabilizationTime() const;
 
     virtual bool                          IsAirwayModeSupported(eAirwayMode /*mode*/) { return true; }
@@ -172,10 +175,7 @@ namespace pulse
     virtual void                          SetupTracker();
 
     EngineState                           m_State;
-    SEEngineTracker*                      m_EngineTrack;
-    SEDataRequested*                      m_DataRequested;
     eEngineInitializationState            m_EngineInitializationState;
-
     SEScalarTime                          m_CurrentTime;
     SEScalarTime                          m_SimulationTime;
     SEScalarTime                          m_StabilizationTime;
@@ -184,6 +184,10 @@ namespace pulse
     eSwitch                               m_Intubation;
 
     PulseConfiguration*                   m_Config = nullptr;
+
+    SEDataRequested*                      m_DataRequested = nullptr;
+    SEEngineTracker*                      m_EngineTracker = nullptr;
+
     SaturationCalculator*                 m_SaturationCalculator = nullptr;
 
     SubstanceManager*                     m_Substances = nullptr;
@@ -246,14 +250,13 @@ namespace pulse
     virtual Data& GetData() { return (*this); }
     virtual const Data& GetData() const { return (*this); }
 
-    virtual bool SerializeFromFile(const std::string& file);
+    virtual bool SerializeFromFile(const std::string& file, const SEDataRequestManager* drMgr=nullptr);
     virtual bool SerializeToFile(const std::string& file) const;
 
-    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m);
+    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m, const SEDataRequestManager* drMgr=nullptr);
     virtual bool SerializeToString(std::string& state, eSerializationFormat m) const;
 
-    virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m);
-    virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration);
+    virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration, const SEDataRequestManager* drMgr=nullptr);
     virtual bool IsReady() const;
     virtual eEngineInitializationState GetInitializationState() const;
 
@@ -334,6 +337,7 @@ namespace pulse
 
     PulseConfiguration const*m_ConfigOverride = nullptr;
     StabilizationController *m_Stabilizer = nullptr;
+    eSwitch m_Tracking = eSwitch::On;
   };
 
   class PULSE_DECL StabilizationController : public SEEngineStabilization::Controller

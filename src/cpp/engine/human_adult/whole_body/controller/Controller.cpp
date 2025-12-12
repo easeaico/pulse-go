@@ -27,10 +27,6 @@
 #include "engine/human_adult/whole_body/system/physiology/Saturation.h"
 #include "engine/human_adult/whole_body/system/physiology/TissueModel.h"
 
-#include "cdm/engine/SEActionManager.h"
-#include "cdm/engine/SEConditionManager.h"
-#include "cdm/engine/SEDataRequested.h"
-#include "cdm/patient/SEPatient.h"
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
@@ -49,18 +45,18 @@ namespace pulse { namespace human_adult_whole_body
   }
 
   // I am pretty sure we will want different states per engine
-  bool Controller::SerializeFromFile(const std::string& filename)
+  bool Controller::SerializeFromFile(const std::string& filename, const SEDataRequestManager* drMgr)
   {
-    return pulse::Controller::SerializeFromFile(filename);
+    return pulse::Controller::SerializeFromFile(filename, drMgr);
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
     return pulse::Controller::SerializeToFile(filename);
   }
 
-  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
+  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m, const SEDataRequestManager* drMgr)
   {
-    return pulse::Controller::SerializeFromString(src, m);
+    return pulse::Controller::SerializeFromString(src, m, drMgr);
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
@@ -121,7 +117,6 @@ namespace pulse { namespace human_adult_whole_body
     m_Models.push_back(m_ElectroCardioGramModel);
     m_Models.push_back(m_ECMOModel);
 
-    // Call this after models are setup
     SetupTracker();
   }
 

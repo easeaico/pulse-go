@@ -29,12 +29,12 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/SEPatient.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceCompound.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SECondition.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/utils/FileUtils.h"
@@ -97,16 +97,6 @@ namespace pulse
       ss << "PulseState must have a configuration" << std::endl;
     else
       PBConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
-
-    // We could preserve the tracker, but I think I want to force the user to set it up
-    // again, they should have the data tracks (or easily get them), and they should
-    // Set it back up, and set or reset the results file they are using
-    if (src.has_datarequestmanager())
-    {
-      dst.m_EngineTrack->GetDataRequestManager().Clear();
-      PBEngine::Load(src.datarequestmanager(), dst.m_EngineTrack->GetDataRequestManager());
-      dst.m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data
-    }
 
     if (src.has_simulationtime())
     {
@@ -307,6 +297,20 @@ namespace pulse
     if (dst.m_AdvanceHandler != nullptr)
       dst.SetAdvanceHandler(dst.m_AdvanceHandler);
 
+    // We could preserve the tracker, but I think I want to force the user to set it up
+    // again, they should have the data tracks (or easily get them), and they should
+    // Set it back up, and set or reset the results file they are using
+    if (src.has_datarequestmanager())
+    {
+      // Engine Tracker will make a copy of this drMgr
+      SEDataRequestManager drMgr(dst.GetLogger());
+      PBEngine::Load(src.datarequestmanager(), drMgr);
+      dst.m_EngineTracker->SetupDataRequests(drMgr);
+    }
+    else
+    {
+      dst.m_EngineTracker->Reset();
+    }
 
     // It helps to unload what you just loaded and do a compare if you have issues
     //SerializeToFile(dst, "WhatIJustLoaded.json");
@@ -315,10 +319,6 @@ namespace pulse
     dst.m_State = EngineState::Active;
     // TODO CheckDataRequirements/IsValid() or something
 
-    // Ask the engine tracker to reconnect to all its scalars
-    // Compartments and Circuits configurations can change from state to state
-    // So they are all new objects when a state is loaded, so we need to hook up any cmpt based requests to those new objects
-    dst.m_EngineTrack->ForceConnection();
     return true;
   }
 
@@ -334,8 +334,8 @@ namespace pulse
     dst.set_airwaymode((PULSE_BIND::eAirwayMode)src.m_AirwayMode);
     dst.set_intubation((CDM_BIND::eSwitch)src.m_Intubation);
     dst.set_allocated_simulationtime(PBProperty::Unload(src.m_SimulationTime));
-    if (src.m_EngineTrack->GetDataRequestManager().HasDataRequests())
-      dst.set_allocated_datarequestmanager(PBEngine::Unload(src.m_EngineTrack->GetDataRequestManager()));
+    if (src.m_EngineTracker->GetDataRequestManager().HasDataRequests())
+      dst.set_allocated_datarequestmanager(PBEngine::Unload(src.m_EngineTracker->GetDataRequestManager()));
     // Patient
     dst.set_allocated_currentpatient(PBPatient::Unload(*src.m_CurrentPatient));
     dst.set_allocated_initialpatient(PBPatient::Unload(*src.m_InitialPatient));

@@ -66,7 +66,7 @@ namespace Pulse.CDM
       this.substance = substance;
     }
 
-    public string ToString()
+    public override string ToString()
     {
       return "Anesthesia Machine Chamber"
       + "\n\tState: " + GetState()

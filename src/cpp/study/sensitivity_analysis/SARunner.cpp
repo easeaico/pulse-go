@@ -158,34 +158,34 @@ namespace pulse::study::sensitivity_analysis
     profiler.Start("Status");
 
     auto pulse = CreatePulseEngine();
+    pulse->GetLogger()->LogToConsole(false); // No logging to console (when threaded)
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
+
+    // Setup data requests
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    //drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
+    //drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    //drMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //drMgr.SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
     PulseConfiguration cfg(pulse->GetLogger());
     cfg.SetBaroreceptorFeedback(eSwitch::Off);
     cfg.SetChemoreceptorFeedback(eSwitch::Off);
     pulse->SetConfigurationOverride(&cfg);
-    if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
+    if (!pulse->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))
       return false;
-
-    // No logging to console (when threaded)
-    pulse->GetLogger()->LogToConsole(false);
-    // Setup data requests
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // Apply Overrides (Note using Force, as these values are locked (for good reason)
     // But we know what we are doing, right?
@@ -235,42 +235,42 @@ namespace pulse::study::sensitivity_analysis
 
     std::unordered_map<std::string, RunningAverages> runningAverages =
     {
-      {"MeanAortaInFlow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanAortaInflow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta), VolumePerTimeUnit::mL_Per_s)},
       {"MeanArterialOxygenPartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("Oxygen")), PressureUnit::mmHg)},
-      {"MeanBoneVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanBrainVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanFatVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanKidneyVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Kidneys), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLargeIntestineVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LargeIntestine), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftArmVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftArm), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftHeartInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBoneVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBrainVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanFatVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanKidneyVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Kidneys), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLargeIntestineVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LargeIntestine), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftArmVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftArm), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftHeartInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart), VolumePerTimeUnit::mL_Per_s)},
       {"MeanLeftHeartPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart), PressureUnit::mmHg)},
-      {"MeanLeftKidneyVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftLegVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLeg), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftPulmonaryArteriesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftPulmonaryCapillariesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftPulmonaryVeinsInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLiverVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanMuscleVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanMyocardiumVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanPulmonaryArteriesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanPulmonaryCapillariesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftKidneyVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftLegVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLeg), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftPulmonaryArteriesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftPulmonaryCapillariesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftPulmonaryVeinsInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLiverVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanMuscleVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanMyocardiumVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanPulmonaryArteriesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanPulmonaryCapillariesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
       {"MeanPulmonaryCapillariesPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryCapillaries), PressureUnit::mmHg)},
-      {"MeanPulmonaryVeinsInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanPulmonaryVeinsInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
       {"MeanPulmonaryVeinsPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins), PressureUnit::mmHg)},
-      {"MeanRightArmVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightHeartInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightArmVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightHeartInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart), VolumePerTimeUnit::mL_Per_s)},
       {"MeanRightHeartPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart), PressureUnit::mmHg)},
-      {"MeanRightKidneyVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightLegVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLeg), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightPulmonaryArteriesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightPulmonaryCapillariesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightPulmonaryVeinsInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSkinVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSmallIntestineVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::SmallIntestine), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSplanchnicVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Splanchnic), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSpleenVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanVenaCavaInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightKidneyVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightLegVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLeg), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightPulmonaryArteriesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightPulmonaryCapillariesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightPulmonaryVeinsInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSkinVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSmallIntestineVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::SmallIntestine), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSplanchnicVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Splanchnic), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSpleenVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanVenaCavaInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava), VolumePerTimeUnit::mL_Per_s)},
       {"MeanVenousCarbonDioxidePartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("CarbonDioxide")), PressureUnit::mmHg)},
       {"MeanVenousOxygenPartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("Oxygen")), PressureUnit::mmHg)}
     };
@@ -387,45 +387,45 @@ namespace pulse::study::sensitivity_analysis
     sim.set_diastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg));
     sim.set_heartejectionfraction(pulse->GetCardiovascularSystem()->GetHeartEjectionFraction());
     sim.set_heartstrokevolume_ml(pulse->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL));
-    sim.set_meanaortainflow_ml_per_s(runningAverages.at("MeanAortaInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanaortainflow_ml_per_s(runningAverages.at("MeanAortaInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanarterialcarbondioxidepartialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialCarbonDioxidePartialPressure(PressureUnit::mmHg));
     sim.set_meanarterialoxygenpartialpressure_mmhg(runningAverages.at("MeanArterialOxygenPartialPressure_mmHg").instantaneousAverage);
     sim.set_meanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
-    sim.set_meanbonevasculatureinflow_ml_per_s(runningAverages.at("MeanBoneVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbonevasculatureinflow_ml_per_s(runningAverages.at("MeanBoneVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInflow_mL_Per_s").instantaneousAverage);
     sim.set_meancentralvenouspressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg));
-    sim.set_meanfatvasculatureinflow_ml_per_s(runningAverages.at("MeanFatVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meankidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanlargeintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanLargeIntestineVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftarmvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftArmVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftheartinflow_ml_per_s(runningAverages.at("MeanLeftHeartInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanfatvasculatureinflow_ml_per_s(runningAverages.at("MeanFatVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meankidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanKidneyVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanlargeintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanLargeIntestineVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftarmvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftArmVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftheartinflow_ml_per_s(runningAverages.at("MeanLeftHeartInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanleftheartpressure_mmhg(runningAverages.at("MeanLeftHeartPressure_mmHg").instantaneousAverage);
-    sim.set_meanleftkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftlegvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftLegVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanlivervasculatureinflow_ml_per_s(runningAverages.at("MeanLiverVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanmusclevasculatureinflow_ml_per_s(runningAverages.at("MeanMuscleVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanmyocardiumvasculatureinflow_ml_per_s(runningAverages.at("MeanMyocardiumVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftKidneyVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftlegvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftLegVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryArteriesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryCapillariesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryVeinsInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanlivervasculatureinflow_ml_per_s(runningAverages.at("MeanLiverVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanmusclevasculatureinflow_ml_per_s(runningAverages.at("MeanMuscleVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanmyocardiumvasculatureinflow_ml_per_s(runningAverages.at("MeanMyocardiumVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanPulmonaryArteriesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanPulmonaryCapillariesInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanpulmonarycapillariespressure_mmhg(runningAverages.at("MeanPulmonaryCapillariesPressure_mmHg").instantaneousAverage);
-    sim.set_meanpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanPulmonaryVeinsInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanpulmonaryveinspressure_mmhg(runningAverages.at("MeanPulmonaryVeinsPressure_mmHg").instantaneousAverage);
-    sim.set_meanrightarmvasculatureinflow_ml_per_s(runningAverages.at("MeanRightArmVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightheartinflow_ml_per_s(runningAverages.at("MeanRightHeartInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightarmvasculatureinflow_ml_per_s(runningAverages.at("MeanRightArmVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightheartinflow_ml_per_s(runningAverages.at("MeanRightHeartInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanrightheartpressure_mmhg(runningAverages.at("MeanRightHeartPressure_mmHg").instantaneousAverage);
-    sim.set_meanrightkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanRightKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightlegvasculatureinflow_ml_per_s(runningAverages.at("MeanRightLegVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanskinvasculatureinflow_ml_per_s(runningAverages.at("MeanSkinVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meansmallintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanSmallIntestineVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meansplanchnicvasculatureinflow_ml_per_s(runningAverages.at("MeanSplanchnicVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanspleenvasculatureinflow_ml_per_s(runningAverages.at("MeanSpleenVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanvenacavainflow_ml_per_s(runningAverages.at("MeanVenaCavaInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanRightKidneyVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightlegvasculatureinflow_ml_per_s(runningAverages.at("MeanRightLegVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryArteriesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryCapillariesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryVeinsInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanskinvasculatureinflow_ml_per_s(runningAverages.at("MeanSkinVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meansmallintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanSmallIntestineVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meansplanchnicvasculatureinflow_ml_per_s(runningAverages.at("MeanSplanchnicVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanspleenvasculatureinflow_ml_per_s(runningAverages.at("MeanSpleenVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanvenacavainflow_ml_per_s(runningAverages.at("MeanVenaCavaInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanvenouscarbondioxidepartialpressure_mmhg(runningAverages.at("MeanVenousCarbonDioxidePartialPressure_mmHg").instantaneousAverage);
     sim.set_meanvenousoxygenpartialpressure_mmhg(runningAverages.at("MeanVenousOxygenPartialPressure_mmHg").instantaneousAverage);
     sim.set_pulmonarydiastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryDiastolicArterialPressure(PressureUnit::mmHg));
@@ -448,7 +448,26 @@ namespace pulse::study::sensitivity_analysis
     profiler.Start("Status");
 
     auto pulse = CreatePulseEngine();
+    pulse->GetLogger()->LogToConsole(false); // No logging to console (when threaded)
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
+
+    // Setup data requests
+    SEDataRequestManager drMgr(pulse->GetLogger());
+    //drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
+    //drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    //drMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
+    //drMgr.CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+    //drMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //drMgr.SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
     PulseConfiguration cfg(pulse->GetLogger());
@@ -461,26 +480,7 @@ namespace pulse::study::sensitivity_analysis
 
     SEPatientConfiguration pc;
     pc.SetPatientFile("./patients/StandardMale.json");
-    if (!pulse->InitializeEngine(pc)) return false;
-
-    // No logging to console (when threaded)
-    pulse->GetLogger()->LogToConsole(false);
-    // Setup data requests
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialCarbonDioxidePartialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryDiastolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryMeanCapillaryFlow", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonarySystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
+    if (!pulse->InitializeEngine(pc, &drMgr)) return false;
 
     // check if overriding respiratory path
     pulse::Controller& pctrl =
@@ -498,42 +498,42 @@ namespace pulse::study::sensitivity_analysis
 
     std::unordered_map<std::string, RunningAverages> runningAverages =
     {
-      {"MeanAortaInFlow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanAortaInflow_mL_Per_s", RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta), VolumePerTimeUnit::mL_Per_s)},
       {"MeanArterialOxygenPartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("Oxygen")), PressureUnit::mmHg)},
-      {"MeanBoneVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanBrainVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanFatVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanKidneyVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Kidneys), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLargeIntestineVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LargeIntestine), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftArmVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftArm), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftHeartInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBoneVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanBrainVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanFatVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanKidneyVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Kidneys), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLargeIntestineVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LargeIntestine), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftArmVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftArm), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftHeartInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart), VolumePerTimeUnit::mL_Per_s)},
       {"MeanLeftHeartPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftHeart), PressureUnit::mmHg)},
-      {"MeanLeftKidneyVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftLegVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLeg), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftPulmonaryArteriesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftPulmonaryCapillariesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLeftPulmonaryVeinsInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanLiverVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanMuscleVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanMyocardiumVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanPulmonaryArteriesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanPulmonaryCapillariesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftKidneyVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftLegVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLeg), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftPulmonaryArteriesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftPulmonaryCapillariesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLeftPulmonaryVeinsInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanLiverVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanMuscleVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanMyocardiumVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanPulmonaryArteriesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanPulmonaryCapillariesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
       {"MeanPulmonaryCapillariesPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryCapillaries), PressureUnit::mmHg)},
-      {"MeanPulmonaryVeinsInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanPulmonaryVeinsInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
       {"MeanPulmonaryVeinsPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::PulmonaryVeins), PressureUnit::mmHg)},
-      {"MeanRightArmVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightHeartInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightArmVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightHeartInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart), VolumePerTimeUnit::mL_Per_s)},
       {"MeanRightHeartPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightHeart), PressureUnit::mmHg)},
-      {"MeanRightKidneyVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightLegVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLeg), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightPulmonaryArteriesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightPulmonaryCapillariesInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanRightPulmonaryVeinsInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSkinVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSmallIntestineVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::SmallIntestine), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSplanchnicVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Splanchnic), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanSpleenVasculatureInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen), VolumePerTimeUnit::mL_Per_s)},
-      {"MeanVenaCavaInFlow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightKidneyVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightLegVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLeg), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightPulmonaryArteriesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryArteries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightPulmonaryCapillariesInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanRightPulmonaryVeinsInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryVeins), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSkinVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSmallIntestineVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::SmallIntestine), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSplanchnicVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Splanchnic), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanSpleenVasculatureInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen), VolumePerTimeUnit::mL_Per_s)},
+      {"MeanVenaCavaInflow_mL_Per_s",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava), VolumePerTimeUnit::mL_Per_s)},
       {"MeanVenousCarbonDioxidePartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("CarbonDioxide")), PressureUnit::mmHg)},
       {"MeanVenousOxygenPartialPressure_mmHg",  RunningAverages(pulse->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(*pulse->GetSubstanceManager().GetSubstance("Oxygen")), PressureUnit::mmHg)}
     };
@@ -649,45 +649,45 @@ namespace pulse::study::sensitivity_analysis
     sim.set_diastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg));
     sim.set_heartejectionfraction(pulse->GetCardiovascularSystem()->GetHeartEjectionFraction());
     sim.set_heartstrokevolume_ml(pulse->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL));
-    sim.set_meanaortainflow_ml_per_s(runningAverages.at("MeanAortaInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanaortainflow_ml_per_s(runningAverages.at("MeanAortaInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanarterialcarbondioxidepartialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialCarbonDioxidePartialPressure(PressureUnit::mmHg));
     sim.set_meanarterialoxygenpartialpressure_mmhg(runningAverages.at("MeanArterialOxygenPartialPressure_mmHg").instantaneousAverage);
     sim.set_meanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
-    sim.set_meanbonevasculatureinflow_ml_per_s(runningAverages.at("MeanBoneVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbonevasculatureinflow_ml_per_s(runningAverages.at("MeanBoneVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanbrainvasculatureinflow_ml_per_s(runningAverages.at("MeanBrainVasculatureInflow_mL_Per_s").instantaneousAverage);
     sim.set_meancentralvenouspressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanCentralVenousPressure(PressureUnit::mmHg));
-    sim.set_meanfatvasculatureinflow_ml_per_s(runningAverages.at("MeanFatVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meankidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanlargeintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanLargeIntestineVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftarmvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftArmVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftheartinflow_ml_per_s(runningAverages.at("MeanLeftHeartInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanfatvasculatureinflow_ml_per_s(runningAverages.at("MeanFatVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meankidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanKidneyVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanlargeintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanLargeIntestineVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftarmvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftArmVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftheartinflow_ml_per_s(runningAverages.at("MeanLeftHeartInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanleftheartpressure_mmhg(runningAverages.at("MeanLeftHeartPressure_mmHg").instantaneousAverage);
-    sim.set_meanleftkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftlegvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftLegVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanleftpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanlivervasculatureinflow_ml_per_s(runningAverages.at("MeanLiverVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanmusclevasculatureinflow_ml_per_s(runningAverages.at("MeanMuscleVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanmyocardiumvasculatureinflow_ml_per_s(runningAverages.at("MeanMyocardiumVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftKidneyVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftlegvasculatureinflow_ml_per_s(runningAverages.at("MeanLeftLegVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryArteriesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryCapillariesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanleftpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanLeftPulmonaryVeinsInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanlivervasculatureinflow_ml_per_s(runningAverages.at("MeanLiverVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanmusclevasculatureinflow_ml_per_s(runningAverages.at("MeanMuscleVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanmyocardiumvasculatureinflow_ml_per_s(runningAverages.at("MeanMyocardiumVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanPulmonaryArteriesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanPulmonaryCapillariesInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanpulmonarycapillariespressure_mmhg(runningAverages.at("MeanPulmonaryCapillariesPressure_mmHg").instantaneousAverage);
-    sim.set_meanpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanPulmonaryVeinsInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanpulmonaryveinspressure_mmhg(runningAverages.at("MeanPulmonaryVeinsPressure_mmHg").instantaneousAverage);
-    sim.set_meanrightarmvasculatureinflow_ml_per_s(runningAverages.at("MeanRightArmVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightheartinflow_ml_per_s(runningAverages.at("MeanRightHeartInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightarmvasculatureinflow_ml_per_s(runningAverages.at("MeanRightArmVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightheartinflow_ml_per_s(runningAverages.at("MeanRightHeartInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanrightheartpressure_mmhg(runningAverages.at("MeanRightHeartPressure_mmHg").instantaneousAverage);
-    sim.set_meanrightkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanRightKidneyVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightlegvasculatureinflow_ml_per_s(runningAverages.at("MeanRightLegVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryArteriesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryCapillariesInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanrightpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryVeinsInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanskinvasculatureinflow_ml_per_s(runningAverages.at("MeanSkinVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meansmallintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanSmallIntestineVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meansplanchnicvasculatureinflow_ml_per_s(runningAverages.at("MeanSplanchnicVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanspleenvasculatureinflow_ml_per_s(runningAverages.at("MeanSpleenVasculatureInFlow_mL_Per_s").instantaneousAverage);
-    sim.set_meanvenacavainflow_ml_per_s(runningAverages.at("MeanVenaCavaInFlow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightkidneyvasculatureinflow_ml_per_s(runningAverages.at("MeanRightKidneyVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightlegvasculatureinflow_ml_per_s(runningAverages.at("MeanRightLegVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightpulmonaryarteriesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryArteriesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightpulmonarycapillariesinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryCapillariesInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanrightpulmonaryveinsinflow_ml_per_s(runningAverages.at("MeanRightPulmonaryVeinsInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanskinvasculatureinflow_ml_per_s(runningAverages.at("MeanSkinVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meansmallintestinevasculatureinflow_ml_per_s(runningAverages.at("MeanSmallIntestineVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meansplanchnicvasculatureinflow_ml_per_s(runningAverages.at("MeanSplanchnicVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanspleenvasculatureinflow_ml_per_s(runningAverages.at("MeanSpleenVasculatureInflow_mL_Per_s").instantaneousAverage);
+    sim.set_meanvenacavainflow_ml_per_s(runningAverages.at("MeanVenaCavaInflow_mL_Per_s").instantaneousAverage);
     sim.set_meanvenouscarbondioxidepartialpressure_mmhg(runningAverages.at("MeanVenousCarbonDioxidePartialPressure_mmHg").instantaneousAverage);
     sim.set_meanvenousoxygenpartialpressure_mmhg(runningAverages.at("MeanVenousOxygenPartialPressure_mmHg").instantaneousAverage);
     sim.set_pulmonarydiastolicarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetPulmonaryDiastolicArterialPressure(PressureUnit::mmHg));

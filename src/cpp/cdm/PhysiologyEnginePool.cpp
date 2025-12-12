@@ -7,7 +7,6 @@ See accompanying NOTICE file for details.*/
 #include "cdm/engine/SEAdvanceTime.h"
 #include "cdm/engine/SEDataRequested.h"
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 
 namespace
@@ -103,14 +102,11 @@ bool SEPhysiologyEnginePool::InitializeEngines()
         engine->GetLogger()->SetLogFile(init->GetLogFilename());
       // Patient/State
       if (init->HasPatientConfiguration())
-        pe->IsActive = engine->InitializeEngine(init->GetPatientConfiguration());
+        pe->IsActive = engine->InitializeEngine(init->GetPatientConfiguration(), &init->GetDataRequestManager());
       else if (init->HasStateFilename())
-        pe->IsActive = engine->SerializeFromFile(init->GetStateFilename());
+        pe->IsActive = engine->SerializeFromFile(init->GetStateFilename(), &init->GetDataRequestManager());
       else if (init->HasState())
-        pe->IsActive = engine->SerializeFromString(init->GetState(), init->GetStateFormat());
-      // Data Requests
-      if (init->HasDataRequestManager())
-        engine->GetEngineTracker()->GetDataRequestManager().Copy(init->GetDataRequestManager());
+        pe->IsActive = engine->SerializeFromString(init->GetState(), init->GetStateFormat(), &init->GetDataRequestManager());
       // Events
       pe->DataRequested.KeepEventChanges(init->KeepEventChanges());
       engine->GetEventManager().ForwardEvents(&pe->DataRequested);

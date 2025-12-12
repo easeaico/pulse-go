@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/patient/actions/SERespiratoryMechanicsModification.h"
 #include "cdm/system/physiology/SERespiratoryMechanicsModifiers.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
@@ -33,32 +33,33 @@ void HowToRespiratoryMechanicsModification()
 {
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_RespiratoryMechanicsModification.cpp.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_RespiratoryMechanicsModification.cpp/HowTo_RespiratoryMechanicsModification.log");
   pe->GetLogger()->Info("HowTo_RespiratoryMechanicsModification");
+
+  // Setup data requests to write to a csv file so we can plot data
+  SEDataRequestManager drMgr(pe->GetLogger());
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  drMgr.CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  drMgr.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
+  drMgr.SetResultsFilename("./test_results/howto/HowTo_RespiratoryMechanicsModification.cpp/HowTo_RespiratoryMechanicsModification.csv");
 
   // With this engine, you do not initialize it, its already ready to go at construction time
 
   // You can load a previously saved state, but this is optional!
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))// Select patient
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", &drMgr))// Select patient
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
-  // Setup data requests to write to a csv file so we can plot data
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryRespiratoryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespiratoryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_RespiratoryMechanicsModification.cpp.csv");
-
   for (size_t i = 0; i < 6; i++)
   {
-    AdvanceAndTrackTime_s(10, *pe);
-    pe->GetEngineTracker()->LogRequestedValues();
+    pe->AdvanceModelTime(10, TimeUnit::s);
+    pe->GetDataRequestTracker().LogRequestedValues();
   }
 
   SERespiratoryMechanicsModification config;
@@ -73,7 +74,7 @@ void HowToRespiratoryMechanicsModification()
 
   for (size_t i = 0; i < 12; i++)
   {
-    AdvanceAndTrackTime_s(10, *pe);
-    pe->GetEngineTracker()->LogRequestedValues();
+    pe->AdvanceModelTime(10, TimeUnit::s);
+    pe->GetDataRequestTracker().LogRequestedValues();
   }
 }

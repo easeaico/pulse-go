@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/compartment/SECompartmentManager.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
@@ -28,42 +28,46 @@
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/properties/SEFunctionVolumeVsTime.h"
-#include "cdm/properties/SEScalar0To1.h"
+
+void SetDataRequests(SEDataRequestManager& drMgr)
+{
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  drMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  drMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("ExtravascularFluidVolume", VolumeUnit::mL);
+  drMgr.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
+  drMgr.CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
+  drMgr.CreatePhysiologyDataRequest("CentralVenousPressure", PressureUnit::mmHg);
+  drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+}
 
 void CreateState()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_CombatMultitrauma_CreateState.log");
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_CombatMultitrauma_CreateState.cpp/HowTo_CombatMultitrauma_CreateState.log");
   pe->GetLogger()->Info("HowTo_CombatMultitrauma_CreateState");
+
+  SEDataRequestManager drMgr(pe->GetLogger());
+  SetDataRequests(drMgr);
+  drMgr.SetResultsFilename("./test_results/HowTo_CombatMultitrauma_CreateState.cpp/HowTo_CombatMultitrauma_CreateState.csv");
 
   // Load the Soldier patient
   // You can alternatively define your own patient (see HowTo-CreateAPatient) and apply conditions (see HowTo-Pneumonia) 
   // This would require runnning stabilization rather than loading an existing state
-  if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
+  if (!pe->SerializeFromFile("./states/Soldier@0s.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExtravascularFluidVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent", MassUnit::g);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CentralVenousPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToCombatMultitrauma.csv");
 
   pe->GetLogger()->Info("Patient healthy state");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
@@ -97,7 +101,7 @@ void CreateState()
   pe->ProcessAction(hemorrhageVenaCava);
 
   //Advance the engine to the point we would like to load later
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   pe->GetLogger()->Info("Patient injured state at serialization");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
@@ -115,7 +119,7 @@ void CreateState()
 
   // Save this state out.
   // You an then load this state in your application
-  pe->SerializeToFile("./states/CombatMultirauma_Initial_Injuries.json");
+  pe->SerializeToFile("./test_results/HowTo_CombatMultitrauma_CreateState.cpp/CombatMultirauma_Initial_Injuries.json");
 
   pe->GetLogger()->Info("State saved");
 }
@@ -127,8 +131,12 @@ void LoadState()
   pe->GetLogger()->SetLogFile("./test_results/HowTo_CombatMultitrauma_LoadState.log");
   pe->GetLogger()->Info("HowTo_CombatMultitrauma_LoadState");
 
+  SEDataRequestManager drMgr(pe->GetLogger());
+  SetDataRequests(drMgr);
+  drMgr.SetResultsFilename("./test_results/HowTo_CombatMultitrauma_CreateState.cpp/HowTo_CombatMultitrauma_LoadState.csv");
+
   //Load the injured state we created
-  if (!pe->SerializeFromFile("./states/CombatMultirauma_Initial_Injuries.json"))
+  if (!pe->SerializeFromFile("./test_results/HowTo_CombatMultitrauma_CreateState.cpp/CombatMultirauma_Initial_Injuries.json", &drMgr))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -162,7 +170,7 @@ void LoadState()
   hemorrhageVenaCava.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageVenaCava);
 
-  AdvanceAndTrackTime_s(60, *pe);
+  pe->AdvanceModelTime(60, TimeUnit::s);
 
   // Needle Decompression to help with pneumothorax
   SENeedleDecompression needleDecomp;
@@ -171,14 +179,14 @@ void LoadState()
   pe->ProcessAction(needleDecomp);
 
   // Advance the engine while you prepare to treat the patient
-  AdvanceAndTrackTime_s(60.0 * 4.0, *pe); //4 min
+  pe->AdvanceModelTime(60.0 * 4.0, TimeUnit::s); //4 min
 
   // Apply a tournaquet and stop the bleeding completely
   hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
    
-  AdvanceAndTrackTime_s(30, *pe);
+  pe->AdvanceModelTime(30, TimeUnit::s);
 
   // Give an IV
   const SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
@@ -187,7 +195,7 @@ void LoadState()
   iVSaline.GetRate().SetValue(100, VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   pe->ProcessAction(iVSaline);
 
-  AdvanceAndTrackTime_s(60.0 * 2.0, *pe); //2 min
+  pe->AdvanceModelTime(60.0 * 2.0, TimeUnit::s); //2 min
 
   // Provide morphine
   const SESubstance* morphine = pe->GetSubstanceManager().GetSubstance("Morphine");
@@ -197,7 +205,7 @@ void LoadState()
   bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   pe->ProcessAction(bolus);
 
-  AdvanceAndTrackTime_s(60.0 * 3.0, *pe); //3 min
+  pe->AdvanceModelTime(60.0 * 3.0, TimeUnit::s); //3 min
    
   pe->GetLogger()->Info("Patient state after interventions");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());

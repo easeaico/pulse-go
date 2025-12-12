@@ -15,7 +15,6 @@ import com.kitware.pulse.utilities.FileUtils;
 
 public class SETimedStabilization
 {
-  protected eSwitch                  trackingStabilization;
   protected Map<String,SEScalarTime> convergenceCriteria;
   
   public SETimedStabilization()
@@ -27,7 +26,6 @@ public class SETimedStabilization
   public void clear()
   {
     clear();
-    this.trackingStabilization=eSwitch.Off;
     this.convergenceCriteria.clear();
   }
   
@@ -44,8 +42,6 @@ public class SETimedStabilization
   
   public static void load(TimedStabilizationData src, SETimedStabilization dst) 
   {
-    if(src.getTrackingStabilization()!=eSwitch.UNRECOGNIZED && src.getTrackingStabilization()!=eSwitch.NullSwitch)
-      dst.trackingStabilization=src.getTrackingStabilization();
     for(String name : src.getConvergenceCriteriaMap().keySet())
     {
       SEScalarTime.load(src.getConvergenceCriteriaMap().get(name),dst.createConvergenceCriteria(name));     
@@ -61,21 +57,10 @@ public class SETimedStabilization
   
   protected static void unload(SETimedStabilization src, TimedStabilizationData.Builder dst)
   {
-  	if(src.trackingStabilization!=null)
-  		dst.setTrackingStabilization(src.trackingStabilization);
     for(String name : src.convergenceCriteria.keySet())
     {
     	dst.putConvergenceCriteria(name, SEScalarTime.unload(src.convergenceCriteria.get(name)));
     }
-  }
-  
-  public eSwitch isTrackingStabilization()
-  {
-    return this.trackingStabilization;
-  }
-  public void TrackStabilization(eSwitch b)
-  {
-  	this.trackingStabilization = (b==eSwitch.NullSwitch) ? eSwitch.Off : b;
   }
   
   public SEScalarTime createConvergenceCriteria(String type)

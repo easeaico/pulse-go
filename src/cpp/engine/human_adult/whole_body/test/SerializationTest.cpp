@@ -6,7 +6,7 @@
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
 #include "cdm/engine/SETimedStabilization.h"
-#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/substance/SESubstance.h"
@@ -22,7 +22,6 @@
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "cdm/system/equipment/inhaler/SEInhaler.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
-#include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarElectricPotential.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
@@ -42,37 +41,10 @@
 #include "cdm/utils/testing/SETestCase.h"
 #include "cdm/utils/testing/SETestSuite.h"
 
-class HowToTracker
-{
-private:
-  double m_dT_s;  // Cached Engine Time Step
-  PhysiologyEngine& m_Engine;
-public:
-  HowToTracker(PhysiologyEngine& engine) : m_Engine(engine)
-  {
-    m_dT_s = m_Engine.GetTimeStep(TimeUnit::s);
-  }
-  ~HowToTracker(){}
-
-  // This class will operate on seconds
-  void AdvanceModelTime(double time_s)
-  {
-    int count = static_cast<int>(time_s / m_dT_s);
-    for (int i = 0; i <= count; i++)
-    {
-      m_Engine.AdvanceModelTime();  // Compute 1 time step
-
-      // Pull Track will pull data from the engine and append it to the file
-      m_Engine.GetEngineTracker()->TrackData(m_Engine.GetSimulationTime(TimeUnit::s));
-    }
-  }
-};
-
 namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
   {
-    pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.csv");
     SEPatientConfiguration pconfig;
     pconfig.SetPatientFile("StandardMale.json");
     if (!pc->InitializeEngine(pconfig))
@@ -81,7 +53,7 @@ namespace pulse { namespace human_adult_whole_body
       return;
     }
 
-    tracker.AdvanceModelTime(30);
+    pc->AdvanceModelTime(30, TimeUnit::s);
 
     SEInhalerConfiguration config(pc->GetLogger());
     config.GetConfiguration().SetSubstance(pc->GetSubstanceManager().GetSubstance("Albuterol"));
@@ -105,7 +77,7 @@ namespace pulse { namespace human_adult_whole_body
     pause.GetPeriod().SetValue(10, TimeUnit::s);
 
     pc->ProcessAction(cResp);
-    tracker.AdvanceModelTime(5);
+    pc->AdvanceModelTime(5, TimeUnit::s);
 
     SEScalarTime now;// Make sure to tell the engine that we are at the same time
     // Save and Load the Engine State
@@ -116,17 +88,11 @@ namespace pulse { namespace human_adult_whole_body
     pc->SerializeFromString(state, eSerializationFormat::BINARY);
     pc->SetSimulationTime(now);
 
-    // Change the results file
-    pc->GetLogger()->SetLogFile("InhalerSerialization.log");
-    std::remove("InhalerSerializationResults.csv");
-    pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerSerializationResults.csv");
-
-    tracker.AdvanceModelTime(145);
+    pc->AdvanceModelTime(145, TimeUnit::s);
   }
 
   void EngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& tracker, const SESubstance& succs)
   {
-    pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.csv");
     SEPatientConfiguration pconfig;
     pconfig.SetPatientFile("StandardMale.json");
     if (!pc->InitializeEngine(pconfig))
@@ -143,19 +109,13 @@ namespace pulse { namespace human_adult_whole_body
     pc->AdvanceModelTime(1, TimeUnit::s);// Not tracking
 
     SEScalarTime now;// Make sure to tell the engine that we are at the same time
-
-    // Change our results file name
-    pc->GetLogger()->SetLogFile("InjectSuccsSerialization.log");
-    std::remove("InjectSuccsSerialization.csv");
-    pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.csv");
-
     // Save and Load the Engine State
     pc->SerializeToFile("./MidBolusState.json");
     now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
     pc->SerializeFromFile("./MidBolusState.json");
     pc->SetSimulationTime(now);
 
-    tracker.AdvanceModelTime(15);
+    pc->AdvanceModelTime(15, TimeUnit::s);
 
     SEAnesthesiaMachineConfiguration amConfig(pc->GetLogger());
     amConfig.GetConfiguration().SetConnection(eSwitch::On);
@@ -171,14 +131,14 @@ namespace pulse { namespace human_adult_whole_body
     amConfig.GetConfiguration().GetOxygenBottleOne().GetVolume().SetValue(660, VolumeUnit::L);
     amConfig.GetConfiguration().GetOxygenBottleTwo().GetVolume().SetValue(660, VolumeUnit::L);
     pc->ProcessAction(amConfig);
-    tracker.AdvanceModelTime(5);
+    pc->AdvanceModelTime(5, TimeUnit::s);
 
     pc->SerializeToFile("./AnesthesiaMachineState.json");
     now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
     pc->SerializeFromFile("./AnesthesiaMachineState.json");
     pc->SetSimulationTime(now);
 
-    tracker.AdvanceModelTime(40);
+    pc->AdvanceModelTime(40, TimeUnit::s);
   }
 
   void EngineTest::SerializationTest(const std::string& sTestDirectory)

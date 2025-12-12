@@ -20,12 +20,12 @@
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "AchievedExerciseLevel", "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Insulin", "PropertyName": "BloodConcentration", "Unit": "ug/mL" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Substance", "SubstanceName": "Sodium", "PropertyName": "BloodConcentration", "Unit": "ug/mL" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "GutVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MuscleVasculature", "PropertyName": "InFlow", "Unit": "mL/s" },
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "GutVasculature", "PropertyName": "Inflow", "Unit": "mL/s" },
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "MuscleVasculature", "PropertyName": "Inflow", "Unit": "mL/s" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "LeftHeart", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "LeftHeart", "PropertyName": "InFlow", "Unit": "mL/min" },
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "LeftHeart", "PropertyName": "Inflow", "Unit": "mL/min" },
       { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "Volume", "Unit": "mL" },
-      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "InFlow", "Unit": "mL/min" }
+      { "DecimalFormat": { }, "Category": "LiquidCompartment", "CompartmentName": "RightHeart", "PropertyName": "Inflow", "Unit": "mL/min" }
     ]
   },
   "AnyAction": [{

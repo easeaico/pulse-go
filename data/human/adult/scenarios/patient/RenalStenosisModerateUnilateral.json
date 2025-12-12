@@ -25,8 +25,8 @@
   "DataRequestManager": {
     "DataRequest": 
     [
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftRenalArtery", "PropertyName": "InFlow", "Unit": "mL/min" },
-      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightRenalArtery", "PropertyName": "InFlow", "Unit": "mL/min" }
+      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "LeftRenalArtery", "PropertyName": "Inflow", "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "RightRenalArtery", "PropertyName": "Inflow", "Unit": "mL/min" }
     ]
   },
   "AnyAction": [{
