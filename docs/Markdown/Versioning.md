@@ -33,6 +33,10 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Threaded execution of a set of scenarios supported in all API languages, check out a HowTo-RunScenarios file
     - Created Python based HowTo for running/analyzing large amounts of patients and insult/intervention combinations
     - Added examples and support for post processing log files
+  - Automated C++ Data Request Tracking
+    - Users no longer need to track data themselves, tracking is now internal to the engine
+    - Refactored the C++ PhysiologyEngine interface to be consistent with Python/C#/Java
+      - Provide SEDataRequestManager on state loading and initialization
 
 - Physiology Model Improvements
     - Added clinical shunt and dead space outputs using blood gas values instead of fluid mechanics properties
