@@ -38,11 +38,11 @@ enum class TrackMode { CSV, Dynamic };
 class SEDataRequestScalar : public SEGenericScalar
 {
   friend class SEEngineTracker;
-  friend class SEDynamicStabilizationPropertyConvergence;
-
-protected:
+public:
   SEDataRequestScalar(Logger* logger) : SEGenericScalar(logger)
   {
+    idx = 0;
+    Heading = "";
     UpdateProperty = CompartmentUpdate::None;
     GasCmpt = nullptr;
     GasSubstance = nullptr;
@@ -50,7 +50,8 @@ protected:
     LiquidSubstance = nullptr;
     ThermalCmpt = nullptr;
   }
-  
+
+protected:
   void UpdateScalar();
   void SetScalarRequest(const SEScalar& s, SEDataRequest& dr);
 
@@ -74,6 +75,8 @@ class CDM_DECL SEDataRequestTracker : public Loggable
 public:
   SEDataRequestTracker(Logger* logger) : Loggable(logger) {}
   virtual ~SEDataRequestTracker() {}
+
+  virtual void Reset() = 0;
 
   // Close the active stream file using this method
   // Will no longer stream data to this file until SetupDataRequests is called
@@ -102,7 +105,7 @@ public:
   virtual ~SEEngineTracker();
 
   void Clear();// Reset + Sets CDM objects to nullptr
-  void Reset();
+  void Reset() override; // Removes all the current tracks
 
   void CloseResultsFile() override;
 
@@ -110,6 +113,7 @@ public:
 
   size_t NumTracks() const override;
   double GetValue(size_t idx) const override;
+  // These methods will use the dr address, assumes they are a part of this tracker DataRequestManager
   double GetValue(const SEDataRequest& dr) const override;
   std::string GetUnit(const SEDataRequest& dr) const override;
 

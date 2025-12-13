@@ -26,8 +26,8 @@ add_library_ex(Pulse ${${PROJECT_NAME}_LIB_TYPE}
     protobuf::libprotobuf
   PRIVATE_DEPENDS
     ${_filesystem}
-    Eigen3::Eigen
 )
+target_include_directories(Pulse PRIVATE ${EIGEN3_INCLUDE_DIR})
 if(ANDROID)
   message(STATUS "Setting special ANDROID link options")
   target_link_options(Pulse PRIVATE -llog -static-libstdc++)

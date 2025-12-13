@@ -24,7 +24,6 @@ public:
   bool IsOptional()               const { return m_Optional; }
   void SetOptional(bool b)              { m_Optional = b; }
 
-  void TrackScalar(const SEScalar& s);
   SEDataRequestScalar& GetDataRequestScalar();
 protected:
 
