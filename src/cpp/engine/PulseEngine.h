@@ -2370,6 +2370,7 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilationConnection);
+    DEFINE_STATIC_STRING_EX(DeadSpace, MechanicalVentilationDeadSpace);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -2377,6 +2378,7 @@ namespace pulse
       if (_values.empty())
       {
         _values.push_back(Connection);
+        _values.push_back(DeadSpace);
       }
       return _values;
     }
@@ -2399,14 +2401,16 @@ namespace pulse
   class MechanicalVentilationLink
   {
   public:
-    DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilationConnectionToAirway);
+    DEFINE_STATIC_STRING_EX(ConnectionToDeadSpace, MechanicalVentilationConnectionToDeadSpace);
+    DEFINE_STATIC_STRING_EX(DeadSpaceToAirway, MechanicalVentilationDeadSpaceToAirway);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(ConnectionToAirway);
+        _values.push_back(ConnectionToDeadSpace);
+        _values.push_back(DeadSpaceToAirway);
       }
       return _values;
     }

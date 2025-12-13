@@ -17,7 +17,7 @@ enum eAirwayMode
   AnesthesiaMachine                                                  = 1;/**<<@brief Hooked up to this equipment */
   BagValveMask                                                       = 2;/**<<@brief Hooked up to this equipment */
   Inhaler                                                            = 3;/**<<@brief Hooked up to this equipment */
-  MechanicalVentilation                                              = 4;/**<<@brief Physical ventilation being performed */
+  MechanicalVentilation                                              = 4;/**<<@brief Positive pressure ventilation being performed */
   MechanicalVentilator                                               = 5;/**<<@brief Hooked up to this equipment */
   NasalCannula                                                       = 6;/**<<@brief Hooked up to this equipment */
   NonRebreatherMask                                                  = 7;/**<<@brief Hooked up to this equipment */

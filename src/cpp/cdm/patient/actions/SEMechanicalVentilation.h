@@ -42,6 +42,10 @@ public:
   virtual SEScalarPressure& GetPressure();
   virtual double GetPressure(const PressureUnit& unit) const;
 
+  virtual bool HasMechanicalDeadSpaceVolume() const;
+  virtual SEScalarVolume& GetMechanicalDeadSpaceVolume();
+  virtual double GetMechanicalDeadSpaceVolume(const VolumeUnit& unit) const;
+
   bool HasGasFraction() const;
   bool HasGasFraction(const SESubstance& substance) const;
   const std::vector<SESubstanceFraction*>& GetGasFractions();
@@ -65,6 +69,7 @@ protected:
   eSwitch                 m_State;
   SEScalarVolumePerTime*  m_Flow;
   SEScalarPressure*       m_Pressure;
+  SEScalarVolume*         m_MechanicalDeadSpaceVolume;
 
   std::vector<SESubstanceFraction*>       m_GasFractions;
   std::vector<const SESubstanceFraction*> m_cGasFractions;

@@ -997,6 +997,8 @@ void PBPatientAction::Serialize(const CDM_BIND::MechanicalVentilationData& src, 
     PBProperty::Load(src.flow(), dst.GetFlow());
   if (src.has_pressure())
     PBProperty::Load(src.pressure(), dst.GetPressure());
+  if (src.has_mechanicaldeadspacevolume())
+    PBProperty::Load(src.mechanicaldeadspacevolume(), dst.GetMechanicalDeadSpaceVolume());
 
   dst.m_GasFractions.clear();
   dst.m_cGasFractions.clear();
@@ -1049,6 +1051,8 @@ void PBPatientAction::Serialize(const SEMechanicalVentilation& src, CDM_BIND::Me
     dst.set_allocated_flow(PBProperty::Unload(*src.m_Flow));
   if (src.HasPressure())
     dst.set_allocated_pressure(PBProperty::Unload(*src.m_Pressure));
+  if (src.HasMechanicalDeadSpaceVolume())
+    dst.set_allocated_mechanicaldeadspacevolume(PBProperty::Unload(*src.m_MechanicalDeadSpaceVolume));
   for (SESubstanceFraction *sf : src.m_GasFractions)
     dst.mutable_gasfraction()->AddAllocated(PBSubstance::Unload(*sf));
   for (SESubstanceConcentration *sc : src.m_Aerosols)

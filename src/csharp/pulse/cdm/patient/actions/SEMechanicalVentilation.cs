@@ -10,6 +10,7 @@ namespace Pulse.CDM
     protected eSwitch               state;
     protected SEScalarVolumePerTime flow;
     protected SEScalarPressure      pressure;
+    protected SEScalarVolume        mechanical_dead_space_volume;
 
     protected List<SESubstanceFraction> gas_fractions;
     protected List<SESubstanceConcentration> aerosols;
@@ -19,6 +20,7 @@ namespace Pulse.CDM
       this.state = 0;
       this.flow = null;
       this.pressure = null;
+      this.mechanical_dead_space_volume = null;
 
       this.gas_fractions = new List<SESubstanceFraction>();
       this.aerosols = new List<SESubstanceConcentration>();
@@ -37,6 +39,8 @@ namespace Pulse.CDM
         flow.Invalidate();
       if (pressure != null)
         pressure.Invalidate();
+      if (mechanical_dead_space_volume != null)
+        mechanical_dead_space_volume.Invalidate();
 
       gas_fractions.Clear();
       aerosols.Clear();
@@ -54,6 +58,8 @@ namespace Pulse.CDM
         this.GetFlow().Set(from.GetFlow());
       if (from.HasPressure())
         this.GetPressure().Set(from.GetPressure());
+      if (from.HasMechanicalDeadSpaceVolume())
+        this.GetMechanicalDeadSpaceVolume().Set(from.GetMechanicalDeadSpaceVolume());
 
       if (from.gas_fractions != null)
       {
@@ -144,6 +150,17 @@ namespace Pulse.CDM
     public bool HasPressure()
     {
       return pressure == null ? false : pressure.IsValid();
+    }
+
+    public SEScalarVolume GetMechanicalDeadSpaceVolume()
+    {
+      if (mechanical_dead_space_volume == null)
+        mechanical_dead_space_volume = new SEScalarVolume();
+      return mechanical_dead_space_volume;
+    }
+    public bool HasMechanicalDeadSpaceVolume()
+    {
+      return mechanical_dead_space_volume == null ? false : mechanical_dead_space_volume.IsValid();
     }
 
     public SESubstanceFraction CreateGasFraction(string substance)
@@ -255,7 +272,8 @@ namespace Pulse.CDM
       string str = "Envriomental Conditions:"
           + "\n\tState: " + GetState()
           + "\n\tFlow: " + (HasFlow() ? GetFlow().ToString() : "None")
-          + "\n\tPressure: " + (HasPressure() ? GetPressure().ToString() : "None");
+          + "\n\tPressure: " + (HasPressure() ? GetPressure().ToString() : "None")
+          + "\n\tMechanicalDeadSpaceVolume: " + (HasMechanicalDeadSpaceVolume() ? GetMechanicalDeadSpaceVolume().ToString() : "None");
       foreach (SESubstanceFraction sf in this.gas_fractions)
         str += "\n\t" + sf.GetSubstance();
       foreach (SESubstanceConcentration sc in this.aerosols)

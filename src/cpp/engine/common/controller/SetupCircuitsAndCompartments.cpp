@@ -3922,11 +3922,16 @@ namespace pulse
     Connection.GetPressure().Set(Ambient.GetNextPressure());
     Connection.GetNextPressure().Set(Ambient.GetNextPressure());
     Connection.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+    SEFluidCircuitNode& DeadSpace = m_CombinedMechanicalVentilation.CreateNode(pulse::MechanicalVentilationNode::DeadSpace);
+    DeadSpace.GetPressure().Set(Ambient.GetNextPressure());
+    DeadSpace.GetNextPressure().Set(Ambient.GetNextPressure());
+    DeadSpace.GetVolumeBaseline().SetValue(0.001, VolumeUnit::L);
     // Paths
-    SEFluidCircuitPath& ConnectionToAirway = m_CombinedMechanicalVentilation.CreatePath(Connection, Airway, pulse::MechanicalVentilationPath::ConnectionToAirway);
+    SEFluidCircuitPath& ConnectionToDeadSpace = m_CombinedMechanicalVentilation.CreatePath(Connection, DeadSpace, pulse::MechanicalVentilationPath::ConnectionToDeadSpace);
     //ConnectionToAirway.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s); //We add this on the fly, it can only be there when explicitly set
     SEFluidCircuitPath& GroundToConnection = m_CombinedMechanicalVentilation.CreatePath(Ambient, Connection, pulse::MechanicalVentilationPath::GroundToConnection);
     GroundToConnection.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
+    SEFluidCircuitPath& DeadSpaceToAirway = m_CombinedMechanicalVentilation.CreatePath(DeadSpace, Airway, pulse::MechanicalVentilationPath::DeadSpaceToAirway);
     m_CombinedMechanicalVentilation.RemovePath(pulse::RespiratoryPath::EnvironmentToAirway);
     m_CombinedMechanicalVentilation.SetNextAndCurrentFromBaselines();
     m_CombinedMechanicalVentilation.StateChange();
@@ -3938,17 +3943,23 @@ namespace pulse
     // Compartments //
     SEGasCompartment& gConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
     gConnection.MapNode(Connection);
+    SEGasCompartment& gDeadSpace = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilationCompartment::DeadSpace);
+    gDeadSpace.MapNode(DeadSpace);
     ///////////
     // Links //  
-    SEGasCompartmentLink& gConnectionToAirway = m_Compartments->CreateGasLink(gConnection, *gAirway, pulse::MechanicalVentilationLink::ConnectionToAirway);
-    gConnectionToAirway.MapPath(ConnectionToAirway);
+    SEGasCompartmentLink& gConnectionToDeadSpace = m_Compartments->CreateGasLink(gConnection, gDeadSpace, pulse::MechanicalVentilationLink::ConnectionToDeadSpace);
+    gConnectionToDeadSpace.MapPath(ConnectionToDeadSpace);
+    SEGasCompartmentLink& gDeadSpaceToAirway = m_Compartments->CreateGasLink(gDeadSpace, *gAirway, pulse::MechanicalVentilationLink::DeadSpaceToAirway);
+    gDeadSpaceToAirway.MapPath(DeadSpaceToAirway);
     ///////////
     // Graph //
     SEGasCompartmentGraph& gCombinedMechanicalVentilation = m_Compartments->GetRespiratoryAndMechanicalVentilationGraph();
     gCombinedMechanicalVentilation.AddGraph(gRespiratory);
     gCombinedMechanicalVentilation.RemoveLink(pulse::PulmonaryLink::EnvironmentToAirway);
     gCombinedMechanicalVentilation.AddCompartment(gConnection);
-    gCombinedMechanicalVentilation.AddLink(gConnectionToAirway);
+    gCombinedMechanicalVentilation.AddCompartment(gDeadSpace);
+    gCombinedMechanicalVentilation.AddLink(gConnectionToDeadSpace);
+    gCombinedMechanicalVentilation.AddLink(gDeadSpaceToAirway);
     gCombinedMechanicalVentilation.StateChange();
 
     ///////////////////////////////////
@@ -3958,17 +3969,23 @@ namespace pulse
     // Compartments //
     SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
     lConnection.MapNode(Connection);
+    SELiquidCompartment& lDeadSpace = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilationCompartment::DeadSpace);
+    lDeadSpace.MapNode(DeadSpace);
     ///////////
     // Links //  
-    SELiquidCompartmentLink& lConnectionToAirway = m_Compartments->CreateLiquidLink(lConnection, *lAirway, pulse::MechanicalVentilationLink::ConnectionToAirway);
-    lConnectionToAirway.MapPath(ConnectionToAirway);
+    SELiquidCompartmentLink& lConnectionToDeadSpace = m_Compartments->CreateLiquidLink(lConnection, lDeadSpace, pulse::MechanicalVentilationLink::ConnectionToDeadSpace);
+    lConnectionToDeadSpace.MapPath(ConnectionToDeadSpace);
+    SELiquidCompartmentLink& lDeadSpaceToAirway = m_Compartments->CreateLiquidLink(lDeadSpace, *lAirway, pulse::MechanicalVentilationLink::DeadSpaceToAirway);
+    lDeadSpaceToAirway.MapPath(DeadSpaceToAirway);
     ///////////
     // Graph //
     SELiquidCompartmentGraph& lCombinedMechanicalVentilation = m_Compartments->GetAerosolAndMechanicalVentilationGraph();
     lCombinedMechanicalVentilation.AddGraph(lAerosol);
     lCombinedMechanicalVentilation.RemoveLink(pulse::PulmonaryLink::EnvironmentToAirway);
     lCombinedMechanicalVentilation.AddCompartment(lConnection);
-    lCombinedMechanicalVentilation.AddLink(lConnectionToAirway);
+    lCombinedMechanicalVentilation.AddCompartment(lDeadSpace);
+    lCombinedMechanicalVentilation.AddLink(lConnectionToDeadSpace);
+    lCombinedMechanicalVentilation.AddLink(lDeadSpaceToAirway);
     lCombinedMechanicalVentilation.StateChange();
   }
 
