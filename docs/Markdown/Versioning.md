@@ -14,7 +14,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 ## Pulse Integration (Current new feature set)
 
 - Software Architecture Improvements
-  - Update Eigen to 5.0.0
+  - Update Eigen to 5.0.1
   - Automated Validation Updates
     - Improved organization for automated validation modules
     - Moved hemorrhage model validation to an automated validation module

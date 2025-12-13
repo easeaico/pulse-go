@@ -21,6 +21,9 @@ endif()
 if(POLICY CMP0177)# For normalizing install paths
   cmake_policy(SET CMP0177 NEW)
 endif()
+if(POLICY CMP0022)# For interface library linkings
+  cmake_policy(SET CMP0177 NEW)
+endif()
 
 if(NOT CMAKE_INSTALL_PREFIX OR CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   message(STATUS "Setting install dir inside build dir ${CMAKE_BINARY_DIR} ")
@@ -325,6 +328,13 @@ include(AddExecutable)# Extras to do when creating an executable
 #-----------------------------------------------------------------------------
 
 find_package(Eigen3 REQUIRED)
+# Grab the include directory
+# link_libraries(Pulse PRIVATE Eigen3::Eigen)
+# Is adding Eigen to the PulseTargets.cmake when it should not
+# So let's just use target_link_directories instead
+get_property(Eigen3_INCLUDE TARGET Eigen3::Eigen
+             PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "Using Eigen from ${Eigen3_INCLUDE}")
 
 # Tell protobuf-config.cmake to try to be compatible with FindProtobuf.cmake;
 # this makes it easier for us to work with either one

@@ -27,7 +27,8 @@ add_library_ex(Pulse ${${PROJECT_NAME}_LIB_TYPE}
   PRIVATE_DEPENDS
     ${_filesystem}
 )
-target_include_directories(Pulse PRIVATE ${EIGEN3_INCLUDE_DIR})
+target_include_directories(Pulse PRIVATE ${Eigen3_INCLUDE})
+
 if(ANDROID)
   message(STATUS "Setting special ANDROID link options")
   target_link_options(Pulse PRIVATE -llog -static-libstdc++)
@@ -43,10 +44,7 @@ add_library_ex(PulseTests STATIC
   PUBLIC_DEPENDS
     Pulse
   LIB_INSTALL_ONLY
-
 )
-target_include_directories(PulseTests PRIVATE ${EIGEN3_INCLUDE_DIR})
-
 
 if(${PROJECT_NAME}_C_AS_STATIC)
   return()
