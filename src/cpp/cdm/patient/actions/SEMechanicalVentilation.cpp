@@ -9,6 +9,7 @@
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
@@ -18,6 +19,7 @@ SEMechanicalVentilation::SEMechanicalVentilation(Logger* logger) : SEPatientActi
   m_State = eSwitch::Off;
   m_Flow = nullptr;
   m_Pressure = nullptr;
+  m_MechanicalDeadSpaceVolume = nullptr;
 }
 
 SEMechanicalVentilation::~SEMechanicalVentilation()
@@ -26,6 +28,7 @@ SEMechanicalVentilation::~SEMechanicalVentilation()
   m_State = eSwitch::Off;
   SAFE_DELETE(m_Flow);
   SAFE_DELETE(m_Pressure);
+  SAFE_DELETE(m_MechanicalDeadSpaceVolume);
 
   DELETE_VECTOR(m_GasFractions);
   m_cGasFractions.clear();
@@ -40,6 +43,7 @@ void SEMechanicalVentilation::Clear()
   m_State = eSwitch::Off;
   INVALIDATE_PROPERTY(m_Flow);
   INVALIDATE_PROPERTY(m_Pressure);
+  INVALIDATE_PROPERTY(m_MechanicalDeadSpaceVolume);
 
   for (SESubstanceFraction* sf : m_GasFractions)
     sf->Clear();
@@ -162,6 +166,23 @@ double SEMechanicalVentilation::GetPressure(const PressureUnit& unit) const
   if (m_Pressure == nullptr)
     return SEScalar::dNaN();
   return m_Pressure->GetValue(unit);
+}
+
+bool SEMechanicalVentilation::HasMechanicalDeadSpaceVolume() const
+{
+  return m_MechanicalDeadSpaceVolume == nullptr ? false : m_MechanicalDeadSpaceVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilation::GetMechanicalDeadSpaceVolume()
+{
+  if (m_MechanicalDeadSpaceVolume == nullptr)
+    m_MechanicalDeadSpaceVolume = new SEScalarVolume();
+  return *m_MechanicalDeadSpaceVolume;
+}
+double SEMechanicalVentilation::GetMechanicalDeadSpaceVolume(const VolumeUnit& unit) const
+{
+  if (m_MechanicalDeadSpaceVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_MechanicalDeadSpaceVolume->GetValue(unit);
 }
 
 bool SEMechanicalVentilation::HasGasFraction() const
