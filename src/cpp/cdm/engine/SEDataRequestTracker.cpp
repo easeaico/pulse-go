@@ -598,7 +598,6 @@ void SEEngineTracker::TrackData(double time_s, double dt_s)
   if (sampleTime_s != 0)
     sampleTime_s = 1 / sampleTime_s;
 
-  m_CurrentSampleTime_s += dt_s;
   if (m_CurrentSampleTime_s >= sampleTime_s)
   {
     m_CurrentSampleTime_s = 0;
@@ -639,6 +638,7 @@ void SEEngineTracker::TrackData(double time_s, double dt_s)
   }
 
   m_LastPullTime_s = time_s;
+  m_CurrentSampleTime_s += dt_s;
 }
 
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
