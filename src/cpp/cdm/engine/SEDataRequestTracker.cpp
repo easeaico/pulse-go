@@ -118,6 +118,17 @@ void SEEngineTracker::Reset()
   DELETE_MAP_SECOND(m_Request2Scalar);
 }
 
+void SEEngineTracker::OpenResultsFile(double currentTime_s)
+{
+  if (m_Mode == TrackMode::CSV && !m_ResultsStream->is_open())
+  {
+    // Assumes that the DataTrack has the current time data (hence TrackData won't write to the file)
+    Info("Creating csv request file: " + m_DataRequestMgr->GetResultFilename());
+    m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), *m_ResultsStream);
+    m_DataTrack->StreamProbesToFile(currentTime_s, *m_ResultsStream);
+  }
+}
+
 void SEEngineTracker::CloseResultsFile()
 {
   m_Mode = TrackMode::Dynamic;
@@ -587,7 +598,7 @@ void SEEngineTracker::TrackData(double time_s, double dt_s)
   if (sampleTime_s != 0)
     sampleTime_s = 1 / sampleTime_s;
 
-  if (m_CurrentSampleTime_s >= sampleTime_s)
+  if (m_CurrentSampleTime_s >= sampleTime_s || dt_s == 0)
   {
     m_CurrentSampleTime_s = 0;
 
@@ -622,15 +633,9 @@ void SEEngineTracker::TrackData(double time_s, double dt_s)
         m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
     }
 
-    if (m_Mode == TrackMode::CSV)
-    {
-      if (!m_ResultsStream->is_open())
-      {
-        Info("Creating csv request file: " + m_DataRequestMgr->GetResultFilename());
-        m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), *m_ResultsStream);
-      }
+    if (m_Mode == TrackMode::CSV && m_ResultsStream->is_open())
       m_DataTrack->StreamProbesToFile(time_s, *m_ResultsStream);
-    }
+
   }
 
   m_LastPullTime_s = time_s;

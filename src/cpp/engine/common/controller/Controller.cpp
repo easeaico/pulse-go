@@ -752,6 +752,9 @@ namespace pulse
     if (!IsReady())
       return false;
 
+    if (m_Tracking == eSwitch::On)// Create results file if we need to
+      m_EngineTracker->OpenResultsFile(m_SimulationTime.GetValue(TimeUnit::s));
+
     CheckIntubation();
     PreProcess();
     Process();

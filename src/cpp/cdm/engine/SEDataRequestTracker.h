@@ -107,6 +107,7 @@ public:
   void Clear();// Reset + Sets CDM objects to nullptr
   void Reset() override; // Removes all the current tracks
 
+  void OpenResultsFile(double currentTime_s);
   void CloseResultsFile() override;
 
   bool SetupDataRequests(const SEDataRequestManager& drMgr) override;
