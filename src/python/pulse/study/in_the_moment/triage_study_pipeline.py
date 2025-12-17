@@ -1029,7 +1029,7 @@ class TriageStudy:
                     triage = self._death_triage(death_module.time_of_death_s / 60,
                                                 casualty["specification"]["injuries"],
                                                 casualty["pulse_injuries"], vitals)
-                    intervention["death"] = {"time": death_module.time_of_death_s / 60,
+                    intervention["death"] = {"time_min": death_module.time_of_death_s / 60,
                                              "cause": death_module.cause_of_death,
                                              "triage": triage}
                 else:

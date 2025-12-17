@@ -106,6 +106,9 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
             }
 
     for pid, run in study_run.items():
+        if not run["specification"]["pulse"]:
+            continue
+
         tgt_injuries = run["specification"]["injuries"]
         if len(tgt_injuries) == 1:
             loc = tgt_injuries[0]["location"]
@@ -175,23 +178,21 @@ def create_markdown(set_name: str, set_type: str, study_run: dict, output_dir):
                 file.write("\n\n")
                 if "intervention" in visit:
                     final_triage = visit["intervention"]
-                    file.write(f"#### Intervention state at time {final_triage['final']['time_min']}min \n\n")
+                    file.write(f"#### Intervention Performed\n\n")
                     for intervention in triage["vitals"]["interventions"]:
                         if intervention == Intervention.RepositionAirway:
-                            file.write(f"The casualty's head was repositioned to open the airway.\n")
+                            file.write(f"The casualty's head was repositioned to open the airway.\n\n")
                             continue
                         if intervention == Intervention.Tourniquet:
-                            file.write(f"A tourniquet was applied to the casualty's wounded extremity.\n")
+                            file.write(f"A tourniquet was applied to the casualty's wounded extremity.\n\n")
                         if intervention == Intervention.WoundPack:
-                            file.write(f"Gauze was use to pack the casualty's wounded.\n")
+                            file.write(f"Gauze was use to pack the casualty's wounded.\n\n")
                     if "final" in final_triage:
-                        file.write(f"\n")
+                        file.write(f"Casualty state at time {final_triage['final']['time_min']}min\n")
                         table = _create_table(final_triage["final"]["triage"])
                     elif "death" in final_triage:
-                        file.write(f"Casualty dies at time {final_triage['death']['time']:.1f} min. "
-                                   f"{final_triage['death']['cause']}")
-                                   #f"Intervention extended life {final_triage['death']['time']-run['death']['time']:.1f} min.")
-                        file.write("\n\n")
+                        file.write(f"Casualty died at time {final_triage['death']['time_min']:.1f} min. "
+                                   f"{final_triage['death']['cause']}\n\n")
                         triage = final_triage["death"]["triage"]
                         table = _create_table(triage)
                     else:
@@ -313,7 +314,7 @@ def create_align_dataset(study_run: dict, scenario_id: str) -> list:
             visit = run["visits"]["15.0"]
             cases.append(triage_case(visit["triage"], 15.0))
         elif "death" in run:
-            cases.append(triage_case(run["death"]["triage"], run["death"]["time"]))
+            cases.append(triage_case(run["death"]["triage"], run["death"]["time_min"]))
         # Not adding the "final" state, only the initial visit
 
     return cases
@@ -427,6 +428,8 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
             plots.add(f"ais-{i+1}.0")
             survivability_counts[protocol][f"ais-{i+1}.0"] = copy.deepcopy(ledger)
 
+    no_intervention_death_counts = {}
+    intervention_death_counts = {}
     for pid, run in study_run.items():
         if not run["specification"]["pulse"]:
             continue  # Casualty not run through Pulse
@@ -443,24 +446,32 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
                 survivability_counts[protocol][axis]["total"] += 1
 
         if "final" in run:
-            no_intervention_death = max_time
+            no_intervention_death_time_min = max_time
             if "ais-6.0" in axes:
                 _log.info("Found ais-6.0")
         elif "death" in run:
-            no_intervention_death = run["death"]["time_min"]
+            cause = run["death"]["cause"]
+            if cause not in no_intervention_death_counts:
+                no_intervention_death_counts[cause] = 0
+            no_intervention_death_counts[cause] += 1
+            no_intervention_death_time_min = run["death"]["time_min"]
         else:
             _log.info(f"{pid} has no final or death?")
             exit(1)
 
         intervention = None
-        intervention_death = no_intervention_death
+        intervention_death = no_intervention_death_time_min
+        # TODO Targeting a specific time for our study construction, this could be generic
         if "15.0" in run["visits"]:
             visit = run["visits"]["15.0"]
             if "intervention" in visit:
                 intervention_death = max_time
                 if "death" in visit["intervention"]:
-                    _log.info("intervention death")
-                    intervention_death = visit["intervention"]["death"]["time"]
+                    cause = visit["intervention"]["death"]["cause"]
+                    if cause not in intervention_death_counts:
+                        intervention_death_counts[cause] = 0
+                    intervention_death_counts[cause] += 1
+                    intervention_death = visit["intervention"]["death"]["time_min"]
                 interventions = visit["triage"]["vitals"]["interventions"]
                 if len(interventions) > 1:
                     _log.info(f"{pid} has more than 1 intervention")
@@ -469,11 +480,11 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
                     intervention = interventions[0]
 
         for time in ledger["time_counts"].keys():
-            if no_intervention_death >= time:
+            if no_intervention_death_time_min >= time:
                 for axis in axes:
                     survivability_counts["none"][axis]["time_counts"][time] += 1
             if not intervention:
-                if no_intervention_death >= time:
+                if no_intervention_death_time_min >= time:
                     for axis in axes:
                         survivability_counts["start"][axis]["time_counts"][time] += 1
                         survivability_counts["salt"][axis]["time_counts"][time] += 1
@@ -483,7 +494,7 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
                     if intervention_death >= time:
                         for axis in axes:
                             survivability_counts["salt"][axis]["time_counts"][time] += 1
-                    if no_intervention_death >= time:
+                    if no_intervention_death_time_min >= time:
                         for axis in axes:
                             survivability_counts["start"][axis]["time_counts"][time] += 1
                             survivability_counts["bcd_sieve"][axis]["time_counts"][time] += 1
@@ -500,7 +511,7 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
                         for axis in axes:
                             survivability_counts["salt"][axis]["time_counts"][time] += 1
                             survivability_counts["bcd_sieve"][axis]["time_counts"][time] += 1
-                    if no_intervention_death >= time:
+                    if no_intervention_death_time_min >= time:
                         for axis in axes:
                             survivability_counts["start"][axis]["time_counts"][time] += 1
 
@@ -509,12 +520,15 @@ def plot_kaplan_meier(study_run: dict, output_dir: str):
                         for axis in axes:
                             survivability_counts["salt"][axis]["time_counts"][time] += 1
                             survivability_counts["bcd_sieve"][axis]["time_counts"][time] += 1
-                    if no_intervention_death >= time:
+                    if no_intervention_death_time_min >= time:
                         for axis in axes:
                             survivability_counts["start"][axis]["time_counts"][time] += 1
 
     for plot in plots:
         _kaplan_meier_plot(plot)
+
+    _log.info(f"No intervention deaths\n{no_intervention_death_counts}")
+    _log.info(f"Intervention deaths\n{intervention_death_counts}")
 
 
 def count_tags(study_run: dict):

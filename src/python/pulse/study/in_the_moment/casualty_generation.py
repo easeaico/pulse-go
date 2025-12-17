@@ -169,23 +169,23 @@ def calculate_population_error(population: dict, distributions: dict) -> dict:
     male_bmis = []
     for i, sex in enumerate(population["sex"]):
         if sex == "female":
-            female_heights.append(population["height"][i])
+            female_heights.append(population["height_cm"][i])
             female_bmis.append(population["bmi"][i])
         else:
-            male_heights.append(population["height"][i])
+            male_heights.append(population["height_cm"][i])
             male_bmis.append(population["bmi"][i])
 
     female_height = {"synthetic_mean": np.mean(female_heights),
-                     "actual_mean": distributions["sex"]["female"]["height"]["mean"],
+                     "actual_mean": distributions["sex"]["female"]["height_cm"]["mean"],
                      "synthetic_std": np.std(female_heights),
-                     "actual_std": distributions["sex"]["female"]["height"]["std"]}
+                     "actual_std": distributions["sex"]["female"]["height_cm"]["std"]}
     female_height["mean_error"] = percent_difference(female_height["synthetic_mean"], female_height["actual_mean"])
     female_height["std_error"] = percent_difference(female_height["synthetic_std"], female_height["actual_std"])
 
     male_height = {"synthetic_mean": np.mean(male_heights),
-                   "actual_mean": distributions["sex"]["male"]["height"]["mean"],
+                   "actual_mean": distributions["sex"]["male"]["height_cm"]["mean"],
                    "synthetic_std": np.std(male_heights),
-                   "actual_std": distributions["sex"]["male"]["height"]["std"]}
+                   "actual_std": distributions["sex"]["male"]["height_cm"]["std"]}
     male_height["mean_error"] = percent_difference(male_height["synthetic_mean"], male_height["actual_mean"])
     male_height["std_error"] = percent_difference(male_height["synthetic_std"], male_height["actual_std"])
 
@@ -203,24 +203,26 @@ def calculate_population_error(population: dict, distributions: dict) -> dict:
     male_bmi["mean_error"] = percent_difference(male_bmi["synthetic_mean"], male_bmi["actual_mean"])
     male_bmi["std_error"] = percent_difference(male_bmi["synthetic_std"], male_bmi["actual_std"])
 
-    error["sex"] = {"female": {"count": female_count, "height": female_height, "bmi": female_bmi},
-                    "male": {"count": male_count, "height": male_height, "bmi": male_bmi}}
+    error["sex"] = {"female": {"count": female_count, "height_cm": female_height, "bmi": female_bmi},
+                    "male": {"count": male_count, "height_cm": male_height, "bmi": male_bmi}}
 
     # Heart Rate
-    error["heart_rate"] = {"synthetic_mean": np.mean(population["heart_rate"]),
-                           "actual_mean": distributions["heart_rate"]["mean"],
-                           "synthetic_std": np.std(population["heart_rate"]),
-                           "actual_std": distributions["heart_rate"]["std"]}
-    error["heart_rate"]["mean_error"] = percent_difference(error["heart_rate"]["synthetic_mean"], error["heart_rate"]["actual_mean"])
-    error["heart_rate"]["std_error"] = percent_difference(error["heart_rate"]["synthetic_std"], error["heart_rate"]["actual_std"])
+    error["heart_rate_bpm"] = {"synthetic_mean": np.mean(population["heart_rate_bpm"]),
+                           "actual_mean": distributions["heart_rate_bpm"]["mean"],
+                           "synthetic_std": np.std(population["heart_rate_bpm"]),
+                           "actual_std": distributions["heart_rate_bpm"]["std"]}
+    error["heart_rate_bpm"]["mean_error"] = (
+        percent_difference(error["heart_rate_bpm"]["synthetic_mean"], error["heart_rate_bpm"]["actual_mean"]))
+    error["heart_rate_bpm"]["std_error"] = (
+        percent_difference(error["heart_rate_bpm"]["synthetic_std"], error["heart_rate_bpm"]["actual_std"]))
 
     # Age
-    age_bins = distributions["age"]["bins"]
-    actual_age_counts = distributions["age"]["counts"]
-    synthetic_age_counts, bins = np.histogram(population["age"], bins=age_bins)
-    error["age"] = {"bins": age_bins,
-                    "synthetic_counts": synthetic_age_counts / synthetic_age_counts.sum(),
-                    "actual_counts": [x / sum(actual_age_counts) for x in actual_age_counts]}
+    age_bins = distributions["age_yr"]["bins"]
+    actual_age_counts = distributions["age_yr"]["counts"]
+    synthetic_age_counts, bins = np.histogram(population["age_yr"], bins=age_bins)
+    error["age_yr"] = {"bins": age_bins,
+                       "synthetic_counts": synthetic_age_counts / synthetic_age_counts.sum(),
+                       "actual_counts": [x / sum(actual_age_counts) for x in actual_age_counts]}
 
     return error
 
@@ -245,9 +247,9 @@ def plot_population(ages: dict, img_dir: Path):
 def plot_population_error(population_error: dict, results_stem: str):
 
     # Age
-    age_bins = population_error["age"]["bins"]
-    actual_age_counts = population_error["age"]["actual_counts"]
-    synthetic_age_counts = population_error["age"]["synthetic_counts"]
+    age_bins = population_error["age_yr"]["bins"]
+    actual_age_counts = population_error["age_yr"]["actual_counts"]
+    synthetic_age_counts = population_error["age_yr"]["synthetic_counts"]
     fig, axes = plt.subplots(1, 2, figsize=(10, 5))
     axes[0].hist(age_bins[:-1], age_bins, weights=synthetic_age_counts, color="skyblue", edgecolor="black")
     axes[0].set_ylim(0, 0.45)
@@ -277,11 +279,11 @@ def plot_population_error(population_error: dict, results_stem: str):
                 "Synthetic Mean", "Actual Mean", "Mean % Difference",
                 "Synthetic SD", "Actual SD", "SD % Difference"]
     fields = [0, 1, 2, 3, 4, 5, 6]  # All headings
-    data.append(_error_row("Female Height", population_error["sex"]["female"]["height"]))
+    data.append(_error_row("Female Height", population_error["sex"]["female"]["height_cm"]))
     data.append(_error_row("Female BMI", population_error["sex"]["female"]["bmi"]))
-    data.append(_error_row("Male Height", population_error["sex"]["male"]["height"]))
+    data.append(_error_row("Male Height", population_error["sex"]["male"]["height_cm"]))
     data.append(_error_row("Male BMI", population_error["sex"]["male"]["bmi"]))
-    data.append(_error_row("Heart Rate", population_error["heart_rate"]))
+    data.append(_error_row("Heart Rate", population_error["heart_rate_bpm"]))
     create_report(f"{results_stem}_statistics", data, fields, headings)
 
     # Sex Count Table
