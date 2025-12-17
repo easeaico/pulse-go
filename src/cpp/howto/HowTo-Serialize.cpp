@@ -105,13 +105,44 @@ void HowToSerialize()
     return;
   }
 
+  // NOTE: Appending/Truncating data to csv files with multiple runs (the same or different engine) is not well defined
+  // We have not had a use case where managing and reusing engines running multiple related states
+  // Ex. Using the same engine with multiple states with different simulation times all needing to create a single continuous csv file
+  // Ex. What if 2 different engines want to share (via serial execution) a csv file?
+  // Maybe you have a different use case...that needs different csv control... let us know!
+  // Might need to add a param on the data request manager to specify truc/append to the results file
+
+  double lastSimTime_s = pe->GetSimulationTime(TimeUnit::s);
+
   // Now let's load that state back in and continue running, and writing to our same csv file
+  // By not providing a data request manager, you are deferring to use the data request manager in the state
+  // A provided data request manager to SerializeFromFile will override the state data request manager
+  // 
+  // The engine instance keeps all csv file handles and will append data to those file
+  // Files contents are cleared when initially opened, and appended to, even after loading a new state with the same csv file
 
   if (!pe->SerializeFromFile(state))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  // If you do not wish to track anything, reset the tracker
+  // pe->GetDataRequestTracker().Reset();
+
+  // You can close the tracked file and stop tracking
+  //pe->GetDataRequestTracker().CloseResultsFile();
+
+  // You can change what you track and to what file at any time
+  //pe->GetDataRequestTracker().SetupDataRequests(drMgr);
+  
+  // TODO Should these 3 options reset the contents of the csv file if the same csv is used again?
+  // Maybe add a bool param to 'forget' file handles so csv files are tructated on true, appended on false?
+
+  // The engine simulation time is contained in the state, and the engine sim time will be set to this time
+  // You can override the simulation time if you wish after loading the state
+  //SEScalarTime newTime;
+  //newTime.SetValue(lastSimTime_s + 300, TimeUnit::s);
+  //pe->SetSimulationTime(newTime);
 
   // Let's apply some interventions
   hemorrhageLeg.SetCompartment(eHemorrhage_Compartment::RightLeg);//the location of the hemorrhage
