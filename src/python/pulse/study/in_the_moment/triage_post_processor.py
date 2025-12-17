@@ -528,12 +528,29 @@ def count_tags(study_run: dict):
                   4.0: copy.deepcopy(protocol_counts),
                   5.0: copy.deepcopy(protocol_counts),
                   6.0: copy.deepcopy(protocol_counts)}
-    counts = {"locations": {}, "tags": copy.deepcopy(protocol_counts), "ais": copy.deepcopy(ais_counts)}
+    counts = {"locations": {},
+              "tags": copy.deepcopy(protocol_counts),
+              "ais": copy.deepcopy(ais_counts),
+              "disagreements": {"pids": [], "locations": {}}
+              }
     for loc, injury in army_injury_distributions.items():
-        counts["locations"][loc] = {"injuries": {}, "tags": copy.deepcopy(protocol_counts), "ais": copy.deepcopy(ais_counts)}
-        for typ in injury["types"]:
-            counts["locations"][loc]["injuries"][typ] = {"tags": copy.deepcopy(protocol_counts), "ais": copy.deepcopy(ais_counts)}
+        counts["locations"][loc] = {"injuries": {},
+                                    "tags": copy.deepcopy(protocol_counts),
+                                    "ais": copy.deepcopy(ais_counts)}
+        counts["disagreements"]["locations"][loc] = {"pids": [], "injuries": {}}
+        for t in injury["types"]:
+            counts["locations"][loc]["injuries"][t] = {"tags": copy.deepcopy(protocol_counts),
+                                                       "ais": copy.deepcopy(ais_counts)}
+            counts["disagreements"]["locations"][loc]["injuries"][t] = {"pids": [],
+                                                                        "ais": {0: {"pids": []},
+                                                                                1: {"pids": []},
+                                                                                2: {"pids": []},
+                                                                                3: {"pids": []},
+                                                                                4: {"pids": []},
+                                                                                5: {"pids": []},
+                                                                                6: {"pids": []}}}
 
+    choices = set()
     time_of_interest = "15.0"
     for pid, run in study_run.items():
         if not run["specification"]["pulse"]:
@@ -558,8 +575,10 @@ def count_tags(study_run: dict):
                     counts["ais"][ais][protocol][color] += 1
         else:
             tags = visits[time_of_interest]["triage"]["tags"]
+            choices.clear()
             for protocol in protocol_counts.keys():
                 color = tags[protocol]
+                choices.add(color)
                 if color == TriageColor.Black and "death" not in run:
                     _log.info(f"{pid} is black tagged but not dead")
                     _log.info(f"\t{run['specification']['injuries']}")
@@ -576,6 +595,15 @@ def count_tags(study_run: dict):
                             ais_set.add(ais)
                 for ais in ais_set:
                     counts["ais"][ais][protocol][color] += 1
+            if len(choices) > 1:
+                counts["disagreements"]["pids"].append(pid)
+                for loc, types in injuries.items():
+                    counts["disagreements"]["locations"][loc]["pids"].append(pid)
+                    for t, severity in types.items():
+                        counts["disagreements"]["locations"][loc]["injuries"][t]["pids"].append(pid)
+                        for ais in severity["severities"]:
+                            counts["disagreements"]["locations"][loc]["injuries"][t]["ais"][ais]["pids"].append(pid)
+
     return counts
 
 
@@ -804,13 +832,13 @@ def main():
     parser.add_argument(
         "-ev1k", "--eval_1k_file",
         type=Path,
-        default=Path("./skip"),  # Path("./test_results/itm/triage_study/1000_casualties.json"),
+        default=Path("./test_results/itm/triage_study/1000_casualties.json"),
         help="Triage study evaluation file"
     )
     parser.add_argument(
         "-ev10k", "--eval_10k_file",
         type=Path,
-        default=Path("./skip"),  # Path("./test_results/itm/triage_study/10000_casualties.json"),
+        default=Path("./test_results/itm/triage_study/10000_casualties.json"),
         help="Triage study evaluation file"
     )
     parser.add_argument(
@@ -996,10 +1024,10 @@ def main():
 
     if opts.example_file.exists():
         _process_eval_file(opts.example_file, "example")
-    if opts.eval_1k_file.exists():
-        _process_eval_file(opts.eval_1k_file, "1k")
-    if opts.eval_10k_file.exists():
-        _process_eval_file(opts.eval_10k_file, "10k")
+    #if opts.eval_1k_file.exists():
+    #    _process_eval_file(opts.eval_1k_file, "1k")
+    #if opts.eval_10k_file.exists():
+    #    _process_eval_file(opts.eval_10k_file, "10k")
 
 
 if __name__ == "__main__":
