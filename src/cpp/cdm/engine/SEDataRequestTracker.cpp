@@ -284,26 +284,15 @@ bool SEEngineTracker::SetupDataRequests(const SEDataRequestManager& drMgr)
     success = false;
   }
 
-  if (m_Mode == TrackMode::CSV)
+  m_ResultsStream = &m_OutputFiles[m_DataRequestMgr->GetResultFilename()];
+  for (auto& pair : m_OutputFiles)
   {
-    m_ResultsStream = &m_OutputFiles[m_DataRequestMgr->GetResultFilename()];
-    if (!m_ResultsStream->is_open())
-    {
-      m_CurrentSampleTime_s = 0;
-      m_LastPullTime_s = SEScalar::dNaN();
-      Info("Creating csv request file: " + m_DataRequestMgr->GetResultFilename());
-      m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), *m_ResultsStream);
-    }
-    for (auto& pair : m_OutputFiles)
-    {
-      // CLose out other streams we may have
-      if (pair.first == m_DataRequestMgr->GetResultFilename())
-        continue;
       if (pair.second.is_open())
-        pair.second.close();
+          pair.second.close();
       pair.second.clear();
-    }
   }
+  m_CurrentSampleTime_s = 0;
+  m_LastPullTime_s = SEScalar::dNaN();
 
   return success;
 }
@@ -634,7 +623,14 @@ void SEEngineTracker::TrackData(double time_s, double dt_s)
     }
 
     if (m_Mode == TrackMode::CSV)
+    {
+      if (!m_ResultsStream->is_open())
+      {
+        Info("Creating csv request file: " + m_DataRequestMgr->GetResultFilename());
+        m_DataTrack->CreateFile(m_DataRequestMgr->GetResultFilename().c_str(), *m_ResultsStream);
+      }
       m_DataTrack->StreamProbesToFile(time_s, *m_ResultsStream);
+    }
   }
 
   m_LastPullTime_s = time_s;
