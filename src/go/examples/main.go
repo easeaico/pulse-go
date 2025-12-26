@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/easeaico/pusle-go/pulse"
+	"github.com/easeaico/pulse-go/pulse"
 )
 
 func main() {

@@ -16,3 +16,5 @@
 /src/python/pulse.egg*
 
 /proj/eclipse/build
+/bin/libPulseC.dylib
+/build

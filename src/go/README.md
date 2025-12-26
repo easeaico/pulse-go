@@ -66,7 +66,7 @@ go build -o pulse_example .
 ### Package Import
 
 ```go
-import "github.com/easeaico/pusle-go/pulse"
+import "github.com/easeaico/pulse-go/pulse"
 ```
 
 ### Basic Usage

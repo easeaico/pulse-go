@@ -1,3 +1,3 @@
-module github.com/easeaico/pusle-go
+module github.com/easeaico/pulse-go
 
 go 1.20
