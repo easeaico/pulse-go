@@ -22,12 +22,13 @@ func main() {
 		fmt.Printf("Failed to get executable path: %v\n", err)
 		return
 	}
-	// Assume data directory is at project root/data
-	dataDir := filepath.Join(filepath.Dir(execPath), "..", "..", "..", "..", "data")
+	// Data directory is in the same directory as the executable
+	execDir := filepath.Dir(execPath)
+	dataDir := filepath.Join(execDir, "data")
 	if _, err := os.Stat(dataDir); os.IsNotExist(err) {
 		// Try current working directory
 		cwd, _ := os.Getwd()
-		dataDir = filepath.Join(cwd, "..", "..", "..", "data")
+		dataDir = filepath.Join(cwd, "data")
 	}
 	fmt.Printf("Data Directory: %s\n\n", dataDir)
 
@@ -59,8 +60,8 @@ func main() {
 		]
 	}`
 
-	// Try to load from a state file
-	stateFile := filepath.Join(dataDir, "states", "StandardMale@0s.json")
+	// Try to load from a state file (use local DefaultMale@0s.json)
+	stateFile := filepath.Join(dataDir, "DefaultMale@0s.json")
 	fmt.Printf("Loading state from: %s\n", stateFile)
 
 	err = pe.SerializeFromFile(stateFile, dataRequests, pulse.JSON)
